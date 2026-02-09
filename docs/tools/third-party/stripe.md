@@ -7,37 +7,37 @@ catalog_icon: /adk-docs/assets/tools-stripe.png
 # Stripe
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [Stripe MCP Server](https://docs.stripe.com/mcp) connects your ADK agent to
-the [Stripe](https://stripe.com/) ecosystem. This integration gives your agent
-the ability to manage payments, customers, subscriptions, and invoices using
-natural language, enabling automated commerce workflows and financial
-operations.
+El [Servidor MCP de Stripe](https://docs.stripe.com/mcp) conecta tu agente ADK al
+ecosistema de [Stripe](https://stripe.com/). Esta integración le otorga a tu agente
+la capacidad de gestionar pagos, clientes, suscripciones y facturas usando
+lenguaje natural, habilitando flujos de trabajo de comercio automatizados y
+operaciones financieras.
 
-## Use cases
+## Casos de uso
 
-- **Automate Payment Operations**: Create payment links, process refunds, and
-  list payment intents through conversational commands.
+- **Automatizar Operaciones de Pago**: Crea enlaces de pago, procesa reembolsos y
+  lista intenciones de pago mediante comandos conversacionales.
 
-- **Streamline Invoicing**: Generate and finalize invoices, add line items, and
-  track outstanding payments without leaving your development environment.
+- **Simplificar Facturación**: Genera y finaliza facturas, añade elementos de línea y
+  rastrea pagos pendientes sin salir de tu entorno de desarrollo.
 
-- **Access Business Insights**: Query account balances, list products and
-  prices, and search across Stripe resources to make data-driven decisions.
+- **Acceder a Información Empresarial**: Consulta saldos de cuenta, lista productos y
+  precios, y busca a través de recursos de Stripe para tomar decisiones basadas en datos.
 
-## Prerequisites
+## Requisitos previos
 
-- Create a [Stripe account](https://dashboard.stripe.com/register)
-- Generate a [Restricted API key](https://dashboard.stripe.com/apikeys) from the
-  Stripe Dashboard
+- Crear una [cuenta de Stripe](https://dashboard.stripe.com/register)
+- Generar una [clave API restringida](https://dashboard.stripe.com/apikeys) desde el
+  Panel de Stripe
 
-## Use with agent
+## Usar con agente
 
 === "Python"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```python
         from google.adk.agents import Agent
@@ -60,7 +60,7 @@ operations.
                                 "-y",
                                 "@stripe/mcp",
                                 "--tools=all",
-                                # (Optional) Specify which tools to enable
+                                # (Opcional) Especificar qué herramientas habilitar
                                 # "--tools=customers.read,invoices.read,products.read",
                             ],
                             env={
@@ -74,7 +74,7 @@ operations.
         )
         ```
 
-    === "Remote MCP Server"
+    === "Servidor MCP Remoto"
 
         ```python
         from google.adk.agents import Agent
@@ -102,7 +102,7 @@ operations.
 
 === "TypeScript"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -122,7 +122,7 @@ operations.
                             "-y",
                             "@stripe/mcp",
                             "--tools=all",
-                            // (Optional) Specify which tools to enable
+                            // (Opcional) Especificar qué herramientas habilitar
                             // "--tools=customers.read,invoices.read,products.read",
                         ],
                         env: {
@@ -136,7 +136,7 @@ operations.
         export { rootAgent };
         ```
 
-    === "Remote MCP Server"
+    === "Servidor MCP Remoto"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -161,45 +161,45 @@ operations.
         export { rootAgent };
         ```
 
-!!! tip "Best practices"
+!!! tip "Mejores prácticas"
 
-    Enable human confirmation of tool actions and exercise caution when using
-    the Stripe MCP server alongside other MCP servers to mitigate prompt
-    injection risks.
+    Habilita la confirmación humana de las acciones de herramientas y ejerce precaución al usar
+    el servidor MCP de Stripe junto con otros servidores MCP para mitigar
+    riesgos de inyección de prompts.
 
-## Available tools
+## Herramientas disponibles
 
-Resource | Tool | API
+Recurso | Herramienta | API
 -------- | ---- | ----
-Account | `get_stripe_account_info` | Retrieve account
-Balance | `retrieve_balance` | Retrieve balance
-Coupon | `create_coupon` | Create coupon
-Coupon | `list_coupons` | List coupons
-Customer | `create_customer` | Create customer
-Customer | `list_customers` | List customers
-Dispute | `list_disputes` | List disputes
-Dispute | `update_dispute` | Update dispute
-Invoice | `create_invoice` | Create invoice
-Invoice | `create_invoice_item` | Create invoice item
-Invoice | `finalize_invoice` | Finalize invoice
-Invoice | `list_invoices` | List invoices
-Payment Link | `create_payment_link` | Create payment link
-PaymentIntent | `list_payment_intents` | List PaymentIntents
-Price | `create_price` | Create price
-Price | `list_prices` | List prices
-Product | `create_product` | Create product
-Product | `list_products` | List products
-Refund | `create_refund` | Create refund
-Subscription | `cancel_subscription` | Cancel subscription
-Subscription | `list_subscriptions` | List subscriptions
-Subscription | `update_subscription` | Update subscription
-Others | `search_stripe_resources` | Search Stripe resources
-Others | `fetch_stripe_resources` | Fetch Stripe object
-Others | `search_stripe_documentation` | Search Stripe knowledge
+Cuenta | `get_stripe_account_info` | Recuperar cuenta
+Saldo | `retrieve_balance` | Recuperar saldo
+Cupón | `create_coupon` | Crear cupón
+Cupón | `list_coupons` | Listar cupones
+Cliente | `create_customer` | Crear cliente
+Cliente | `list_customers` | Listar clientes
+Disputa | `list_disputes` | Listar disputas
+Disputa | `update_dispute` | Actualizar disputa
+Factura | `create_invoice` | Crear factura
+Factura | `create_invoice_item` | Crear elemento de factura
+Factura | `finalize_invoice` | Finalizar factura
+Factura | `list_invoices` | Listar facturas
+Enlace de Pago | `create_payment_link` | Crear enlace de pago
+IntenciónDePago | `list_payment_intents` | Listar IntencionesDePago
+Precio | `create_price` | Crear precio
+Precio | `list_prices` | Listar precios
+Producto | `create_product` | Crear producto
+Producto | `list_products` | Listar productos
+Reembolso | `create_refund` | Crear reembolso
+Suscripción | `cancel_subscription` | Cancelar suscripción
+Suscripción | `list_subscriptions` | Listar suscripciones
+Suscripción | `update_subscription` | Actualizar suscripción
+Otros | `search_stripe_resources` | Buscar recursos de Stripe
+Otros | `fetch_stripe_resources` | Obtener objeto de Stripe
+Otros | `search_stripe_documentation` | Buscar conocimiento de Stripe
 
-## Additional resources
+## Recursos adicionales
 
-- [Stripe MCP Server Documentation](https://docs.stripe.com/mcp)
-- [Stripe MCP Server on GitHub](https://github.com/stripe/ai/tree/main/tools/modelcontextprotocol)
-- [Build on Stripe with LLMs](https://docs.stripe.com/building-with-llms)
-- [Add Stripe to your agentic workflows](https://docs.stripe.com/agents)
+- [Documentación del Servidor MCP de Stripe](https://docs.stripe.com/mcp)
+- [Servidor MCP de Stripe en GitHub](https://github.com/stripe/ai/tree/main/tools/modelcontextprotocol)
+- [Construir en Stripe con LLMs](https://docs.stripe.com/building-with-llms)
+- [Añadir Stripe a tus flujos de trabajo agénticos](https://docs.stripe.com/agents)

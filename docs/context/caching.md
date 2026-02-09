@@ -1,25 +1,25 @@
-# Context caching with Gemini
+# Almacenamiento en caché de contexto con Gemini
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.15.0</span>
 </div>
 
-When working with agents to complete tasks, you may want to reuse extended
-instructions or large sets of data across multiple agent requests to a
-generative AI model. Resending this data for each agent request is slow,
-inefficient, and can be expensive. Using context caching features in generative
-AI models can significantly speed up responses and lower the number of tokens
-sent to the model for each request.
+Cuando trabajas con agentes para completar tareas, es posible que quieras reutilizar
+instrucciones extendidas o grandes conjuntos de datos a través de múltiples solicitudes de agente a un
+modelo de IA generativa. Reenviar estos datos para cada solicitud de agente es lento,
+ineficiente y puede ser costoso. Usar características de almacenamiento en caché de contexto en modelos de IA
+generativa puede acelerar significativamente las respuestas y reducir el número de tokens
+enviados al modelo para cada solicitud.
 
-The ADK Context Caching feature allows you to cache request data with generative
-AI models that support it, including Gemini 2.0 and higher models. This document
-explains how to configure and use this feature.
+La característica de Almacenamiento en Caché de Contexto del ADK te permite cachear datos de solicitud con modelos de IA
+generativa que lo soportan, incluyendo Gemini 2.0 y modelos superiores. Este documento
+explica cómo configurar y usar esta característica.
 
-## Configure context caching
+## Configurar el almacenamiento en caché de contexto
 
-You configure the context caching feature at the ADK `App` object level,
-which wraps your agent. Use the `ContextCacheConfig` class to configure
-these settings, as shown in the following code sample:
+Configuras la característica de almacenamiento en caché de contexto a nivel del objeto `App` del ADK,
+que envuelve tu agente. Usa la clase `ContextCacheConfig` para configurar
+estos ajustes, como se muestra en el siguiente ejemplo de código:
 
 ```python
 from google.adk import Agent
@@ -42,37 +42,37 @@ app = App(
 )
 ```
 
-## Configuration settings
+## Configuración de ajustes
 
-The `ContextCacheConfig` class has the following settings that control how
-caching works for your agent. When you configure these settings, they apply to
-all agents within your app.
+La clase `ContextCacheConfig` tiene los siguientes ajustes que controlan cómo
+funciona el almacenamiento en caché para tu agente. Cuando configuras estos ajustes, se aplican a
+todos los agentes dentro de tu aplicación.
 
--   **`min_tokens`** (int): The minimum number of tokens required in a request
-    to enable caching. This setting allows you to avoid the overhead of caching
-    for very small requests where the performance benefit would be negligible.
-    Defaults to `0`.
--   **`ttl_seconds`** (int): The time-to-live (TTL) for the cache in seconds.
-    This setting determines how long the cached content is stored before it is
-    refreshed. Defaults to `1800` (30 minutes).
--   **`cache_intervals`** (int): The maximum number of times the same cached
-    content can be used before it expires. This setting allows you to
-    control how frequently the cache is updated, even if the TTL has not
-    expired. Defaults to `10`.
+-   **`min_tokens`** (int): El número mínimo de tokens requeridos en una solicitud
+    para habilitar el almacenamiento en caché. Este ajuste te permite evitar la sobrecarga del almacenamiento en caché
+    para solicitudes muy pequeñas donde el beneficio de rendimiento sería insignificante.
+    Por defecto es `0`.
+-   **`ttl_seconds`** (int): El tiempo de vida (TTL) para la caché en segundos.
+    Este ajuste determina cuánto tiempo se almacena el contenido cacheado antes de que se
+    actualice. Por defecto es `1800` (30 minutos).
+-   **`cache_intervals`** (int): El número máximo de veces que el mismo contenido cacheado
+    puede ser usado antes de que expire. Este ajuste te permite
+    controlar con qué frecuencia se actualiza la caché, incluso si el TTL no ha
+    expirado. Por defecto es `10`.
 
-## Next steps
+## Próximos pasos
 
-For a full implementation of how to use and test the context caching feature,
-see the following sample:
+Para una implementación completa de cómo usar y probar la característica de almacenamiento en caché de contexto,
+consulta el siguiente ejemplo:
 
 -   [`cache_analysis`](https://github.com/google/adk-python/tree/main/contributing/samples/cache_analysis):
-    A code sample that demonstrates how to analyze the performance of context
-    caching.
+    Un ejemplo de código que demuestra cómo analizar el rendimiento del almacenamiento en caché de
+    contexto.
 
-If your use case requires that you provide instructions that are used throughout
-a session, consider using the `static_instruction` parameter for an agent, which
-allows you to amend the system instructions for a generative model. For more
-details, see this sample code:
+Si tu caso de uso requiere que proporciones instrucciones que se usan a lo largo de
+una sesión, considera usar el parámetro `static_instruction` para un agente, que
+te permite modificar las instrucciones del sistema para un modelo generativo. Para más
+detalles, consulta este código de ejemplo:
 
 -   [`static_instruction`](https://github.com/google/adk-python/tree/main/contributing/samples/static_instruction):
-    An implementation of a digital pet agent using static instructions.
+    Una implementación de un agente de mascota digital usando instrucciones estáticas.

@@ -10,35 +10,35 @@ catalog_icon: /adk-docs/assets/tools-paypal.png
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [PayPal MCP Server](https://github.com/paypal/paypal-mcp-server) connects
-your ADK agent to the [PayPal](https://www.paypal.com/) ecosystem. This
-integration gives your agent the ability to manage payments, invoices,
-subscriptions, and disputes using natural language, enabling automated commerce
-workflows and business insights.
+El [Servidor MCP de PayPal](https://github.com/paypal/paypal-mcp-server) conecta
+tu agente ADK al ecosistema de [PayPal](https://www.paypal.com/). Esta
+integración le da a tu agente la capacidad de gestionar pagos, facturas,
+suscripciones y disputas usando lenguaje natural, habilitando flujos de trabajo
+de comercio automatizado e información empresarial.
 
-## Use cases
+## Casos de uso
 
-- **Streamline Financial Operations**: Create orders, send invoices, and process
-  refunds directly through chat without switching context. You can instruct your
-  agent to "bill Client X" or "refund order Y" immediately.
+- **Simplifica Operaciones Financieras**: Crea órdenes, envía facturas y procesa
+  reembolsos directamente a través del chat sin cambiar de contexto. Puedes instruir a tu
+  agente para "facturar al Cliente X" o "reembolsar la orden Y" inmediatamente.
 
-- **Manage Subscriptions & Products**: Handle the full lifecycle of recurring
-  billing by creating products, setting up subscription plans, and managing
-  subscriber details using natural language.
+- **Gestiona Suscripciones y Productos**: Maneja el ciclo de vida completo de
+  facturación recurrente creando productos, configurando planes de suscripción y gestionando
+  detalles de suscriptores usando lenguaje natural.
 
-- **Resolve Issues & Track Performance**: Summarize and accept dispute claims,
-  track shipment statuses, and retrieve merchant insights to make data-driven
-  decisions on the fly.
+- **Resuelve Problemas y Rastrea el Rendimiento**: Resume y acepta reclamos de disputas,
+  rastrea estados de envío y obtén información de comerciantes para tomar decisiones
+  basadas en datos sobre la marcha.
 
-## Prerequisites
+## Prerrequisitos
 
-- Create a [PayPal Developer account](https://developer.paypal.com/)
-- Create an app and retrieve your credentials from the
-  [PayPal Developer Dashboard](https://developer.paypal.com/)
-- [Generate an access token](https://developer.paypal.com/reference/get-an-access-token/)
-  from your credentials
+- Crea una [cuenta de desarrollador de PayPal](https://developer.paypal.com/)
+- Crea una aplicación y obtén tus credenciales desde el
+  [Panel de Desarrollador de PayPal](https://developer.paypal.com/)
+- [Genera un token de acceso](https://developer.paypal.com/reference/get-an-access-token/)
+  desde tus credenciales
 
-## Use with agent
+## Uso con agente
 
 === "Python"
 
@@ -50,7 +50,7 @@ workflows and business insights.
         from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
         from mcp import StdioServerParameters
 
-        PAYPAL_ENVIRONMENT = "SANDBOX"  # Options: "SANDBOX" or "PRODUCTION"
+        PAYPAL_ENVIRONMENT = "SANDBOX"  # Opciones: "SANDBOX" o "PRODUCTION"
         PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
 
         root_agent = Agent(
@@ -66,7 +66,7 @@ workflows and business insights.
                                 "-y",
                                 "@paypal/mcp",
                                 "--tools=all",
-                                # (Optional) Specify which tools to enable
+                                # (Opcional) Especifica qué herramientas habilitar
                                 # "--tools=subscriptionPlans.list,subscriptionPlans.show",
                             ],
                             env={
@@ -88,7 +88,7 @@ workflows and business insights.
         from google.adk.tools.mcp_tool import McpToolset
         from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
 
-        PAYPAL_MCP_ENDPOINT = "https://mcp.sandbox.paypal.com/sse"  # Production: https://mcp.paypal.com/sse
+        PAYPAL_MCP_ENDPOINT = "https://mcp.sandbox.paypal.com/sse"  # Producción: https://mcp.paypal.com/sse
         PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
 
         root_agent = Agent(
@@ -115,7 +115,7 @@ workflows and business insights.
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
 
-        const PAYPAL_ENVIRONMENT = "SANDBOX"; // Options: "SANDBOX" or "PRODUCTION"
+        const PAYPAL_ENVIRONMENT = "SANDBOX"; // Opciones: "SANDBOX" o "PRODUCTION"
         const PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN";
 
         const rootAgent = new LlmAgent({
@@ -131,7 +131,7 @@ workflows and business insights.
                             "-y",
                             "@paypal/mcp",
                             "--tools=all",
-                            // (Optional) Specify which tools to enable
+                            // (Opcional) Especifica qué herramientas habilitar
                             // "--tools=subscriptionPlans.list,subscriptionPlans.show",
                         ],
                         env: {
@@ -148,116 +148,116 @@ workflows and business insights.
 
 !!! note
 
-    **Token Expiration**: PayPal Access Tokens have a limited lifespan of 3-8
-    hours. If your agent stops working, ensure your token has not expired and
-    generate a new one if necessary. You should implement token refresh logic to
-    handle token expiration.
+    **Expiración del Token**: Los tokens de acceso de PayPal tienen una vida útil limitada de 3-8
+    horas. Si tu agente deja de funcionar, asegúrate de que tu token no haya expirado y
+    genera uno nuevo si es necesario. Debes implementar lógica de actualización de tokens para
+    manejar la expiración del token.
 
-## Available tools
+## Herramientas disponibles
 
-### Catalog management
+### Gestión de catálogo
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`create_product` | Create a new product in the PayPal catalog
-`list_products` | List products from the PayPal catalog
-`show_product_details` | Show details of a specific product from the PayPal catalog
-`update_product` | Update an existing product in the PayPal catalog
+`create_product` | Crea un nuevo producto en el catálogo de PayPal
+`list_products` | Lista productos del catálogo de PayPal
+`show_product_details` | Muestra detalles de un producto específico del catálogo de PayPal
+`update_product` | Actualiza un producto existente en el catálogo de PayPal
 
-### Dispute management
+### Gestión de disputas
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`list_disputes` | Retrieve a summary of all disputes with optional filtering
-`get_dispute` | Retrieve detailed information about a specific dispute
-`accept_dispute_claim` | Accept a dispute claim, resolving it in favor of the buyer
+`list_disputes` | Obtiene un resumen de todas las disputas con filtrado opcional
+`get_dispute` | Obtiene información detallada sobre una disputa específica
+`accept_dispute_claim` | Acepta un reclamo de disputa, resolviéndolo a favor del comprador
 
-### Invoices
+### Facturas
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`create_invoice` | Create a new invoice in the PayPal system
-`list_invoices` | List invoices
-`get_invoice` | Retrieve details about a specific invoice
-`send_invoice` | Send an existing invoice to the specified recipient
-`send_invoice_reminder` | Send a reminder for an existing invoice
-`cancel_sent_invoice` | Cancel a sent invoice
-`generate_invoice_qr_code` | Generate a QR code for an invoice
+`create_invoice` | Crea una nueva factura en el sistema de PayPal
+`list_invoices` | Lista facturas
+`get_invoice` | Obtiene detalles sobre una factura específica
+`send_invoice` | Envía una factura existente al destinatario especificado
+`send_invoice_reminder` | Envía un recordatorio para una factura existente
+`cancel_sent_invoice` | Cancela una factura enviada
+`generate_invoice_qr_code` | Genera un código QR para una factura
 
-### Payments
+### Pagos
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`create_order` | Create an order in the PayPal system based on the provided details
-`create_refund` | Process a refund for a captured payment
-`get_order` | Get details of a specific payment
-`get_refund` | Get the details for a specific refund
-`pay_order` | Capture payment for an authorized order
+`create_order` | Crea una orden en el sistema de PayPal basada en los detalles proporcionados
+`create_refund` | Procesa un reembolso para un pago capturado
+`get_order` | Obtiene detalles de un pago específico
+`get_refund` | Obtiene los detalles de un reembolso específico
+`pay_order` | Captura el pago para una orden autorizada
 
-### Reporting and insights
+### Reportes e información
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`get_merchant_insights` | Retrieve business intelligence metrics and analytics for a merchant
-`list_transactions` | List all transactions
+`get_merchant_insights` | Obtiene métricas de inteligencia empresarial y analítica para un comerciante
+`list_transactions` | Lista todas las transacciones
 
-### Shipment tracking
+### Rastreo de envío
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`create_shipment_tracking` | Create shipment tracking information for a PayPal transaction
-`get_shipment_tracking` | Get shipment tracking information for a specific shipment
-`update_shipment_tracking` | Update shipment tracking information for a specific shipment
+`create_shipment_tracking` | Crea información de rastreo de envío para una transacción de PayPal
+`get_shipment_tracking` | Obtiene información de rastreo de envío para un envío específico
+`update_shipment_tracking` | Actualiza información de rastreo de envío para un envío específico
 
-### Subscription management
+### Gestión de suscripciones
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`cancel_subscription` | Cancel an active subscription
-`create_subscription` | Create a new subscription
-`create_subscription_plan` | Create a new subscription plan
-`update_subscription` | Update an existing subscription
-`list_subscription_plans` | List subscription plans
-`show_subscription_details` | Show details of a specific subscription
-`show_subscription_plan_details` | Show details of a specific subscription plan
+`cancel_subscription` | Cancela una suscripción activa
+`create_subscription` | Crea una nueva suscripción
+`create_subscription_plan` | Crea un nuevo plan de suscripción
+`update_subscription` | Actualiza una suscripción existente
+`list_subscription_plans` | Lista planes de suscripción
+`show_subscription_details` | Muestra detalles de una suscripción específica
+`show_subscription_plan_details` | Muestra detalles de un plan de suscripción específico
 
-## Configuration
+## Configuración
 
-You can control which tools are enabled using the `--tools` command-line
-argument. This is useful for limiting the scope of the agent's permissions.
+Puedes controlar qué herramientas están habilitadas usando el argumento de línea de comandos
+`--tools`. Esto es útil para limitar el alcance de los permisos del agente.
 
-You can enable all tools with `--tools=all` or specify a comma-separated list of
-specific tool identifiers.
+Puedes habilitar todas las herramientas con `--tools=all` o especificar una lista separada por comas de
+identificadores de herramientas específicas.
 
-**Note**: The configuration identifiers below use dot notation (e.g.,
-`invoices.create`) which differs from the tool names exposed to the agent (e.g.,
+**Nota**: Los identificadores de configuración a continuación usan notación de puntos (p. ej.,
+`invoices.create`) que difiere de los nombres de herramientas expuestos al agente (p. ej.,
 `create_invoice`).
 
-**Products**: `products.create`, `products.list`, `products.update`,
+**Productos**: `products.create`, `products.list`, `products.update`,
 `products.show`
 
-**Disputes**:
+**Disputas**:
 `disputes.list`, `disputes.get`, `disputes.create`
 
-**Invoices**: `invoices.create`, `invoices.list`, `invoices.get`,
+**Facturas**: `invoices.create`, `invoices.list`, `invoices.get`,
 `invoices.send`, `invoices.sendReminder`, `invoices.cancel`,
 `invoices.generateQRC`
 
-**Orders & Payments**: `orders.create`, `orders.get`, `orders.capture`,
+**Órdenes y Pagos**: `orders.create`, `orders.get`, `orders.capture`,
 `payments.createRefund`, `payments.getRefunds`
 
-**Transactions**:
+**Transacciones**:
 `transactions.list`
 
-**Shipment**:
+**Envío**:
 `shipment.create`, `shipment.get`
 
-**Subscriptions**: `subscriptionPlans.create`, `subscriptionPlans.list`,
+**Suscripciones**: `subscriptionPlans.create`, `subscriptionPlans.list`,
 `subscriptionPlans.show`, `subscriptions.create`, `subscriptions.show`,
 `subscriptions.cancel`
 
-## Additional resources
+## Recursos adicionales
 
-- [PayPal MCP Server Documentation](https://docs.paypal.ai/developer/tools/ai/mcp-quickstart)
-- [PayPal MCP Server Repository](https://github.com/paypal/paypal-mcp-server)
-- [PayPal Agent Tools Reference](https://docs.paypal.ai/developer/tools/ai/agent-tools-ref)
+- [Documentación del Servidor MCP de PayPal](https://docs.paypal.ai/developer/tools/ai/mcp-quickstart)
+- [Repositorio del Servidor MCP de PayPal](https://github.com/paypal/paypal-mcp-server)
+- [Referencia de Herramientas de Agente de PayPal](https://docs.paypal.ai/developer/tools/ai/agent-tools-ref)

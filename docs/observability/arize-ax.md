@@ -1,60 +1,60 @@
-# Agent Observability with Arize AX
+# Observabilidad de Agentes con Arize AX
 
-[Arize AX](https://arize.com/docs/ax) is a production-grade observability platform for monitoring, debugging, and improving LLM applications and AI Agents at scale. It provides comprehensive tracing, evaluation, and monitoring capabilities for your Google ADK applications. To get started, sign up for a [free account](https://app.arize.com/auth/join).
+[Arize AX](https://arize.com/docs/ax) es una plataforma de observabilidad de nivel de producción para monitorear, depurar y mejorar aplicaciones LLM y Agentes de IA a escala. Proporciona capacidades completas de rastreo, evaluación y monitoreo para tus aplicaciones Google ADK. Para comenzar, regístrate para obtener una [cuenta gratuita](https://app.arize.com/auth/join).
 
-For an open-source, self-hosted alternative, check out [Phoenix](https://arize.com/docs/phoenix).
+Para una alternativa de código abierto y auto-hospedada, consulta [Phoenix](https://arize.com/docs/phoenix).
 
-## Overview
+## Descripción General
 
-Arize AX can automatically collect traces from Google ADK using [OpenInference instrumentation](https://github.com/Arize-ai/openinference/tree/main/python/instrumentation/openinference-instrumentation-google-adk), allowing you to:
+Arize AX puede recopilar automáticamente trazas de Google ADK usando [instrumentación OpenInference](https://github.com/Arize-ai/openinference/tree/main/python/instrumentation/openinference-instrumentation-google-adk), permitiéndote:
 
-- **Trace agent interactions** - Automatically capture every agent run, tool call, model request, and response with context and metadata
-- **Evaluate performance** - Assess agent behavior using custom or pre-built evaluators and run experiments to test agent configurations
-- **Monitor in production** - Set up real-time dashboards and alerts to track performance
-- **Debug issues** - Analyze detailed traces to quickly identify bottlenecks, failed tool calls, and any unexpected agent behavior
+- **Rastrear interacciones de agentes** - Capturar automáticamente cada ejecución de agente, llamada a herramienta, solicitud de modelo y respuesta con contexto y metadatos
+- **Evaluar rendimiento** - Evaluar el comportamiento del agente usando evaluadores personalizados o predefinidos y ejecutar experimentos para probar configuraciones de agentes
+- **Monitorear en producción** - Configurar paneles de control y alertas en tiempo real para rastrear el rendimiento
+- **Depurar problemas** - Analizar trazas detalladas para identificar rápidamente cuellos de botella, llamadas a herramientas fallidas y cualquier comportamiento inesperado del agente
 
 ![Agent Traces](https://storage.googleapis.com/arize-phoenix-assets/assets/images/google-adk-traces.png)
 
-## Installation
+## Instalación
 
-Install the required packages:
+Instala los paquetes requeridos:
 
 ```bash
 pip install openinference-instrumentation-google-adk google-adk arize-otel
 ```
 
-## Setup
+## Configuración
 
-### 1. Configure Environment Variables { #configure-environment-variables }
+### 1. Configurar Variables de Entorno { #configure-environment-variables }
 
-Set your Google API key:
+Establece tu clave de API de Google:
 
 ```bash
 export GOOGLE_API_KEY=[your_key_here]
 ```
 
-### 2. Connect your application to Arize AX { #connect-your-application-to-arize-ax }
+### 2. Conectar tu aplicación a Arize AX { #connect-your-application-to-arize-ax }
 
 ```python
 from arize.otel import register
 
-# Register with Arize AX
+# Registrar con Arize AX
 tracer_provider = register(
-    space_id="your-space-id",      # Found in app space settings page
-    api_key="your-api-key",        # Found in app space settings page
-    project_name="your-project-name"  # Name this whatever you prefer
+    space_id="your-space-id",      # Se encuentra en la página de configuración del espacio de la aplicación
+    api_key="your-api-key",        # Se encuentra en la página de configuración del espacio de la aplicación
+    project_name="your-project-name"  # Nómbralo como prefieras
 )
 
-# Import and configure the automatic instrumentor from OpenInference
+# Importar y configurar el instrumentador automático de OpenInference
 from openinference.instrumentation.google_adk import GoogleADKInstrumentor
 
-# Finish automatic instrumentation
+# Finalizar la instrumentación automática
 GoogleADKInstrumentor().instrument(tracer_provider=tracer_provider)
 ```
 
-## Observe
+## Observar
 
-Now that you have tracing setup, all Google ADK SDK requests will be streamed to Arize AX for observability and evaluation.
+Ahora que tienes el rastreo configurado, todas las solicitudes del SDK de Google ADK se transmitirán a Arize AX para observabilidad y evaluación.
 
 ```python
 import nest_asyncio
@@ -64,15 +64,15 @@ from google.adk.agents import Agent
 from google.adk.runners import InMemoryRunner
 from google.genai import types
 
-# Define a tool function
+# Definir una función de herramienta
 def get_weather(city: str) -> dict:
-    """Retrieves the current weather report for a specified city.
+    """Recupera el informe meteorológico actual para una ciudad especificada.
 
     Args:
-        city (str): The name of the city for which to retrieve the weather report.
+        city (str): El nombre de la ciudad para la cual recuperar el informe meteorológico.
 
     Returns:
-        dict: status and result or error msg.
+        dict: estado y resultado o mensaje de error.
     """
     if city.lower() == "new york":
         return {
@@ -88,7 +88,7 @@ def get_weather(city: str) -> dict:
             "error_message": f"Weather information for '{city}' is not available.",
         }
 
-# Create an agent with tools
+# Crear un agente con herramientas
 agent = Agent(
     name="weather_agent",
     model="gemini-2.0-flash-exp",
@@ -109,7 +109,7 @@ await session_service.create_session(
     session_id=session_id
 )
 
-# Run the agent (all interactions will be traced)
+# Ejecutar el agente (todas las interacciones serán rastreadas)
 async for event in runner.run_async(
     user_id=user_id,
     session_id=session_id,
@@ -120,12 +120,12 @@ async for event in runner.run_async(
     if event.is_final_response():
         print(event.content.parts[0].text.strip())
 ```
-## View Results in Arize AX
+## Ver Resultados en Arize AX
 ![Traces in Arize AX](https://storage.googleapis.com/arize-phoenix-assets/assets/images/google-adk-dashboard.png)
 ![Agent Visualization](https://storage.googleapis.com/arize-phoenix-assets/assets/images/google-adk-agent.png)
 ![Agent Experiments](https://storage.googleapis.com/arize-phoenix-assets/assets/images/google-adk-experiments.png)
 
-## Support and Resources
-- [Arize AX Documentation](https://arize.com/docs/ax/integrations/frameworks-and-platforms/google-adk)
-- [Arize Community Slack](https://arize-ai.slack.com/join/shared_invite/zt-11t1vbu4x-xkBIHmOREQnYnYDH1GDfCg#/shared-invite/email)
-- [OpenInference Package](https://github.com/Arize-ai/openinference/tree/main/python/instrumentation/openinference-instrumentation-google-adk)
+## Soporte y Recursos
+- [Documentación de Arize AX](https://arize.com/docs/ax/integrations/frameworks-and-platforms/google-adk)
+- [Slack de la Comunidad Arize](https://arize-ai.slack.com/join/shared_invite/zt-11t1vbu4x-xkBIHmOREQnYnYDH1GDfCg#/shared-invite/email)
+- [Paquete OpenInference](https://github.com/Arize-ai/openinference/tree/main/python/instrumentation/openinference-instrumentation-google-adk)

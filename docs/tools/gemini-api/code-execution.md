@@ -4,21 +4,21 @@ catalog_description: Execute code and debug using Gemini models
 catalog_icon: /adk-docs/assets/tools-gemini-spark.svg
 ---
 
-# Code Execution with Gemini API
+# Ejecución de Código con Gemini API
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-The `built_in_code_execution` tool enables the agent to execute code,
-specifically when using Gemini 2 and higher models. This allows the model to
-perform tasks like calculations, data manipulation, or running small scripts.
+La herramienta `built_in_code_execution` permite al agente ejecutar código,
+específicamente cuando se usan modelos Gemini 2 y superiores. Esto permite al modelo
+realizar tareas como cálculos, manipulación de datos o ejecutar pequeños scripts.
 
-!!! warning "Warning: Single tool per agent limitation"
+!!! warning "Advertencia: Limitación de una herramienta por agente"
 
-    This tool can only be used ***by itself*** within an agent instance.
-    For more information about this limitation and workarounds, see
-    [Limitations for ADK tools](/adk-docs/tools/limitations/#one-tool-one-agent).
+    Esta herramienta solo puede usarse ***por sí sola*** dentro de una instancia de agente.
+    Para más información sobre esta limitación y soluciones alternativas, consulta
+    [Limitaciones para las herramientas de ADK](/adk-docs/tools/limitations/#one-tool-one-agent).
 
 === "Python"
 

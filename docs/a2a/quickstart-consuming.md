@@ -1,14 +1,14 @@
-# Quickstart: Consuming a remote agent via A2A
+# Inicio Rápido: Consumiendo un agente remoto vía A2A
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-preview">Experimental</span>
 </div>
 
-This quickstart covers the most common starting point for any developer: **"There is a remote agent, how do I let my ADK agent use it via A2A?"**. This is crucial for building complex multi-agent systems where different agents need to collaborate and interact.
+Este inicio rápido cubre el punto de partida más común para cualquier desarrollador: **"Hay un agente remoto, ¿cómo puedo hacer que mi agente ADK lo use vía A2A?"**. Esto es crucial para construir sistemas multi-agente complejos donde diferentes agentes necesitan colaborar e interactuar.
 
-## Overview
+## Descripción General
 
-This sample demonstrates the **Agent2Agent (A2A)** architecture in the Agent Development Kit (ADK), showcasing how multiple agents can work together to handle complex tasks. The sample implements an agent that can roll dice and check if numbers are prime.
+Esta muestra demuestra la arquitectura **Agent2Agent (A2A)** en el Agent Development Kit (ADK), mostrando cómo múltiples agentes pueden trabajar juntos para manejar tareas complejas. La muestra implementa un agente que puede lanzar dados y verificar si los números son primos.
 
 ```text
 ┌─────────────────┐    ┌──────────────────┐    ┌────────────────────┐
@@ -19,33 +19,33 @@ This sample demonstrates the **Agent2Agent (A2A)** architecture in the Agent Dev
 └─────────────────┘    └──────────────────┘    └────────────────────┘
 ```
 
-The A2A Basic sample consists of:
+La muestra A2A Basic consiste en:
 
-- **Root Agent** (`root_agent`): The main orchestrator that delegates tasks to specialized sub-agents
-- **Roll Agent** (`roll_agent`): A local sub-agent that handles dice rolling operations
-- **Prime Agent** (`prime_agent`): A remote A2A agent that checks if numbers are prime, this agent is running on a separate A2A server
+- **Root Agent** (`root_agent`): El orquestador principal que delega tareas a sub-agentes especializados
+- **Roll Agent** (`roll_agent`): Un sub-agente local que maneja operaciones de lanzamiento de dados
+- **Prime Agent** (`prime_agent`): Un agente A2A remoto que verifica si los números son primos, este agente se ejecuta en un servidor A2A separado
 
-## Exposing Your Agent with the ADK Server
+## Exponiendo Tu Agente con el Servidor ADK
 
-  The ADK comes with a built-in CLI command, `adk api_server --a2a` to expose your agent using the A2A protocol.
+  El ADK viene con un comando CLI integrado, `adk api_server --a2a` para exponer tu agente usando el protocolo A2A.
 
-  In the `a2a_basic` example, you will first need to expose the `check_prime_agent` via an A2A server, so that the local root agent can use it.
+  En el ejemplo `a2a_basic`, primero necesitarás exponer el `check_prime_agent` vía un servidor A2A, para que el agente raíz local pueda usarlo.
 
-### 1. Getting the Sample Code { #getting-the-sample-code }
+### 1. Obteniendo el Código de Muestra { #getting-the-sample-code }
 
-First, make sure you have the necessary dependencies installed:
+Primero, asegúrate de tener las dependencias necesarias instaladas:
 
 ```bash
 pip install google-adk[a2a]
 ```
 
-You can clone and navigate to the [**`a2a_basic`** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a_basic) here:
+Puedes clonar y navegar a la muestra [**`a2a_basic`**](https://github.com/google/adk-python/tree/main/contributing/samples/a2a_basic) aquí:
 
 ```bash
 git clone https://github.com/google/adk-python.git
 ```
 
-As you'll see, the folder structure is as follows:
+Como verás, la estructura de carpetas es la siguiente:
 
 ```text
 a2a_basic/
@@ -56,42 +56,42 @@ a2a_basic/
 │       └── agent.py
 ├── README.md
 ├── __init__.py
-└── agent.py # local root agent
+└── agent.py # agente raíz local
 ```
 
-#### Main Agent (`a2a_basic/agent.py`)
+#### Agente Principal (`a2a_basic/agent.py`)
 
-- **`roll_die(sides: int)`**: Function tool for rolling dice
-- **`roll_agent`**: Local agent specialized in dice rolling
-- **`prime_agent`**: Remote A2A agent configuration
-- **`root_agent`**: Main orchestrator with delegation logic
+- **`roll_die(sides: int)`**: Herramienta de función para lanzar dados
+- **`roll_agent`**: Agente local especializado en lanzamiento de dados
+- **`prime_agent`**: Configuración de agente A2A remoto
+- **`root_agent`**: Orquestador principal con lógica de delegación
 
-#### Remote Prime Agent (`a2a_basic/remote_a2a/check_prime_agent/`)
+#### Agente Prime Remoto (`a2a_basic/remote_a2a/check_prime_agent/`)
 
-- **`agent.py`**: Implementation of the prime checking service
-- **`agent.json`**: Agent card of the A2A agent
-- **`check_prime(nums: list[int])`**: Prime number checking algorithm
+- **`agent.py`**: Implementación del servicio de verificación de primos
+- **`agent.json`**: Tarjeta del agente A2A
+- **`check_prime(nums: list[int])`**: Algoritmo de verificación de números primos
 
-### 2. Start the Remote Prime Agent server { #start-the-remote-prime-agent-server }
+### 2. Iniciar el servidor del Agente Prime Remoto { #start-the-remote-prime-agent-server }
 
-To show how your ADK agent can consume a remote agent via A2A, you'll first need to start a remote agent server, which will host the prime agent (under `check_prime_agent`).
+Para mostrar cómo tu agente ADK puede consumir un agente remoto vía A2A, primero necesitarás iniciar un servidor de agente remoto, que alojará el agente prime (bajo `check_prime_agent`).
 
 ```bash
-# Start the remote a2a server that serves the check_prime_agent on port 8001
+# Inicia el servidor a2a remoto que sirve el check_prime_agent en el puerto 8001
 adk api_server --a2a --port 8001 contributing/samples/a2a_basic/remote_a2a
 ```
 
-??? note "Adding logging for debugging with `--log_level debug`"
-    To enable debug-level logging, you can add `--log_level debug` to your `adk api_server`, as in:
+??? note "Agregando logging para depuración con `--log_level debug`"
+    Para habilitar el logging a nivel debug, puedes agregar `--log_level debug` a tu `adk api_server`, como en:
     ```bash
     adk api_server --a2a --port 8001 contributing/samples/a2a_basic/remote_a2a --log_level debug
     ```
-    This will give richer logs for you to inspect when testing your agents.
+    Esto proporcionará logs más completos para que puedas inspeccionar al probar tus agentes.
 
-??? note "Why use port 8001?"
-    In this quickstart, when testing locally, your agents will be using localhost, so the `port` for the A2A server for the exposed agent (the remote, prime agent) must be different from the consuming agent's port. The default port for `adk web` where you will interact with the consuming agent is `8000`, which is why the A2A server is created using a separate port, `8001`.
+??? note "¿Por qué usar el puerto 8001?"
+    En este inicio rápido, cuando pruebas localmente, tus agentes estarán usando localhost, por lo que el `port` para el servidor A2A del agente expuesto (el agente prime remoto) debe ser diferente del puerto del agente consumidor. El puerto predeterminado para `adk web` donde interactuarás con el agente consumidor es `8000`, razón por la cual el servidor A2A se crea usando un puerto separado, `8001`.
 
-Once executed, you should see something like:
+Una vez ejecutado, deberías ver algo como:
 
 ``` shell
 INFO:     Started server process [56558]
@@ -100,13 +100,13 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
 ```
   
-### 3. Look out for the required agent card (`agent-card.json`) of the remote agent { #look-out-for-the-required-agent-card-agent-json-of-the-remote-agent }
+### 3. Busca la tarjeta de agente requerida (`agent-card.json`) del agente remoto { #look-out-for-the-required-agent-card-agent-json-of-the-remote-agent }
 
-A2A Protocol requires that each agent must have an agent card that describes what it does.
+El Protocolo A2A requiere que cada agente debe tener una tarjeta de agente que describa lo que hace.
 
-If someone else has already built the remote A2A agent that you are looking to consume in your agent, then you should confirm that they have an agent card (`agent-card.json`).
+Si alguien más ya ha construido el agente A2A remoto que estás buscando consumir en tu agente, entonces debes confirmar que tienen una tarjeta de agente (`agent-card.json`).
 
-In the sample, the `check_prime_agent` already has an agent card provided:
+En la muestra, el `check_prime_agent` ya tiene una tarjeta de agente proporcionada:
 
 ```json title="a2a_basic/remote_a2a/check_prime_agent/agent-card.json"
 
@@ -129,20 +129,20 @@ In the sample, the `check_prime_agent` already has an agent card provided:
 }
 ```
 
-??? note "More info on agent cards in ADK"
+??? note "Más información sobre tarjetas de agente en ADK"
 
-    In ADK, you can use a `to_a2a(root_agent)` wrapper which automatically generates an agent card for you. If you're interested in learning more about how to expose your existing agent so others can use it, then please look at the [A2A Quickstart (Exposing)](quickstart-exposing.md) tutorial. 
+    En ADK, puedes usar un wrapper `to_a2a(root_agent)` que genera automáticamente una tarjeta de agente para ti. Si estás interesado en aprender más sobre cómo exponer tu agente existente para que otros puedan usarlo, entonces por favor consulta el tutorial [Inicio Rápido A2A (Exponiendo)](quickstart-exposing.md). 
 
-### 4. Run the Main (Consuming) Agent { #run-the-main-consuming-agent }
+### 4. Ejecutar el Agente Principal (Consumidor) { #run-the-main-consuming-agent }
 
   ```bash
-  # In a separate terminal, run the adk web server
+  # En una terminal separada, ejecuta el servidor adk web
   adk web contributing/samples/
   ```
 
-#### How it works
+#### Cómo funciona
 
-The main agent uses the `RemoteA2aAgent()` function to consume the remote agent (`prime_agent` in our example). As you can see below, `RemoteA2aAgent()` requires the `name`, `description`, and the URL of the `agent_card`.
+El agente principal usa la función `RemoteA2aAgent()` para consumir el agente remoto (`prime_agent` en nuestro ejemplo). Como puedes ver a continuación, `RemoteA2aAgent()` requiere el `name`, `description`, y la URL de la `agent_card`.
 
 ```python title="a2a_basic/agent.py"
 <...code truncated...>
@@ -161,7 +161,7 @@ prime_agent = RemoteA2aAgent(
 <...code truncated>
 ```
 
-Then, you can simply use the `RemoteA2aAgent` in your agent. In this case, `prime_agent` is used as one of the sub-agents in the `root_agent` below:
+Luego, simplemente puedes usar el `RemoteA2aAgent` en tu agente. En este caso, `prime_agent` se usa como uno de los sub-agentes en el `root_agent` a continuación:
 
 ```python title="a2a_basic/agent.py"
 from google.adk.agents.llm_agent import Agent
@@ -186,7 +186,7 @@ root_agent = Agent(
     tools=[example_tool],
     generate_content_config=types.GenerateContentConfig(
         safety_settings=[
-            types.SafetySetting(  # avoid false alarm about rolling dice.
+            types.SafetySetting(  # evita falsa alarma sobre lanzamiento de dados.
                 category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
                 threshold=types.HarmBlockThreshold.OFF,
             ),
@@ -195,30 +195,30 @@ root_agent = Agent(
 )
 ```
 
-## Example Interactions
+## Ejemplos de Interacciones
 
-Once both your main and remote agents are running, you can interact with the root agent to see how it calls the remote agent via A2A:
+Una vez que tanto tu agente principal como los remotos estén ejecutándose, puedes interactuar con el agente raíz para ver cómo llama al agente remoto vía A2A:
 
-**Simple Dice Rolling:**
-This interaction uses a local agent, the Roll Agent:
+**Lanzamiento Simple de Dados:**
+Esta interacción usa un agente local, el Roll Agent:
 
 ```text
 User: Roll a 6-sided die
 Bot: I rolled a 4 for you.
 ```
 
-**Prime Number Checking:**
+**Verificación de Números Primos:**
 
-This interaction uses a remote agent via A2A, the Prime Agent:
+Esta interacción usa un agente remoto vía A2A, el Prime Agent:
 
 ```text
 User: Is 7 a prime number?
 Bot: Yes, 7 is a prime number.
 ```
 
-**Combined Operations:**
+**Operaciones Combinadas:**
 
-This interaction uses both the local Roll Agent and the remote Prime Agent:
+Esta interacción usa tanto el Roll Agent local como el Prime Agent remoto:
 
 ```text
 User: Roll a 10-sided die and check if it's prime
@@ -226,8 +226,8 @@ Bot: I rolled an 8 for you.
 Bot: 8 is not a prime number.
 ```
 
-## Next Steps
+## Próximos Pasos
 
-Now that you have created an agent that's using a remote agent via an A2A server, the next step is to learn how to connect to it from another agent.
+Ahora que has creado un agente que está usando un agente remoto vía un servidor A2A, el siguiente paso es aprender cómo conectarse a él desde otro agente.
 
-- [**A2A Quickstart (Exposing)**](./quickstart-exposing.md): Learn how to expose your existing agent so that other agents can use it via the A2A Protocol.
+- [**Inicio Rápido A2A (Exponiendo)**](./quickstart-exposing.md): Aprende cómo exponer tu agente existente para que otros agentes puedan usarlo vía el Protocolo A2A.

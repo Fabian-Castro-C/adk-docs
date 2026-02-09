@@ -4,49 +4,49 @@ catalog_description: Connect over 30 different data sources to your agents
 catalog_icon: /adk-docs/assets/tools-mcp-toolbox-for-databases.png
 ---
 
-# MCP Toolbox for Databases
+# MCP Toolbox para Bases de Datos
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">Typescript</span><span class="lst-go">Go</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python</span><span class="lst-typescript">Typescript</span><span class="lst-go">Go</span>
 </div>
 
-[MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) is an
-open source MCP server for databases. It was designed with enterprise-grade and
-production-quality in mind. It enables you to develop tools easier, faster, and
-more securely by handling the complexities such as connection pooling,
-authentication, and more.
+[MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) es un
+servidor MCP de código abierto para bases de datos. Fue diseñado pensando en calidad
+empresarial y lista para producción. Te permite desarrollar herramientas más fácil,
+rápido y de forma más segura al manejar las complejidades como agrupación de
+conexiones, autenticación y más.
 
-Google’s Agent Development Kit (ADK) has built in support for Toolbox. For more
-information on
-[getting started](https://googleapis.github.io/genai-toolbox/getting-started/) or
-[configuring](https://googleapis.github.io/genai-toolbox/getting-started/configure/)
-Toolbox, see the
-[documentation](https://googleapis.github.io/genai-toolbox/getting-started/introduction/).
+El Kit de Desarrollo de Agentes (ADK) de Google tiene soporte integrado para Toolbox. Para más
+información sobre
+[cómo empezar](https://googleapis.github.io/genai-toolbox/getting-started/) o
+[configurar](https://googleapis.github.io/genai-toolbox/getting-started/configure/)
+Toolbox, consulta la
+[documentación](https://googleapis.github.io/genai-toolbox/getting-started/introduction/).
 
 ![GenAI Toolbox](../../assets/mcp_db_toolbox.png)
 
-## Supported Data Sources
+## Fuentes de Datos Soportadas
 
-MCP Toolbox provides out-of-the-box toolsets for the following databases and data platforms:
+MCP Toolbox proporciona conjuntos de herramientas listos para usar para las siguientes bases de datos y plataformas de datos:
 
 ### Google Cloud
 
-*   [BigQuery](https://googleapis.github.io/genai-toolbox/resources/sources/bigquery/) (including tools for SQL execution, schema discovery, and AI-powered time series forecasting)
-*   [AlloyDB](https://googleapis.github.io/genai-toolbox/resources/sources/alloydb-pg/) (PostgreSQL-compatible, with tools for both standard queries and natural language queries)
+*   [BigQuery](https://googleapis.github.io/genai-toolbox/resources/sources/bigquery/) (incluyendo herramientas para ejecución SQL, descubrimiento de esquemas y pronósticos de series temporales impulsados por IA)
+*   [AlloyDB](https://googleapis.github.io/genai-toolbox/resources/sources/alloydb-pg/) (compatible con PostgreSQL, con herramientas tanto para consultas estándar como consultas en lenguaje natural)
 *   [AlloyDB Admin](https://googleapis.github.io/genai-toolbox/resources/sources/alloydb-admin/)
-*   [Spanner](https://googleapis.github.io/genai-toolbox/resources/sources/spanner/) (supporting both GoogleSQL and PostgreSQL dialects)
-*   Cloud SQL (with dedicated support for [Cloud SQL for PostgreSQL](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-pg/), [Cloud SQL for MySQL](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-mysql/), and [Cloud SQL for SQL Server](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-mssql/))
+*   [Spanner](https://googleapis.github.io/genai-toolbox/resources/sources/spanner/) (soporta dialectos tanto GoogleSQL como PostgreSQL)
+*   Cloud SQL (con soporte dedicado para [Cloud SQL for PostgreSQL](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-pg/), [Cloud SQL for MySQL](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-mysql/), y [Cloud SQL for SQL Server](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-mssql/))
 *   [Cloud SQL Admin](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-admin/)
 *   [Firestore](https://googleapis.github.io/genai-toolbox/resources/sources/firestore/)
 *   [Bigtable](https://googleapis.github.io/genai-toolbox/resources/sources/bigtable/)
-*   [Dataplex](https://googleapis.github.io/genai-toolbox/resources/sources/dataplex/) (for data discovery and metadata search)
+*   [Dataplex](https://googleapis.github.io/genai-toolbox/resources/sources/dataplex/) (para descubrimiento de datos y búsqueda de metadatos)
 *   [Cloud Monitoring](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-monitoring/)
 
-### Relational & SQL Databases
+### Bases de Datos Relacionales y SQL
 
-*   [PostgreSQL](https://googleapis.github.io/genai-toolbox/resources/sources/postgres/) (generic)
-*   [MySQL](https://googleapis.github.io/genai-toolbox/resources/sources/mysql/) (generic)
-*   [Microsoft SQL Server](https://googleapis.github.io/genai-toolbox/resources/sources/mssql/) (generic)
+*   [PostgreSQL](https://googleapis.github.io/genai-toolbox/resources/sources/postgres/) (genérico)
+*   [MySQL](https://googleapis.github.io/genai-toolbox/resources/sources/mysql/) (genérico)
+*   [Microsoft SQL Server](https://googleapis.github.io/genai-toolbox/resources/sources/mssql/) (genérico)
 *   [ClickHouse](https://googleapis.github.io/genai-toolbox/resources/sources/clickhouse/)
 *   [TiDB](https://googleapis.github.io/genai-toolbox/resources/sources/tidb/)
 *   [OceanBase](https://googleapis.github.io/genai-toolbox/resources/sources/oceanbase/)
@@ -54,7 +54,7 @@ MCP Toolbox provides out-of-the-box toolsets for the following databases and dat
 *   [SQLite](https://googleapis.github.io/genai-toolbox/resources/sources/sqlite/)
 *   [YugabyteDB](https://googleapis.github.io/genai-toolbox/resources/sources/yugabytedb/)
 
-### NoSQL & Key-Value Stores
+### Bases de Datos NoSQL y Almacenes Clave-Valor
 
 *   [MongoDB](https://googleapis.github.io/genai-toolbox/resources/sources/mongodb/)
 *   [Couchbase](https://googleapis.github.io/genai-toolbox/resources/sources/couchbase/)
@@ -62,44 +62,43 @@ MCP Toolbox provides out-of-the-box toolsets for the following databases and dat
 *   [Valkey](https://googleapis.github.io/genai-toolbox/resources/sources/valkey/)
 *   [Cassandra](https://googleapis.github.io/genai-toolbox/resources/sources/cassandra/)
 
-### Graph Databases
+### Bases de Datos de Grafos
 
-*   [Neo4j](https://googleapis.github.io/genai-toolbox/resources/sources/neo4j/) (with tools for Cypher queries and schema inspection)
+*   [Neo4j](https://googleapis.github.io/genai-toolbox/resources/sources/neo4j/) (con herramientas para consultas Cypher e inspección de esquemas)
 *   [Dgraph](https://googleapis.github.io/genai-toolbox/resources/sources/dgraph/)
 
-### Data Platforms & Federation
+### Plataformas de Datos y Federación
 
-*   [Looker](https://googleapis.github.io/genai-toolbox/resources/sources/looker/) (for running Looks, queries, and building dashboards via the Looker API)
-*   [Trino](https://googleapis.github.io/genai-toolbox/resources/sources/trino/) (for running federated queries across multiple sources)
+*   [Looker](https://googleapis.github.io/genai-toolbox/resources/sources/looker/) (para ejecutar Looks, consultas y construir paneles a través de la API de Looker)
+*   [Trino](https://googleapis.github.io/genai-toolbox/resources/sources/trino/) (para ejecutar consultas federadas a través de múltiples fuentes)
 
-### Other
+### Otros
 
 *   [HTTP](https://googleapis.github.io/genai-toolbox/resources/sources/http/)
 
-## Configure and deploy
+## Configurar e implementar
 
-Toolbox is an open source server that you deploy and manage yourself. For more
-instructions on deploying and configuring, see the official Toolbox
-documentation:
+Toolbox es un servidor de código abierto que tú despliegas y gestionas. Para más
+instrucciones sobre cómo desplegar y configurar, consulta la documentación oficial de Toolbox:
 
-* [Installing the Server](https://googleapis.github.io/genai-toolbox/getting-started/introduction/#installing-the-server)
-* [Configuring Toolbox](https://googleapis.github.io/genai-toolbox/getting-started/configure/)
+* [Instalando el Servidor](https://googleapis.github.io/genai-toolbox/getting-started/introduction/#installing-the-server)
+* [Configurando Toolbox](https://googleapis.github.io/genai-toolbox/getting-started/configure/)
 
-## Install Client SDK for ADK
+## Instalar SDK del Cliente para ADK
 
 === "Python"
 
-    ADK relies on the `toolbox-adk` python package to use Toolbox. Install the
-    package before getting started:
+    ADK depende del paquete de python `toolbox-adk` para usar Toolbox. Instala el
+    paquete antes de empezar:
 
     ```shell
     pip install google-adk[toolbox]
     ```
 
-    ### Loading Toolbox Tools
+    ### Cargando Herramientas de Toolbox
 
-    Once your Toolbox server is configured, up and running, you can load tools
-    from your server using ADK:
+    Una vez que tu servidor Toolbox esté configurado, funcionando, puedes cargar herramientas
+    desde tu servidor usando ADK:
 
     ```python
     from google.adk.agents import Agent
@@ -111,23 +110,23 @@ documentation:
 
     root_agent = Agent(
         ...,
-        tools=[toolset] # Provide the toolset to the Agent
+        tools=[toolset] # Proporciona el conjunto de herramientas al Agente
     )
     ```
 
-    ### Authentication
+    ### Autenticación
 
-    The `ToolboxToolset` supports various authentication strategies including Workload Identity (ADC), User Identity (OAuth2), and API Keys. For full documentation, see the [Toolbox ADK Authentication Guide](https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-adk#authentication).
+    El `ToolboxToolset` soporta varias estrategias de autenticación incluyendo Workload Identity (ADC), User Identity (OAuth2) y API Keys. Para documentación completa, consulta la [Guía de Autenticación de Toolbox ADK](https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-adk#authentication).
 
-    **Example: Workload Identity (ADC)**
+    **Ejemplo: Workload Identity (ADC)**
 
-    Recommended for Cloud Run, GKE, or local development with `gcloud auth login`.
+    Recomendado para Cloud Run, GKE o desarrollo local con `gcloud auth login`.
 
     ```python
     from google.adk.tools.toolbox_toolset import ToolboxToolset
     from toolbox_adk import CredentialStrategy
 
-    # target_audience: The URL of your Toolbox server
+    # target_audience: La URL de tu servidor Toolbox
     creds = CredentialStrategy.workload_identity(target_audience="<TOOLBOX_URL>")
 
     toolset = ToolboxToolset(
@@ -136,27 +135,27 @@ documentation:
     )
     ```
 
-    ### Advanced Configuration
+    ### Configuración Avanzada
 
-    You can configure parameter binding, request hooks, and additional headers. See the [Toolbox ADK documentation](https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-adk) for details.
+    Puedes configurar enlace de parámetros, hooks de solicitud y encabezados adicionales. Consulta la [documentación de Toolbox ADK](https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-adk) para más detalles.
 
-    #### Parameter Binding
+    #### Enlace de Parámetros
 
-    Bind values to tool parameters globally. These values are hidden from the model.
+    Enlaza valores a parámetros de herramientas globalmente. Estos valores están ocultos del modelo.
 
     ```python
     toolset = ToolboxToolset(
         server_url="...",
         bound_params={
             "region": "us-central1",
-            "api_key": lambda: get_api_key() # Can be a callable
+            "api_key": lambda: get_api_key() # Puede ser un callable
         }
     )
     ```
 
-    #### Usage with Hooks
+    #### Uso con Hooks
 
-    Attach `pre_hook` and `post_hook` functions to execute logic before and after tool invocation.
+    Adjunta funciones `pre_hook` y `post_hook` para ejecutar lógica antes y después de la invocación de herramientas.
 
     ```python
     async def log_start(context, args):
@@ -170,17 +169,17 @@ documentation:
 
 === "Typescript"
 
-    ADK relies on the `@toolbox-sdk/adk` TS package to use Toolbox. Install the
-    package before getting started:
+    ADK depende del paquete TS `@toolbox-sdk/adk` para usar Toolbox. Instala el
+    paquete antes de empezar:
 
     ```shell
     npm install @toolbox-sdk/adk
     ```
 
-    ### Loading Toolbox Tools
+    ### Cargando Herramientas de Toolbox
 
-    Once you’re Toolbox server is configured and up and running, you can load tools
-    from your server using ADK:
+    Una vez que tu servidor Toolbox esté configurado y funcionando, puedes cargar herramientas
+    desde tu servidor usando ADK:
 
     ```typescript
     import {InMemoryRunner, LlmAgent} from '@google/adk';
@@ -194,9 +193,9 @@ documentation:
       name: 'weather_time_agent',
       model: 'gemini-2.5-flash',
       description:
-        'Agent to answer questions about the time and weather in a city.',
+        'Agente para responder preguntas sobre la hora y el clima en una ciudad.',
       instruction:
-        'You are a helpful agent who can answer user questions about the time and weather in a city.',
+        'Eres un agente útil que puede responder preguntas de usuarios sobre la hora y el clima en una ciudad.',
       tools: loadedTools,
     });
 
@@ -231,17 +230,17 @@ documentation:
 
 === "Go"
 
-    ADK relies on the `mcp-toolbox-sdk-go` go module to use Toolbox. Install the
-    module before getting started:
+    ADK depende del módulo go `mcp-toolbox-sdk-go` para usar Toolbox. Instala el
+    módulo antes de empezar:
 
     ```shell
     go get github.com/googleapis/mcp-toolbox-sdk-go
     ```
 
-    ### Loading Toolbox Tools
+    ### Cargando Herramientas de Toolbox
 
-    Once you’re Toolbox server is configured and up and running, you can load tools
-    from your server using ADK:
+    Una vez que tu servidor Toolbox esté configurado y funcionando, puedes cargar herramientas
+    desde tu servidor usando ADK:
 
     ```go
     package main
@@ -261,7 +260,7 @@ documentation:
     		log.Fatalf("Failed to create MCP Toolbox client: %v", err)
     	}
 
-      // Load a specific set of tools
+      // Carga un conjunto específico de herramientas
       toolboxtools, err := toolboxClient.LoadToolset("my-toolset-name", ctx)
       if err != nil {
         return fmt.Sprintln("Could not load Toolbox Toolset", err)
@@ -277,7 +276,7 @@ documentation:
         Tools:       toolsList,
       })
 
-      // Load a single tool
+      // Carga una sola herramienta
       tool, err := client.LoadTool("my-tool-name", ctx)
       if err != nil {
         return fmt.Sprintln("Could not load Toolbox Tool", err)
@@ -290,11 +289,11 @@ documentation:
     }
     ```
 
-## Advanced Toolbox Features
+## Características Avanzadas de Toolbox
 
-Toolbox has a variety of features to make developing Gen AI tools for databases.
-For more information, read more about the following features:
+Toolbox tiene una variedad de características para facilitar el desarrollo de herramientas Gen AI para bases de datos.
+Para más información, lee más sobre las siguientes características:
 
-* [Authenticated Parameters](https://googleapis.github.io/genai-toolbox/resources/tools/#authenticated-parameters): bind tool inputs to values from OIDC tokens automatically, making it easy to run sensitive queries without potentially leaking data
-* [Authorized Invocations:](https://googleapis.github.io/genai-toolbox/resources/tools/#authorized-invocations)  restrict access to use a tool based on the users Auth token
-* [OpenTelemetry](https://googleapis.github.io/genai-toolbox/how-to/export_telemetry/): get metrics and tracing from Toolbox with OpenTelemetry
+* [Parámetros Autenticados](https://googleapis.github.io/genai-toolbox/resources/tools/#authenticated-parameters): enlaza entradas de herramientas a valores de tokens OIDC automáticamente, facilitando la ejecución de consultas sensibles sin potencialmente filtrar datos
+* [Invocaciones Autorizadas:](https://googleapis.github.io/genai-toolbox/resources/tools/#authorized-invocations) restringe el acceso para usar una herramienta basándose en el token de autenticación del usuario
+* [OpenTelemetry](https://googleapis.github.io/genai-toolbox/how-to/export_telemetry/): obtén métricas y rastreo de Toolbox con OpenTelemetry

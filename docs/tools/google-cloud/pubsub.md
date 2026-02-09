@@ -4,60 +4,60 @@ catalog_description: Publish, pull, and acknowledge messages from Google Cloud P
 catalog_icon: /adk-docs/assets/tools-pubsub.png
 ---
 
-# Pub/Sub Tools for ADK
+# Herramientas Pub/Sub para ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.22.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v1.22.0</span>
 </div>
 
-The `PubSubToolset` allows agents to interact with
-[Google Cloud Pub/Sub](https://cloud.google.com/pubsub)
-service to publish, pull, and acknowledge messages.
+El `PubSubToolset` permite a los agentes interactuar con el
+servicio [Google Cloud Pub/Sub](https://cloud.google.com/pubsub)
+para publicar, extraer y confirmar mensajes.
 
-## Prerequisites
+## Requisitos previos
 
-Before using the `PubSubToolset`, you need to:
+Antes de usar el `PubSubToolset`, necesitas:
 
-1.  **Enable the Pub/Sub API** in your Google Cloud project.
-2.  **Authenticate and authorize**: Ensure that the principal (e.g., user, service account) running the agent has the necessary IAM permissions to perform Pub/Sub operations. For more information on Pub/Sub roles, see the [Pub/Sub access control documentation](https://cloud.google.com/pubsub/docs/access-control).
-3.  **Create a topic or subscription**: [Create a topic](https://cloud.google.com/pubsub/docs/create-topic) to publish messages and [create a subscription](https://cloud.google.com/pubsub/docs/create-subscription) to receive them.
+1.  **Habilitar la API de Pub/Sub** en tu proyecto de Google Cloud.
+2.  **Autenticar y autorizar**: Asegúrate de que el principal (por ejemplo, usuario, cuenta de servicio) que ejecuta el agente tenga los permisos IAM necesarios para realizar operaciones de Pub/Sub. Para más información sobre los roles de Pub/Sub, consulta la [documentación de control de acceso de Pub/Sub](https://cloud.google.com/pubsub/docs/access-control).
+3.  **Crear un tema o suscripción**: [Crea un tema](https://cloud.google.com/pubsub/docs/create-topic) para publicar mensajes y [crea una suscripción](https://cloud.google.com/pubsub/docs/create-subscription) para recibirlos.
 
 
-## Usage
+## Uso
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/pubsub.py"
 ```
-## Tools
+## Herramientas
 
-The `PubSubToolset` includes the following tools:
+El `PubSubToolset` incluye las siguientes herramientas:
 
 ### `publish_message`
 
-Publishes a message to a Pub/Sub topic.
+Publica un mensaje en un tema de Pub/Sub.
 
-| Parameter      | Type                | Description                                                                                             |
+| Parámetro      | Tipo                | Descripción                                                                                             |
 | -------------- | ------------------- | ------------------------------------------------------------------------------------------------------- |
-| `topic_name`   | `str`               | The name of the Pub/Sub topic (e.g., `projects/my-project/topics/my-topic`).                            |
-| `message`      | `str`               | The message content to publish.                                                                         |
-| `attributes`   | `dict[str, str]`    | (Optional) Attributes to attach to the message.                                                         |
-| `ordering_key` | `str`               | (Optional) The ordering key for the message. If you set this parameter, messages are published in order. |
+| `topic_name`   | `str`               | El nombre del tema de Pub/Sub (por ejemplo, `projects/my-project/topics/my-topic`).                            |
+| `message`      | `str`               | El contenido del mensaje a publicar.                                                                         |
+| `attributes`   | `dict[str, str]`    | (Opcional) Atributos para adjuntar al mensaje.                                                         |
+| `ordering_key` | `str`               | (Opcional) La clave de ordenamiento para el mensaje. Si estableces este parámetro, los mensajes se publican en orden. |
 
 ### `pull_messages`
 
-Pulls messages from a Pub/Sub subscription.
+Extrae mensajes de una suscripción de Pub/Sub.
 
-| Parameter           | Type    | Description                                                                                                 |
+| Parámetro           | Tipo    | Descripción                                                                                                 |
 | ------------------- | ------- | ----------------------------------------------------------------------------------------------------------- |
-| `subscription_name` | `str`   | The name of the Pub/Sub subscription (e.g., `projects/my-project/subscriptions/my-sub`).                      |
-| `max_messages`      | `int`   | (Optional) The maximum number of messages to pull. Defaults to `1`.                                         |
-| `auto_ack`          | `bool`  | (Optional) Whether to automatically acknowledge the messages. Defaults to `False`.                            |
+| `subscription_name` | `str`   | El nombre de la suscripción de Pub/Sub (por ejemplo, `projects/my-project/subscriptions/my-sub`).                      |
+| `max_messages`      | `int`   | (Opcional) El número máximo de mensajes a extraer. Por defecto es `1`.                                         |
+| `auto_ack`          | `bool`  | (Opcional) Si se deben confirmar automáticamente los mensajes. Por defecto es `False`.                            |
 
 ### `acknowledge_messages`
 
-Acknowledges one or more messages on a Pub/Sub subscription.
+Confirma uno o más mensajes en una suscripción de Pub/Sub.
 
-| Parameter           | Type          | Description                                                                                       |
+| Parámetro           | Tipo          | Descripción                                                                                       |
 | ------------------- | ------------- | ------------------------------------------------------------------------------------------------- |
-| `subscription_name` | `str`         | The name of the Pub/Sub subscription (e.g., `projects/my-project/subscriptions/my-sub`).            |
-| `ack_ids`           | `list[str]`   | A list of acknowledgment IDs to acknowledge.                                                      |
+| `subscription_name` | `str`         | El nombre de la suscripción de Pub/Sub (por ejemplo, `projects/my-project/subscriptions/my-sub`).            |
+| `ack_ids`           | `list[str]`   | Una lista de IDs de confirmación para confirmar.                                                      |

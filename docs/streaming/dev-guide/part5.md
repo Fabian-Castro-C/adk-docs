@@ -1,22 +1,22 @@
-# Part 5: How to Use Audio, Image and Video
+# Parte 5: Cómo Usar Audio, Imagen y Video
 
-This section covers audio, image and video capabilities in ADK's Live API integration, including supported models, audio model architectures, specifications, and best practices for implementing voice and video features.
+Esta sección cubre las capacidades de audio, imagen y video en la integración de Live API de ADK, incluyendo modelos compatibles, arquitecturas de modelos de audio, especificaciones y mejores prácticas para implementar características de voz y video.
 
-## How to Use Audio
+## Cómo Usar Audio
 
-Live API's audio capabilities enable natural voice conversations with sub-second latency through bidirectional audio streaming. This section covers how to send audio input to the model and receive audio responses, including format requirements, streaming best practices, and client-side implementation patterns.
+Las capacidades de audio de Live API permiten conversaciones de voz naturales con latencia inferior a un segundo mediante transmisión de audio bidireccional. Esta sección cubre cómo enviar entrada de audio al modelo y recibir respuestas de audio, incluyendo requisitos de formato, mejores prácticas de transmisión y patrones de implementación del lado del cliente.
 
-### Sending Audio Input
+### Enviando Entrada de Audio
 
-**Audio Format Requirements:**
+**Requisitos de Formato de Audio:**
 
-Before calling `send_realtime()`, ensure your audio data is already in the correct format:
+Antes de llamar a `send_realtime()`, asegúrate de que tus datos de audio ya estén en el formato correcto:
 
-- **Format**: 16-bit PCM (signed integer)
-- **Sample Rate**: 16,000 Hz (16kHz)
-- **Channels**: Mono (single channel)
+- **Formato**: PCM de 16 bits (entero con signo)
+- **Tasa de Muestreo**: 16,000 Hz (16kHz)
+- **Canales**: Mono (canal único)
 
-ADK does not perform audio format conversion. Sending audio in incorrect formats will result in poor quality or errors.
+ADK no realiza conversión de formato de audio. Enviar audio en formatos incorrectos resultará en mala calidad o errores.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L181-L184" target="_blank">main.py:181-184</a>'
 audio_blob = types.Blob(
@@ -26,88 +26,88 @@ audio_blob = types.Blob(
 live_request_queue.send_realtime(audio_blob)
 ```
 
-#### Best Practices for Sending Audio Input
+#### Mejores Prácticas para Enviar Entrada de Audio
 
-1. **Chunked Streaming**: Send audio in small chunks for low latency. Choose chunk size based on your latency requirements:
+1. **Transmisión en Fragmentos**: Envía audio en fragmentos pequeños para baja latencia. Elige el tamaño del fragmento según tus requisitos de latencia:
 
-    - **Ultra-low latency** (real-time conversation): 10-20ms chunks (~320-640 bytes @ 16kHz)
-    - **Balanced** (recommended): 50-100ms chunks (~1600-3200 bytes @ 16kHz)
-    - **Lower overhead**: 100-200ms chunks (~3200-6400 bytes @ 16kHz)
+    - **Latencia ultra baja** (conversación en tiempo real): fragmentos de 10-20ms (~320-640 bytes @ 16kHz)
+    - **Balanceado** (recomendado): fragmentos de 50-100ms (~1600-3200 bytes @ 16kHz)
+    - **Menor sobrecarga**: fragmentos de 100-200ms (~3200-6400 bytes @ 16kHz)
 
-    Use consistent chunk sizes throughout the session for optimal performance. Example: 100ms @ 16kHz = 16000 samples/sec × 0.1 sec × 2 bytes/sample = 3200 bytes.
+    Usa tamaños de fragmento consistentes durante toda la sesión para un rendimiento óptimo. Ejemplo: 100ms @ 16kHz = 16000 muestras/seg × 0.1 seg × 2 bytes/muestra = 3200 bytes.
 
-2. **Prompt Forwarding**: ADK's `LiveRequestQueue` forwards each chunk promptly without coalescing or batching. Choose chunk sizes that meet your latency and bandwidth requirements. Don't wait for model responses before sending next chunks.
+2. **Reenvío Inmediato**: El `LiveRequestQueue` de ADK reenvía cada fragmento inmediatamente sin fusionar o agrupar. Elige tamaños de fragmento que cumplan tus requisitos de latencia y ancho de banda. No esperes respuestas del modelo antes de enviar los siguientes fragmentos.
 
-3. **Continuous Processing**: The model processes audio continuously, not turn-by-turn. With automatic VAD enabled (the default), just stream continuously and let the API detect speech.
+3. **Procesamiento Continuo**: El modelo procesa audio continuamente, no por turnos. Con VAD automático habilitado (el predeterminado), simplemente transmite continuamente y deja que la API detecte el habla.
 
-4. **Activity Signals**: Use `send_activity_start()` / `send_activity_end()` only when you explicitly disable VAD for manual turn-taking control. VAD is enabled by default, so activity signals are not needed for most applications.
+4. **Señales de Actividad**: Usa `send_activity_start()` / `send_activity_end()` solo cuando deshabilites explícitamente VAD para control manual de turnos. VAD está habilitado por defecto, por lo que las señales de actividad no son necesarias para la mayoría de las aplicaciones.
 
-#### Handling Audio Input at the Client
+#### Manejando Entrada de Audio en el Cliente
 
-In browser-based applications, capturing microphone audio and sending it to the server requires using the Web Audio API with AudioWorklet processors. The bidi-demo demonstrates how to capture microphone input, convert it to the required 16-bit PCM format at 16kHz, and stream it continuously to the WebSocket server.
+En aplicaciones basadas en navegador, capturar audio del micrófono y enviarlo al servidor requiere usar la API de Web Audio con procesadores AudioWorklet. El bidi-demo demuestra cómo capturar entrada del micrófono, convertirla al formato PCM de 16 bits requerido a 16kHz y transmitirla continuamente al servidor WebSocket.
 
-**Architecture:**
+**Arquitectura:**
 
-1. **Audio capture**: Use Web Audio API to access microphone with 16kHz sample rate
-2. **Audio processing**: AudioWorklet processor captures audio frames in real-time
-3. **Format conversion**: Convert Float32Array samples to 16-bit PCM
-4. **WebSocket streaming**: Send PCM chunks to server via WebSocket
+1. **Captura de audio**: Usa Web Audio API para acceder al micrófono con tasa de muestreo de 16kHz
+2. **Procesamiento de audio**: El procesador AudioWorklet captura fotogramas de audio en tiempo real
+3. **Conversión de formato**: Convierte muestras Float32Array a PCM de 16 bits
+4. **Transmisión WebSocket**: Envía fragmentos PCM al servidor vía WebSocket
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/static/js/audio-recorder.js#L7-L58" target="_blank">audio-recorder.js:7-58</a>'
-// Start audio recorder worklet
+// Iniciar worklet de grabadora de audio
 export async function startAudioRecorderWorklet(audioRecorderHandler) {
-    // Create an AudioContext with 16kHz sample rate
-    // This matches the Live API's required input format (16-bit PCM @ 16kHz)
+    // Crear un AudioContext con tasa de muestreo de 16kHz
+    // Esto coincide con el formato de entrada requerido por Live API (PCM de 16 bits @ 16kHz)
     const audioRecorderContext = new AudioContext({ sampleRate: 16000 });
 
-    // Load the AudioWorklet module that will process audio in real-time
-    // AudioWorklet runs on a separate thread for low-latency, glitch-free audio processing
+    // Cargar el módulo AudioWorklet que procesará audio en tiempo real
+    // AudioWorklet se ejecuta en un hilo separado para procesamiento de audio de baja latencia sin interrupciones
     const workletURL = new URL("./pcm-recorder-processor.js", import.meta.url);
     await audioRecorderContext.audioWorklet.addModule(workletURL);
 
-    // Request access to the user's microphone
-    // channelCount: 1 requests mono audio (single channel) as required by Live API
+    // Solicitar acceso al micrófono del usuario
+    // channelCount: 1 solicita audio mono (canal único) como requiere Live API
     micStream = await navigator.mediaDevices.getUserMedia({
         audio: { channelCount: 1 }
     });
     const source = audioRecorderContext.createMediaStreamSource(micStream);
 
-    // Create an AudioWorkletNode that uses our custom PCM recorder processor
-    // This node will capture audio frames and send them to our handler
+    // Crear un AudioWorkletNode que usa nuestro procesador de grabadora PCM personalizado
+    // Este nodo capturará fotogramas de audio y los enviará a nuestro manejador
     const audioRecorderNode = new AudioWorkletNode(
         audioRecorderContext,
         "pcm-recorder-processor"
     );
 
-    // Connect the microphone source to the worklet processor
-    // The processor will receive audio frames and post them via port.postMessage
+    // Conectar la fuente del micrófono al procesador worklet
+    // El procesador recibirá fotogramas de audio y los publicará vía port.postMessage
     source.connect(audioRecorderNode);
     audioRecorderNode.port.onmessage = (event) => {
-        // Convert Float32Array to 16-bit PCM format required by Live API
+        // Convertir Float32Array al formato PCM de 16 bits requerido por Live API
         const pcmData = convertFloat32ToPCM(event.data);
 
-        // Send the PCM data to the handler (which will forward to WebSocket)
+        // Enviar los datos PCM al manejador (que reenviará a WebSocket)
         audioRecorderHandler(pcmData);
     };
     return [audioRecorderNode, audioRecorderContext, micStream];
 }
 
-// Convert Float32 samples to 16-bit PCM
+// Convertir muestras Float32 a PCM de 16 bits
 function convertFloat32ToPCM(inputData) {
-    // Create an Int16Array of the same length
+    // Crear un Int16Array de la misma longitud
     const pcm16 = new Int16Array(inputData.length);
     for (let i = 0; i < inputData.length; i++) {
-        // Web Audio API provides Float32 samples in range [-1.0, 1.0]
-        // Multiply by 0x7fff (32767) to convert to 16-bit signed integer range [-32768, 32767]
+        // Web Audio API proporciona muestras Float32 en el rango [-1.0, 1.0]
+        // Multiplicar por 0x7fff (32767) para convertir al rango de entero con signo de 16 bits [-32768, 32767]
         pcm16[i] = inputData[i] * 0x7fff;
     }
-    // Return the underlying ArrayBuffer (binary data) for efficient transmission
+    // Devolver el ArrayBuffer subyacente (datos binarios) para transmisión eficiente
     return pcm16.buffer;
 }
 ```
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/static/js/pcm-recorder-processor.js#L1-L18" target="_blank">pcm-recorder-processor.js:1-18</a>'
-// pcm-recorder-processor.js - AudioWorklet processor for capturing audio
+// pcm-recorder-processor.js - Procesador AudioWorklet para capturar audio
 class PCMProcessor extends AudioWorkletProcessor {
     constructor() {
         super();
@@ -115,9 +115,9 @@ class PCMProcessor extends AudioWorkletProcessor {
 
     process(inputs, outputs, parameters) {
         if (inputs.length > 0 && inputs[0].length > 0) {
-            // Use the first channel (mono)
+            // Usar el primer canal (mono)
             const inputChannel = inputs[0][0];
-            // Copy the buffer to avoid issues with recycled memory
+            // Copiar el búfer para evitar problemas con memoria reciclada
             const inputCopy = new Float32Array(inputChannel);
             this.port.postMessage(inputCopy);
         }
@@ -129,91 +129,91 @@ registerProcessor("pcm-recorder-processor", PCMProcessor);
 ```
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L979-L988" target="_blank">app.js:977-986</a>'
-// Audio recorder handler - called for each audio chunk
+// Manejador de grabadora de audio - llamado para cada fragmento de audio
 function audioRecorderHandler(pcmData) {
     if (websocket && websocket.readyState === WebSocket.OPEN && is_audio) {
-        // Send audio as binary WebSocket frame (more efficient than base64 JSON)
+        // Enviar audio como fotograma WebSocket binario (más eficiente que JSON base64)
         websocket.send(pcmData);
         console.log("[CLIENT TO AGENT] Sent audio chunk: %s bytes", pcmData.byteLength);
     }
 }
 ```
 
-**Key Implementation Details:**
+**Detalles Clave de Implementación:**
 
-1. **16kHz Sample Rate**: The AudioContext must be created with `sampleRate: 16000` to match Live API requirements. Modern browsers support this rate.
+1. **Tasa de Muestreo de 16kHz**: El AudioContext debe crearse con `sampleRate: 16000` para coincidir con los requisitos de Live API. Los navegadores modernos soportan esta tasa.
 
-2. **Mono Audio**: Request single-channel audio (`channelCount: 1`) since Live API expects mono input. This reduces bandwidth and processing overhead.
+2. **Audio Mono**: Solicita audio de un solo canal (`channelCount: 1`) ya que Live API espera entrada mono. Esto reduce el ancho de banda y la sobrecarga de procesamiento.
 
-3. **AudioWorklet Processing**: AudioWorklet runs on a separate thread from the main JavaScript thread, ensuring low-latency, glitch-free audio processing without blocking the UI.
+3. **Procesamiento AudioWorklet**: AudioWorklet se ejecuta en un hilo separado del hilo principal de JavaScript, asegurando procesamiento de audio de baja latencia sin interrupciones sin bloquear la interfaz de usuario.
 
-4. **Float32 to PCM16 Conversion**: Web Audio API provides audio as Float32Array values in range [-1.0, 1.0]. Multiply by 32767 (0x7fff) to convert to 16-bit signed integer PCM.
+4. **Conversión Float32 a PCM16**: Web Audio API proporciona audio como valores Float32Array en el rango [-1.0, 1.0]. Multiplica por 32767 (0x7fff) para convertir a PCM de entero con signo de 16 bits.
 
-5. **Binary WebSocket Frames**: Send PCM data directly as ArrayBuffer via WebSocket binary frames instead of base64-encoding in JSON. This reduces bandwidth by ~33% and eliminates encoding/decoding overhead.
+5. **Fotogramas WebSocket Binarios**: Envía datos PCM directamente como ArrayBuffer vía fotogramas WebSocket binarios en lugar de codificar en base64 en JSON. Esto reduce el ancho de banda en ~33% y elimina la sobrecarga de codificación/decodificación.
 
-6. **Continuous Streaming**: The AudioWorklet `process()` method is called automatically at regular intervals (typically 128 samples at a time for 16kHz). This provides consistent chunk sizes for streaming.
+6. **Transmisión Continua**: El método `process()` de AudioWorklet se llama automáticamente a intervalos regulares (típicamente 128 muestras a la vez para 16kHz). Esto proporciona tamaños de fragmento consistentes para transmisión.
 
-This architecture ensures low-latency audio capture and efficient transmission to the server, which then forwards it to the ADK Live API via `LiveRequestQueue.send_realtime()`.
+Esta arquitectura asegura captura de audio de baja latencia y transmisión eficiente al servidor, que luego lo reenvía a la Live API de ADK vía `LiveRequestQueue.send_realtime()`.
 
-### Receiving Audio Output
+### Recibiendo Salida de Audio
 
-When `response_modalities=["AUDIO"]` is configured, the model returns audio data in the event stream as `inline_data` parts.
+Cuando `response_modalities=["AUDIO"]` está configurado, el modelo devuelve datos de audio en el flujo de eventos como partes `inline_data`.
 
-**Audio Format Requirements:**
+**Requisitos de Formato de Audio:**
 
-The model outputs audio in the following format:
+El modelo genera audio en el siguiente formato:
 
-- **Format**: 16-bit PCM (signed integer)
-- **Sample Rate**: 24,000 Hz (24kHz) for native audio models
-- **Channels**: Mono (single channel)
-- **MIME Type**: `audio/pcm;rate=24000`
+- **Formato**: PCM de 16 bits (entero con signo)
+- **Tasa de Muestreo**: 24,000 Hz (24kHz) para modelos de audio nativos
+- **Canales**: Mono (canal único)
+- **Tipo MIME**: `audio/pcm;rate=24000`
 
-The audio data arrives as raw PCM bytes, ready for playback or further processing. No additional conversion is required unless you need a different sample rate or format.
+Los datos de audio llegan como bytes PCM sin procesar, listos para reproducción o procesamiento adicional. No se requiere conversión adicional a menos que necesites una tasa de muestreo o formato diferente.
 
-**Receiving Audio Output:**
+**Recibiendo Salida de Audio:**
 
 ```python
 from google.adk.agents.run_config import RunConfig, StreamingMode
 
-# Configure for audio output
+# Configurar para salida de audio
 run_config = RunConfig(
-    response_modalities=["AUDIO"],  # Required for audio responses
+    response_modalities=["AUDIO"],  # Requerido para respuestas de audio
     streaming_mode=StreamingMode.BIDI
 )
 
-# Process audio output from the model
+# Procesar salida de audio del modelo
 async for event in runner.run_live(
     user_id="user_123",
     session_id="session_456",
     live_request_queue=live_request_queue,
     run_config=run_config
 ):
-    # Events may contain multiple parts (text, audio, etc.)
+    # Los eventos pueden contener múltiples partes (texto, audio, etc.)
     if event.content and event.content.parts:
         for part in event.content.parts:
-            # Audio data arrives as inline_data with audio/pcm MIME type
+            # Los datos de audio llegan como inline_data con tipo MIME audio/pcm
             if part.inline_data and part.inline_data.mime_type.startswith("audio/pcm"):
-                # The data is already decoded to raw bytes (24kHz, 16-bit PCM, mono)
+                # Los datos ya están decodificados a bytes sin procesar (24kHz, PCM de 16 bits, mono)
                 audio_bytes = part.inline_data.data
 
-                # Your logic to stream audio to client
+                # Tu lógica para transmitir audio al cliente
                 await stream_audio_to_client(audio_bytes)
 
-                # Or save to file
+                # O guardar en archivo
                 # with open("output.pcm", "ab") as f:
                 #     f.write(audio_bytes)
 ```
 
-!!! note "Automatic Base64 Decoding"
+!!! note "Decodificación Base64 Automática"
 
-    The Live API wire protocol transmits audio data as base64-encoded strings. The google.genai types system uses Pydantic's base64 serialization feature (`val_json_bytes='base64'`) to automatically decode base64 strings into bytes when deserializing API responses. When you access `part.inline_data.data`, you receive ready-to-use bytes—no manual base64 decoding needed.
+    El protocolo de cable de Live API transmite datos de audio como cadenas codificadas en base64. El sistema de tipos google.genai usa la característica de serialización base64 de Pydantic (`val_json_bytes='base64'`) para decodificar automáticamente cadenas base64 en bytes al deserializar respuestas de la API. Cuando accedes a `part.inline_data.data`, recibes bytes listos para usar—no se necesita decodificación base64 manual.
 
-#### Handling Audio Events at the Client
+#### Manejando Eventos de Audio en el Cliente
 
-The bidi-demo uses a different architectural approach: instead of processing audio on the server, it forwards all events (including audio data) to the WebSocket client and handles audio playback in the browser. This pattern separates concerns—the server focuses on ADK event streaming while the client handles media playback using Web Audio API.
+El bidi-demo usa un enfoque arquitectónico diferente: en lugar de procesar audio en el servidor, reenvía todos los eventos (incluyendo datos de audio) al cliente WebSocket y maneja la reproducción de audio en el navegador. Este patrón separa las preocupaciones—el servidor se enfoca en la transmisión de eventos de ADK mientras el cliente maneja la reproducción de medios usando Web Audio API.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L225-L233" target="_blank">main.py:225-233</a>'
-# The bidi-demo forwards all events (including audio) to the WebSocket client
+# El bidi-demo reenvía todos los eventos (incluyendo audio) al cliente WebSocket
 async for event in runner.run_live(
     user_id=user_id,
     session_id=session_id,
@@ -224,78 +224,78 @@ async for event in runner.run_live(
     await websocket.send_text(event_json)
 ```
 
-**Demo Implementation (Client - JavaScript):**
+**Implementación Demo (Cliente - JavaScript):**
 
-The client-side implementation involves three components: WebSocket message handling, audio player setup with AudioWorklet, and the AudioWorklet processor itself.
+La implementación del lado del cliente involucra tres componentes: manejo de mensajes WebSocket, configuración del reproductor de audio con AudioWorklet, y el procesador AudioWorklet en sí.
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L640-L690" target="_blank">app.js:638-688</a>'
-// 1. WebSocket Message Handler
-// Handle content events (text or audio)
+// 1. Manejador de Mensajes WebSocket
+// Manejar eventos de contenido (texto o audio)
 if (adkEvent.content && adkEvent.content.parts) {
     const parts = adkEvent.content.parts;
 
     for (const part of parts) {
-        // Handle inline data (audio)
+        // Manejar datos inline (audio)
         if (part.inlineData) {
             const mimeType = part.inlineData.mimeType;
             const data = part.inlineData.data;
 
-            // Check if this is audio PCM data and the audio player is ready
+            // Verificar si estos son datos de audio PCM y el reproductor de audio está listo
             if (mimeType && mimeType.startsWith("audio/pcm") && audioPlayerNode) {
-                // Decode base64 to ArrayBuffer and send to AudioWorklet for playback
+                // Decodificar base64 a ArrayBuffer y enviar a AudioWorklet para reproducción
                 audioPlayerNode.port.postMessage(base64ToArray(data));
             }
         }
     }
 }
 
-// Decode base64 audio data to ArrayBuffer
+// Decodificar datos de audio base64 a ArrayBuffer
 function base64ToArray(base64) {
-    // Convert base64url to standard base64 (RFC 4648 compliance)
-    // base64url uses '-' and '_' instead of '+' and '/', which are URL-safe
+    // Convertir base64url a base64 estándar (cumplimiento RFC 4648)
+    // base64url usa '-' y '_' en lugar de '+' y '/', que son seguros para URL
     let standardBase64 = base64.replace(/-/g, '+').replace(/_/g, '/');
 
-    // Add padding '=' characters if needed
-    // Base64 strings must be multiples of 4 characters
+    // Agregar caracteres de relleno '=' si es necesario
+    // Las cadenas Base64 deben ser múltiplos de 4 caracteres
     while (standardBase64.length % 4) {
         standardBase64 += '=';
     }
 
-    // Decode base64 string to binary string using browser API
+    // Decodificar cadena base64 a cadena binaria usando API del navegador
     const binaryString = window.atob(standardBase64);
     const len = binaryString.length;
     const bytes = new Uint8Array(len);
-    // Convert each character code (0-255) to a byte
+    // Convertir cada código de carácter (0-255) a un byte
     for (let i = 0; i < len; i++) {
         bytes[i] = binaryString.charCodeAt(i);
     }
-    // Return the underlying ArrayBuffer (binary data)
+    // Devolver el ArrayBuffer subyacente (datos binarios)
     return bytes.buffer;
 }
 ```
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/static/js/audio-player.js#L5-L24" target="_blank">audio-player.js:5-24</a>'
-// 2. Audio Player Setup
-// Start audio player worklet
+// 2. Configuración del Reproductor de Audio
+// Iniciar worklet de reproductor de audio
 export async function startAudioPlayerWorklet() {
-    // Create an AudioContext with 24kHz sample rate
-    // This matches the Live API's output audio format (16-bit PCM @ 24kHz)
-    // Note: Different from input rate (16kHz) - Live API outputs at higher quality
+    // Crear un AudioContext con tasa de muestreo de 24kHz
+    // Esto coincide con el formato de audio de salida de Live API (PCM de 16 bits @ 24kHz)
+    // Nota: Diferente de la tasa de entrada (16kHz) - Live API genera audio de mayor calidad
     const audioContext = new AudioContext({
         sampleRate: 24000
     });
 
-    // Load the AudioWorklet module that will handle audio playback
-    // AudioWorklet runs on audio rendering thread for smooth, low-latency playback
+    // Cargar el módulo AudioWorklet que manejará la reproducción de audio
+    // AudioWorklet se ejecuta en el hilo de renderizado de audio para reproducción suave de baja latencia
     const workletURL = new URL('./pcm-player-processor.js', import.meta.url);
     await audioContext.audioWorklet.addModule(workletURL);
 
-    // Create an AudioWorkletNode using our custom PCM player processor
-    // This node will receive audio data via postMessage and play it through speakers
+    // Crear un AudioWorkletNode usando nuestro procesador de reproductor PCM personalizado
+    // Este nodo recibirá datos de audio vía postMessage y los reproducirá a través de los altavoces
     const audioPlayerNode = new AudioWorkletNode(audioContext, 'pcm-player-processor');
 
-    // Connect the player node to the audio destination (speakers/headphones)
-    // This establishes the audio graph: AudioWorklet → AudioContext.destination
+    // Conectar el nodo del reproductor al destino de audio (altavoces/auriculares)
+    // Esto establece el gráfico de audio: AudioWorklet → AudioContext.destination
     audioPlayerNode.connect(audioContext.destination);
 
     return [audioPlayerNode, audioContext];
@@ -303,115 +303,115 @@ export async function startAudioPlayerWorklet() {
 ```
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/static/js/pcm-player-processor.js#L5-L76" target="_blank">pcm-player-processor.js:5-76</a>'
-// 3. AudioWorklet Processor (Ring Buffer)
-// AudioWorklet processor that buffers and plays PCM audio
+// 3. Procesador AudioWorklet (Búfer Circular)
+// Procesador AudioWorklet que almacena en búfer y reproduce audio PCM
 class PCMPlayerProcessor extends AudioWorkletProcessor {
     constructor() {
         super();
 
-        // Initialize ring buffer (24kHz x 180 seconds = ~4.3 million samples)
-        // Ring buffer absorbs network jitter and ensures smooth playback
+        // Inicializar búfer circular (24kHz x 180 segundos = ~4.3 millones de muestras)
+        // El búfer circular absorbe la fluctuación de red y asegura reproducción suave
         this.bufferSize = 24000 * 180;
         this.buffer = new Float32Array(this.bufferSize);
-        this.writeIndex = 0;  // Where we write new audio data
-        this.readIndex = 0;   // Where we read for playback
+        this.writeIndex = 0;  // Dónde escribimos nuevos datos de audio
+        this.readIndex = 0;   // Dónde leemos para reproducción
 
-        // Handle incoming messages from main thread
+        // Manejar mensajes entrantes del hilo principal
         this.port.onmessage = (event) => {
-            // Reset buffer on interruption (e.g., user interrupts model response)
+            // Restablecer búfer en interrupción (ej., usuario interrumpe respuesta del modelo)
             if (event.data.command === 'endOfAudio') {
-                this.readIndex = this.writeIndex; // Clear the buffer by jumping read to write position
+                this.readIndex = this.writeIndex; // Limpiar el búfer saltando lectura a posición de escritura
                 return;
             }
 
-            // Decode Int16 array from incoming ArrayBuffer
-            // The Live API sends 16-bit PCM audio data
+            // Decodificar array Int16 del ArrayBuffer entrante
+            // Live API envía datos de audio PCM de 16 bits
             const int16Samples = new Int16Array(event.data);
 
-            // Add audio data to ring buffer for playback
+            // Agregar datos de audio al búfer circular para reproducción
             this._enqueue(int16Samples);
         };
     }
 
-    // Push incoming Int16 data into ring buffer
+    // Empujar datos Int16 entrantes al búfer circular
     _enqueue(int16Samples) {
         for (let i = 0; i < int16Samples.length; i++) {
-            // Convert 16-bit integer to float in [-1.0, 1.0] required by Web Audio API
-            // Divide by 32768 (max positive value for signed 16-bit int)
+            // Convertir entero de 16 bits a flotante en [-1.0, 1.0] requerido por Web Audio API
+            // Dividir por 32768 (valor positivo máximo para entero con signo de 16 bits)
             const floatVal = int16Samples[i] / 32768;
 
-            // Store in ring buffer at current write position
+            // Almacenar en búfer circular en la posición de escritura actual
             this.buffer[this.writeIndex] = floatVal;
-            // Move write index forward, wrapping around at buffer end (circular buffer)
+            // Mover índice de escritura hacia adelante, envolviendo al final del búfer (búfer circular)
             this.writeIndex = (this.writeIndex + 1) % this.bufferSize;
 
-            // Overflow handling: if write catches up to read, move read forward
-            // This overwrites oldest unplayed samples (rare, only under extreme network delay)
+            // Manejo de desbordamiento: si la escritura alcanza la lectura, mover lectura hacia adelante
+            // Esto sobrescribe las muestras más antiguas no reproducidas (raro, solo bajo retraso extremo de red)
             if (this.writeIndex === this.readIndex) {
                 this.readIndex = (this.readIndex + 1) % this.bufferSize;
             }
         }
     }
 
-    // Called by Web Audio system automatically ~128 samples at a time
-    // This runs on the audio rendering thread for precise timing
+    // Llamado automáticamente por el sistema Web Audio ~128 muestras a la vez
+    // Esto se ejecuta en el hilo de renderizado de audio para temporización precisa
     process(inputs, outputs, parameters) {
         const output = outputs[0];
         const framesPerBlock = output[0].length;
 
         for (let frame = 0; frame < framesPerBlock; frame++) {
-            // Write samples to output buffer (mono to stereo)
-            output[0][frame] = this.buffer[this.readIndex]; // left channel
+            // Escribir muestras al búfer de salida (mono a estéreo)
+            output[0][frame] = this.buffer[this.readIndex]; // canal izquierdo
             if (output.length > 1) {
-                output[1][frame] = this.buffer[this.readIndex]; // right channel (duplicate for stereo)
+                output[1][frame] = this.buffer[this.readIndex]; // canal derecho (duplicar para estéreo)
             }
 
-            // Move read index forward unless buffer is empty (underflow protection)
+            // Mover índice de lectura hacia adelante a menos que el búfer esté vacío (protección contra subflujo)
             if (this.readIndex != this.writeIndex) {
                 this.readIndex = (this.readIndex + 1) % this.bufferSize;
             }
-            // If readIndex == writeIndex, we're out of data - output silence (0.0)
+            // Si readIndex == writeIndex, nos quedamos sin datos - generar silencio (0.0)
         }
 
-        return true; // Keep processor alive (return false to terminate)
+        return true; // Mantener procesador vivo (devolver false para terminar)
     }
 }
 
 registerProcessor('pcm-player-processor', PCMPlayerProcessor);
 ```
 
-**Key Implementation Patterns:**
+**Patrones Clave de Implementación:**
 
-1. **Base64 Decoding**: The server sends audio data as base64-encoded strings in JSON. The client must decode to ArrayBuffer before passing to AudioWorklet. Handle both standard base64 and base64url encoding.
+1. **Decodificación Base64**: El servidor envía datos de audio como cadenas codificadas en base64 en JSON. El cliente debe decodificar a ArrayBuffer antes de pasar a AudioWorklet. Manejar tanto codificación base64 estándar como base64url.
 
-2. **24kHz Sample Rate**: The AudioContext must be created with `sampleRate: 24000` to match Live API output format (different from 16kHz input).
+2. **Tasa de Muestreo de 24kHz**: El AudioContext debe crearse con `sampleRate: 24000` para coincidir con el formato de salida de Live API (diferente de la entrada de 16kHz).
 
-3. **Ring Buffer Architecture**: Use a circular buffer to handle variable network latency and ensure smooth playback. The buffer stores Float32 samples and handles overflow by overwriting oldest data.
+3. **Arquitectura de Búfer Circular**: Usa un búfer circular para manejar latencia de red variable y asegurar reproducción suave. El búfer almacena muestras Float32 y maneja desbordamiento sobrescribiendo datos más antiguos.
 
-4. **PCM16 to Float32 Conversion**: Live API sends 16-bit signed integers. Divide by 32768 to convert to Float32 in range [-1.0, 1.0] required by Web Audio API.
+4. **Conversión PCM16 a Float32**: Live API envía enteros con signo de 16 bits. Divide por 32768 para convertir a Float32 en el rango [-1.0, 1.0] requerido por Web Audio API.
 
-5. **Mono to Stereo**: The processor duplicates mono audio to both left and right channels for stereo output, ensuring compatibility with all audio devices.
+5. **Mono a Estéreo**: El procesador duplica audio mono a los canales izquierdo y derecho para salida estéreo, asegurando compatibilidad con todos los dispositivos de audio.
 
-6. **Interruption Handling**: On interruption events, send `endOfAudio` command to clear the buffer by setting `readIndex = writeIndex`, preventing playback of stale audio.
+6. **Manejo de Interrupciones**: En eventos de interrupción, envía comando `endOfAudio` para limpiar el búfer estableciendo `readIndex = writeIndex`, previniendo reproducción de audio obsoleto.
 
-This architecture ensures smooth, low-latency audio playback while handling network jitter and interruptions gracefully.
+Esta arquitectura asegura reproducción de audio suave de baja latencia mientras maneja fluctuaciones de red e interrupciones con gracia.
 
-## How to Use Image and Video
+## Cómo Usar Imagen y Video
 
-Both images and video in ADK Bidi-streaming are processed as JPEG frames. Rather than typical video streaming using HLS, mp4, or H.264, ADK uses a straightforward frame-by-frame image processing approach where both static images and video frames are sent as individual JPEG images.
+Tanto las imágenes como el video en Bidi-streaming de ADK se procesan como fotogramas JPEG. En lugar de la típica transmisión de video usando HLS, mp4 o H.264, ADK usa un enfoque directo de procesamiento de imagen fotograma por fotograma donde tanto imágenes estáticas como fotogramas de video se envían como imágenes JPEG individuales.
 
-**Image/Video Specifications:**
+**Especificaciones de Imagen/Video:**
 
-- **Format**: JPEG (`image/jpeg`)
-- **Frame rate**: 1 frame per second (1 FPS) recommended maximum
-- **Resolution**: 768x768 pixels (recommended)
+- **Formato**: JPEG (`image/jpeg`)
+- **Tasa de fotogramas**: 1 fotograma por segundo (1 FPS) máximo recomendado
+- **Resolución**: 768x768 píxeles (recomendado)
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L202-L217" target="_blank">main.py:202-217</a>'
-# Decode base64 image data
+# Decodificar datos de imagen base64
 image_data = base64.b64decode(json_message["data"])
 mime_type = json_message.get("mimeType", "image/jpeg")
 
-# Send image as blob
+# Enviar imagen como blob
 image_blob = types.Blob(
     mime_type=mime_type,
     data=image_data
@@ -419,14 +419,14 @@ image_blob = types.Blob(
 live_request_queue.send_realtime(image_blob)
 ```
 
-**Not Suitable For**:
+**No Adecuado Para**:
 
-- **Real-time video action recognition** - 1 FPS is too slow to capture rapid movements or actions
-- **Live sports analysis or motion tracking** - Insufficient temporal resolution for fast-moving subjects
+- **Reconocimiento de acción de video en tiempo real** - 1 FPS es demasiado lento para capturar movimientos o acciones rápidas
+- **Análisis de deportes en vivo o seguimiento de movimiento** - Resolución temporal insuficiente para sujetos en movimiento rápido
 
-**Example Use Case for Image Processing**:
+**Caso de Uso de Ejemplo para Procesamiento de Imágenes**:
 
-In the [Shopper's Concierge demo](https://youtu.be/LwHPYyw7u6U?si=lG9gl9aSIuu-F4ME&t=40), the application uses `send_realtime()` to send the user-uploaded image. The agent recognizes the context from the image and searches for relevant items on the e-commerce site.
+En el [demo de Shopper's Concierge](https://youtu.be/LwHPYyw7u6U?si=lG9gl9aSIuu-F4ME&t=40), la aplicación usa `send_realtime()` para enviar la imagen cargada por el usuario. El agente reconoce el contexto de la imagen y busca artículos relevantes en el sitio de comercio electrónico.
 
 <div class="video-grid">
   <div class="video-item">
@@ -436,24 +436,24 @@ In the [Shopper's Concierge demo](https://youtu.be/LwHPYyw7u6U?si=lG9gl9aSIuu-F4
   </div>
 </div>
 
-### Handling Image Input at the Client
+### Manejando Entrada de Imagen en el Cliente
 
-In browser-based applications, capturing images from the user's webcam and sending them to the server requires using the MediaDevices API to access the camera, capturing frames to a canvas, and converting to JPEG format. The bidi-demo demonstrates how to open a camera preview modal, capture a single frame, and send it as base64-encoded JPEG to the WebSocket server.
+En aplicaciones basadas en navegador, capturar imágenes de la cámara web del usuario y enviarlas al servidor requiere usar la API MediaDevices para acceder a la cámara, capturar fotogramas a un lienzo y convertir a formato JPEG. El bidi-demo demuestra cómo abrir un modal de vista previa de cámara, capturar un solo fotograma y enviarlo como JPEG codificado en base64 al servidor WebSocket.
 
-**Architecture:**
+**Arquitectura:**
 
-1. **Camera access**: Use `navigator.mediaDevices.getUserMedia()` to access webcam
-2. **Video preview**: Display live camera feed in a `<video>` element
-3. **Frame capture**: Draw video frame to `<canvas>` and convert to JPEG
-4. **Base64 encoding**: Convert canvas to base64 data URL for transmission
-5. **WebSocket transmission**: Send as JSON message to server
+1. **Acceso a cámara**: Usa `navigator.mediaDevices.getUserMedia()` para acceder a la cámara web
+2. **Vista previa de video**: Muestra alimentación de cámara en vivo en un elemento `<video>`
+3. **Captura de fotograma**: Dibuja fotograma de video en `<canvas>` y convierte a JPEG
+4. **Codificación Base64**: Convierte lienzo a URL de datos base64 para transmisión
+5. **Transmisión WebSocket**: Envía como mensaje JSON al servidor
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L803-L845" target="_blank">app.js:801-843</a>'
-// 1. Opening Camera Preview
-// Open camera modal and start preview
+// 1. Abriendo Vista Previa de Cámara
+// Abrir modal de cámara e iniciar vista previa
 async function openCameraPreview() {
     try {
-        // Request access to the user's webcam with 768x768 resolution
+        // Solicitar acceso a la cámara web del usuario con resolución 768x768
         cameraStream = await navigator.mediaDevices.getUserMedia({
             video: {
                 width: { ideal: 768 },
@@ -462,10 +462,10 @@ async function openCameraPreview() {
             }
         });
 
-        // Set the stream to the video element
+        // Establecer el flujo al elemento de video
         cameraPreview.srcObject = cameraStream;
 
-        // Show the modal
+        // Mostrar el modal
         cameraModal.classList.add('show');
 
     } catch (error) {
@@ -474,25 +474,25 @@ async function openCameraPreview() {
     }
 }
 
-// Close camera modal and stop preview
+// Cerrar modal de cámara y detener vista previa
 function closeCameraPreview() {
-    // Stop the camera stream
+    // Detener el flujo de cámara
     if (cameraStream) {
         cameraStream.getTracks().forEach(track => track.stop());
         cameraStream = null;
     }
 
-    // Clear the video source
+    // Limpiar la fuente de video
     cameraPreview.srcObject = null;
 
-    // Hide the modal
+    // Ocultar el modal
     cameraModal.classList.remove('show');
 }
 ```
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L848-L916" target="_blank">app.js:846-914</a>'
-// 2. Capturing and Sending Image
-// Capture image from the live preview
+// 2. Capturando y Enviando Imagen
+// Capturar imagen de la vista previa en vivo
 function captureImageFromPreview() {
     if (!cameraStream) {
         addSystemMessage('No camera stream available');
@@ -500,35 +500,35 @@ function captureImageFromPreview() {
     }
 
     try {
-        // Create canvas to capture the frame
+        // Crear lienzo para capturar el fotograma
         const canvas = document.createElement('canvas');
         canvas.width = cameraPreview.videoWidth;
         canvas.height = cameraPreview.videoHeight;
         const context = canvas.getContext('2d');
 
-        // Draw current video frame to canvas
+        // Dibujar fotograma de video actual al lienzo
         context.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
 
-        // Convert canvas to data URL for display
+        // Convertir lienzo a URL de datos para mostrar
         const imageDataUrl = canvas.toDataURL('image/jpeg', 0.85);
 
-        // Display the captured image in the chat
+        // Mostrar la imagen capturada en el chat
         const imageBubble = createImageBubble(imageDataUrl, true);
         messagesDiv.appendChild(imageBubble);
 
-        // Convert canvas to blob for sending to server
+        // Convertir lienzo a blob para enviar al servidor
         canvas.toBlob((blob) => {
-            // Convert blob to base64 for sending to server
+            // Convertir blob a base64 para enviar al servidor
             const reader = new FileReader();
             reader.onloadend = () => {
-                // Remove data:image/jpeg;base64, prefix
+                // Eliminar prefijo data:image/jpeg;base64,
                 const base64data = reader.result.split(',')[1];
                 sendImage(base64data);
             };
             reader.readAsDataURL(blob);
         }, 'image/jpeg', 0.85);
 
-        // Close the camera modal
+        // Cerrar el modal de cámara
         closeCameraPreview();
 
     } catch (error) {
@@ -537,7 +537,7 @@ function captureImageFromPreview() {
     }
 }
 
-// Send image to server
+// Enviar imagen al servidor
 function sendImage(base64Image) {
     if (websocket && websocket.readyState === WebSocket.OPEN) {
         const jsonMessage = JSON.stringify({
@@ -551,98 +551,98 @@ function sendImage(base64Image) {
 }
 ```
 
-**Key Implementation Details:**
+**Detalles Clave de Implementación:**
 
-1. **768x768 Resolution**: Request ideal resolution of 768x768 to match the recommended specification. The browser will provide the closest available resolution.
+1. **Resolución 768x768**: Solicita resolución ideal de 768x768 para coincidir con la especificación recomendada. El navegador proporcionará la resolución disponible más cercana.
 
-2. **User-Facing Camera**: The `facingMode: 'user'` constraint selects the front-facing camera on mobile devices, appropriate for self-portrait captures.
+2. **Cámara Frontal**: La restricción `facingMode: 'user'` selecciona la cámara frontal en dispositivos móviles, apropiada para capturas de autorretrato.
 
-3. **Canvas Frame Capture**: Use `canvas.getContext('2d').drawImage()` to capture a single frame from the live video stream. This creates a static snapshot of the current video frame.
+3. **Captura de Fotograma en Lienzo**: Usa `canvas.getContext('2d').drawImage()` para capturar un solo fotograma del flujo de video en vivo. Esto crea una instantánea estática del fotograma de video actual.
 
-4. **JPEG Compression**: The second parameter to `toDataURL()` and `toBlob()` is the quality (0.0 to 1.0). Using 0.85 provides good quality while keeping file size manageable.
+4. **Compresión JPEG**: El segundo parámetro de `toDataURL()` y `toBlob()` es la calidad (0.0 a 1.0). Usar 0.85 proporciona buena calidad mientras mantiene el tamaño de archivo manejable.
 
-5. **Dual Output**: The code creates both a data URL for immediate UI display and a blob for efficient base64 encoding, demonstrating a pattern for responsive user feedback.
+5. **Salida Dual**: El código crea tanto una URL de datos para visualización inmediata en la interfaz de usuario como un blob para codificación base64 eficiente, demostrando un patrón para retroalimentación de usuario receptiva.
 
-6. **Resource Cleanup**: Always call `getTracks().forEach(track => track.stop())` when closing the camera to release the hardware resource and turn off the camera indicator light.
+6. **Limpieza de Recursos**: Siempre llama `getTracks().forEach(track => track.stop())` al cerrar la cámara para liberar el recurso de hardware y apagar la luz indicadora de cámara.
 
-7. **Base64 Encoding**: The FileReader converts the blob to a data URL (`data:image/jpeg;base64,<data>`). Split on comma and take the second part to get just the base64 data without the prefix.
+7. **Codificación Base64**: El FileReader convierte el blob a una URL de datos (`data:image/jpeg;base64,<data>`). Divide en coma y toma la segunda parte para obtener solo los datos base64 sin el prefijo.
 
-This implementation provides a user-friendly camera interface with preview, single-frame capture, and efficient transmission to the server for processing by the Live API.
+Esta implementación proporciona una interfaz de cámara amigable con vista previa, captura de fotograma único y transmisión eficiente al servidor para procesamiento por Live API.
 
-### Custom Video Streaming Tools Support
+### Soporte de Herramientas de Transmisión de Video Personalizadas
 
-ADK provides special tool support for processing video frames during streaming sessions. Unlike regular tools that execute synchronously, streaming tools can yield video frames asynchronously while the model continues to generate responses.
+ADK proporciona soporte especial de herramientas para procesar fotogramas de video durante sesiones de transmisión. A diferencia de las herramientas regulares que se ejecutan sincrónicamente, las herramientas de transmisión pueden generar fotogramas de video asincrónicamente mientras el modelo continúa generando respuestas.
 
-**Streaming Tool Lifecycle:**
+**Ciclo de Vida de Herramienta de Transmisión:**
 
-1. **Start**: ADK invokes your async generator function when the model calls it
-2. **Stream**: Your function yields results continuously via `AsyncGenerator`
-3. **Stop**: ADK cancels the generator task when:
-   - The model calls a `stop_streaming()` function you provide
-   - The session ends
-   - An error occurs
+1. **Inicio**: ADK invoca tu función generadora asíncrona cuando el modelo la llama
+2. **Transmisión**: Tu función genera resultados continuamente vía `AsyncGenerator`
+3. **Detención**: ADK cancela la tarea del generador cuando:
+   - El modelo llama a una función `stop_streaming()` que proporcionas
+   - La sesión termina
+   - Ocurre un error
 
-**Important**: You must provide a `stop_streaming(function_name: str)` function as a tool to allow the model to explicitly stop streaming operations.
+**Importante**: Debes proporcionar una función `stop_streaming(function_name: str)` como herramienta para permitir que el modelo detenga explícitamente operaciones de transmisión.
 
-For implementing custom video streaming tools that process and yield video frames to the model, see the [Streaming Tools documentation](https://google.github.io/adk-docs/streaming/streaming-tools/).
+Para implementar herramientas de transmisión de video personalizadas que procesan y generan fotogramas de video al modelo, consulta la [documentación de Herramientas de Transmisión](https://google.github.io/adk-docs/streaming/streaming-tools/).
 
-## Understanding Audio Model Architectures
+## Comprendiendo Arquitecturas de Modelos de Audio
 
-When building voice applications with the Live API, one of the most important decisions is selecting the right audio model architecture. The Live API supports two fundamentally different type of models for audio processing: **Native Audio** and **Half-Cascade**. These model architectures differ in how they process audio input and generate audio output, which directly impacts response naturalness, tool execution reliability, latency characteristics, and overall use case suitability.
+Al construir aplicaciones de voz con Live API, una de las decisiones más importantes es seleccionar la arquitectura de modelo de audio correcta. Live API soporta dos tipos fundamentalmente diferentes de modelos para procesamiento de audio: **Audio Nativo** y **Semi-Cascada**. Estas arquitecturas de modelo difieren en cómo procesan entrada de audio y generan salida de audio, lo que impacta directamente la naturalidad de respuesta, confiabilidad de ejecución de herramientas, características de latencia e idoneidad de caso de uso general.
 
-Understanding these architectures helps you make informed model selection decisions based on your application's requirements—whether you prioritize natural conversational AI, production reliability, or specific feature availability.
+Comprender estas arquitecturas te ayuda a tomar decisiones informadas de selección de modelo basadas en los requisitos de tu aplicación—ya sea que priorices IA conversacional natural, confiabilidad de producción o disponibilidad de características específicas.
 
-### Native Audio Models
+### Modelos de Audio Nativo
 
-A fully integrated end-to-end audio model architecture where the model processes audio input and generates audio output directly, without intermediate text conversion. This approach enables more human-like speech with natural prosody.
+Una arquitectura de modelo de audio de extremo a extremo completamente integrada donde el modelo procesa entrada de audio y genera salida de audio directamente, sin conversión de texto intermedia. Este enfoque habilita habla más humana con prosodia natural.
 
-| Audio Model Architecture | Platform | Model | Notes |
+| Arquitectura de Modelo de Audio | Plataforma | Modelo | Notas |
 |-------------------|----------|-------|-------|
-| Native Audio | Gemini Live API | [gemini-2.5-flash-native-audio-preview-12-2025](https://ai.google.dev/gemini-api/docs/models#gemini-2.5-flash-live) |Publicly available|
-| Native Audio | Vertex AI Live API | [gemini-live-2.5-flash-native-audio](https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-flash-live-api) | Public preview |
+| Audio Nativo | Gemini Live API | [gemini-2.5-flash-native-audio-preview-12-2025](https://ai.google.dev/gemini-api/docs/models#gemini-2.5-flash-live) |Disponible públicamente|
+| Audio Nativo | Vertex AI Live API | [gemini-live-2.5-flash-native-audio](https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-flash-live-api) | Vista previa pública |
 
-**Key Characteristics:**
+**Características Clave:**
 
-- **End-to-end audio processing**: Processes audio input and generates audio output directly without converting to text intermediately
-- **Natural prosody**: Produces more human-like speech patterns, intonation, and emotional expressiveness
-- **Extended voice library**: Supports all half-cascade voices plus additional voices from Text-to-Speech (TTS) service
-- **Automatic language detection**: Determines language from conversation context without explicit configuration
-- **Advanced conversational features**:
-  - **[Affective dialog](#proactivity-and-affective-dialog)**: Adapts response style to input expression and tone, detecting emotional cues
-  - **[Proactive audio](#proactivity-and-affective-dialog)**: Can proactively decide when to respond, offer suggestions, or ignore irrelevant input
-  - **Dynamic thinking**: Supports thought summaries and dynamic thinking budgets
-- **AUDIO-only response modality**: Does not support TEXT response modality with `RunConfig`, resulting in slower initial response times
+- **Procesamiento de audio de extremo a extremo**: Procesa entrada de audio y genera salida de audio directamente sin convertir a texto intermediamente
+- **Prosodia natural**: Produce patrones de habla más humanos, entonación y expresividad emocional
+- **Biblioteca de voz extendida**: Soporta todas las voces semi-cascada más voces adicionales del servicio de Text-to-Speech (TTS)
+- **Detección automática de idioma**: Determina idioma del contexto de conversación sin configuración explícita
+- **Características conversacionales avanzadas**:
+  - **[Diálogo afectivo](#proactividad-y-dialogo-afectivo)**: Adapta estilo de respuesta a expresión y tono de entrada, detectando señales emocionales
+  - **[Audio proactivo](#proactividad-y-dialogo-afectivo)**: Puede decidir proactivamente cuándo responder, ofrecer sugerencias o ignorar entrada irrelevante
+  - **Pensamiento dinámico**: Soporta resúmenes de pensamiento y presupuestos de pensamiento dinámicos
+- **Modalidad de respuesta solo AUDIO**: No soporta modalidad de respuesta TEXT con `RunConfig`, resultando en tiempos de respuesta inicial más lentos
 
-### Half-Cascade Models
+### Modelos Semi-Cascada
 
-A hybrid architecture that combines native audio input processing with text-to-speech (TTS) output generation. Also referred to as "Cascaded" models in some documentation.
+Una arquitectura híbrida que combina procesamiento de entrada de audio nativo con generación de salida de text-to-speech (TTS). También referida como modelos "En cascada" en alguna documentación.
 
-Audio input is processed natively, but responses are first generated as text then converted to speech. This separation provides better reliability and more robust tool execution in production environments.
+La entrada de audio se procesa nativamente, pero las respuestas se generan primero como texto y luego se convierten a habla. Esta separación proporciona mejor confiabilidad y ejecución de herramientas más robusta en ambientes de producción.
 
-| Audio Model Architecture | Platform | Model | Notes |
+| Arquitectura de Modelo de Audio | Plataforma | Modelo | Notas |
 |-------------------|----------|-------|-------|
-| Half-Cascade | Gemini Live API | [gemini-2.0-flash-live-001](https://ai.google.dev/gemini-api/docs/models#gemini-2.0-flash-live) | Deprecated on December 09, 2025 |
-| Half-Cascade | Vertex AI Live API | [gemini-live-2.5-flash](https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-flash#2.5-flash) | Private GA, not publicly available |
+| Semi-Cascada | Gemini Live API | [gemini-2.0-flash-live-001](https://ai.google.dev/gemini-api/docs/models#gemini-2.0-flash-live) | Obsoleto el 09 de diciembre de 2025 |
+| Semi-Cascada | Vertex AI Live API | [gemini-live-2.5-flash](https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-flash#2.5-flash) | GA privado, no disponible públicamente |
 
-**Key Characteristics:**
+**Características Clave:**
 
-- **Hybrid architecture**: Combines native audio input processing with TTS-based audio output generation
-- **TEXT response modality support**: Supports TEXT response modality  with `RunConfig` in addition to AUDIO, enabling much faster responses for text-only use cases
-- **Explicit language control**: Supports manual language code configuration via `speech_config.language_code`
-- **Established TTS quality**: Leverages proven text-to-speech technology for consistent audio output
-- **Supported voices**: Puck, Charon, Kore, Fenrir, Aoede, Leda, Orus, Zephyr (8 prebuilt voices)
+- **Arquitectura híbrida**: Combina procesamiento de entrada de audio nativo con generación de salida de audio basada en TTS
+- **Soporte de modalidad de respuesta TEXT**: Soporta modalidad de respuesta TEXT con `RunConfig` además de AUDIO, habilitando respuestas mucho más rápidas para casos de uso solo texto
+- **Control de idioma explícito**: Soporta configuración manual de código de idioma vía `speech_config.language_code`
+- **Calidad TTS establecida**: Aprovecha tecnología text-to-speech probada para salida de audio consistente
+- **Voces soportadas**: Puck, Charon, Kore, Fenrir, Aoede, Leda, Orus, Zephyr (8 voces preconfiguradas)
 
-### How to Handle Model Names
+### Cómo Manejar Nombres de Modelos
 
-When building ADK applications, you'll need to specify which model to use. The recommended approach is to use environment variables for model configuration, which provides flexibility as model availability and naming change over time.
+Al construir aplicaciones ADK, necesitarás especificar qué modelo usar. El enfoque recomendado es usar variables de entorno para configuración de modelo, lo que proporciona flexibilidad a medida que la disponibilidad y nomenclatura de modelos cambia con el tiempo.
 
-**Recommended Pattern:**
+**Patrón Recomendado:**
 
 ```python
 import os
 from google.adk.agents import Agent
 
-# Use environment variable with fallback to a sensible default
+# Usar variable de entorno con respaldo a un valor predeterminado sensato
 agent = Agent(
     name="my_agent",
     model=os.getenv("DEMO_AGENT_MODEL", "gemini-2.5-flash-native-audio-preview-12-2025"),
@@ -651,117 +651,117 @@ agent = Agent(
 )
 ```
 
-**Why use environment variables:**
+**Por qué usar variables de entorno:**
 
-- **Model availability changes**: Models are released, updated, and deprecated regularly (e.g., `gemini-2.0-flash-live-001` was deprecated on December 09, 2025)
-- **Platform-specific names**: Gemini Live API and Vertex AI Live API use different model naming conventions for the same functionality
-- **Easy switching**: Change models without modifying code by updating the `.env` file
-- **Environment-specific configuration**: Use different models for development, staging, and production
+- **Disponibilidad de modelo cambia**: Los modelos se lanzan, actualizan y quedan obsoletos regularmente (ej., `gemini-2.0-flash-live-001` quedó obsoleto el 09 de diciembre de 2025)
+- **Nombres específicos de plataforma**: Gemini Live API y Vertex AI Live API usan diferentes convenciones de nomenclatura de modelo para la misma funcionalidad
+- **Cambio fácil**: Cambia modelos sin modificar código actualizando el archivo `.env`
+- **Configuración específica de entorno**: Usa diferentes modelos para desarrollo, staging y producción
 
-**Configuration in `.env` file:**
+**Configuración en archivo `.env`:**
 
 ```bash
-# For Gemini Live API (publicly available)
+# Para Gemini Live API (disponible públicamente)
 DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
 
-# For Vertex AI Live API (if using Vertex AI)
+# Para Vertex AI Live API (si usas Vertex AI)
 # DEMO_AGENT_MODEL=gemini-live-2.5-flash-native-audio
 ```
 
-!!! note "Environment Variable Loading Order"
+!!! note "Orden de Carga de Variable de Entorno"
 
-    When using `.env` files with `python-dotenv`, you must call `load_dotenv()` **before** importing any modules that read environment variables. Otherwise, `os.getenv()` will return `None` and fall back to the default value, ignoring your `.env` configuration.
+    Al usar archivos `.env` con `python-dotenv`, debes llamar `load_dotenv()` **antes** de importar cualquier módulo que lea variables de entorno. De lo contrario, `os.getenv()` devolverá `None` y recurrirá al valor predeterminado, ignorando tu configuración `.env`.
 
-    **Correct order in `main.py`:**
+    **Orden correcto en `main.py`:**
 
     ```python
     from dotenv import load_dotenv
     from pathlib import Path
 
-    # Load .env file BEFORE importing agent
+    # Cargar archivo .env ANTES de importar agente
     load_dotenv(Path(__file__).parent / ".env")
 
-    # Now safe to import modules that use environment variables
+    # Ahora es seguro importar módulos que usan variables de entorno
     from google_search_agent.agent import agent
     ```
 
-    **Incorrect order (will not work):**
+    **Orden incorrecto (no funcionará):**
 
     ```python
     from dotenv import load_dotenv
-    from google_search_agent.agent import agent  # Agent reads env var here
+    from google_search_agent.agent import agent  # El agente lee var de entorno aquí
 
-    # Too late! Agent already initialized with default model
+    # ¡Demasiado tarde! El agente ya se inicializó con modelo predeterminado
     load_dotenv(Path(__file__).parent / ".env")
     ```
 
-    This is a Python import behavior: when you import a module, its top-level code executes immediately. If your agent module calls `os.getenv("DEMO_AGENT_MODEL")` at import time, the `.env` file must already be loaded.
+    Este es un comportamiento de importación de Python: cuando importas un módulo, su código de nivel superior se ejecuta inmediatamente. Si tu módulo de agente llama `os.getenv("DEMO_AGENT_MODEL")` en el momento de importación, el archivo `.env` ya debe estar cargado.
 
-**Selecting the right model:**
+**Seleccionando el modelo correcto:**
 
-1. **Choose platform**: Decide between Gemini Live API (public) or Vertex AI Live API (enterprise)
-2. **Choose architecture**:
-   - Native Audio for natural conversational AI with advanced features
-   - Half-Cascade for production reliability with tool execution
-3. **Check current availability**: Refer to the model tables above and official documentation
-4. **Configure environment variable**: Set `DEMO_AGENT_MODEL` in your `.env` file (see [`agent.py:11-16`](https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/google_search_agent/agent.py#L11-L16) and [`main.py:99-152`](https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L99-L152))
+1. **Elige plataforma**: Decide entre Gemini Live API (pública) o Vertex AI Live API (empresarial)
+2. **Elige arquitectura**:
+   - Audio Nativo para IA conversacional natural con características avanzadas
+   - Semi-Cascada para confiabilidad de producción con ejecución de herramientas
+3. **Verifica disponibilidad actual**: Consulta las tablas de modelos arriba y documentación oficial
+4. **Configura variable de entorno**: Establece `DEMO_AGENT_MODEL` en tu archivo `.env` (ver [`agent.py:11-16`](https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/google_search_agent/agent.py#L11-L16) y [`main.py:99-152`](https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L99-L152))
 
-### Live API Models Compatibility and Availability
+### Compatibilidad y Disponibilidad de Modelos de Live API
 
-For the latest information on Live API model compatibility and availability:
+Para la información más reciente sobre compatibilidad y disponibilidad de modelos de Live API:
 
-- **Gemini Live API models**: See the [Gemini models documentation](https://ai.google.dev/gemini-api/docs/models/gemini)
-- **Vertex AI Live API models**: See the [Vertex AI model documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models)
+- **Modelos de Gemini Live API**: Ver la [documentación de modelos Gemini](https://ai.google.dev/gemini-api/docs/models/gemini)
+- **Modelos de Vertex AI Live API**: Ver la [documentación de modelos Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models)
 
-Always verify model availability and feature support in the official documentation before deploying to production.
+Siempre verifica la disponibilidad de modelo y soporte de características en la documentación oficial antes de desplegar a producción.
 
-## Audio Transcription
+## Transcripción de Audio
 
-The Live API provides built-in audio transcription capabilities that automatically convert speech to text for both user input and model output. This eliminates the need for external transcription services and enables real-time captions, conversation logging, and accessibility features. ADK exposes these capabilities through `RunConfig`, allowing you to enable transcription for either or both audio directions.
+Live API proporciona capacidades de transcripción de audio integradas que automáticamente convierten habla a texto tanto para entrada de usuario como salida de modelo. Esto elimina la necesidad de servicios de transcripción externos y habilita subtítulos en tiempo real, registro de conversaciones y características de accesibilidad. ADK expone estas capacidades a través de `RunConfig`, permitiéndote habilitar transcripción para cualquiera o ambas direcciones de audio.
 
-!!! note "Source"
+!!! note "Fuente"
 
-    [Gemini Live API - Audio transcriptions](https://ai.google.dev/gemini-api/docs/live-guide#audio-transcriptions)
+    [Gemini Live API - Transcripciones de audio](https://ai.google.dev/gemini-api/docs/live-guide#audio-transcriptions)
 
-**Configuration:**
+**Configuración:**
 
 ```python
 from google.genai import types
 from google.adk.agents.run_config import RunConfig
 
-# Default behavior: Audio transcription is ENABLED by default
-# Both input and output transcription are automatically configured
+# Comportamiento predeterminado: Transcripción de audio está HABILITADA por defecto
+# Tanto transcripción de entrada como salida están automáticamente configuradas
 run_config = RunConfig(
     response_modalities=["AUDIO"]
-    # input_audio_transcription defaults to AudioTranscriptionConfig()
-    # output_audio_transcription defaults to AudioTranscriptionConfig()
+    # input_audio_transcription tiene como valor predeterminado AudioTranscriptionConfig()
+    # output_audio_transcription tiene como valor predeterminado AudioTranscriptionConfig()
 )
 
-# To disable transcription explicitly:
+# Para deshabilitar transcripción explícitamente:
 run_config = RunConfig(
     response_modalities=["AUDIO"],
-    input_audio_transcription=None,   # Explicitly disable user input transcription
-    output_audio_transcription=None   # Explicitly disable model output transcription
+    input_audio_transcription=None,   # Deshabilitar explícitamente transcripción de entrada de usuario
+    output_audio_transcription=None   # Deshabilitar explícitamente transcripción de salida de modelo
 )
 
-# Enable only input transcription (disable output):
+# Habilitar solo transcripción de entrada (deshabilitar salida):
 run_config = RunConfig(
     response_modalities=["AUDIO"],
-    input_audio_transcription=types.AudioTranscriptionConfig(),  # Explicitly enable (redundant with default)
-    output_audio_transcription=None  # Explicitly disable
+    input_audio_transcription=types.AudioTranscriptionConfig(),  # Habilitar explícitamente (redundante con predeterminado)
+    output_audio_transcription=None  # Deshabilitar explícitamente
 )
 
-# Enable only output transcription (disable input):
+# Habilitar solo transcripción de salida (deshabilitar entrada):
 run_config = RunConfig(
     response_modalities=["AUDIO"],
-    input_audio_transcription=None,  # Explicitly disable
-    output_audio_transcription=types.AudioTranscriptionConfig()  # Explicitly enable (redundant with default)
+    input_audio_transcription=None,  # Deshabilitar explícitamente
+    output_audio_transcription=types.AudioTranscriptionConfig()  # Habilitar explícitamente (redundante con predeterminado)
 )
 ```
 
-**Event Structure**:
+**Estructura de Evento**:
 
-Transcriptions are delivered as `types.Transcription` objects on the `Event` object:
+Las transcripciones se entregan como objetos `types.Transcription` en el objeto `Event`:
 
 ```python
 from dataclasses import dataclass
@@ -770,88 +770,88 @@ from google.genai import types
 
 @dataclass
 class Event:
-    content: Optional[Content]  # Audio/text content
-    input_transcription: Optional[types.Transcription]  # User speech → text
-    output_transcription: Optional[types.Transcription]  # Model speech → text
-    # ... other fields
+    content: Optional[Content]  # Contenido de audio/texto
+    input_transcription: Optional[types.Transcription]  # Habla de usuario → texto
+    output_transcription: Optional[types.Transcription]  # Habla de modelo → texto
+    # ... otros campos
 ```
 
-!!! note "Learn More"
+!!! note "Aprende Más"
 
-    For complete Event structure, see [Part 3: The Event Class](part3.md#the-event-class).
+    Para la estructura Event completa, ver [Parte 3: La Clase Event](part3.md#the-event-class).
 
-Each `Transcription` object has two attributes:
-- **`.text`**: The transcribed text (string)
-- **`.finished`**: Boolean indicating if transcription is complete (True) or partial (False)
+Cada objeto `Transcription` tiene dos atributos:
+- **`.text`**: El texto transcrito (cadena)
+- **`.finished`**: Booleano indicando si la transcripción está completa (True) o parcial (False)
 
-**How Transcriptions Are Delivered**:
+**Cómo se Entregan las Transcripciones**:
 
-Transcriptions arrive as separate fields in the event stream, not as content parts. Always use defensive null checking when accessing transcription data:
+Las transcripciones llegan como campos separados en el flujo de eventos, no como partes de contenido. Siempre usa verificación defensiva de nulos al acceder datos de transcripción:
 
-**Processing Transcriptions:**
+**Procesando Transcripciones:**
 
 ```python
 from google.adk.runners import Runner
 
-# ... runner setup code ...
+# ... código de configuración del runner ...
 
 async for event in runner.run_live(...):
-    # User's speech transcription (from input audio)
-    if event.input_transcription:  # First check: transcription object exists
-        # Access the transcription text and status
+    # Transcripción del habla del usuario (de audio de entrada)
+    if event.input_transcription:  # Primera verificación: el objeto de transcripción existe
+        # Acceder al texto de transcripción y estado
         user_text = event.input_transcription.text
         is_finished = event.input_transcription.finished
 
-        # Second check: text is not None or empty
-        # This handles cases where transcription is in progress or empty
+        # Segunda verificación: el texto no es None o vacío
+        # Esto maneja casos donde la transcripción está en progreso o vacía
         if user_text and user_text.strip():
             print(f"User said: {user_text} (finished: {is_finished})")
 
-            # Your caption update logic
+            # Tu lógica de actualización de subtítulos
             update_caption(user_text, is_user=True, is_final=is_finished)
 
-    # Model's speech transcription (from output audio)
-    if event.output_transcription:  # First check: transcription object exists
+    # Transcripción del habla del modelo (de audio de salida)
+    if event.output_transcription:  # Primera verificación: el objeto de transcripción existe
         model_text = event.output_transcription.text
         is_finished = event.output_transcription.finished
 
-        # Second check: text is not None or empty
-        # This handles cases where transcription is in progress or empty
+        # Segunda verificación: el texto no es None o vacío
+        # Esto maneja casos donde la transcripción está en progreso o vacía
         if model_text and model_text.strip():
             print(f"Model said: {model_text} (finished: {is_finished})")
 
-            # Your caption update logic
+            # Tu lógica de actualización de subtítulos
             update_caption(model_text, is_user=False, is_final=is_finished)
 ```
 
-!!! tip "Best Practice for Transcription Null Checking"
+!!! tip "Mejor Práctica para Verificación de Nulos en Transcripción"
 
-    Always use two-level null checking for transcriptions:
+    Siempre usa verificación de nulos de dos niveles para transcripciones:
 
-    1. Check if the transcription object exists (`if event.input_transcription`)
-    2. Check if the text is not empty (`if user_text and user_text.strip()`)
+    1. Verifica si el objeto de transcripción existe (`if event.input_transcription`)
+    2. Verifica si el texto no está vacío (`if user_text and user_text.strip()`)
 
-    This pattern prevents errors from `None` values and handles partial transcriptions that may be empty.
+    Este patrón previene errores de valores `None` y maneja transcripciones parciales que pueden estar vacías.
 
-### Handling Audio Transcription at the Client
+### Manejando Transcripción de Audio en el Cliente
 
-In web applications, transcription events need to be forwarded from the server to the browser and rendered in the UI. The bidi-demo demonstrates a pattern where the server forwards all ADK events (including transcription events) to the WebSocket client, and the client handles displaying transcriptions as speech bubbles with visual indicators for partial vs. finished transcriptions.
+En aplicaciones web, los eventos de transcripción necesitan reenviarse del servidor al navegador y renderizarse en la interfaz de usuario. El bidi-demo demuestra un patrón donde el servidor reenvía todos los eventos de ADK (incluyendo eventos de transcripción) al cliente WebSocket, y el cliente maneja mostrar transcripciones como burbujas de habla con indicadores visuales para transcripciones parciales vs. terminadas.
 
-**Architecture:**
+**Arquitectura:**
 
-1. **Server side**: Forward transcription events through WebSocket (already shown in previous section)
-2. **Client side**: Process `inputTranscription` and `outputTranscription` events from the WebSocket
-3. **UI rendering**: Display partial transcriptions with typing indicators, finalize when `finished: true`
+1. **Lado del servidor**: Reenviar eventos de transcripción a través de WebSocket (ya mostrado en sección anterior)
+2. **Lado del cliente**: Procesar eventos `inputTranscription` y `outputTranscription` del WebSocket
+3. **Renderizado de interfaz de usuario**: Mostrar transcripciones parciales con indicadores de escritura, finalizar cuando `finished: true`
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L532-L655" target="_blank">app.js:530-653</a>'
-// Handle input transcription (user's spoken words)
+// Manejar transcripción de entrada (palabras habladas del usuario)
 if (adkEvent.inputTranscription && adkEvent.inputTranscription.text) {
     const transcriptionText = adkEvent.inputTranscription.text;
     const isFinished = adkEvent.inputTranscription.finished;
 
     if (transcriptionText) {
         if (currentInputTranscriptionId == null) {
-            // Create new transcription bubble
+            // Crear nueva burbuja de transcripción
             currentInputTranscriptionId = Math.random().toString(36).substring(7);
             currentInputTranscriptionElement = createMessageBubble(
                 transcriptionText,
@@ -862,9 +862,9 @@ if (adkEvent.inputTranscription && adkEvent.inputTranscription.text) {
             currentInputTranscriptionElement.classList.add("transcription");
             messagesDiv.appendChild(currentInputTranscriptionElement);
         } else {
-            // Update existing transcription bubble
+            // Actualizar burbuja de transcripción existente
             if (currentOutputTranscriptionId == null && currentMessageId == null) {
-                // Accumulate input transcription text (Live API sends incremental pieces)
+                // Acumular texto de transcripción de entrada (Live API envía piezas incrementales)
                 const existingText = currentInputTranscriptionElement
                     .querySelector(".bubble-text").textContent;
                 const cleanText = existingText.replace(/\.\.\.$/, '');
@@ -877,7 +877,7 @@ if (adkEvent.inputTranscription && adkEvent.inputTranscription.text) {
             }
         }
 
-        // If transcription is finished, reset the state
+        // Si la transcripción está terminada, restablecer el estado
         if (isFinished) {
             currentInputTranscriptionId = null;
             currentInputTranscriptionElement = null;
@@ -885,13 +885,13 @@ if (adkEvent.inputTranscription && adkEvent.inputTranscription.text) {
     }
 }
 
-// Handle output transcription (model's spoken words)
+// Manejar transcripción de salida (palabras habladas del modelo)
 if (adkEvent.outputTranscription && adkEvent.outputTranscription.text) {
     const transcriptionText = adkEvent.outputTranscription.text;
     const isFinished = adkEvent.outputTranscription.finished;
 
     if (transcriptionText) {
-        // Finalize any active input transcription when model starts responding
+        // Finalizar cualquier transcripción de entrada activa cuando el modelo comienza a responder
         if (currentInputTranscriptionId != null && currentOutputTranscriptionId == null) {
             const textElement = currentInputTranscriptionElement
                 .querySelector(".bubble-text");
@@ -904,7 +904,7 @@ if (adkEvent.outputTranscription && adkEvent.outputTranscription.text) {
         }
 
         if (currentOutputTranscriptionId == null) {
-            // Create new transcription bubble for model
+            // Crear nueva burbuja de transcripción para modelo
             currentOutputTranscriptionId = Math.random().toString(36).substring(7);
             currentOutputTranscriptionElement = createMessageBubble(
                 transcriptionText,
@@ -915,7 +915,7 @@ if (adkEvent.outputTranscription && adkEvent.outputTranscription.text) {
             currentOutputTranscriptionElement.classList.add("transcription");
             messagesDiv.appendChild(currentOutputTranscriptionElement);
         } else {
-            // Update existing transcription bubble
+            // Actualizar burbuja de transcripción existente
             const existingText = currentOutputTranscriptionElement
                 .querySelector(".bubble-text").textContent;
             const cleanText = existingText.replace(/\.\.\.$/, '');
@@ -926,7 +926,7 @@ if (adkEvent.outputTranscription && adkEvent.outputTranscription.text) {
             );
         }
 
-        // If transcription is finished, reset the state
+        // Si la transcripción está terminada, restablecer el estado
         if (isFinished) {
             currentOutputTranscriptionId = null;
             currentOutputTranscriptionElement = null;
@@ -935,667 +935,41 @@ if (adkEvent.outputTranscription && adkEvent.outputTranscription.text) {
 }
 ```
 
-**Key Implementation Patterns:**
+**Patrones Clave de Implementación:**
 
-1. **Incremental Text Accumulation**: The Live API may send transcriptions in multiple chunks. Accumulate text by appending new pieces to existing content:
+1. **Acumulación de Texto Incremental**: Live API puede enviar transcripciones en múltiples fragmentos. Acumula texto agregando nuevas piezas al contenido existente:
    ```javascript
    const accumulatedText = cleanText + transcriptionText;
    ```
 
-2. **Partial vs Finished States**: Use the `finished` flag to determine whether to show typing indicators:
-   - `finished: false` → Show typing indicator (e.g., "...")
-   - `finished: true` → Remove typing indicator, finalize bubble
+2. **Estados Parcial vs. Terminado**: Usa la bandera `finished` para determinar si mostrar indicadores de escritura:
+   - `finished: false` → Mostrar indicador de escritura (ej., "...")
+   - `finished: true` → Eliminar indicador de escritura, finalizar burbuja
 
-3. **Bubble State Management**: Track current transcription bubbles separately for input and output using IDs. Create new bubbles only when starting fresh transcriptions:
+3. **Gestión de Estado de Burbujas**: Rastrea burbujas de transcripción actuales separadamente para entrada y salida usando IDs. Crea nuevas burbujas solo al iniciar transcripciones frescas:
    ```javascript
    if (currentInputTranscriptionId == null) {
-       // Create new bubble
+       // Crear nueva burbuja
    } else {
-       // Update existing bubble
+       // Actualizar burbuja existente
    }
    ```
 
-4. **Turn Coordination**: When the model starts responding (first output transcription arrives), finalize any active input transcription to prevent overlapping updates.
+4. **Coordinación de Turnos**: Cuando el modelo comienza a responder (primera transcripción de salida llega), finaliza cualquier transcripción de entrada activa para prevenir actualizaciones superpuestas.
 
-This pattern ensures smooth real-time transcription display with proper handling of streaming updates, turn transitions, and visual feedback for users.
+Este patrón asegura visualización de transcripción en tiempo real suave con manejo adecuado de actualizaciones de transmisión, transiciones de turnos y retroalimentación visual para usuarios.
 
-### Multi-Agent Transcription Requirements
+### Requisitos de Transcripción Multi-Agente
 
-For multi-agent scenarios (agents with `sub_agents`), ADK automatically enables audio transcription regardless of your `RunConfig` settings. This automatic behavior is required for agent transfer functionality, where text transcriptions are used to pass conversation context between agents.
+Para escenarios multi-agente (agentes con `sub_agents`), ADK automáticamente habilita transcripción de audio independientemente de tu configuración `RunConfig`. Este comportamiento automático es requerido para funcionalidad de transferencia de agente, donde las transcripciones de texto se usan para pasar contexto de conversación entre agentes.
 
-**Automatic Enablement Behavior:**
+**Comportamiento de Habilitación Automática:**
 
-When an agent has `sub_agents` defined, ADK's `run_live()` method automatically enables both input and output audio transcription **even if you explicitly set them to `None`**. This ensures that agent transfers work correctly by providing text context to the next agent.
+Cuando un agente tiene `sub_agents` definidos, el método `run_live()` de ADK automáticamente habilita transcripción de audio tanto de entrada como salida **incluso si las estableces explícitamente a `None`**. Esto asegura que las transferencias de agente funcionen correctamente proporcionando contexto de texto al siguiente agente.
 
-**Why This Matters:**
+**Por Qué Esto Importa:**
 
-1. **Cannot be disabled**: You cannot turn off transcription in multi-agent scenarios
-2. **Required for functionality**: Agent transfer breaks without text context
-3. **Transparent to developers**: Transcription events are automatically available
-4. **Plan for data handling**: Your application will receive transcription events that must be processed
-
-**Implementation Details:**
-
-The automatic enablement happens in `Runner.run_live()` when both conditions are met:
-- The agent has `sub_agents` defined
-- A `LiveRequestQueue` is provided (bidirectional streaming mode)
-
-!!! note "Source"
-
-    [`runners.py:1395-1404`](https://github.com/google/adk-python/blob/fd2c0f556b786417a9f6add744827b07e7a06b7d/src/google/adk/runners.py#L1395-L1404)
-
-## Voice Configuration (Speech Config)
-
-The Live API provides voice configuration capabilities that allow you to customize how the model sounds when generating audio responses. ADK supports voice configuration at two levels: **agent-level** (per-agent voice settings) and **session-level** (global voice settings via RunConfig). This enables sophisticated multi-agent scenarios where different agents can speak with different voices, as well as single-agent applications with consistent voice characteristics.
-
-!!! note "Source"
-
-    [Gemini Live API - Capabilities Guide](https://ai.google.dev/gemini-api/docs/live-guide)
-
-### Agent-Level Configuration
-
-You can configure `speech_config` on a per-agent basis by creating a custom `Gemini` LLM instance with voice settings, then passing that instance to the `Agent`. This is particularly useful in multi-agent workflows where different agents represent different personas or roles.
-
-**Configuration:**
-
-```python
-from google.genai import types
-from google.adk.agents import Agent
-from google.adk.models.google_llm import Gemini
-from google.adk.tools import google_search
-
-# Create a Gemini instance with custom speech config
-custom_llm = Gemini(
-    model="gemini-2.5-flash-native-audio-preview-12-2025",
-    speech_config=types.SpeechConfig(
-        voice_config=types.VoiceConfig(
-            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                voice_name="Puck"
-            )
-        ),
-        language_code="en-US"
-    )
-)
-
-# Pass the Gemini instance to the agent
-agent = Agent(
-    model=custom_llm,
-    tools=[google_search],
-    instruction="You are a helpful assistant."
-)
-```
-
-### RunConfig-Level Configuration
-
-You can also set `speech_config` in RunConfig to apply a default voice configuration for all agents in the session. This is useful for single-agent applications or when you want a consistent voice across all agents.
-
-**Configuration:**
-
-```python
-from google.genai import types
-from google.adk.agents.run_config import RunConfig
-
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    speech_config=types.SpeechConfig(
-        voice_config=types.VoiceConfig(
-            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                voice_name="Kore"
-            )
-        ),
-        language_code="en-US"
-    )
-)
-```
-
-### Configuration Precedence
-
-When both agent-level (via `Gemini` instance) and session-level (via `RunConfig`) `speech_config` are provided, **agent-level configuration takes precedence**. This allows you to set a default voice in RunConfig while overriding it for specific agents.
-
-**Precedence Rules:**
-
-1. **Gemini instance has `speech_config`**: Use the Gemini's voice configuration (highest priority)
-2. **RunConfig has `speech_config`**: Use RunConfig's voice configuration
-3. **Neither specified**: Use Live API default voice (lowest priority)
-
-**Example:**
-
-```python
-from google.genai import types
-from google.adk.agents import Agent
-from google.adk.models.google_llm import Gemini
-from google.adk.agents.run_config import RunConfig
-from google.adk.tools import google_search
-
-# Create Gemini instance with custom voice
-custom_llm = Gemini(
-    model="gemini-2.5-flash-native-audio-preview-12-2025",
-    speech_config=types.SpeechConfig(
-        voice_config=types.VoiceConfig(
-            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                voice_name="Puck"  # Agent-level: highest priority
-            )
-        )
-    )
-)
-
-# Agent uses the Gemini instance with custom voice
-agent = Agent(
-    model=custom_llm,
-    tools=[google_search],
-    instruction="You are a helpful assistant."
-)
-
-# RunConfig with default voice (will be overridden by agent's Gemini config)
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    speech_config=types.SpeechConfig(
-        voice_config=types.VoiceConfig(
-            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                voice_name="Kore"  # This is overridden for the agent above
-            )
-        )
-    )
-)
-```
-
-### Multi-Agent Voice Configuration
-
-For multi-agent workflows, you can assign different voices to different agents by creating separate `Gemini` instances with distinct `speech_config` values. This creates more natural and distinguishable conversations where each agent has its own voice personality.
-
-**Multi-Agent Example:**
-
-```python
-from google.genai import types
-from google.adk.agents import Agent
-from google.adk.models.google_llm import Gemini
-from google.adk.agents.run_config import RunConfig
-
-# Customer service agent with a friendly voice
-customer_service_llm = Gemini(
-    model="gemini-2.5-flash-native-audio-preview-12-2025",
-    speech_config=types.SpeechConfig(
-        voice_config=types.VoiceConfig(
-            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                voice_name="Aoede"  # Friendly, warm voice
-            )
-        )
-    )
-)
-
-customer_service_agent = Agent(
-    name="customer_service",
-    model=customer_service_llm,
-    instruction="You are a friendly customer service representative."
-)
-
-# Technical support agent with a professional voice
-technical_support_llm = Gemini(
-    model="gemini-2.5-flash-native-audio-preview-12-2025",
-    speech_config=types.SpeechConfig(
-        voice_config=types.VoiceConfig(
-            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                voice_name="Charon"  # Professional, authoritative voice
-            )
-        )
-    )
-)
-
-technical_support_agent = Agent(
-    name="technical_support",
-    model=technical_support_llm,
-    instruction="You are a technical support specialist."
-)
-
-# Root agent that coordinates the workflow
-root_agent = Agent(
-    name="root_agent",
-    model="gemini-2.5-flash-native-audio-preview-12-2025",
-    instruction="Coordinate customer service and technical support.",
-    sub_agents=[customer_service_agent, technical_support_agent]
-)
-
-# RunConfig without speech_config - each agent uses its own voice
-run_config = RunConfig(
-    response_modalities=["AUDIO"]
-)
-```
-
-In this example, when the customer service agent speaks, users hear the "Aoede" voice. When the technical support agent takes over, users hear the "Charon" voice. This creates a more engaging and natural multi-agent experience.
-
-### Configuration Parameters
-
-**`voice_config`**: Specifies which prebuilt voice to use for audio generation
-- Configured through nested `VoiceConfig` and `PrebuiltVoiceConfig` objects
-- `voice_name`: String identifier for the prebuilt voice (e.g., "Kore", "Puck", "Charon")
-
-**`language_code`**: ISO 639 language code for speech synthesis (e.g., "en-US", "ja-JP")
-- Determines the language and regional accent for synthesized speech
-- **Model-specific behavior:**
-  - **Half-Cascade models**: Use the specified `language_code` for TTS output
-  - **Native audio models**: May ignore `language_code` and automatically determine language from conversation context. Consult model-specific documentation for support.
-
-### Available Voices
-
-The available voices vary by model architecture. To verify which voices are available for your specific model:
-- Check the [Gemini Live API documentation](https://ai.google.dev/gemini-api/docs/live-guide) for the complete list
-- Test voice configurations in development before deploying to production
-- If a voice is not supported, the Live API will return an error
-
-**Half-cascade models** support these voices:
-- Puck
-- Charon
-- Kore
-- Fenrir
-- Aoede
-- Leda
-- Orus
-- Zephyr
-
-**Native audio models** support an extended voice list that includes all half-cascade voices plus additional voices from the Text-to-Speech (TTS) service. For the complete list of voices supported by native audio models:
-- See the [Gemini Live API documentation](https://ai.google.dev/gemini-api/docs/live-guide#available-voices)
-- Or check the [Text-to-Speech voice list](https://cloud.google.com/text-to-speech/docs/voices) which native audio models also support
-
-The extended voice list provides more options for voice characteristics, accents, and languages compared to half-cascade models.
-
-### Platform Availability
-
-Voice configuration is supported on both platforms, but voice availability may vary:
-
-**Gemini Live API:**
-
-- ✅ Fully supported with documented voice options
-- ✅ Half-cascade models: 8 voices (Puck, Charon, Kore, Fenrir, Aoede, Leda, Orus, Zephyr)
-- ✅ Native audio models: Extended voice list (see [documentation](https://ai.google.dev/gemini-api/docs/live-guide))
-
-**Vertex AI Live API:**
-
-- ✅ Voice configuration supported
-- ⚠️ **Platform-specific difference**: Voice availability may differ from Gemini Live API
-- ⚠️ **Verification required**: Check [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api) for the current list of supported voices
-
-**Best practice**: Always test your chosen voice configuration on your target platform during development. If a voice is not supported on your platform/model combination, the Live API will return an error at connection time.
-
-### Important Notes
-
-- **Model compatibility**: Voice configuration is only available for Live API models with audio output capabilities
-- **Configuration levels**: You can set `speech_config` at the agent level (via `Gemini(speech_config=...)`) or session level (`RunConfig(speech_config=...)`). Agent-level configuration takes precedence.
-- **Agent-level usage**: To configure voice per agent, create a `Gemini` instance with `speech_config` and pass it to `Agent(model=gemini_instance)`
-- **Default behavior**: If `speech_config` is not specified at either level, the Live API uses a default voice
-- **Native audio models**: Automatically determine language based on conversation context; explicit `language_code` may not be supported
-- **Voice availability**: Specific voice names may vary by model; refer to the current Live API documentation for supported voices on your chosen model
-
-!!! note "Learn More"
-
-    For complete RunConfig reference, see [Part 4: Understanding RunConfig](part4.md).
-
-## Voice Activity Detection (VAD)
-
-Voice Activity Detection (VAD) is a Live API feature that automatically detects when users start and stop speaking, enabling natural turn-taking without manual control. VAD is **enabled by default** on all Live API models, allowing the model to automatically manage conversation turns based on detected speech activity.
-
-!!! note "Source"
-
-    [Gemini Live API - Voice Activity Detection](https://ai.google.dev/gemini-api/docs/live-guide#voice-activity-detection-vad)
-
-### How VAD Works
-
-When VAD is enabled (the default), the Live API automatically:
-
-1. **Detects speech start**: Identifies when a user begins speaking
-2. **Detects speech end**: Recognizes when a user stops speaking (natural pauses)
-3. **Manages turn-taking**: Allows the model to respond when the user finishes speaking
-4. **Handles interruptions**: Enables natural conversation flow with back-and-forth exchanges
-
-This creates a hands-free, natural conversation experience where users don't need to manually signal when they're speaking or done speaking.
-
-### When to Disable VAD
-
-You should disable automatic VAD in these scenarios:
-
-- **Push-to-talk implementations**: Your application manually controls when audio should be sent (e.g., audio interaction apps in noisy environments or rooms with cross-talk)
-- **Client-side voice detection**: Your application uses client-side VAD that sends activity signals to your server to reduce CPU and network overhead from continuous audio streaming
-- **Specific UX patterns**: Your design requires users to manually indicate when they're done speaking
-
-When you disable VAD (which is enabled by default), you must use manual activity signals (`ActivityStart`/`ActivityEnd`) to control conversation turns. See [Part 2: Activity Signals](part2.md#activity-signals) for details on manual turn control.
-
-### VAD Configurations
-
-**Default behavior (VAD enabled, no configuration needed):**
-
-```python
-from google.adk.agents.run_config import RunConfig
-
-# VAD is enabled by default - no explicit configuration needed
-run_config = RunConfig(
-    response_modalities=["AUDIO"]
-)
-```
-
-**Disable automatic VAD (enables manual turn control):**
-
-```python
-from google.genai import types
-from google.adk.agents.run_config import RunConfig
-
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    realtime_input_config=types.RealtimeInputConfig(
-        automatic_activity_detection=types.AutomaticActivityDetection(
-            disabled=True  # Disable automatic VAD
-        )
-    )
-)
-```
-
-### Client-Side VAD Example
-
-When building voice-enabled applications, you may want to implement client-side Voice Activity Detection (VAD) to reduce CPU and network overhead. This pattern combines browser-based VAD with manual activity signals to control when audio is sent to the server.
-
-**The architecture:**
-
-1. **Client-side**: Browser detects voice activity using Web Audio API (AudioWorklet with RMS-based VAD)
-2. **Signal coordination**: Send `activity_start` when voice detected, `activity_end` when voice stops
-3. **Audio streaming**: Send audio chunks only during active speech periods
-4. **Server configuration**: Disable automatic VAD since client handles detection
-
-#### Server-Side Configuration
-
-**Configuration:**
-
-```python
-from fastapi import FastAPI, WebSocket
-from google.adk.agents.run_config import RunConfig, StreamingMode
-from google.adk.agents.live_request_queue import LiveRequestQueue
-from google.genai import types
-
-# Configure RunConfig to disable automatic VAD
-run_config = RunConfig(
-    streaming_mode=StreamingMode.BIDI,
-    response_modalities=["AUDIO"],
-    realtime_input_config=types.RealtimeInputConfig(
-        automatic_activity_detection=types.AutomaticActivityDetection(
-            disabled=True  # Client handles VAD
-        )
-    )
-)
-```
-
-#### WebSocket Upstream Task
-
-**Implementation:**
-
-```python
-async def upstream_task(websocket: WebSocket, live_request_queue: LiveRequestQueue):
-    """Receives audio and activity signals from client."""
-    try:
-        while True:
-            # Receive JSON message from WebSocket
-            message = await websocket.receive_json()
-
-            if message.get("type") == "activity_start":
-                # Client detected voice - signal the model
-                live_request_queue.send_activity_start()
-
-            elif message.get("type") == "activity_end":
-                # Client detected silence - signal the model
-                live_request_queue.send_activity_end()
-
-            elif message.get("type") == "audio":
-                # Stream audio chunk to the model
-                import base64
-                audio_data = base64.b64decode(message["data"])
-                audio_blob = types.Blob(
-                    mime_type="audio/pcm;rate=16000",
-                    data=audio_data
-                )
-                live_request_queue.send_realtime(audio_blob)
-
-    except WebSocketDisconnect:
-        live_request_queue.close()
-```
-
-#### Client-Side VAD Implementation
-
-**Implementation:**
-
-```javascript
-// vad-processor.js - AudioWorklet processor for voice detection
-class VADProcessor extends AudioWorkletProcessor {
-    constructor() {
-        super();
-        this.threshold = 0.05;  // Adjust based on environment
-    }
-
-    process(inputs, outputs, parameters) {
-        const input = inputs[0];
-        if (input && input.length > 0) {
-            const channelData = input[0];
-            let sum = 0;
-
-            // Calculate RMS (Root Mean Square)
-            for (let i = 0; i < channelData.length; i++) {
-                sum += channelData[i] ** 2;
-            }
-            const rms = Math.sqrt(sum / channelData.length);
-
-            // Signal voice detection status
-            this.port.postMessage({
-                voice: rms > this.threshold,
-                rms: rms
-            });
-        }
-        return true;
-    }
-}
-registerProcessor('vad-processor', VADProcessor);
-```
-
-#### Client-Side Coordination
-
-**Coordinating VAD Signals:**
-
-```javascript
-// Main application logic
-let isSilence = true;
-let lastVoiceTime = 0;
-const SILENCE_TIMEOUT = 2000;  // 2 seconds of silence before sending activity_end
-
-// Set up VAD processor
-const vadNode = new AudioWorkletNode(audioContext, 'vad-processor');
-vadNode.port.onmessage = (event) => {
-    const { voice, rms } = event.data;
-
-    if (voice) {
-        // Voice detected
-        if (isSilence) {
-            // Transition from silence to speech - send activity_start
-            websocket.send(JSON.stringify({ type: "activity_start" }));
-            isSilence = false;
-        }
-        lastVoiceTime = Date.now();
-    } else {
-        // No voice detected - check if silence timeout exceeded
-        if (!isSilence && Date.now() - lastVoiceTime > SILENCE_TIMEOUT) {
-            // Sustained silence - send activity_end
-            websocket.send(JSON.stringify({ type: "activity_end" }));
-            isSilence = true;
-        }
-    }
-};
-
-// Set up audio recorder to stream chunks
-audioRecorderNode.port.onmessage = (event) => {
-    const audioData = event.data;  // Float32Array
-
-    // Only send audio when voice is detected
-    if (!isSilence) {
-        // Convert to PCM16 and send to server
-        const pcm16 = convertFloat32ToPCM(audioData);
-        const base64Audio = arrayBufferToBase64(pcm16);
-
-        websocket.send(JSON.stringify({
-            type: "audio",
-            mime_type: "audio/pcm;rate=16000",
-            data: base64Audio
-        }));
-    }
-};
-```
-
-**Key Implementation Details:**
-
-1. **RMS-Based Voice Detection**: The AudioWorklet processor calculates Root Mean Square (RMS) of audio samples to detect voice activity. RMS provides a simple but effective measure of audio energy that can distinguish speech from silence.
-
-2. **Adjustable Threshold**: The `threshold` value (0.05 in the example) can be tuned based on the environment. Lower thresholds are more sensitive (detect quieter speech but may trigger on background noise), higher thresholds require louder speech.
-
-3. **Silence Timeout**: Use a timeout (e.g., 2000ms) before sending `activity_end` to avoid prematurely ending a turn during natural pauses in speech. This creates a more natural conversation flow.
-
-4. **State Management**: Track `isSilence` state to detect transitions between silence and speech. Send `activity_start` only on silence→speech transitions, and `activity_end` only after sustained silence.
-
-5. **Conditional Audio Streaming**: Only send audio chunks when `!isSilence` to reduce bandwidth. This can save ~50-90% of network traffic depending on the conversation's speech-to-silence ratio.
-
-6. **AudioWorklet Thread Separation**: The VAD processor runs on the audio rendering thread, ensuring real-time performance without being affected by main thread JavaScript execution or network delays.
-
-#### Benefits of Client-Side VAD
-
-This pattern provides several advantages:
-
-- **Reduced CPU and network overhead**: Only send audio during active speech, not continuous silence
-- **Faster response**: Immediate local detection without server round-trip
-- **Better control**: Fine-tune VAD sensitivity based on client environment
-
-!!! note "Activity Signal Timing"
-
-    When using manual activity signals with client-side VAD:
-
-    - Always send `activity_start` **before** sending the first audio chunk
-    - Always send `activity_end` **after** sending the last audio chunk
-    - The model will only process audio between `activity_start` and `activity_end` signals
-    - Incorrect timing may cause the model to ignore audio or produce unexpected behavior
-
-## Proactivity and Affective Dialog
-
-The Live API offers advanced conversational features that enable more natural and context-aware interactions. **Proactive audio** allows the model to intelligently decide when to respond, offer suggestions without explicit prompts, or ignore irrelevant input. **Affective dialog** enables the model to detect and adapt to emotional cues in voice tone and content, adjusting its response style for more empathetic interactions. These features are currently supported only on native audio models.
-
-!!! note "Source"
-
-    [Gemini Live API - Proactive audio](https://ai.google.dev/gemini-api/docs/live-guide#proactive-audio) | [Affective dialog](https://ai.google.dev/gemini-api/docs/live-guide#affective-dialog)
-
-**Configuration:**
-
-```python
-from google.genai import types
-from google.adk.agents.run_config import RunConfig
-
-run_config = RunConfig(
-    # Model can initiate responses without explicit prompts
-    proactivity=types.ProactivityConfig(proactive_audio=True),
-
-    # Model adapts to user emotions
-    enable_affective_dialog=True
-)
-```
-
-**Proactivity:**
-
-When enabled, the model can:
-
-- Offer suggestions without being asked
-- Provide follow-up information proactively
-- Ignore irrelevant or off-topic input
-- Anticipate user needs based on context
-
-**Affective Dialog:**
-
-The model analyzes emotional cues in voice tone and content to:
-
-- Detect user emotions (frustrated, happy, confused, etc.)
-- Adapt response style and tone accordingly
-- Provide empathetic responses in customer service scenarios
-- Adjust formality based on detected sentiment
-
-**Practical Example - Customer Service Bot**:
-
-```python
-from google.genai import types
-from google.adk.agents.run_config import RunConfig, StreamingMode
-
-# Configure for empathetic customer service
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    streaming_mode=StreamingMode.BIDI,
-
-    # Model can proactively offer help
-    proactivity=types.ProactivityConfig(proactive_audio=True),
-
-    # Model adapts to customer emotions
-    enable_affective_dialog=True
-)
-
-# Example interaction (illustrative - actual model behavior may vary):
-# Customer: "I've been waiting for my order for three weeks..."
-# [Model may detect frustration in tone and adapt response]
-# Model: "I'm really sorry to hear about this delay. Let me check your order
-#        status right away. Can you provide your order number?"
-#
-# [Proactivity in action]
-# Model: "I see you previously asked about shipping updates. Would you like
-#        me to set up notifications for future orders?"
-#
-# Note: Proactive and affective behaviors are probabilistic. The model's
-# emotional awareness and proactive suggestions will vary based on context,
-# conversation history, and inherent model variability.
-```
-
-### Platform Compatibility
-
-These features are **model-specific** and have platform implications:
-
-**Gemini Live API:**
-
-- ✅ Supported on `gemini-2.5-flash-native-audio-preview-12-2025` (native audio model)
-- ❌ Not supported on `gemini-live-2.5-flash-preview` (half-cascade model)
-
-**Vertex AI Live API:**
-
-- ❌ Not currently supported on `gemini-live-2.5-flash` (half-cascade model)
-- ⚠️ **Platform-specific difference**: Proactivity and affective dialog require native audio models, which are currently only available on Gemini Live API
-
-**Key insight**: If your application requires proactive audio or affective dialog features, you must use Gemini Live API with a native audio model. Half-cascade models on either platform do not support these features.
-
-**Testing Proactivity**:
-
-To verify proactive behavior is working:
-
-1. **Create open-ended context**: Provide information without asking questions
-    ```text
-    User: "I'm planning a trip to Japan next month."
-    Expected: Model offers suggestions, asks follow-up questions
-    ```
-
-2. **Test emotional response**:
-    ```text
-    User: [frustrated tone] "This isn't working at all!"
-    Expected: Model acknowledges emotion, adjusts response style
-    ```
-
-3. **Monitor for unprompted responses**:
-    - Model should occasionally offer relevant information
-    - Should ignore truly irrelevant input
-    - Should anticipate user needs based on context
-
-**When to Disable**:
-
-Consider disabling proactivity/affective dialog for:
-- **Formal/professional contexts** where emotional adaptation is inappropriate
-- **High-precision tasks** where predictability is critical
-- **Accessibility applications** where consistent behavior is expected
-- **Testing/debugging** where deterministic behavior is needed
-
-## Summary
-
-In this part, you learned how to implement multimodal features in ADK Bidi-streaming applications, focusing on audio, image, and video capabilities. We covered audio specifications and format requirements, explored the differences between native audio and half-cascade architectures, examined how to send and receive audio streams through LiveRequestQueue and Events, and learned about advanced features like audio transcription, voice activity detection, and proactive/affective dialog. You now understand how to build natural voice-enabled AI experiences with proper audio handling, implement video streaming for visual context, and configure model-specific features based on platform capabilities. With this comprehensive understanding of ADK's multimodal streaming features, you're equipped to build production-ready applications that handle text, audio, image, and video seamlessly—creating rich, interactive AI experiences across diverse use cases.
-
-**Congratulations!** You've completed the ADK Bidi-streaming Developer Guide. You now have a comprehensive understanding of how to build production-ready real-time streaming AI applications with Google's Agent Development Kit.
-
-← [Previous: Part 4: Understanding RunConfig](part4.md)
+1. **No puede deshabilitarse**: No puedes desactivar la transcripción en escenarios multi-agente
+2. **Requerido para funcionalidad**: La transferencia de agente se rompe sin contexto de texto
+3. **Transparente para desarrolladores**: Los eventos de transcripción están automáticamente disponibles
+4. **Plan

@@ -1,45 +1,45 @@
-# Loop agents
+# Agentes de bucle
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-The `LoopAgent` is a workflow agent that executes its sub-agents in a loop (i.e. iteratively). It **_repeatedly runs_ a sequence of agents** for a specified number of iterations or until a termination condition is met.
+El `LoopAgent` es un agente de flujo de trabajo que ejecuta sus sub-agentes en un bucle (es decir, iterativamente). **_Ejecuta repetidamente_ una secuencia de agentes** durante un número especificado de iteraciones o hasta que se cumpla una condición de terminación.
 
-Use the `LoopAgent` when your workflow involves repetition or iterative refinement, such as revising code.
+Usa el `LoopAgent` cuando tu flujo de trabajo implique repetición o refinamiento iterativo, como revisar código.
 
-### Example
+### Ejemplo
 
-* You want to build an agent that can generate images of food, but sometimes when you want to generate a specific number of items (e.g. 5 bananas), it generates a different number of those items in the image, such as an image of 7 bananas. You have two tools: `Generate Image`, `Count Food Items`. Because you want to keep generating images until it either correctly generates the specified number of items, or after a certain number of iterations, you should build your agent using a `LoopAgent`.
+* Quieres construir un agente que pueda generar imágenes de comida, pero a veces cuando quieres generar un número específico de elementos (por ejemplo, 5 plátanos), genera un número diferente de esos elementos en la imagen, como una imagen de 7 plátanos. Tienes dos herramientas: `Generate Image`, `Count Food Items`. Como quieres seguir generando imágenes hasta que genere correctamente el número especificado de elementos, o después de un cierto número de iteraciones, debes construir tu agente usando un `LoopAgent`.
 
-As with other [workflow agents](index.md), the `LoopAgent` is not powered by an LLM, and is thus deterministic in how it executes. That being said, workflow agents are only concerned with their execution, such as in a loop, and not their internal logic; the tools or sub-agents of a workflow agent may or may not utilize LLMs.
+Al igual que con otros [agentes de flujo de trabajo](index.md), el `LoopAgent` no está impulsado por un LLM, y por lo tanto es determinista en cómo se ejecuta. Dicho esto, los agentes de flujo de trabajo solo se preocupan por su ejecución, como en un bucle, y no por su lógica interna; las herramientas o sub-agentes de un agente de flujo de trabajo pueden o no utilizar LLMs.
 
-### How it Works
+### Cómo Funciona
 
-When the `LoopAgent`'s `Run Async` method is called, it performs the following actions:
+Cuando se llama al método `Run Async` del `LoopAgent`, realiza las siguientes acciones:
 
-1. **Sub-Agent Execution:**  It iterates through the Sub Agents list _in order_. For _each_ sub-agent, it calls the agent's `Run Async` method.
-2. **Termination Check:**
+1. **Ejecución de Sub-Agentes:** Itera a través de la lista de Sub Agentes _en orden_. Para _cada_ sub-agente, llama al método `Run Async` del agente.
+2. **Verificación de Terminación:**
 
-    _Crucially_, the `LoopAgent` itself does _not_ inherently decide when to stop looping. You _must_ implement a termination mechanism to prevent infinite loops.  Common strategies include:
+    _Crucialmente_, el `LoopAgent` en sí mismo _no_ decide inherentemente cuándo dejar de hacer bucles. _Debes_ implementar un mecanismo de terminación para prevenir bucles infinitos. Las estrategias comunes incluyen:
 
-    * **Max Iterations**: Set a maximum number of iterations in the `LoopAgent`. **The loop will terminate after that many iterations**.
-    * **Escalation from sub-agent**: Design one or more sub-agents to evaluate a condition (e.g., "Is the document quality good enough?", "Has a consensus been reached?").  If the condition is met, the sub-agent can signal termination (e.g., by raising a custom event, setting a flag in a shared context, or returning a specific value).
+    * **Máximo de Iteraciones**: Establece un número máximo de iteraciones en el `LoopAgent`. **El bucle terminará después de esa cantidad de iteraciones**.
+    * **Escalamiento desde sub-agente**: Diseña uno o más sub-agentes para evaluar una condición (por ejemplo, "¿Es la calidad del documento lo suficientemente buena?", "¿Se ha alcanzado un consenso?"). Si se cumple la condición, el sub-agente puede señalar la terminación (por ejemplo, lanzando un evento personalizado, estableciendo una bandera en un contexto compartido, o retornando un valor específico).
 
 ![Loop Agent](../../assets/loop-agent.png)
 
-### Full Example: Iterative Document Improvement
+### Ejemplo Completo: Mejora Iterativa de Documentos
 
-Imagine a scenario where you want to iteratively improve a document:
+Imagina un escenario donde quieres mejorar iterativamente un documento:
 
-* **Writer Agent:** An `LlmAgent` that generates or refines a draft on a topic.
-* **Critic Agent:** An `LlmAgent` that critiques the draft, identifying areas for improvement.
+* **Agente Escritor:** Un `LlmAgent` que genera o refina un borrador sobre un tema.
+* **Agente Crítico:** Un `LlmAgent` que critica el borrador, identificando áreas de mejora.
 
     ```py
     LoopAgent(sub_agents=[WriterAgent, CriticAgent], max_iterations=5)
     ```
 
-In this setup, the `LoopAgent` would manage the iterative process.  The `CriticAgent` could be **designed to return a "STOP" signal when the document reaches a satisfactory quality level**, preventing further iterations. Alternatively, the `max iterations` parameter could be used to limit the process to a fixed number of cycles, or external logic could be implemented to make stop decisions. The **loop would run at most five times**, ensuring the iterative refinement doesn't continue indefinitely.
+En esta configuración, el `LoopAgent` gestionaría el proceso iterativo. El `CriticAgent` podría ser **diseñado para retornar una señal "STOP" cuando el documento alcance un nivel de calidad satisfactorio**, previniendo más iteraciones. Alternativamente, el parámetro `max iterations` podría usarse para limitar el proceso a un número fijo de ciclos, o se podría implementar lógica externa para tomar decisiones de parada. El **bucle se ejecutaría como máximo cinco veces**, asegurando que el refinamiento iterativo no continúe indefinidamente.
 
 ???+ "Full Code"
 

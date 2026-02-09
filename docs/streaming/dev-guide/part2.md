@@ -1,34 +1,34 @@
-# Part 2: Sending messages with LiveRequestQueue
+# Parte 2: Envío de mensajes con LiveRequestQueue
 
-In Part 1, you learned the four-phase lifecycle of ADK Bidi-streaming applications. This part focuses on the upstream flow—how your application sends messages to the agent using `LiveRequestQueue`.
+En la Parte 1, aprendiste el ciclo de vida de cuatro fases de las aplicaciones ADK Bidi-streaming. Esta parte se enfoca en el flujo ascendente: cómo tu aplicación envía mensajes al agente utilizando `LiveRequestQueue`.
 
-Unlike traditional APIs where different message types require different endpoints or channels, ADK provides a single unified interface through `LiveRequestQueue` and its `LiveRequest` message model. This part covers:
+A diferencia de las APIs tradicionales donde diferentes tipos de mensajes requieren diferentes endpoints o canales, ADK proporciona una única interfaz unificada a través de `LiveRequestQueue` y su modelo de mensaje `LiveRequest`. Esta parte cubre:
 
-- **Message types**: Sending text via `send_content()`, streaming audio/image/video via `send_realtime()`, controlling conversation turns with activity signals, and gracefully terminating sessions with control signals
-- **Concurrency patterns**: Understanding async queue management and event-loop thread safety
-- **Best practices**: Creating queues in async context, ensuring proper resource cleanup, and understanding message ordering guarantees
-- **Troubleshooting**: Diagnosing common issues like messages not being processed and queue lifecycle problems
+- **Tipos de mensajes**: Envío de texto mediante `send_content()`, streaming de audio/imagen/video mediante `send_realtime()`, control de turnos de conversación con señales de actividad, y terminación elegante de sesiones con señales de control
+- **Patrones de concurrencia**: Comprensión de la gestión de colas asíncronas y seguridad de hilos del event-loop
+- **Mejores prácticas**: Creación de colas en contexto asíncrono, garantía de limpieza adecuada de recursos, y comprensión de las garantías de orden de mensajes
+- **Solución de problemas**: Diagnóstico de problemas comunes como mensajes que no se procesan y problemas del ciclo de vida de la cola
 
-Understanding `LiveRequestQueue` is essential for building responsive streaming applications that handle multimodal inputs seamlessly within async event loops.
+Comprender `LiveRequestQueue` es esencial para construir aplicaciones de streaming responsivas que manejen entradas multimodales sin problemas dentro de event loops asíncronos.
 
-## LiveRequestQueue and LiveRequest
+## LiveRequestQueue y LiveRequest
 
-The `LiveRequestQueue` is your primary interface for sending messages to the Agent in streaming conversations. Rather than managing separate channels for text, audio, and control signals, ADK provides a unified `LiveRequest` container that handles all message types through a single, elegant API:
+El `LiveRequestQueue` es tu interfaz principal para enviar mensajes al Agente en conversaciones de streaming. En lugar de gestionar canales separados para texto, audio y señales de control, ADK proporciona un contenedor unificado `LiveRequest` que maneja todos los tipos de mensajes a través de una única API elegante:
 
 ```python title='Source reference: <a href="https://github.com/google/adk-python/blob/29c1115959b0084ac1169748863b35323da3cf50/src/google/adk/agents/live_request_queue.py" target="_blank">live_request_queue.py</a>'
 class LiveRequest(BaseModel):
-    content: Optional[Content] = None           # Text-based content and structured data
-    blob: Optional[Blob] = None                 # Audio/video data and binary streams
-    activity_start: Optional[ActivityStart] = None  # Signal start of user activity
-    activity_end: Optional[ActivityEnd] = None      # Signal end of user activity
-    close: bool = False                         # Graceful connection termination signal
+    content: Optional[Content] = None           # Contenido basado en texto y datos estructurados
+    blob: Optional[Blob] = None                 # Datos de audio/video y flujos binarios
+    activity_start: Optional[ActivityStart] = None  # Señal de inicio de actividad del usuario
+    activity_end: Optional[ActivityEnd] = None      # Señal de fin de actividad del usuario
+    close: bool = False                         # Señal de terminación elegante de conexión
 ```
 
-This streamlined design handles every streaming scenario you'll encounter. The `content` and `blob` fields handle different data types, the `activity_start` and `activity_end` fields enable activity signaling, and the `close` flag provides graceful termination semantics.
+Este diseño simplificado maneja cada escenario de streaming que encontrarás. Los campos `content` y `blob` manejan diferentes tipos de datos, los campos `activity_start` y `activity_end` habilitan señalización de actividad, y la bandera `close` proporciona semántica de terminación elegante.
 
-The `content` and `blob` fields are mutually exclusive—only one can be set per LiveRequest. While ADK does not enforce this client-side and will attempt to send both if set, the Live API backend will reject this with a validation error. ADK's convenience methods `send_content()` and `send_realtime()` automatically ensure this constraint is met by setting only one field, so **using these methods (rather than manually creating `LiveRequest` objects) is the recommended approach**.
+Los campos `content` y `blob` son mutuamente excluyentes: solo uno puede ser establecido por LiveRequest. Aunque ADK no impone esto del lado del cliente e intentará enviar ambos si se establecen, el backend de Live API rechazará esto con un error de validación. Los métodos convenientes de ADK `send_content()` y `send_realtime()` automáticamente aseguran que esta restricción se cumpla al establecer solo un campo, por lo que **usar estos métodos (en lugar de crear manualmente objetos `LiveRequest`) es el enfoque recomendado**.
 
-The following diagram illustrates how different message types flow from your application through `LiveRequestQueue` methods, into `LiveRequest` containers, and finally to the Live API:
+El siguiente diagrama ilustra cómo diferentes tipos de mensajes fluyen desde tu aplicación a través de los métodos de `LiveRequestQueue`, hacia contenedores `LiveRequest`, y finalmente a la Live API:
 
 ```mermaid
 graph LR
@@ -65,43 +65,43 @@ graph LR
     A4 --> B4 --> C4 --> D
 ```
 
-## Sending Different Message Types
+## Envío de diferentes tipos de mensajes
 
-`LiveRequestQueue` provides convenient methods for sending different message types to the agent. This section demonstrates practical patterns for text messages, audio/video streaming, activity signals for manual turn control, and session termination.
+`LiveRequestQueue` proporciona métodos convenientes para enviar diferentes tipos de mensajes al agente. Esta sección demuestra patrones prácticos para mensajes de texto, streaming de audio/video, señales de actividad para control manual de turnos, y terminación de sesión.
 
-### send_content(): Sends Text With Turn-by-Turn
+### send_content(): Envía texto con turno por turno
 
-The `send_content()` method sends text messages in turn-by-turn mode, where each message represents a discrete conversation turn. This signals a complete turn to the model, triggering immediate response generation.
+El método `send_content()` envía mensajes de texto en modo turno por turno, donde cada mensaje representa un turno de conversación discreto. Esto señala un turno completo al modelo, desencadenando la generación de respuesta inmediata.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L194-L199" target="_blank">main.py:194-199</a>'
 content = types.Content(parts=[types.Part(text=json_message["text"])])
 live_request_queue.send_content(content)
 ```
 
-**Using Content and Part with ADK Bidi-streaming:**
+**Uso de Content y Part con ADK Bidi-streaming:**
 
-- **`Content`** (`google.genai.types.Content`): A container that represents a single message or turn in the conversation. It holds an array of `Part` objects that together compose the complete message.
+- **`Content`** (`google.genai.types.Content`): Un contenedor que representa un único mensaje o turno en la conversación. Contiene un arreglo de objetos `Part` que juntos componen el mensaje completo.
 
-- **`Part`** (`google.genai.types.Part`): An individual piece of content within a message. For ADK Bidi-streaming with Live API, you'll use:
-  - `text`: Text content (including code) that you send to the model
+- **`Part`** (`google.genai.types.Part`): Una pieza individual de contenido dentro de un mensaje. Para ADK Bidi-streaming con Live API, usarás:
+  - `text`: Contenido de texto (incluyendo código) que envías al modelo
 
-In practice, most messages use a single text Part for ADK Bidi-streaming. The multi-part structure is designed for scenarios like:
-- Mixing text with function responses (automatically handled by ADK)
-- Combining text explanations with structured data
-- Future extensibility for new content types
+En la práctica, la mayoría de los mensajes usan un único Part de texto para ADK Bidi-streaming. La estructura multi-parte está diseñada para escenarios como:
+- Mezclar texto con respuestas de función (manejado automáticamente por ADK)
+- Combinar explicaciones de texto con datos estructurados
+- Extensibilidad futura para nuevos tipos de contenido
 
-For Live API, multimodal inputs (audio/video) use different mechanisms (see `send_realtime()` below), not multi-part Content.
+Para Live API, las entradas multimodales (audio/video) usan mecanismos diferentes (ver `send_realtime()` más abajo), no Content multi-parte.
 
-!!! note "Content and Part usage in ADK Bidi-streaming"
+!!! note "Uso de Content y Part en ADK Bidi-streaming"
     
-    While the Gemini API `Part` type supports many fields (`inline_data`, `file_data`, `function_call`, `function_response`, etc.), most are either handled automatically by ADK or use different mechanisms in Live API:
+    Aunque el tipo `Part` de la API Gemini soporta muchos campos (`inline_data`, `file_data`, `function_call`, `function_response`, etc.), la mayoría son manejados automáticamente por ADK o usan mecanismos diferentes en Live API:
     
-    - **Function calls**: ADK automatically handles the function calling loop - receiving function calls from the model, executing your registered functions, and sending responses back. You don't manually construct these.
-    - **Images/Video**: Do NOT use `send_content()` with `inline_data`. Instead, use `send_realtime(Blob(mime_type="image/jpeg", data=...))` for continuous streaming. See [Part 5: How to Use Image and Video](part5.md#how-to-use-image-and-video).
+    - **Llamadas a función**: ADK maneja automáticamente el ciclo de llamadas a función - recibiendo llamadas a función del modelo, ejecutando tus funciones registradas, y enviando respuestas de vuelta. No construyes estos manualmente.
+    - **Imágenes/Video**: NO uses `send_content()` con `inline_data`. En su lugar, usa `send_realtime(Blob(mime_type="image/jpeg", data=...))` para streaming continuo. Ver [Parte 5: Cómo usar imagen y video](part5.md#how-to-use-image-and-video).
 
-### send_realtime(): Sends Audio, Image and Video in Real-Time
+### send_realtime(): Envía audio, imagen y video en tiempo real
 
-The `send_realtime()` method sends binary data streams—primarily audio, image and video—flow through the `Blob` type, which handles transmission in realtime mode. Unlike text content that gets processed in turn-by-turn mode, blobs are designed for continuous streaming scenarios where data arrives in chunks. You provide raw bytes, and Pydantic automatically handles base64 encoding during JSON serialization for safe network transmission (configured in `LiveRequest.model_config`). The MIME type helps the model understand the content format.
+El método `send_realtime()` envía flujos de datos binarios—principalmente audio, imagen y video—fluyen a través del tipo `Blob`, que maneja la transmisión en modo tiempo real. A diferencia del contenido de texto que se procesa en modo turno por turno, los blobs están diseñados para escenarios de streaming continuo donde los datos llegan en fragmentos. Proporcionas bytes crudos, y Pydantic maneja automáticamente la codificación base64 durante la serialización JSON para transmisión de red segura (configurado en `LiveRequest.model_config`). El tipo MIME ayuda al modelo a entender el formato del contenido.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L181-L184" target="_blank">main.py:181-184</a>'
 audio_blob = types.Blob(
@@ -111,57 +111,57 @@ audio_blob = types.Blob(
 live_request_queue.send_realtime(audio_blob)
 ```
 
-!!! note "Learn More"
+!!! note "Aprender más"
     
-    For complete details on audio, image and video specifications, formats, and best practices, see [Part 5: How to Use Audio, Image and Video](part5.md).
+    Para detalles completos sobre especificaciones de audio, imagen y video, formatos, y mejores prácticas, ver [Parte 5: Cómo usar audio, imagen y video](part5.md).
 
-### Activity Signals
+### Señales de actividad
 
-Activity signals (`ActivityStart`/`ActivityEnd`) can **ONLY** be sent when automatic (server-side) Voice Activity Detection is **explicitly disabled** in your `RunConfig`. Use them when your application requires manual voice activity control, such as:
+Las señales de actividad (`ActivityStart`/`ActivityEnd`) **SOLO** pueden enviarse cuando la Detección de Actividad de Voz (VAD) automática (del lado del servidor) está **explícitamente deshabilitada** en tu `RunConfig`. Úsalas cuando tu aplicación requiere control manual de actividad de voz, tales como:
 
-- **Push-to-talk interfaces**: User explicitly controls when they're speaking (e.g., holding a button)
-- **Noisy environments**: Background noise makes automatic VAD unreliable, so you use client-side VAD or manual control
-- **Client-side VAD**: You implement your own VAD algorithm on the client to reduce network overhead by only sending audio when speech is detected
-- **Custom interaction patterns**: Non-speech scenarios like gesture-triggered interactions or timed audio segments
+- **Interfaces push-to-talk**: El usuario controla explícitamente cuándo está hablando (ej., manteniendo presionado un botón)
+- **Entornos ruidosos**: El ruido de fondo hace que VAD automático sea poco confiable, por lo que usas VAD del lado del cliente o control manual
+- **VAD del lado del cliente**: Implementas tu propio algoritmo VAD en el cliente para reducir sobrecarga de red enviando audio solo cuando se detecta habla
+- **Patrones de interacción personalizados**: Escenarios sin habla como interacciones activadas por gestos o segmentos de audio temporizados
 
-**What activity signals tell the model:**
+**Lo que las señales de actividad le dicen al modelo:**
 
-- `ActivityStart`: "The user is now speaking - start accumulating audio for processing"
-- `ActivityEnd`: "The user has finished speaking - process the accumulated audio and generate a response"
+- `ActivityStart`: "El usuario está ahora hablando - comienza a acumular audio para procesamiento"
+- `ActivityEnd`: "El usuario ha terminado de hablar - procesa el audio acumulado y genera una respuesta"
 
-Without these signals (when VAD is disabled), the model doesn't know when to start/stop listening for speech, so you must explicitly mark turn boundaries.
+Sin estas señales (cuando VAD está deshabilitado), el modelo no sabe cuándo empezar/detener la escucha del habla, por lo que debes marcar explícitamente los límites de turno.
 
-**Sending Activity Signals:**
+**Envío de señales de actividad:**
 
 ```python
 from google.genai import types
 
-# Manual activity signal pattern (e.g., push-to-talk)
-live_request_queue.send_activity_start()  # Signal: user started speaking
+# Patrón de señal de actividad manual (ej., push-to-talk)
+live_request_queue.send_activity_start()  # Señal: el usuario comenzó a hablar
 
-# Stream audio chunks while user holds the talk button
+# Transmite fragmentos de audio mientras el usuario mantiene presionado el botón de hablar
 while user_is_holding_button:
     audio_blob = types.Blob(mime_type="audio/pcm;rate=16000", data=audio_chunk)
     live_request_queue.send_realtime(audio_blob)
 
-live_request_queue.send_activity_end()  # Signal: user stopped speaking
+live_request_queue.send_activity_end()  # Señal: el usuario dejó de hablar
 ```
 
-**Default behavior (automatic VAD):** If you don't send activity signals, Live API's built-in VAD automatically detects speech boundaries in the audio stream you send via `send_realtime()`. This is the recommended approach for most applications.
+**Comportamiento predeterminado (VAD automático):** Si no envías señales de actividad, el VAD integrado de Live API detecta automáticamente los límites del habla en el flujo de audio que envías mediante `send_realtime()`. Este es el enfoque recomendado para la mayoría de las aplicaciones.
 
-!!! note "Learn More"
+!!! note "Aprender más"
     
-    For detailed comparison of automatic VAD vs manual activity signals, including when to disable VAD and best practices, see [Part 5: Voice Activity Detection](part5.md#voice-activity-detection-vad).
+    Para comparación detallada de VAD automático vs señales de actividad manual, incluyendo cuándo deshabilitar VAD y mejores prácticas, ver [Parte 5: Detección de actividad de voz](part5.md#voice-activity-detection-vad).
 
-### Control Signals
+### Señales de control
 
-The `close` signal provides graceful termination semantics for streaming sessions. It signals the system to cleanly close the model connection and end the Bidi-stream. In ADK Bidi-streaming, your application is responsible for sending the `close` signal explicitly:
+La señal `close` proporciona semántica de terminación elegante para sesiones de streaming. Señala al sistema que cierre limpiamente la conexión del modelo y finalice el Bidi-stream. En ADK Bidi-streaming, tu aplicación es responsable de enviar la señal `close` explícitamente:
 
-**Manual closure in BIDI mode:** When using `StreamingMode.BIDI` (Bidi-streaming), your application should manually call `close()` when the session terminates or when errors occur. This practice minimizes session resource usage.
+**Cierre manual en modo BIDI:** Cuando usas `StreamingMode.BIDI` (Bidi-streaming), tu aplicación debe llamar manualmente `close()` cuando la sesión termina o cuando ocurren errores. Esta práctica minimiza el uso de recursos de sesión.
 
-**Automatic closure in SSE mode:** When using the legacy `StreamingMode.SSE` (not Bidi-streaming), ADK automatically calls `close()` on the queue when it receives a `turn_complete=True` event from the model (see [`base_llm_flow.py:781`](https://github.com/google/adk-python/blob/fd2c0f556b786417a9f6add744827b07e7a06b7d/src/google/adk/flows/llm_flows/base_llm_flow.py#L780)).
+**Cierre automático en modo SSE:** Cuando usas el legado `StreamingMode.SSE` (no Bidi-streaming), ADK automáticamente llama `close()` en la cola cuando recibe un evento `turn_complete=True` del modelo (ver [`base_llm_flow.py:781`](https://github.com/google/adk-python/blob/fd2c0f556b786417a9f6add744827b07e7a06b7d/src/google/adk/flows/llm_flows/base_llm_flow.py#L780)).
 
-See [Part 4: Understanding RunConfig](part4.md#streamingmode-bidi-or-sse) for detailed comparison and when to use each mode.
+Ver [Parte 4: Comprender RunConfig](part4.md#streamingmode-bidi-or-sse) para comparación detallada y cuándo usar cada modo.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L238-L253" target="_blank">main.py:238-253</a>'
 try:
@@ -176,32 +176,32 @@ except WebSocketDisconnect:
 except Exception as e:
     logger.error(f"Unexpected error in streaming tasks: {e}", exc_info=True)
 finally:
-    # Always close the queue, even if exceptions occurred
+    # Siempre cierra la cola, incluso si ocurrieron excepciones
     logger.debug("Closing live_request_queue")
     live_request_queue.close()
 ```
 
-**What happens if you don't call close()?**
+**¿Qué sucede si no llamas close()?**
 
-Although ADK cleans up local resources automatically, failing to call `close()` in BIDI mode prevents sending a graceful termination signal to the Live API, which will then receive an abrupt disconnection after certain timeout period. This can lead to "zombie" Live API sessions that remain open on the cloud service, even though your application has finished with them. These stranded sessions may significantly decrease the number of concurrent sessions your application can handle, as they continue to count against your quota limits until they eventually timeout.
+Aunque ADK limpia recursos locales automáticamente, fallar al llamar `close()` en modo BIDI previene el envío de una señal de terminación elegante a Live API, que entonces recibirá una desconexión abrupta después de cierto período de tiempo de espera. Esto puede llevar a sesiones "zombie" de Live API que permanecen abiertas en el servicio en la nube, incluso aunque tu aplicación haya terminado con ellas. Estas sesiones abandonadas pueden disminuir significativamente el número de sesiones concurrentes que tu aplicación puede manejar, ya que continúan contando contra tus límites de cuota hasta que eventualmente expiran.
 
-!!! note "Learn More"
+!!! note "Aprender más"
     
-    For comprehensive error handling patterns during streaming, including when to use `break` vs `continue` and handling different error types, see [Part 3: Error Events](part3.md#error-events).
+    Para patrones comprensivos de manejo de errores durante streaming, incluyendo cuándo usar `break` vs `continue` y manejo de diferentes tipos de errores, ver [Parte 3: Eventos de error](part3.md#error-events).
 
-## Concurrency and Thread Safety
+## Concurrencia y seguridad de hilos
 
-Understanding how `LiveRequestQueue` handles concurrency is essential for building reliable streaming applications. The queue is built on `asyncio.Queue`, which means it's safe for concurrent access **within the same event loop thread** (the common case), but requires special handling when called from **different threads** (the advanced case). This section explains the design choices behind `LiveRequestQueue`'s API, when you can safely use it without extra precautions, and when you need thread-safety mechanisms like `loop.call_soon_threadsafe()`.
+Comprender cómo `LiveRequestQueue` maneja la concurrencia es esencial para construir aplicaciones de streaming confiables. La cola está construida sobre `asyncio.Queue`, lo que significa que es segura para acceso concurrente **dentro del mismo hilo del event loop** (el caso común), pero requiere manejo especial cuando se llama desde **diferentes hilos** (el caso avanzado). Esta sección explica las decisiones de diseño detrás de la API de `LiveRequestQueue`, cuándo puedes usarla de manera segura sin precauciones extra, y cuándo necesitas mecanismos de seguridad de hilos como `loop.call_soon_threadsafe()`.
 
-### Async Queue Management
+### Gestión de cola asíncrona
 
-`LiveRequestQueue` uses synchronous methods (`send_content()`, `send_realtime()`) instead of async methods, even though the underlying queue is consumed asynchronously. This design choice uses `asyncio.Queue.put_nowait()` - a non-blocking operation that doesn't require `await`.
+`LiveRequestQueue` usa métodos síncronos (`send_content()`, `send_realtime()`) en lugar de métodos asíncronos, aunque la cola subyacente se consume de manera asíncrona. Esta decisión de diseño usa `asyncio.Queue.put_nowait()` - una operación no bloqueante que no requiere `await`.
 
-**Why synchronous send methods?** Convenience and simplicity. You can call them from anywhere in your async code without `await`:
+**¿Por qué métodos de envío síncronos?** Conveniencia y simplicidad. Puedes llamarlos desde cualquier lugar en tu código asíncrono sin `await`:
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L169-L199" target="_blank">main.py:169-199</a>'
 async def upstream_task() -> None:
-    """Receives messages from WebSocket and sends to LiveRequestQueue."""
+    """Recibe mensajes de WebSocket y los envía a LiveRequestQueue."""
     while True:
         message = await websocket.receive()
 
@@ -222,43 +222,43 @@ async def upstream_task() -> None:
                 live_request_queue.send_content(content)
 ```
 
-This pattern mixes async I/O operations with sync CPU operations naturally. The send methods return immediately without blocking, allowing your application to stay responsive.
+Este patrón mezcla operaciones de I/O asíncronas con operaciones de CPU síncronas naturalmente. Los métodos de envío regresan inmediatamente sin bloquear, permitiendo que tu aplicación permanezca responsiva.
 
-#### Best Practice: Create Queue in Async Context
+#### Mejor práctica: Crear cola en contexto asíncrono
 
-Always create `LiveRequestQueue` within an async context (async function or coroutine) to ensure it uses the correct event loop:
+Siempre crea `LiveRequestQueue` dentro de un contexto asíncrono (función async o corrutina) para asegurar que use el event loop correcto:
 
 ```python
-# ✅ Recommended - Create in async context
+# ✅ Recomendado - Crear en contexto asíncrono
 async def main():
-    queue = LiveRequestQueue()  # Uses existing event loop from async context
-    # This is the preferred pattern - ensures queue uses the correct event loop
-    # that will run your streaming operations
+    queue = LiveRequestQueue()  # Usa el event loop existente del contexto asíncrono
+    # Este es el patrón preferido - asegura que la cola use el event loop correcto
+    # que ejecutará tus operaciones de streaming
 
-# ❌ Not recommended - Creates event loop automatically
-queue = LiveRequestQueue()  # Works but ADK auto-creates new loop
-# This works due to ADK's safety mechanism, but may cause issues with
-# loop coordination in complex applications or multi-threaded scenarios
+# ❌ No recomendado - Crea event loop automáticamente
+queue = LiveRequestQueue()  # Funciona pero ADK auto-crea nuevo loop
+# Esto funciona debido al mecanismo de seguridad de ADK, pero puede causar problemas con
+# coordinación de loop en aplicaciones complejas o escenarios multi-hilo
 ```
 
-**Why this matters:** `LiveRequestQueue` requires an event loop to exist when instantiated. ADK includes a safety mechanism that auto-creates a loop if none exists, but relying on this can cause unexpected behavior in multi-threaded scenarios or with custom event loop configurations.
+**Por qué esto importa:** `LiveRequestQueue` requiere que exista un event loop cuando se instancia. ADK incluye un mecanismo de seguridad que auto-crea un loop si no existe ninguno, pero confiar en esto puede causar comportamiento inesperado en escenarios multi-hilo o con configuraciones personalizadas de event loop.
 
-## Message Ordering Guarantees
+## Garantías de orden de mensajes
 
-`LiveRequestQueue` provides predictable message delivery behavior:
+`LiveRequestQueue` proporciona comportamiento de entrega de mensajes predecible:
 
-| Guarantee | Description | Impact |
+| Garantía | Descripción | Impacto |
 |-----------|-------------|--------|
-| **FIFO ordering** | Messages processed in send order (guaranteed by underlying `asyncio.Queue`) | Maintains conversation context and interaction consistency |
-| **No coalescing** | Each message delivered independently | No automatic batching—each send operation creates one request |
-| **Unbounded by default** | Queue accepts unlimited messages without blocking | **Benefit**: Simplifies client code (no blocking on send)<br>**Risk**: Memory growth if sending faster than processing<br>**Mitigation**: Monitor queue depth in production |
+| **Orden FIFO** | Mensajes procesados en orden de envío (garantizado por el `asyncio.Queue` subyacente) | Mantiene contexto de conversación y consistencia de interacción |
+| **Sin coalescencia** | Cada mensaje entregado independientemente | Sin agrupamiento automático—cada operación de envío crea una solicitud |
+| **Sin límite por defecto** | La cola acepta mensajes ilimitados sin bloquear | **Beneficio**: Simplifica el código del cliente (sin bloqueo en envío)<br>**Riesgo**: Crecimiento de memoria si envía más rápido que el procesamiento<br>**Mitigación**: Monitorear profundidad de cola en producción |
 
-> **Production Tip**: For high-throughput audio/video streaming, monitor `live_request_queue._queue.qsize()` to detect backpressure. If the queue depth grows continuously, slow down your send rate or implement batching. Note: `_queue` is an internal attribute and may change in future releases; use with caution.
+> **Consejo de producción**: Para streaming de audio/video de alto rendimiento, monitorea `live_request_queue._queue.qsize()` para detectar contrapresión. Si la profundidad de la cola crece continuamente, desacelera tu tasa de envío o implementa agrupamiento. Nota: `_queue` es un atributo interno y puede cambiar en versiones futuras; usa con precaución.
 
-## Summary
+## Resumen
 
-In this part, you learned how `LiveRequestQueue` provides a unified interface for sending messages to ADK streaming agents within an async event loop. We covered the `LiveRequest` message model and explored how to send different message types: text content via `send_content()`, audio/video blobs via `send_realtime()`, activity signals for manual turn control, and control signals for graceful termination via `close()`. You also learned best practices for async queue management, creating queues in async context, resource cleanup, and message ordering. You now understand how to use `LiveRequestQueue` as the upstream communication channel in your Bidi-streaming applications, enabling users to send messages concurrently while receiving agent responses. Next, you'll learn how to handle the downstream flow—processing the events that agents generate in response to these messages.
+En esta parte, aprendiste cómo `LiveRequestQueue` proporciona una interfaz unificada para enviar mensajes a agentes de streaming ADK dentro de un event loop asíncrono. Cubrimos el modelo de mensaje `LiveRequest` y exploramos cómo enviar diferentes tipos de mensajes: contenido de texto mediante `send_content()`, blobs de audio/video mediante `send_realtime()`, señales de actividad para control manual de turnos, y señales de control para terminación elegante mediante `close()`. También aprendiste mejores prácticas para gestión de cola asíncrona, creación de colas en contexto asíncrono, limpieza de recursos, y orden de mensajes. Ahora comprendes cómo usar `LiveRequestQueue` como el canal de comunicación ascendente en tus aplicaciones Bidi-streaming, permitiendo a los usuarios enviar mensajes concurrentemente mientras reciben respuestas del agente. A continuación, aprenderás cómo manejar el flujo descendente—procesando los eventos que los agentes generan en respuesta a estos mensajes.
 
 ---
 
-← [Previous: Part 1: Introduction to ADK Bidi-streaming](part1.md) | [Next: Part 3: Event Handling with run_live()](part3.md) →
+← [Anterior: Parte 1: Introducción a ADK Bidi-streaming](part1.md) | [Siguiente: Parte 3: Manejo de eventos con run_live()](part3.md) →

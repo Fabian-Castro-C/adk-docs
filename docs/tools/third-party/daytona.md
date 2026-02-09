@@ -1,51 +1,51 @@
 ---
 catalog_title: Daytona
-catalog_description: Execute code, run shell commands, and manage files in secure sandboxes
+catalog_description: Ejecuta código, ejecuta comandos de shell y administra archivos en sandboxes seguros
 catalog_icon: /adk-docs/assets/plugins-daytona.png
 ---
 
 # Daytona
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-The [Daytona ADK plugin](https://github.com/daytonaio/daytona-adk-plugin) connects your ADK
-agent to [Daytona](https://www.daytona.io/) sandboxes. This integration gives
-your agent the ability to execute code, run shell commands, and manage files in
-isolated environments, enabling secure execution of AI-generated code.
+El [plugin ADK de Daytona](https://github.com/daytonaio/daytona-adk-plugin) conecta tu agente
+ADK a sandboxes de [Daytona](https://www.daytona.io/). Esta integración le da
+a tu agente la capacidad de ejecutar código, ejecutar comandos de shell y administrar archivos en
+entornos aislados, habilitando la ejecución segura de código generado por IA.
 
-## Use cases
+## Casos de uso
 
-- **Secure Code Execution**: Run Python, JavaScript, and TypeScript code in
-  isolated sandboxes without risking your local environment.
+- **Ejecución Segura de Código**: Ejecuta código Python, JavaScript y TypeScript en
+  sandboxes aislados sin arriesgar tu entorno local.
 
-- **Shell Command Automation**: Execute shell commands with configurable
-  timeouts and working directories for build tasks, installations, or system
-  operations.
+- **Automatización de Comandos Shell**: Ejecuta comandos de shell con tiempos de espera
+  configurables y directorios de trabajo para tareas de construcción, instalaciones u
+  operaciones del sistema.
 
-- **File Management**: Upload scripts and datasets to sandboxes, then retrieve
-  generated outputs and results.
+- **Administración de Archivos**: Sube scripts y conjuntos de datos a sandboxes, luego recupera
+  salidas generadas y resultados.
 
-## Prerequisites
+## Prerrequisitos
 
-- A [Daytona](https://www.daytona.io/) account
-- Daytona API key
+- Una cuenta de [Daytona](https://www.daytona.io/)
+- Clave API de Daytona
 
-## Installation
+## Instalación
 
 ```bash
 pip install daytona-adk
 ```
 
-## Use with agent
+## Uso con agente
 
 ```python
 from daytona_adk import DaytonaPlugin
 from google.adk.agents import Agent
 
 plugin = DaytonaPlugin(
-  api_key="your-daytona-api-key" # Or set DAYTONA_API_KEY environment variable
+  api_key="your-daytona-api-key" # O establece la variable de entorno DAYTONA_API_KEY
 )
 
 root_agent = Agent(
@@ -56,25 +56,25 @@ root_agent = Agent(
 )
 ```
 
-## Available tools
+## Herramientas disponibles
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`execute_code_in_daytona` | Execute Python, JavaScript, or TypeScript code
-`execute_command_in_daytona` | Run shell commands
-`upload_file_to_daytona` | Upload scripts or data files to the sandbox
-`read_file_from_daytona` | Read script outputs or generated files
-`start_long_running_command_daytona` | Start background processes (servers, watchers)
+`execute_code_in_daytona` | Ejecuta código Python, JavaScript o TypeScript
+`execute_command_in_daytona` | Ejecuta comandos de shell
+`upload_file_to_daytona` | Sube scripts o archivos de datos al sandbox
+`read_file_from_daytona` | Lee salidas de scripts o archivos generados
+`start_long_running_command_daytona` | Inicia procesos en segundo plano (servidores, observadores)
 
-## Learn more
+## Aprende más
 
-For a detailed guide on building a code generator agent that writes, tests, and
-verifies code in secure sandboxes, check out
-[this guide](https://www.daytona.io/docs/en/google-adk-code-generator).
+Para una guía detallada sobre cómo construir un agente generador de código que escribe, prueba y
+verifica código en sandboxes seguros, consulta
+[esta guía](https://www.daytona.io/docs/en/google-adk-code-generator).
 
-## Additional resources
+## Recursos adicionales
 
-- [Code Generator Agent Guide](https://www.daytona.io/docs/en/google-adk-code-generator)
-- [Daytona ADK on PyPI](https://pypi.org/project/daytona-adk/)
-- [Daytona ADK on GitHub](https://github.com/daytonaio/daytona-adk-plugin)
-- [Daytona Documentation](https://www.daytona.io/docs)
+- [Guía del Agente Generador de Código](https://www.daytona.io/docs/en/google-adk-code-generator)
+- [Daytona ADK en PyPI](https://pypi.org/project/daytona-adk/)
+- [Daytona ADK en GitHub](https://github.com/daytonaio/daytona-adk-plugin)
+- [Documentación de Daytona](https://www.daytona.io/docs)

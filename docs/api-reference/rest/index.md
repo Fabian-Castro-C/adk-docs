@@ -1,51 +1,51 @@
-# REST API Reference
+# Referencia de la API REST
 
-This page provides a reference for the REST API provided by the ADK web server.
-For details on using the ADK REST API in practice, see
-[Use the API Server](/adk-docs/runtime/api-server/).
+Esta página proporciona una referencia para la API REST proporcionada por el servidor web de ADK.
+Para obtener detalles sobre el uso de la API REST de ADK en la práctica, consulte
+[Usar el Servidor API](/adk-docs/runtime/api-server/).
 
 !!! tip
-    You can view an updated API reference on a running ADK web server by browsing
-    the `/docs` location, for example at: `http://localhost:8000/docs`
+    Puede ver una referencia de API actualizada en un servidor web ADK en ejecución navegando
+    a la ubicación `/docs`, por ejemplo en: `http://localhost:8000/docs`
 
 ## Endpoints
 
 ### `/run`
 
-This endpoint executes an agent run. It takes a JSON payload with the details of the run and returns a list of events generated during the run.
+Este endpoint ejecuta una ejecución del agente. Recibe un payload JSON con los detalles de la ejecución y devuelve una lista de eventos generados durante la ejecución.
 
-**Request Body**
+**Cuerpo de la Solicitud**
 
-The request body should be a JSON object with the following fields:
+El cuerpo de la solicitud debe ser un objeto JSON con los siguientes campos:
 
-- `app_name` (string, required): The name of the agent to run.
-- `user_id` (string, required): The ID of the user.
-- `session_id` (string, required): The ID of the session.
-- `new_message` (Content, required): The new message to send to the agent. See the [Content](#content-object) section for more details.
-- `streaming` (boolean, optional): Whether to use streaming. Defaults to `false`.
-- `state_delta` (object, optional): A delta of the state to apply before the run.
+- `app_name` (string, requerido): El nombre del agente a ejecutar.
+- `user_id` (string, requerido): El ID del usuario.
+- `session_id` (string, requerido): El ID de la sesión.
+- `new_message` (Content, requerido): El nuevo mensaje a enviar al agente. Consulte la sección [Content](#content-object) para más detalles.
+- `streaming` (boolean, opcional): Si se debe usar streaming. Por defecto es `false`.
+- `state_delta` (object, opcional): Un delta del estado a aplicar antes de la ejecución.
 
-**Response Body**
+**Cuerpo de la Respuesta**
 
-The response body is a JSON array of [Event](#event-object) objects.
+El cuerpo de la respuesta es un array JSON de objetos [Event](#event-object).
 
 ### `/run_sse`
 
-This endpoint executes an agent run using Server-Sent Events (SSE) for streaming responses. It takes the same JSON payload as the `/run` endpoint.
+Este endpoint ejecuta una ejecución del agente usando Server-Sent Events (SSE) para respuestas de streaming. Recibe el mismo payload JSON que el endpoint `/run`.
 
-**Request Body**
+**Cuerpo de la Solicitud**
 
-The request body is the same as for the `/run` endpoint.
+El cuerpo de la solicitud es el mismo que para el endpoint `/run`.
 
-**Response Body**
+**Cuerpo de la Respuesta**
 
-The response is a stream of Server-Sent Events. Each event is a JSON object representing an [Event](#event-object).
+La respuesta es un flujo de Server-Sent Events. Cada evento es un objeto JSON que representa un [Event](#event-object).
 
-## Objects
+## Objetos
 
-### `Content` object
+### Objeto `Content`
 
-The `Content` object represents the content of a message. It has the following structure:
+El objeto `Content` representa el contenido de un mensaje. Tiene la siguiente estructura:
 
 ```json
 {
@@ -58,14 +58,14 @@ The `Content` object represents the content of a message. It has the following s
 }
 ```
 
-- `parts`: A list of parts. Each part can be either text or a function call.
-- `role`: The role of the author of the message (e.g., "user", "model").
+- `parts`: Una lista de partes. Cada parte puede ser texto o una llamada a función.
+- `role`: El rol del autor del mensaje (por ejemplo, "user", "model").
 
-### `Event` object
+### Objeto `Event`
 
-The `Event` object represents an event that occurred during an agent run. It has a complex structure with many optional fields. The most important fields are:
+El objeto `Event` representa un evento que ocurrió durante una ejecución del agente. Tiene una estructura compleja con muchos campos opcionales. Los campos más importantes son:
 
-- `id`: The ID of the event.
-- `timestamp`: The timestamp of the event.
-- `author`: The author of the event.
-- `content`: The content of the event.
+- `id`: El ID del evento.
+- `timestamp`: La marca de tiempo del evento.
+- `author`: El autor del evento.
+- `content`: El contenido del evento.

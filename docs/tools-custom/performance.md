@@ -1,49 +1,49 @@
-# Increase tool performance with parallel execution
+# Mejora el rendimiento de las herramientas con ejecución paralela
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.10.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v1.10.0</span>
 </div>
 
-Starting with Agent Development Kit (ADK) version 1.10.0 for Python, the framework
-attempts to run any agent-requested 
-[function tools](/adk-docs/tools-custom/function-tools/) 
-in parallel. This behavior can significantly improve the performance and
-responsiveness of your agents, particularly for agents that rely on multiple
-external APIs or long-running tasks. For example, if you have 3 tools that each
-take 2 seconds, by running them in parallel, the total execution time will be
-closer to 2 seconds, instead of 6 seconds. The ability to run tool functions
-parallel can improve the performance of your agents, particularly in the
-following scenarios:
+A partir de la versión 1.10.0 del Agent Development Kit (ADK) para Python, el framework
+intenta ejecutar cualquier 
+[herramienta de función](/adk-docs/tools-custom/function-tools/) 
+solicitada por el agente en paralelo. Este comportamiento puede mejorar significativamente el rendimiento y
+la capacidad de respuesta de tus agentes, particularmente para agentes que dependen de múltiples
+APIs externas o tareas de larga duración. Por ejemplo, si tienes 3 herramientas que cada una
+tarda 2 segundos, al ejecutarlas en paralelo, el tiempo total de ejecución será
+más cercano a 2 segundos, en lugar de 6 segundos. La capacidad de ejecutar funciones de herramientas
+en paralelo puede mejorar el rendimiento de tus agentes, particularmente en los
+siguientes escenarios:
 
--   **Research tasks:** Where the agent collects information from multiple
-    sources before proceeding to the next stage of the workflow.
--   **API calls:** Where the agent accesses several APIs independently, such
-    as searching for available flights using APIs from multiple airlines.
--   **Publishing and communication tasks:** When the agent needs to publish
-    or communicate through multiple, independent channels or multiple recipients.
+-   **Tareas de investigación:** Donde el agente recopila información de múltiples
+    fuentes antes de proceder a la siguiente etapa del flujo de trabajo.
+-   **Llamadas a API:** Donde el agente accede a varias APIs de forma independiente, como
+    buscar vuelos disponibles usando APIs de múltiples aerolíneas.
+-   **Tareas de publicación y comunicación:** Cuando el agente necesita publicar
+    o comunicarse a través de múltiples canales independientes o múltiples destinatarios.
 
-However, your custom tools must be built with asynchronous execution support to
-enable this performance improvement. This guide explains how parallel tool
-execution works in the ADK and how to build your tools to take full advantage of
-this processing feature.
+Sin embargo, tus herramientas personalizadas deben estar construidas con soporte de ejecución asíncrona para
+habilitar esta mejora de rendimiento. Esta guía explica cómo funciona la ejecución paralela de herramientas
+en el ADK y cómo construir tus herramientas para aprovechar al máximo esta
+característica de procesamiento.
 
 !!! warning
-    Any ADK Tools that use synchronous processing in a set of tool function
-    calls will block other tools from executing in parallel, even if the other
-    tools allow for parallel execution.
+    Cualquier herramienta de ADK que use procesamiento síncrono en un conjunto de llamadas a funciones de herramientas
+    bloqueará la ejecución paralela de otras herramientas, incluso si las otras
+    herramientas permiten la ejecución paralela.
 
-## Build parallel-ready tools
+## Construye herramientas listas para paralelización
 
-Enable parallel execution of your tool functions by defining them as
-asynchronous functions. In Python code, this means using `async def` and `await`
-syntax which allows the ADK to run them concurrently in an `asyncio` event loop.
-The following sections show examples of agent tools built for parallel
-processing and asynchronous operations.
+Habilita la ejecución paralela de tus funciones de herramientas definiéndolas como
+funciones asíncronas. En código Python, esto significa usar la sintaxis `async def` y `await`
+que permite al ADK ejecutarlas concurrentemente en un bucle de eventos `asyncio`.
+Las siguientes secciones muestran ejemplos de herramientas de agentes construidas para procesamiento
+paralelo y operaciones asíncronas.
 
-### Example of http web call
+### Ejemplo de llamada web http
 
-The following code example show how to modify the `get_weather()` function to
-operate asynchronously and allow for parallel execution:
+El siguiente ejemplo de código muestra cómo modificar la función `get_weather()` para
+operar de forma asíncrona y permitir la ejecución paralela:
 
 ```python
  async def get_weather(city: str) -> dict:
@@ -52,10 +52,10 @@ operate asynchronously and allow for parallel execution:
               return await response.json()
 ```
 
-### Example of database call
+### Ejemplo de llamada a base de datos
 
-The following code example show how to write a database calling function to
-operate asynchronously:
+El siguiente ejemplo de código muestra cómo escribir una función de llamada a base de datos para
+operar de forma asíncrona:
 
 ```python
 async def query_database(query: str) -> list:
@@ -63,40 +63,40 @@ async def query_database(query: str) -> list:
           return await conn.fetch(query)
 ```
 
-### Example of yielding behavior for long loops
+### Ejemplo de comportamiento de cesión para bucles largos
 
-In cases where a tool is processing multiple requests or numerous long-running
-requests, consider adding yielding code to allow other tools to execute, as
-shown in the following code sample:
+En casos donde una herramienta está procesando múltiples solicitudes o numerosas solicitudes
+de larga duración, considera agregar código de cesión para permitir que otras herramientas se ejecuten, como
+se muestra en el siguiente ejemplo de código:
 
 ```python
 async def process_data(data: list) -> dict:
       results = []
       for i, item in enumerate(data):
-          processed = await process_item(item)  # Yield point
+          processed = await process_item(item)  # Punto de cesión
           results.append(processed)
 
-          # Add periodic yield points for long loops
+          # Agregar puntos de cesión periódicos para bucles largos
           if i % 100 == 0:
-              await asyncio.sleep(0)  # Yield control
+              await asyncio.sleep(0)  # Ceder el control
       return {"results": results}
 ```
 
-!!! tip "Important"
-    Use the `asyncio.sleep()` function for pauses to avoid blocking
-    execution of other functions.
+!!! tip "Importante"
+    Usa la función `asyncio.sleep()` para pausas para evitar bloquear la
+    ejecución de otras funciones.
 
-### Example of thread pools for intensive operations
+### Ejemplo de pools de hilos para operaciones intensivas
 
-When performing processing-intensive functions, consider creating thread pools
-for better management of available computing resources, as shown in the
-following example:
+Cuando realices funciones intensivas en procesamiento, considera crear pools de hilos
+para una mejor gestión de los recursos de computación disponibles, como se muestra en el
+siguiente ejemplo:
 
 ```python
 async def cpu_intensive_tool(data: list) -> dict:
       loop = asyncio.get_event_loop()
 
-      # Use thread pool for CPU-bound work
+      # Usar pool de hilos para trabajo intensivo de CPU
       with ThreadPoolExecutor() as executor:
           result = await loop.run_in_executor(
               executor,
@@ -106,12 +106,12 @@ async def cpu_intensive_tool(data: list) -> dict:
       return {"result": result}
 ```
 
-### Example of process chunking
+### Ejemplo de división en fragmentos del procesamiento
 
-When performing processes on long lists or large amounts of data, consider
-combining a thread pool technique with dividing up processing into chunks of
-data, and yielding processing time between the chunks, as shown in the following
-example:
+Cuando realices procesos en listas largas o grandes cantidades de datos, considera
+combinar una técnica de pool de hilos con dividir el procesamiento en fragmentos de
+datos, y ceder tiempo de procesamiento entre los fragmentos, como se muestra en el siguiente
+ejemplo:
 
 ```python
  async def process_large_dataset(dataset: list) -> dict:
@@ -121,7 +121,7 @@ example:
       for i in range(0, len(dataset), chunk_size):
           chunk = dataset[i:i + chunk_size]
 
-          # Process chunk in thread pool
+          # Procesar fragmento en pool de hilos
           loop = asyncio.get_event_loop()
           with ThreadPoolExecutor() as executor:
               chunk_result = await loop.run_in_executor(
@@ -130,17 +130,17 @@ example:
 
           results.extend(chunk_result)
 
-          # Yield control between chunks
+          # Ceder el control entre fragmentos
           await asyncio.sleep(0)
 
       return {"total_processed": len(results), "results": results}
 ```
 
-## Write parallel-ready prompts and tool descriptions
+## Escribe prompts y descripciones de herramientas listas para paralelización
 
-When building prompts for AI models, consider explicitly specifying or hinting
-that function calls be made in parallel. The following example of an AI prompt
-directs the model to use tools in parallel:
+Al construir prompts para modelos de IA, considera especificar explícitamente o insinuar
+que las llamadas a funciones se realicen en paralelo. El siguiente ejemplo de un prompt de IA
+dirige al modelo a usar herramientas en paralelo:
 
 ```none
 When users ask for multiple pieces of information, always call functions in
@@ -156,8 +156,8 @@ parallel.
   Always prefer multiple specific function calls over single complex calls.
 ```
 
-The following example shows a tool function description that hints at more
-efficient use through parallel execution:
+El siguiente ejemplo muestra una descripción de función de herramienta que insinúa un uso más
+eficiente a través de la ejecución paralela:
 
 ```python
  async def get_weather(city: str) -> dict:
@@ -171,15 +171,14 @@ efficient use through parallel execution:
       Returns:
           Weather data including temperature, conditions, humidity
       """
-      await asyncio.sleep(2)  # Simulate API call
+      await asyncio.sleep(2)  # Simular llamada a API
       return {"city": city, "temp": 72, "condition": "sunny"}
 ```
 
-## Next steps
+## Próximos pasos
 
-For more information on building Tools for agents and function calling, see
-[Function Tools](/adk-docs/tools-custom/function-tools/). For
-more detailed examples of tools that take advantage of parallel processing, see
-the samples in the
-[adk-python](https://github.com/google/adk-python/tree/main/contributing/samples/parallel_functions)
-repository.
+Para más información sobre la construcción de herramientas para agentes y llamadas a funciones, consulta
+[Herramientas de Función](/adk-docs/tools-custom/function-tools/). Para
+ejemplos más detallados de herramientas que aprovechan el procesamiento paralelo, consulta
+las muestras en el repositorio
+[adk-python](https://github.com/google/adk-python/tree/main/contributing/samples/parallel_functions).

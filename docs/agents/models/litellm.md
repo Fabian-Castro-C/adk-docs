@@ -1,90 +1,90 @@
-# LiteLLM model connector for ADK agents
+# Conector de modelo LiteLLM para agentes ADK
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-[LiteLLM](https://docs.litellm.ai/) is a Python library that acts as a
-translation layer for models and model hosting services, providing a
-standardized, OpenAI-compatible interface to over 100+ LLMs. ADK provides
-integration through the LiteLLM library, allowing you to access a vast range of
-LLMs from providers like OpenAI, Anthropic (non-Vertex AI), Cohere, and many
-others. You can run open-source models locally or self-host them and integrate
-them using LiteLLM for operational control, cost savings, privacy, or offline
-use cases.
+[LiteLLM](https://docs.litellm.ai/) es una biblioteca de Python que actúa como una
+capa de traducción para modelos y servicios de alojamiento de modelos, proporcionando una
+interfaz estandarizada compatible con OpenAI para más de 100 LLMs. ADK proporciona
+integración a través de la biblioteca LiteLLM, permitiéndote acceder a una amplia gama de
+LLMs de proveedores como OpenAI, Anthropic (no Vertex AI), Cohere, y muchos
+otros. Puedes ejecutar modelos de código abierto localmente o auto-alojarlos e integrarlos
+usando LiteLLM para control operacional, ahorro de costos, privacidad, o casos de uso
+sin conexión.
 
-You can use the LiteLLM library to access remote or locally hosted AI models:
+Puedes usar la biblioteca LiteLLM para acceder a modelos de IA alojados de forma remota o local:
 
-*   **Remote model host:** Use the `LiteLlm` wrapper class and set it
-    as the `model` parameter of `LlmAgent`.
-*   **Local model host:** Use the `LiteLlm` wrapper class configured to
-    point to your local model server. For examples of local model hosting
-    solutions, see the [Ollama](/adk-docs/agents/models/ollama/)
-    or [vLLM](/adk-docs/agents/models/vllm/) documentation.
+*   **Alojamiento remoto de modelos:** Usa la clase wrapper `LiteLlm` y establécela
+    como el parámetro `model` de `LlmAgent`.
+*   **Alojamiento local de modelos:** Usa la clase wrapper `LiteLlm` configurada para
+    apuntar a tu servidor de modelo local. Para ejemplos de soluciones de alojamiento
+    local de modelos, consulta la documentación de [Ollama](/adk-docs/agents/models/ollama/)
+    o [vLLM](/adk-docs/agents/models/vllm/).
 
-??? warning "Windows Encoding with LiteLLM"
+??? warning "Codificación en Windows con LiteLLM"
 
-    When using ADK agents with LiteLLM on Windows, you might encounter a
-    `UnicodeDecodeError`. This error occurs because LiteLLM may attempt to read
-    cached files using the default Windows encoding (`cp1252`) instead of UTF-8.
-    Prevent this error by setting the `PYTHONUTF8` environment variable to
-    `1`. This forces Python to use UTF-8 for all file I/O.
+    Al usar agentes ADK con LiteLLM en Windows, podrías encontrar un
+    `UnicodeDecodeError`. Este error ocurre porque LiteLLM puede intentar leer
+    archivos en caché usando la codificación predeterminada de Windows (`cp1252`) en lugar de UTF-8.
+    Prevén este error estableciendo la variable de entorno `PYTHONUTF8` a
+    `1`. Esto fuerza a Python a usar UTF-8 para todas las operaciones de E/S de archivos.
 
-    **Example (PowerShell):**
+    **Ejemplo (PowerShell):**
     ```powershell
-    # Set for the current session
+    # Establecer para la sesión actual
     $env:PYTHONUTF8 = "1"
 
-    # Set persistently for the user
+    # Establecer de forma persistente para el usuario
     [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', [System.EnvironmentVariableTarget]::User)
     ```
 
-## Setup
+## Configuración
 
-1. **Install LiteLLM:**
+1. **Instalar LiteLLM:**
         ```shell
         pip install litellm
         ```
-2. **Set Provider API Keys:** Configure API keys as environment variables for
-   the specific providers you intend to use.
+2. **Establecer Claves API del Proveedor:** Configura las claves API como variables de entorno para
+   los proveedores específicos que pretendes usar.
 
-    * *Example for OpenAI:*
+    * *Ejemplo para OpenAI:*
 
         ```shell
         export OPENAI_API_KEY="YOUR_OPENAI_API_KEY"
         ```
 
-    * *Example for Anthropic (non-Vertex AI):*
+    * *Ejemplo para Anthropic (no Vertex AI):*
 
         ```shell
         export ANTHROPIC_API_KEY="YOUR_ANTHROPIC_API_KEY"
         ```
 
-    * *Consult the
-      [LiteLLM Providers Documentation](https://docs.litellm.ai/docs/providers)
-      for the correct environment variable names for other providers.*
+    * *Consulta la
+      [Documentación de Proveedores de LiteLLM](https://docs.litellm.ai/docs/providers)
+      para los nombres correctos de variables de entorno para otros proveedores.*
 
-## Example implementation
+## Ejemplo de implementación
 
 ```python
 from google.adk.agents import LlmAgent
 from google.adk.models.lite_llm import LiteLlm
 
-# --- Example Agent using OpenAI's GPT-4o ---
-# (Requires OPENAI_API_KEY)
+# --- Agente de Ejemplo usando GPT-4o de OpenAI ---
+# (Requiere OPENAI_API_KEY)
 agent_openai = LlmAgent(
-    model=LiteLlm(model="openai/gpt-4o"), # LiteLLM model string format
+    model=LiteLlm(model="openai/gpt-4o"), # Formato de cadena de modelo LiteLLM
     name="openai_agent",
     instruction="You are a helpful assistant powered by GPT-4o.",
-    # ... other agent parameters
+    # ... otros parámetros del agente
 )
 
-# --- Example Agent using Anthropic's Claude Haiku (non-Vertex) ---
-# (Requires ANTHROPIC_API_KEY)
+# --- Agente de Ejemplo usando Claude Haiku de Anthropic (no Vertex) ---
+# (Requiere ANTHROPIC_API_KEY)
 agent_claude_direct = LlmAgent(
     model=LiteLlm(model="anthropic/claude-3-haiku-20240307"),
     name="claude_direct_agent",
     instruction="You are an assistant powered by Claude Haiku.",
-    # ... other agent parameters
+    # ... otros parámetros del agente
 )
 ```

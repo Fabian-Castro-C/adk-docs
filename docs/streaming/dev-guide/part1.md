@@ -1,78 +1,78 @@
-# Part 1: Introduction to ADK Bidi-streaming
+# Parte 1: Introducción a ADK Bidi-streaming
 
-Google's Agent Development Kit ([ADK](https://google.github.io/adk-docs/)) provides a production-ready framework for building Bidi-streaming applications with Gemini models. This guide introduces ADK's streaming architecture, which enables real-time, two-way communication between users and AI agents through multimodal channels (text, audio, video).
+El Kit de Desarrollo de Agentes ([ADK](https://google.github.io/adk-docs/)) de Google proporciona un framework listo para producción para construir aplicaciones Bidi-streaming con modelos Gemini. Esta guía introduce la arquitectura de streaming de ADK, que permite comunicación bidireccional en tiempo real entre usuarios y agentes de IA a través de canales multimodales (texto, audio, video).
 
-**What you'll learn**: This part covers the fundamentals of Bidi-streaming, the underlying Live API technology (Gemini Live API and Vertex AI Live API), ADK's architectural components (`LiveRequestQueue`, `Runner`, `Agent`), and a complete FastAPI implementation example. You'll understand how ADK handles session management, tool orchestration, and platform abstraction—reducing months of infrastructure development to declarative configuration.
+**Lo que aprenderás**: Esta parte cubre los fundamentos de Bidi-streaming, la tecnología subyacente de Live API (Gemini Live API y Vertex AI Live API), los componentes arquitectónicos de ADK (`LiveRequestQueue`, `Runner`, `Agent`), y un ejemplo completo de implementación con FastAPI. Comprenderás cómo ADK maneja la gestión de sesiones, orquestación de herramientas y abstracción de plataformas—reduciendo meses de desarrollo de infraestructura a configuración declarativa.
 
-## ADK Bidi-streaming Demo
+## Demo de ADK Bidi-streaming
 
-To help you understand the concepts in this guide, we provide a working demo application that showcases ADK bidirectional streaming in action. This FastAPI-based demo implements the complete streaming lifecycle with a practical, real-world architecture.
+Para ayudarte a entender los conceptos en esta guía, proporcionamos una aplicación demo funcional que muestra ADK bidirectional streaming en acción. Esta demo basada en FastAPI implementa el ciclo de vida completo de streaming con una arquitectura práctica del mundo real.
 
-**Demo Repository**: [adk-samples/python/agents/bidi-demo](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo)
+**Repositorio de Demo**: [adk-samples/python/agents/bidi-demo](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo)
 
 ![ADK Bidi-streaming Demo](assets/bidi-demo-screen.png)
 
-The demo features:
+La demo incluye:
 
-- **WebSocket Communication**: Real-time bidirectional streaming with concurrent upstream/downstream tasks
-- **Multimodal Requests**: Text, audio, and image/video input with automatic transcription
-- **Flexible Responses**: Text or audio output based on model capabilities
-- **Interactive UI**: Web interface with event console for monitoring Live API events
-- **Google Search Integration**: Agent equipped with tool calling capabilities
+- **Comunicación WebSocket**: Streaming bidireccional en tiempo real con tareas upstream/downstream concurrentes
+- **Solicitudes Multimodales**: Entrada de texto, audio e imagen/video con transcripción automática
+- **Respuestas Flexibles**: Salida de texto o audio según las capacidades del modelo
+- **UI Interactiva**: Interfaz web con consola de eventos para monitorear eventos de Live API
+- **Integración con Google Search**: Agente equipado con capacidades de llamada a herramientas
 
-**We strongly recommend installing and running this demo** before diving into the guide. Hands-on experimentation will help you understand the concepts more deeply, and the demo code serves as a practical reference throughout all parts of this guide.
+**Recomendamos encarecidamente instalar y ejecutar esta demo** antes de sumergirse en la guía. La experimentación práctica te ayudará a entender los conceptos más profundamente, y el código de la demo sirve como referencia práctica a lo largo de todas las partes de esta guía.
 
-For installation instructions and usage details, see the [demo README](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo).
+Para instrucciones de instalación y detalles de uso, consulta el [README de la demo](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo).
 
-## 1.1 What is Bidi-streaming?
+## 1.1 ¿Qué es Bidi-streaming?
 
-Bidi-streaming (Bidirectional streaming) represents a fundamental shift from traditional AI interactions. Instead of the rigid "ask-and-wait" pattern, it enables **real-time, two-way communication** where both human and AI can speak, listen, and respond simultaneously. This creates natural, human-like conversations with immediate responses and the revolutionary ability to interrupt ongoing interactions.
+Bidi-streaming (Streaming bidireccional) representa un cambio fundamental respecto a las interacciones tradicionales de IA. En lugar del patrón rígido de "preguntar y esperar", permite **comunicación bidireccional en tiempo real** donde tanto humanos como IA pueden hablar, escuchar y responder simultáneamente. Esto crea conversaciones naturales, similares a las humanas, con respuestas inmediatas y la capacidad revolucionaria de interrumpir interacciones en curso.
 
-Think of the difference between sending emails and having a phone conversation. Traditional AI interactions are like emails—you send a complete message, wait for a complete response, then send another complete message. Bidi-streaming is like a phone conversation—fluid, natural, with the ability to interrupt, clarify, and respond in real-time.
+Piensa en la diferencia entre enviar correos electrónicos y tener una conversación telefónica. Las interacciones tradicionales de IA son como correos electrónicos—envías un mensaje completo, esperas una respuesta completa, luego envías otro mensaje completo. Bidi-streaming es como una conversación telefónica—fluida, natural, con la capacidad de interrumpir, aclarar y responder en tiempo real.
 
-### Key Characteristics
+### Características Clave
 
-These characteristics distinguish Bidi-streaming from traditional AI interactions and make it uniquely powerful for creating engaging user experiences:
+Estas características distinguen Bidi-streaming de las interacciones tradicionales de IA y lo hacen excepcionalmente poderoso para crear experiencias de usuario atractivas:
 
-- **Two-way Communication**: Continuous data exchange without waiting for complete responses. Users can interrupt the AI mid-response with new input, creating a natural conversational flow. The AI responds after detecting the user has finished speaking (via automatic voice activity detection or explicit activity signals).
+- **Comunicación Bidireccional**: Intercambio continuo de datos sin esperar respuestas completas. Los usuarios pueden interrumpir a la IA a mitad de respuesta con nueva entrada, creando un flujo conversacional natural. La IA responde después de detectar que el usuario ha terminado de hablar (mediante detección automática de actividad de voz o señales de actividad explícitas).
 
-- **Responsive Interruption**: Perhaps the most important feature for the natural user experience—users can interrupt the agent mid-response with new input, just like in human conversation. If an AI is explaining quantum physics and you suddenly ask "wait, what's an electron?", the AI stops immediately and addresses your question.
+- **Interrupción Responsiva**: Quizás la característica más importante para la experiencia natural del usuario—los usuarios pueden interrumpir al agente a mitad de respuesta con nueva entrada, justo como en una conversación humana. Si una IA está explicando física cuántica y de repente preguntas "espera, ¿qué es un electrón?", la IA se detiene inmediatamente y aborda tu pregunta.
 
-- **Best for Multimodal**: Bidi-streaming excels at multimodal interactions because it can process different input types simultaneously through a single connection. Users can speak while showing documents, type follow-up questions during voice calls, or seamlessly switch between communication modes without losing context. This unified approach eliminates the complexity of managing separate channels for each modality.
+- **Mejor para Multimodal**: Bidi-streaming sobresale en interacciones multimodales porque puede procesar diferentes tipos de entrada simultáneamente a través de una única conexión. Los usuarios pueden hablar mientras muestran documentos, escribir preguntas de seguimiento durante llamadas de voz, o cambiar sin problemas entre modos de comunicación sin perder contexto. Este enfoque unificado elimina la complejidad de gestionar canales separados para cada modalidad.
 
 ```mermaid
 sequenceDiagram
-    participant Client as User
-    participant Agent
+    participant Client as Usuario
+    participant Agent as Agente
 
-    Client->>Agent: "Hi!"
-    Client->>Agent: "Explain the history of Japan"
-    Agent->>Client: "Hello!"
-    Agent->>Client: "Sure! Japan's history is a..." (partial content)
-    Client->>Agent: "Ah, wait."
+    Client->>Agent: "¡Hola!"
+    Client->>Agent: "Explica la historia de Japón"
+    Agent->>Client: "¡Hola!"
+    Agent->>Client: "¡Claro! La historia de Japón es..." (contenido parcial)
+    Client->>Agent: "Ah, espera."
 
-    Agent->>Client: "OK, how can I help?" [interrupted: true]
+    Agent->>Client: "OK, ¿cómo puedo ayudar?" [interrupted: true]
 ```
 
-### Difference from Other Streaming Types
+### Diferencia con Otros Tipos de Streaming
 
-Understanding how Bidi-streaming differs from other approaches is crucial for appreciating its unique value. The streaming landscape includes several distinct patterns, each serving different use cases:
+Entender cómo Bidi-streaming difiere de otros enfoques es crucial para apreciar su valor único. El panorama de streaming incluye varios patrones distintos, cada uno sirviendo diferentes casos de uso:
 
-!!! note "Streaming Types Comparison"
+!!! note "Comparación de Tipos de Streaming"
 
-    **Bidi-streaming** differs fundamentally from other streaming approaches:
+    **Bidi-streaming** difiere fundamentalmente de otros enfoques de streaming:
 
-    - **Server-Side Streaming**: One-way data flow from server to client. Like watching a live video stream—you receive continuous data but can't interact with it in real-time. Useful for dashboards or live feeds, but not for conversations.
+    - **Streaming del Lado del Servidor**: Flujo de datos unidireccional del servidor al cliente. Como ver una transmisión de video en vivo—recibes datos continuos pero no puedes interactuar con ellos en tiempo real. Útil para dashboards o feeds en vivo, pero no para conversaciones.
 
-    - **Token-Level Streaming**: Sequential text token delivery without interruption. The AI generates response word-by-word, but you must wait for completion before sending new input. Like watching someone type a message in real-time—you see it forming, but can't interrupt.
+    - **Streaming a Nivel de Token**: Entrega secuencial de tokens de texto sin interrupción. La IA genera respuesta palabra por palabra, pero debes esperar a que se complete antes de enviar nueva entrada. Como ver a alguien escribir un mensaje en tiempo real—lo ves formándose, pero no puedes interrumpir.
 
-    - **Bidi-streaming**: Full two-way communication with interruption support. True conversational AI where both parties can speak, listen, and respond simultaneously. This is what enables natural dialogue where you can interrupt, clarify, or change topics mid-conversation.
+    - **Bidi-streaming**: Comunicación bidireccional completa con soporte de interrupción. IA conversacional verdadera donde ambas partes pueden hablar, escuchar y responder simultáneamente. Esto es lo que permite el diálogo natural donde puedes interrumpir, aclarar o cambiar de tema a mitad de conversación.
 
-### Real-World Applications
+### Aplicaciones del Mundo Real
 
-Bidi-streaming revolutionizes agentic AI applications by enabling agents to operate with human-like responsiveness and intelligence. These applications showcase how streaming transforms static AI interactions into dynamic, agent-driven experiences that feel genuinely intelligent and proactive.
+Bidi-streaming revoluciona las aplicaciones de IA agéntica al permitir que los agentes operen con capacidad de respuesta e inteligencia similares a las humanas. Estas aplicaciones muestran cómo el streaming transforma interacciones estáticas de IA en experiencias dinámicas impulsadas por agentes que se sienten genuinamente inteligentes y proactivas.
 
-In a video of the [Shopper's Concierge demo](https://www.youtube.com/watch?v=LwHPYyw7u6U), the multimodal Bidi-streaming feature significantly improve the user experience of e-commerce by enabling a faster and more intuitive shopping experience. The combination of conversational understanding and rapid, parallelized searching culminates in advanced capabilities like virtual try-on, boosting buyer confidence and reducing the friction of online shopping.
+En un video de la [demo de Shopper's Concierge](https://www.youtube.com/watch?v=LwHPYyw7u6U), la característica multimodal de Bidi-streaming mejora significativamente la experiencia del usuario de comercio electrónico al habilitar una experiencia de compra más rápida e intuitiva. La combinación de comprensión conversacional y búsqueda rápida y paralelizada culmina en capacidades avanzadas como prueba virtual, aumentando la confianza del comprador y reduciendo la fricción de las compras en línea.
 
 <div class="video-grid">
   <div class="video-item">
@@ -82,138 +82,138 @@ In a video of the [Shopper's Concierge demo](https://www.youtube.com/watch?v=LwH
   </div>
 </div>
 
-Also, there are many possible real-world applications for Bidi-streaming:
+Además, hay muchas aplicaciones posibles del mundo real para Bidi-streaming:
 
-#### Customer Service & Contact Centers
+#### Servicio al Cliente y Centros de Contacto
 
-This is the most direct application. The technology can create sophisticated virtual agents that go far beyond traditional chatbots.
+Esta es la aplicación más directa. La tecnología puede crear agentes virtuales sofisticados que van mucho más allá de los chatbots tradicionales.
 
-- Use case: A customer calls a retail company's support line about a defective product.
-- Multimodality (video): The customer can say, "My coffee machine is leaking from the bottom, let me show you." They can then use their phone's camera to stream live video of the issue. The AI agent can use its vision capabilities to identify the model and the specific point of failure.
-- Live Interaction & Interruption: If the agent says, "Okay, I'm processing a return for your Model X coffee maker," the customer can interrupt with, "No, wait, it's the Model Y Pro," and the agent can immediately correct its course without restarting the conversation.
+- Caso de uso: Un cliente llama a la línea de soporte de una empresa minorista sobre un producto defectuoso.
+- Multimodalidad (video): El cliente puede decir, "Mi cafetera está goteando por abajo, déjame mostrarte." Luego pueden usar la cámara de su teléfono para transmitir video en vivo del problema. El agente de IA puede usar sus capacidades de visión para identificar el modelo y el punto específico de falla.
+- Interacción en Vivo e Interrupción: Si el agente dice, "Bien, estoy procesando una devolución para tu cafetera Modelo X," el cliente puede interrumpir con, "No, espera, es la Modelo Y Pro," y el agente puede corregir inmediatamente su curso sin reiniciar la conversación.
 
-#### E-commerce & Personalized Shopping
+#### Comercio Electrónico y Compras Personalizadas
 
-The agent can act as a live, interactive personal shopper, enhancing the online retail experience.
+El agente puede actuar como un comprador personal en vivo e interactivo, mejorando la experiencia de retail en línea.
 
-- Use Case: A user is browsing a fashion website and wants styling advice.
-- Multimodality (Voice & Image): The user can hold up a piece of clothing to their webcam and ask, "Can you find me a pair of shoes that would go well with these pants?" The agent analyzes the color and style of the pants.
-- Live Interaction: The conversation can be a fluid back-and-forth: "Show me something more casual." ... "Okay, how about these sneakers?" ... "Perfect, add the blue ones in size 10 to my cart."
+- Caso de Uso: Un usuario está navegando un sitio web de moda y quiere consejos de estilo.
+- Multimodalidad (Voz e Imagen): El usuario puede sostener una prenda de vestir frente a su webcam y preguntar, "¿Puedes encontrarme un par de zapatos que combinen bien con estos pantalones?" El agente analiza el color y estilo de los pantalones.
+- Interacción en Vivo: La conversación puede ser un ir y venir fluido: "Muéstrame algo más casual." ... "Bien, ¿qué tal estos tenis?" ... "Perfecto, agrega los azules en talla 10 a mi carrito."
 
-#### Field Service & Technical Assistance
+#### Servicio de Campo y Asistencia Técnica
 
-Technicians working on-site can use a hands-free, voice-activated assistant to get real-time help.
+Los técnicos que trabajan en campo pueden usar un asistente activado por voz y manos libres para obtener ayuda en tiempo real.
 
-- Use Case: An HVAC technician is on-site trying to diagnose a complex commercial air conditioning unit.
-- Multimodality (Video & Voice): The technician, wearing smart glasses or using a phone, can stream their point-of-view to the AI agent. They can ask, "I'm hearing a strange noise from this compressor. Can you identify it and pull up the diagnostic flowchart for this model?"
-- Live Interaction: The agent can guide the technician step-by-step, and the technician can ask clarifying questions or interrupt at any point without taking their hands off their tools.
+- Caso de Uso: Un técnico de HVAC está en sitio tratando de diagnosticar una unidad de aire acondicionado comercial compleja.
+- Multimodalidad (Video y Voz): El técnico, usando gafas inteligentes o usando un teléfono, puede transmitir su punto de vista al agente de IA. Pueden preguntar, "Estoy escuchando un ruido extraño de este compresor. ¿Puedes identificarlo y mostrar el diagrama de flujo de diagnóstico para este modelo?"
+- Interacción en Vivo: El agente puede guiar al técnico paso a paso, y el técnico puede hacer preguntas aclaratorias o interrumpir en cualquier punto sin quitar las manos de sus herramientas.
 
-#### Healthcare & Telemedicine
+#### Salud y Telemedicina
 
-The agent can serve as a first point of contact for patient intake, triage, and basic consultations.
+El agente puede servir como primer punto de contacto para la admisión de pacientes, triaje y consultas básicas.
 
-- Use Case: A patient uses a provider's app for a preliminary consultation about a skin condition.
-- Multimodality (Video/Image): The patient can securely share a live video or high-resolution image of a rash. The AI can perform a preliminary analysis and ask clarifying questions.
+- Caso de Uso: Un paciente usa la app de un proveedor para una consulta preliminar sobre una condición de la piel.
+- Multimodalidad (Video/Imagen): El paciente puede compartir de forma segura un video en vivo o imagen de alta resolución de una erupción. La IA puede realizar un análisis preliminar y hacer preguntas aclaratorias.
 
-#### Financial Services & Wealth Management
+#### Servicios Financieros y Gestión de Patrimonio
 
-An agent can provide clients with a secure, interactive, and data-rich way to manage their finances.
+Un agente puede proporcionar a los clientes una forma segura, interactiva y rica en datos para gestionar sus finanzas.
 
-- Use Case: A client wants to review their investment portfolio and discuss market trends.
-- Multimodality (Screen Sharing): The agent can share its screen to display charts, graphs, and portfolio performance data. The client could also share their screen to point to a specific news article and ask, "What is the potential impact of this event on my tech stocks?"
-- Live Interaction: Analyze the client's current portfolio allocation by accessing their account data.Simulate the impact of a potential trade on the portfolio's risk profile.
+- Caso de Uso: Un cliente quiere revisar su portafolio de inversión y discutir tendencias del mercado.
+- Multimodalidad (Compartir Pantalla): El agente puede compartir su pantalla para mostrar gráficos, tablas y rendimiento del portafolio. El cliente también podría compartir su pantalla para señalar un artículo de noticias específico y preguntar, "¿Cuál es el impacto potencial de este evento en mis acciones de tecnología?"
+- Interacción en Vivo: Analizar la asignación actual del portafolio del cliente accediendo a los datos de su cuenta. Simular el impacto de una operación potencial en el perfil de riesgo del portafolio.
 
-## 1.2 Gemini Live API and Vertex AI Live API
+## 1.2 Gemini Live API y Vertex AI Live API
 
-ADK's Bidi-streaming capabilities are powered by Live API technology, available through two platforms: **[Gemini Live API](https://ai.google.dev/gemini-api/docs/live)** (via Google AI Studio) and **[Vertex AI Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)** (via Google Cloud). Both provide real-time, low-latency streaming conversations with Gemini models, but serve different development and deployment needs.
+Las capacidades de Bidi-streaming de ADK están impulsadas por la tecnología Live API, disponible a través de dos plataformas: **[Gemini Live API](https://ai.google.dev/gemini-api/docs/live)** (vía Google AI Studio) y **[Vertex AI Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)** (vía Google Cloud). Ambas proporcionan conversaciones de streaming en tiempo real y baja latencia con modelos Gemini, pero sirven diferentes necesidades de desarrollo y despliegue.
 
-Throughout this guide, we use **"Live API"** to refer to both platforms collectively, specifying "Gemini Live API" or "Vertex AI Live API" only when discussing platform-specific features or differences.
+A lo largo de esta guía, usamos **"Live API"** para referirnos a ambas plataformas colectivamente, especificando "Gemini Live API" o "Vertex AI Live API" solo al discutir características o diferencias específicas de la plataforma.
 
-### What is the Live API?
+### ¿Qué es Live API?
 
-Live API is Google's real-time conversational AI technology that enables **low-latency Bidi-streaming** with Gemini models. Unlike traditional request-response APIs, Live API establishes persistent WebSocket connections that support:
+Live API es la tecnología de IA conversacional en tiempo real de Google que habilita **Bidi-streaming de baja latencia** con modelos Gemini. A diferencia de las APIs tradicionales de solicitud-respuesta, Live API establece conexiones WebSocket persistentes que soportan:
 
-**Core Capabilities:**
+**Capacidades Principales:**
 
-- **Multimodal streaming**: Processes continuous streams of audio, video, and text in real-time
-- **Voice Activity Detection (VAD)**: Automatically detects when users finish speaking, enabling natural turn-taking without explicit signals. The AI knows when to start responding and when to wait for more input
-- **Immediate responses**: Delivers human-like spoken or text responses with minimal latency
-- **Intelligent interruption**: Enables users to interrupt the AI mid-response, just like human conversations
-- **Audio Transcription**: Real-time transcription of both user input and model output, enabling accessibility features and conversation logging without separate transcription services
-- **Session Management**: Long conversations can span multiple connections through session resumption, with the API preserving full conversation history and context across reconnections
-- **Tool Integration**: Function calling works seamlessly in streaming mode, with tools executing in the background while conversation continues
+- **Streaming multimodal**: Procesa flujos continuos de audio, video y texto en tiempo real
+- **Detección de Actividad de Voz (VAD)**: Detecta automáticamente cuándo los usuarios terminan de hablar, habilitando cambios de turno naturales sin señales explícitas. La IA sabe cuándo comenzar a responder y cuándo esperar más entrada
+- **Respuestas inmediatas**: Entrega respuestas habladas o de texto similares a las humanas con latencia mínima
+- **Interrupción inteligente**: Permite a los usuarios interrumpir a la IA a mitad de respuesta, justo como conversaciones humanas
+- **Transcripción de Audio**: Transcripción en tiempo real tanto de entrada del usuario como de salida del modelo, habilitando características de accesibilidad y registro de conversación sin servicios de transcripción separados
+- **Gestión de Sesiones**: Conversaciones largas pueden abarcar múltiples conexiones a través de reanudación de sesión, con la API preservando historial completo de conversación y contexto a través de reconexiones
+- **Integración de Herramientas**: La llamada a funciones funciona sin problemas en modo streaming, con herramientas ejecutándose en segundo plano mientras la conversación continúa
 
-**Native Audio Model Features:**
+**Características Nativas del Modelo de Audio:**
 
-- **Proactive Audio**: The model can initiate responses based on context awareness, creating more natural interactions where the AI offers help or clarification proactively (Native Audio models only)
-- **Affective Dialog**: Advanced models understand tone of voice and emotional context, adapting responses to match the conversational mood and user sentiment (Native Audio models only)
+- **Audio Proactivo**: El modelo puede iniciar respuestas basándose en conciencia del contexto, creando interacciones más naturales donde la IA ofrece ayuda o aclaración proactivamente (solo modelos de Audio Nativo)
+- **Diálogo Afectivo**: Los modelos avanzados entienden el tono de voz y contexto emocional, adaptando respuestas para coincidir con el estado de ánimo conversacional y el sentimiento del usuario (solo modelos de Audio Nativo)
 
-!!! note "Learn More"
+!!! note "Aprende Más"
 
-    For detailed information about Native Audio models and these features, see [Part 5: Audio and Video - Proactivity and Affective Dialog](part5.md#proactivity-and-affective-dialog).
+    Para información detallada sobre modelos de Audio Nativo y estas características, consulta [Parte 5: Audio y Video - Proactividad y Diálogo Afectivo](part5.md#proactivity-and-affective-dialog).
 
-**Technical Specifications:**
+**Especificaciones Técnicas:**
 
-- **Audio input**: 16-bit PCM at 16kHz (mono)
-- **Audio output**: 16-bit PCM at 24kHz (native audio models)
-- **Video input**: 1 frame per second, recommended 768x768 resolution
-- **Context windows**: Varies by model (typically 32k-128k tokens for Live API models). See [Gemini models](https://ai.google.dev/gemini-api/docs/models/gemini) for specific limits.
-- **Languages**: 24+ languages supported with automatic detection
+- **Entrada de audio**: PCM de 16 bits a 16kHz (mono)
+- **Salida de audio**: PCM de 16 bits a 24kHz (modelos de audio nativo)
+- **Entrada de video**: 1 fotograma por segundo, resolución recomendada 768x768
+- **Ventanas de contexto**: Varía según el modelo (típicamente 32k-128k tokens para modelos Live API). Consulta [modelos Gemini](https://ai.google.dev/gemini-api/docs/models/gemini) para límites específicos.
+- **Idiomas**: Más de 24 idiomas soportados con detección automática
 
 ### Gemini Live API vs Vertex AI Live API
 
-Both APIs provide the same core Live API technology, but differ in deployment platform, authentication, and enterprise features:
+Ambas APIs proporcionan la misma tecnología central Live API, pero difieren en plataforma de despliegue, autenticación y características empresariales:
 
-| **Aspect** | **Gemini Live API** | **Vertex AI Live API** |
+| **Aspecto** | **Gemini Live API** | **Vertex AI Live API** |
 |--------|-----------------|-------------------|
-| **Access** | Google AI Studio | Google Cloud |
-| **Authentication** | API key (`GOOGLE_API_KEY`) | Google Cloud credentials (`GOOGLE_CLOUD_PROJECT`, `GOOGLE_CLOUD_LOCATION`) |
-| **Best for** | Rapid prototyping, development, experimentation | Production deployments, enterprise applications |
-| **Session Duration** | Audio-only: 15 min<br>Audio+video: 2 min<br>With [Part 4: Context Window Compression](part4.md#live-api-context-window-compression): Unlimited | Both: 10 min<br>With [Part 4: Context Window Compression](part4.md#live-api-context-window-compression): Unlimited |
-| **Concurrent Sessions** | Tier-based quotas (see [API quotas](https://ai.google.dev/gemini-api/docs/quota)) | Up to 1,000 per project (configurable via quota requests) |
-| **Enterprise Features** | Basic | Advanced monitoring, logging, SLAs, session resumption (24h) |
-| **Setup Complexity** | Minimal (API key only) | Requires Google Cloud project setup |
-| **API Version** | `v1beta` | `v1beta1` |
-| **API Endpoint** | `generativelanguage.googleapis.com` | `{location}-aiplatform.googleapis.com` |
-| **Billing** | Usage tracked via API key | Google Cloud project billing |
+| **Acceso** | Google AI Studio | Google Cloud |
+| **Autenticación** | Clave API (`GOOGLE_API_KEY`) | Credenciales de Google Cloud (`GOOGLE_CLOUD_PROJECT`, `GOOGLE_CLOUD_LOCATION`) |
+| **Mejor para** | Prototipado rápido, desarrollo, experimentación | Despliegues en producción, aplicaciones empresariales |
+| **Duración de Sesión** | Solo audio: 15 min<br>Audio+video: 2 min<br>Con [Parte 4: Compresión de Ventana de Contexto](part4.md#live-api-context-window-compression): Ilimitado | Ambos: 10 min<br>Con [Parte 4: Compresión de Ventana de Contexto](part4.md#live-api-context-window-compression): Ilimitado |
+| **Sesiones Concurrentes** | Cuotas basadas en niveles (ver [cuotas API](https://ai.google.dev/gemini-api/docs/quota)) | Hasta 1,000 por proyecto (configurable vía solicitudes de cuota) |
+| **Características Empresariales** | Básicas | Monitoreo avanzado, registro, SLAs, reanudación de sesión (24h) |
+| **Complejidad de Configuración** | Mínima (solo clave API) | Requiere configuración de proyecto Google Cloud |
+| **Versión API** | `v1beta` | `v1beta1` |
+| **Endpoint API** | `generativelanguage.googleapis.com` | `{location}-aiplatform.googleapis.com` |
+| **Facturación** | Uso rastreado vía clave API | Facturación de proyecto Google Cloud |
 
-!!! note "Live API Reference Notes"
+!!! note "Notas de Referencia de Live API"
 
-    **Concurrent session limits**: Quota-based and may vary by account tier or configuration. Check your current quotas in Google AI Studio or Google Cloud Console.
+    **Límites de sesiones concurrentes**: Basados en cuota y pueden variar según el nivel de cuenta o configuración. Verifica tus cuotas actuales en Google AI Studio o Google Cloud Console.
 
-    **Official Documentation**: [Gemini Live API Guide](https://ai.google.dev/gemini-api/docs/live-guide) | [Vertex AI Live API Overview](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
+    **Documentación Oficial**: [Guía Gemini Live API](https://ai.google.dev/gemini-api/docs/live-guide) | [Descripción General Vertex AI Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
-## 1.3 ADK Bidi-streaming: For Building Realtime Agent Applications
+## 1.3 ADK Bidi-streaming: Para Construir Aplicaciones de Agentes en Tiempo Real
 
-Building realtime Agent applications from scratch presents significant engineering challenges. While Live API provides the underlying streaming technology, integrating it into production applications requires solving complex problems: managing WebSocket connections and reconnection logic, orchestrating tool execution and response handling, persisting conversation state across sessions, coordinating concurrent data flows for multimodal inputs, and handling platform differences between development and production environments.
+Construir aplicaciones de Agentes en tiempo real desde cero presenta desafíos de ingeniería significativos. Mientras Live API proporciona la tecnología de streaming subyacente, integrarla en aplicaciones de producción requiere resolver problemas complejos: gestionar conexiones WebSocket y lógica de reconexión, orquestar ejecución de herramientas y manejo de respuestas, persistir estado de conversación a través de sesiones, coordinar flujos de datos concurrentes para entradas multimodales, y manejar diferencias de plataforma entre entornos de desarrollo y producción.
 
-ADK transforms these challenges into simple, declarative APIs. Instead of spending months building infrastructure for session management, tool orchestration, and state persistence, developers can focus on defining agent behavior and creating user experiences. This section explores what ADK handles automatically and why it's the recommended path for building production-ready streaming applications.
+ADK transforma estos desafíos en APIs simples y declarativas. En lugar de pasar meses construyendo infraestructura para gestión de sesiones, orquestación de herramientas y persistencia de estado, los desarrolladores pueden enfocarse en definir comportamiento del agente y crear experiencias de usuario. Esta sección explora lo que ADK maneja automáticamente y por qué es el camino recomendado para construir aplicaciones de streaming listas para producción.
 
-**Raw Live API v. ADK Bidi-streaming:**
+**Live API Cruda vs. ADK Bidi-streaming:**
 
-| Feature | Raw Live API (`google-genai` SDK) | ADK Bidi-streaming (`adk-python` and `adk-java` SDK) |
+| Característica | Live API Cruda (SDK `google-genai`) | ADK Bidi-streaming (SDK `adk-python` y `adk-java`) |
 |---------|-----------------------------------|------------------------------------------------------|
-| **Agent Framework** | ❌ Not available | ✅ Single agent, multi-agent with sub-agents, and sequential workflow agents, Tool ecosystem, Deployment ready, Evaluation, Security and more (see [ADK Agent docs](https://google.github.io/adk-docs/agents/)) |
-| **Tool Execution** | ❌ Manual tool execution and response handling | ✅ Automatic tool execution (see [Part 3: Tool Call Events](part3.md#tool-call-events)) |
-| **Connection Management** | ❌ Manual reconnection and session resumption | ✅ Automatic reconnection and session resumption (see [Part 4: Live API Session Resumption](part4.md#live-api-session-resumption)) |
-| **Event Model** | ❌ Custom event structures and serialization | ✅ Unified event model with metadata (see [Part 3: Event Handling](part3.md)) |
-| **Async Event Processing Framework** | ❌ Manual async coordination and stream handling | ✅ `LiveRequestQueue`, `run_live()` async generator, automatic bidirectional flow coordination (see [Part 2](part2.md) and [Part 3](part3.md)) |
-| **App-level Session Persistence** | ❌ Manual implementation | ✅ SQL databases (PostgreSQL, MySQL, SQLite), Vertex AI, in-memory (see [ADK Session docs](https://google.github.io/adk-docs/sessions/)) |
+| **Framework de Agentes** | ❌ No disponible | ✅ Agente único, multi-agente con sub-agentes, y agentes de flujo de trabajo secuencial, Ecosistema de herramientas, Listo para despliegue, Evaluación, Seguridad y más (ver [docs de Agente ADK](https://google.github.io/adk-docs/agents/)) |
+| **Ejecución de Herramientas** | ❌ Ejecución manual de herramientas y manejo de respuestas | ✅ Ejecución automática de herramientas (ver [Parte 3: Eventos de Llamada a Herramientas](part3.md#tool-call-events)) |
+| **Gestión de Conexión** | ❌ Reconexión manual y reanudación de sesión | ✅ Reconexión automática y reanudación de sesión (ver [Parte 4: Reanudación de Sesión Live API](part4.md#live-api-session-resumption)) |
+| **Modelo de Eventos** | ❌ Estructuras de eventos personalizadas y serialización | ✅ Modelo de eventos unificado con metadatos (ver [Parte 3: Manejo de Eventos](part3.md)) |
+| **Framework de Procesamiento de Eventos Async** | ❌ Coordinación async manual y manejo de streams | ✅ `LiveRequestQueue`, generador async `run_live()`, coordinación automática de flujo bidireccional (ver [Parte 2](part2.md) y [Parte 3](part3.md)) |
+| **Persistencia de Sesión a Nivel de Aplicación** | ❌ Implementación manual | ✅ Bases de datos SQL (PostgreSQL, MySQL, SQLite), Vertex AI, en memoria (ver [docs de Sesión ADK](https://google.github.io/adk-docs/sessions/)) |
 
-### Platform Flexibility
+### Flexibilidad de Plataforma
 
-One of ADK's most powerful features is its transparent support for both [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) and [Vertex AI Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api). This platform flexibility enables a seamless development-to-production workflow: develop locally with Gemini API using free API keys, then deploy to production with Vertex AI using enterprise Google Cloud infrastructure—all **without changing application code**, only environment configuration.
+Una de las características más poderosas de ADK es su soporte transparente para tanto [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) como [Vertex AI Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api). Esta flexibilidad de plataforma habilita un flujo de trabajo desarrollo-a-producción sin costuras: desarrolla localmente con Gemini API usando claves API gratuitas, luego despliega a producción con Vertex AI usando infraestructura empresarial de Google Cloud—todo **sin cambiar código de aplicación**, solo configuración de entorno.
 
-#### How Platform Selection Works
+#### Cómo Funciona la Selección de Plataforma
 
-ADK uses the `GOOGLE_GENAI_USE_VERTEXAI` environment variable to determine which Live API platform to use:
+ADK usa la variable de entorno `GOOGLE_GENAI_USE_VERTEXAI` para determinar qué plataforma Live API usar:
 
-- `GOOGLE_GENAI_USE_VERTEXAI=FALSE` (or not set): Uses Gemini Live API via Google AI Studio
-- `GOOGLE_GENAI_USE_VERTEXAI=TRUE`: Uses Vertex AI Live API via Google Cloud
+- `GOOGLE_GENAI_USE_VERTEXAI=FALSE` (o no configurada): Usa Gemini Live API vía Google AI Studio
+- `GOOGLE_GENAI_USE_VERTEXAI=TRUE`: Usa Vertex AI Live API vía Google Cloud
 
-This environment variable is read by the underlying `google-genai` SDK when ADK creates the LLM connection. No code changes are needed when switching platforms—only environment configuration changes.
+Esta variable de entorno es leída por el SDK subyacente `google-genai` cuando ADK crea la conexión LLM. No se necesitan cambios de código al cambiar plataformas—solo cambios de configuración de entorno.
 
-##### Development Phase: Gemini Live API (Google AI Studio)
+##### Fase de Desarrollo: Gemini Live API (Google AI Studio)
 
 ```bash
 # .env.development
@@ -221,14 +221,14 @@ GOOGLE_GENAI_USE_VERTEXAI=FALSE
 GOOGLE_API_KEY=your_api_key_here
 ```
 
-**Benefits:**
+**Beneficios:**
 
-- Rapid prototyping with free API keys from Google AI Studio
-- No Google Cloud setup required
-- Instant experimentation with streaming features
-- Zero infrastructure costs during development
+- Prototipado rápido con claves API gratuitas de Google AI Studio
+- No se requiere configuración de Google Cloud
+- Experimentación instantánea con características de streaming
+- Cero costos de infraestructura durante desarrollo
 
-##### Production Phase: Vertex AI Live API (Google Cloud)
+##### Fase de Producción: Vertex AI Live API (Google Cloud)
 
 ```bash
 # .env.production
@@ -237,23 +237,23 @@ GOOGLE_CLOUD_PROJECT=your_project_id
 GOOGLE_CLOUD_LOCATION=us-central1
 ```
 
-**Benefits:**
+**Beneficios:**
 
-- Enterprise-grade infrastructure via Google Cloud
-- Advanced monitoring, logging, and cost controls
-- Integration with existing Google Cloud services
-- Production SLAs and support
-- **No code changes required** - just environment configuration
+- Infraestructura de grado empresarial vía Google Cloud
+- Monitoreo avanzado, registro y controles de costos
+- Integración con servicios existentes de Google Cloud
+- SLAs de producción y soporte
+- **No se requieren cambios de código** - solo configuración de entorno
 
-By handling the complexity of session management, tool orchestration, state persistence, and platform differences, ADK lets you focus on building intelligent agent experiences rather than wrestling with streaming infrastructure. The same code works seamlessly across development and production environments, giving you the full power of Bidi-streaming without the implementation burden.
+Al manejar la complejidad de gestión de sesiones, orquestación de herramientas, persistencia de estado y diferencias de plataforma, ADK te permite enfocarte en construir experiencias de agentes inteligentes en lugar de luchar con infraestructura de streaming. El mismo código funciona sin problemas a través de entornos de desarrollo y producción, dándote todo el poder de Bidi-streaming sin la carga de implementación.
 
-## 1.4 ADK Bidi-streaming Architecture Overview
+## 1.4 Descripción General de la Arquitectura ADK Bidi-streaming
 
-Now that you understand Live API technology and why ADK adds value, let's explore how ADK actually works. This section maps the complete data flow from your application through ADK's pipeline to Live API and back, showing which components handle which responsibilities.
+Ahora que entiendes la tecnología Live API y por qué ADK agrega valor, exploremos cómo ADK realmente funciona. Esta sección mapea el flujo completo de datos desde tu aplicación a través del pipeline de ADK hacia Live API y de vuelta, mostrando qué componentes manejan qué responsabilidades.
 
-You'll see how key components like `LiveRequestQueue`, `Runner`, and `Agent` orchestrate streaming conversations without requiring you to manage WebSocket connections, coordinate async flows, or handle platform-specific API differences.
+Verás cómo componentes clave como `LiveRequestQueue`, `Runner` y `Agent` orquestan conversaciones de streaming sin requerir que gestiones conexiones WebSocket, coordines flujos async o manejes diferencias API específicas de la plataforma.
 
-### High-Level Architecture
+### Arquitectura de Alto Nivel
 
 ```mermaid
 graph TB
@@ -300,45 +300,45 @@ graph TB
     class L1,L2,L3,L4,G1,G2 adk
 ```
 
-| Developer provides: | ADK provides: | Live API provide: |
+| El desarrollador proporciona: | ADK proporciona: | Live API proporciona: |
 |---------------------|---------------|------------------|
-| **Web / Mobile**: Frontend applications that users interact with, handling UI/UX, user input capture, and response display<br><br>**[WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) / [SSE](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) Server**: Real-time communication server (such as [FastAPI](https://fastapi.tiangolo.com/)) that manages client connections, handles streaming protocols, and routes messages between clients and ADK<br><br>**`Agent`**: Custom AI agent definition with specific instructions, tools, and behavior tailored to your application's needs | **[LiveRequestQueue](https://github.com/google/adk-python/blob/29c1115959b0084ac1169748863b35323da3cf50/src/google/adk/agents/live_request_queue.py)**: Message queue that buffers and sequences incoming user messages (text content, audio blobs, control signals) for orderly processing by the agent<br><br>**[Runner](https://github.com/google/adk-python/blob/29c1115959b0084ac1169748863b35323da3cf50/src/google/adk/runners.py)**: Execution engine that orchestrates agent sessions, manages conversation state, and provides the `run_live()` streaming interface<br><br>**[RunConfig](https://github.com/google/adk-python/blob/29c1115959b0084ac1169748863b35323da3cf50/src/google/adk/agents/run_config.py)**: Configuration for streaming behavior, modalities, and advanced features<br><br>**Internal components** (managed automatically, not directly used by developers): [LLM Flow](https://github.com/google/adk-python/blob/29c1115959b0084ac1169748863b35323da3cf50/src/google/adk/flows/llm_flows/base_llm_flow.py) for processing pipeline and [GeminiLlmConnection](https://github.com/google/adk-python/blob/29c1115959b0084ac1169748863b35323da3cf50/src/google/adk/models/gemini_llm_connection.py) for protocol translation | **[Gemini Live API](https://ai.google.dev/gemini-api/docs/live)** (via Google AI Studio) and **[Vertex AI Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)** (via Google Cloud): Google's real-time language model services that process streaming input, generate responses, handle interruptions, support multimodal content (text, audio, video), and provide advanced AI capabilities like function calling and contextual understanding |
+| **Web / Mobile**: Aplicaciones frontend con las que los usuarios interactúan, manejando UI/UX, captura de entrada del usuario y visualización de respuestas<br><br>**Servidor [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) / [SSE](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)**: Servidor de comunicación en tiempo real (como [FastAPI](https://fastapi.tiangolo.com/)) que gestiona conexiones de clientes, maneja protocolos de streaming y enruta mensajes entre clientes y ADK<br><br>**`Agent`**: Definición de agente de IA personalizado con instrucciones, herramientas y comportamiento específicos adaptados a las necesidades de tu aplicación | **[LiveRequestQueue](https://github.com/google/adk-python/blob/29c1115959b0084ac1169748863b35323da3cf50/src/google/adk/agents/live_request_queue.py)**: Cola de mensajes que almacena en búfer y secuencia mensajes entrantes del usuario (contenido de texto, blobs de audio, señales de control) para procesamiento ordenado por el agente<br><br>**[Runner](https://github.com/google/adk-python/blob/29c1115959b0084ac1169748863b35323da3cf50/src/google/adk/runners.py)**: Motor de ejecución que orquesta sesiones de agente, gestiona estado de conversación y proporciona la interfaz de streaming `run_live()`<br><br>**[RunConfig](https://github.com/google/adk-python/blob/29c1115959b0084ac1169748863b35323da3cf50/src/google/adk/agents/run_config.py)**: Configuración para comportamiento de streaming, modalidades y características avanzadas<br><br>**Componentes internos** (gestionados automáticamente, no usados directamente por desarrolladores): [LLM Flow](https://github.com/google/adk-python/blob/29c1115959b0084ac1169748863b35323da3cf50/src/google/adk/flows/llm_flows/base_llm_flow.py) para pipeline de procesamiento y [GeminiLlmConnection](https://github.com/google/adk-python/blob/29c1115959b0084ac1169748863b35323da3cf50/src/google/adk/models/gemini_llm_connection.py) para traducción de protocolo | **[Gemini Live API](https://ai.google.dev/gemini-api/docs/live)** (vía Google AI Studio) y **[Vertex AI Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)** (vía Google Cloud): Servicios de modelo de lenguaje en tiempo real de Google que procesan entrada de streaming, generan respuestas, manejan interrupciones, soportan contenido multimodal (texto, audio, video) y proporcionan capacidades avanzadas de IA como llamada a funciones y comprensión contextual |
 
-This architecture demonstrates ADK's clear separation of concerns: your application handles user interaction and transport protocols, ADK manages the streaming orchestration and state, and Live API provide the AI intelligence. By abstracting away the complexity of LLM-side streaming connection management, event loops, and protocol translation, ADK enables you to focus on building agent behavior and user experiences rather than streaming infrastructure.
+Esta arquitectura demuestra la clara separación de responsabilidades de ADK: tu aplicación maneja interacción del usuario y protocolos de transporte, ADK gestiona la orquestación de streaming y estado, y Live API proporcionan la inteligencia de IA. Al abstraer la complejidad de gestión de conexión de streaming del lado del LLM, bucles de eventos y traducción de protocolo, ADK te permite enfocarte en construir comportamiento del agente y experiencias de usuario en lugar de infraestructura de streaming.
 
-## 1.5 ADK Bidi-streaming Application Lifecycle
+## 1.5 Ciclo de Vida de Aplicación ADK Bidi-streaming
 
-ADK Bidi-streaming integrates Live API session into the ADK framework's application lifecycle. This integration creates a four-phase lifecycle that combines ADK's agent management with Live API's real-time streaming capabilities:
+ADK Bidi-streaming integra sesión Live API en el ciclo de vida de aplicación del framework ADK. Esta integración crea un ciclo de vida de cuatro fases que combina gestión de agentes de ADK con capacidades de streaming en tiempo real de Live API:
 
-- **Phase 1: Application Initialization** (Once at Startup)
-  - ADK Application initialization
-    - Create an [Agent](https://google.github.io/adk-docs/agents/): for interacting with users, utilize external tools, and coordinate with other agents.
-    - Create a [SessionService](https://google.github.io/adk-docs/sessions/session/#managing-sessions-with-a-sessionservice): for getting or creating ADK `Session`
-    - Create a [Runner](https://google.github.io/adk-docs/runtime/): for providing a runtime for the Agent
+- **Fase 1: Inicialización de Aplicación** (Una Vez al Inicio)
+  - Inicialización de Aplicación ADK
+    - Crear un [Agent](https://google.github.io/adk-docs/agents/): para interactuar con usuarios, utilizar herramientas externas y coordinar con otros agentes.
+    - Crear un [SessionService](https://google.github.io/adk-docs/sessions/session/#managing-sessions-with-a-sessionservice): para obtener o crear `Session` de ADK
+    - Crear un [Runner](https://google.github.io/adk-docs/runtime/): para proporcionar un runtime para el Agent
 
-- **Phase 2: Session Initialization** (Once per User Session)
-  - ADK `Session` initialization:
-    - Get or Create an ADK `Session` using the `SessionService`
-  - ADK Bidi-streaming initialization:
-    - Create a [RunConfig](part4.md) for configuring ADK Bidi-streaming
-    - Create a [LiveRequestQueue](part2.md) for sending user messages to the `Agent`
-    - Start a [run_live()](part3.md) event loop
+- **Fase 2: Inicialización de Sesión** (Una Vez por Sesión de Usuario)
+  - Inicialización de `Session` de ADK:
+    - Obtener o Crear una `Session` de ADK usando el `SessionService`
+  - Inicialización de ADK Bidi-streaming:
+    - Crear un [RunConfig](part4.md) para configurar ADK Bidi-streaming
+    - Crear un [LiveRequestQueue](part2.md) para enviar mensajes de usuario al `Agent`
+    - Iniciar un bucle de eventos [run_live()](part3.md)
 
-- **Phase 3: Bidi-streaming with `run_live()` event loop** (One or More Times per User Session)
-  - Upstream: User sends message to the agent with `LiveRequestQueue`
-  - Downstream: Agent responds to the user with `Event`
+- **Fase 3: Bidi-streaming con bucle de eventos `run_live()`** (Una o Más Veces por Sesión de Usuario)
+  - Upstream: Usuario envía mensaje al agente con `LiveRequestQueue`
+  - Downstream: Agente responde al usuario con `Event`
 
-- **Phase 4: Terminate Live API session** (One or More Times per User Session)
+- **Fase 4: Terminar sesión Live API** (Una o Más Veces por Sesión de Usuario)
   - `LiveRequestQueue.close()`
 
-**Lifecycle Flow Overview:**
+**Descripción General del Flujo del Ciclo de Vida:**
 
 ```mermaid
 graph TD
-    A[Phase 1: Application Init<br/>Once at Startup] --> B[Phase 2: Session Init<br/>Per User Connection]
-    B --> C[Phase 3: Bidi-streaming<br/>Active Communication]
-    C --> D[Phase 4: Terminate<br/>Close Session]
-    D -.New Connection.-> B
+    A[Fase 1: Init Aplicación<br/>Una Vez al Inicio] --> B[Fase 2: Init Sesión<br/>Por Conexión de Usuario]
+    B --> C[Fase 3: Bidi-streaming<br/>Comunicación Activa]
+    C --> D[Fase 4: Terminar<br/>Cerrar Sesión]
+    D -.Nueva Conexión.-> B
 
     style A fill:#e3f2fd
     style B fill:#e8f5e9
@@ -346,82 +346,82 @@ graph TD
     style D fill:#ffebee
 ```
 
-This flowchart shows the high-level lifecycle phases and how they connect. The detailed sequence diagram below illustrates the specific components and interactions within each phase.
+Este diagrama de flujo muestra las fases del ciclo de vida de alto nivel y cómo se conectan. El diagrama de secuencia detallado a continuación ilustra los componentes específicos e interacciones dentro de cada fase.
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant App as Application Server
+    participant Client as Cliente
+    participant App as Servidor de Aplicación
     participant Queue as LiveRequestQueue
     participant Runner
-    participant Agent
+    participant Agent as Agente
     participant API as Live API
 
     rect rgb(230, 240, 255)
-        Note over App: Phase 1: Application Initialization (Once at Startup)
-        App->>Agent: 1. Create Agent(model, tools, instruction)
-        App->>App: 2. Create SessionService()
-        App->>Runner: 3. Create Runner(app_name, agent, session_service)
+        Note over App: Fase 1: Inicialización de Aplicación (Una Vez al Inicio)
+        App->>Agent: 1. Crear Agent(model, tools, instruction)
+        App->>App: 2. Crear SessionService()
+        App->>Runner: 3. Crear Runner(app_name, agent, session_service)
     end
 
     rect rgb(240, 255, 240)
-        Note over Client,API: Phase 2: Session Initialization (Every Time a User Connected)
+        Note over Client,API: Fase 2: Inicialización de Sesión (Cada Vez que un Usuario se Conecta)
         Client->>App: 1. WebSocket connect(user_id, session_id)
         App->>App: 2. get_or_create_session(app_name, user_id, session_id)
-        App->>App: 3. Create RunConfig(streaming_mode, modalities)
-        App->>Queue: 4. Create LiveRequestQueue()
-        App->>Runner: 5. Start run_live(user_id, session_id, queue, config)
-        Runner->>API: Connect to Live API session
+        App->>App: 3. Crear RunConfig(streaming_mode, modalities)
+        App->>Queue: 4. Crear LiveRequestQueue()
+        App->>Runner: 5. Iniciar run_live(user_id, session_id, queue, config)
+        Runner->>API: Conectar a sesión Live API
     end
 
     rect rgb(255, 250, 240)
-        Note over Client,API: Phase 3: Bidi-streaming with run_live() Event Loop
+        Note over Client,API: Fase 3: Bidi-streaming con Bucle de Eventos run_live()
 
-        par Upstream: User sends messages via LiveRequestQueue
-            Client->>App: User message (text/audio/video)
+        par Upstream: Usuario envía mensajes vía LiveRequestQueue
+            Client->>App: Mensaje de usuario (text/audio/video)
             App->>Queue: send_content() / send_realtime()
-            Queue->>Runner: Buffered request
-            Runner->>Agent: Process request
-            Agent->>API: Stream to Live API
-        and Downstream: Agent responds via Events
-            API->>Agent: Streaming response
-            Agent->>Runner: Process response
+            Queue->>Runner: Solicitud en búfer
+            Runner->>Agent: Procesar solicitud
+            Agent->>API: Stream a Live API
+        and Downstream: Agente responde vía Events
+            API->>Agent: Respuesta streaming
+            Agent->>Runner: Procesar respuesta
             Runner->>App: yield Event (text/audio/tool/turn)
-            App->>Client: Forward Event via WebSocket
+            App->>Client: Reenviar Event vía WebSocket
         end
 
-        Note over Client,API: (Event loop continues until close signal)
+        Note over Client,API: (Bucle de eventos continúa hasta señal de cierre)
     end
 
     rect rgb(255, 240, 240)
-        Note over Client,API: Phase 4: Terminate Live API session
+        Note over Client,API: Fase 4: Terminar sesión Live API
         Client->>App: WebSocket disconnect
         App->>Queue: close()
-        Queue->>Runner: Close signal
-        Runner->>API: Disconnect from Live API
-        Runner->>App: run_live() exits
+        Queue->>Runner: Señal de cierre
+        Runner->>API: Desconectar de Live API
+        Runner->>App: run_live() sale
     end
 ```
 
-In the following sections, you'll see each phase detailed, showing exactly when to create each component and how they work together. Understanding this lifecycle pattern is essential for building robust streaming applications that can handle multiple concurrent sessions efficiently.
+En las siguientes secciones, verás cada fase detallada, mostrando exactamente cuándo crear cada componente y cómo funcionan juntos. Entender este patrón de ciclo de vida es esencial para construir aplicaciones de streaming robustas que puedan manejar múltiples sesiones concurrentes eficientemente.
 
 
-### Phase 1: Application Initialization
+### Fase 1: Inicialización de Aplicación
 
-These components are created once when your application starts and shared across all streaming sessions. They define your agent's capabilities, manage conversation history, and orchestrate the streaming execution.
+Estos componentes se crean una vez cuando tu aplicación inicia y se comparten a través de todas las sesiones de streaming. Definen las capacidades de tu agente, gestionan historial de conversación y orquestan la ejecución de streaming.
 
-#### Define Your Agent
+#### Define Tu Agente
 
-The `Agent` is the core of your streaming application—it defines what your AI can do, how it should behave, and which AI model powers it. You configure your agent with a specific model, tools it can use (like Google Search or custom APIs), and instructions that shape its personality and behavior.
+El `Agent` es el núcleo de tu aplicación de streaming—define qué puede hacer tu IA, cómo debe comportarse y qué modelo de IA lo impulsa. Configuras tu agente con un modelo específico, herramientas que puede usar (como Google Search o APIs personalizadas), e instrucciones que moldean su personalidad y comportamiento.
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/google_search_agent/agent.py#L10-L15" target="_blank">agent.py:10-15</a>'
-"""Google Search Agent definition for ADK Bidi-streaming demo."""
+```python title='Implementación de Demo: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/google_search_agent/agent.py#L10-L15" target="_blank">agent.py:10-15</a>'
+"""Definición del Agente de Google Search para demo ADK Bidi-streaming."""
 
 import os
 from google.adk.agents import Agent
 from google.adk.tools import google_search
 
-# Default models for Live API with native audio support:
+# Modelos predeterminados para Live API con soporte de audio nativo:
 # - Gemini Live API: gemini-2.5-flash-native-audio-preview-12-2025
 # - Vertex AI Live API: gemini-live-2.5-flash-native-audio
 agent = Agent(
@@ -432,59 +432,59 @@ agent = Agent(
 )
 ```
 
-The agent instance is **stateless and reusable**—you create it once and use it for all streaming sessions. Agent configuration is covered in the [ADK Agent documentation](https://google.github.io/adk-docs/agents/).
+La instancia del agente es **sin estado y reutilizable**—la creas una vez y la usas para todas las sesiones de streaming. La configuración del agente se cubre en la [documentación de Agent ADK](https://google.github.io/adk-docs/agents/).
 
-!!! note "Model Availability"
+!!! note "Disponibilidad de Modelos"
 
-    For the latest supported models and their capabilities, see [Part 5: Understanding Audio Model Architectures](part5.md#understanding-audio-model-architectures).
+    Para los últimos modelos soportados y sus capacidades, consulta [Parte 5: Entendiendo Arquitecturas de Modelos de Audio](part5.md#understanding-audio-model-architectures).
 
 !!! note "Agent vs LlmAgent"
 
-    `Agent` is the recommended shorthand for `LlmAgent` (both are imported from `google.adk.agents`). They are identical - use whichever you prefer. This guide uses `Agent` for brevity, but you may see `LlmAgent` in other ADK documentation and examples.
+    `Agent` es la abreviatura recomendada para `LlmAgent` (ambos se importan de `google.adk.agents`). Son idénticos - usa el que prefieras. Esta guía usa `Agent` por brevedad, pero puedes ver `LlmAgent` en otra documentación y ejemplos de ADK.
 
-#### Define Your SessionService
+#### Define Tu SessionService
 
-The ADK [Session](https://google.github.io/adk-docs/sessions/session/) manages conversation state and history across streaming sessions. It stores and retrieves session data, enabling features like conversation resumption and context persistence.
+La [Session](https://google.github.io/adk-docs/sessions/session/) de ADK gestiona estado e historial de conversación a través de sesiones de streaming. Almacena y recupera datos de sesión, habilitando características como reanudación de conversación y persistencia de contexto.
 
-To create a `Session`, or get an existing one for a specified `session_id`, every ADK application needs to have a [SessionService](https://google.github.io/adk-docs/sessions/session/#managing-sessions-with-a-sessionservice). For development purpose, ADK provides a simple `InMemorySessionService` that will lose the `Session` state when the application shuts down.
+Para crear una `Session`, u obtener una existente para un `session_id` especificado, cada aplicación ADK necesita tener un [SessionService](https://google.github.io/adk-docs/sessions/session/#managing-sessions-with-a-sessionservice). Para propósito de desarrollo, ADK proporciona un `InMemorySessionService` simple que perderá el estado de la `Session` cuando la aplicación se apague.
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L37" target="_blank">main.py:37</a>'
+```python title='Implementación de Demo: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L37" target="_blank">main.py:37</a>'
 from google.adk.sessions import InMemorySessionService
 
-# Define your session service
+# Define tu servicio de sesión
 session_service = InMemorySessionService()
 ```
 
-For production applications, choose a persistent session service based on your infrastructure:
+Para aplicaciones de producción, elige un servicio de sesión persistente basado en tu infraestructura:
 
-**Use `DatabaseSessionService` if:**
+**Usa `DatabaseSessionService` si:**
 
-- You need persistent storage with SQLite, PostgreSQL, or MySQL
-- You're building single-server apps (SQLite) or multi-server deployments (PostgreSQL/MySQL)
-- You want full control over data storage and backups
-- Examples:
+- Necesitas almacenamiento persistente con SQLite, PostgreSQL o MySQL
+- Estás construyendo apps de un solo servidor (SQLite) o despliegues multi-servidor (PostgreSQL/MySQL)
+- Quieres control total sobre almacenamiento de datos y respaldos
+- Ejemplos:
     - SQLite: `DatabaseSessionService(db_url="sqlite:///./sessions.db")`
     - PostgreSQL: `DatabaseSessionService(db_url="postgresql://user:pass@host/db")`
 
-**Use `VertexAiSessionService` if:**
+**Usa `VertexAiSessionService` si:**
 
-- You're already using Google Cloud Platform
-- You want managed storage with built-in scalability
-- You need tight integration with Vertex AI features
-- Example: `VertexAiSessionService(project="my-project")`
+- Ya estás usando Google Cloud Platform
+- Quieres almacenamiento gestionado con escalabilidad integrada
+- Necesitas integración estrecha con características de Vertex AI
+- Ejemplo: `VertexAiSessionService(project="my-project")`
 
-Both provide session persistence capabilities—choose based on your infrastructure and scale requirements. With persistent session services, the state of the `Session` will be preserved even after application shutdown. See the [ADK Session Management documentation](https://google.github.io/adk-docs/sessions/) for more details.
+Ambos proporcionan capacidades de persistencia de sesión—elige según tus requisitos de infraestructura y escala. Con servicios de sesión persistentes, el estado de la `Session` se preservará incluso después del apagado de la aplicación. Consulta la [documentación de Gestión de Sesiones ADK](https://google.github.io/adk-docs/sessions/) para más detalles.
 
-#### Define Your Runner
+#### Define Tu Runner
 
-The [Runner](https://google.github.io/adk-docs/runtime/) provides the runtime for the `Agent`. It manages the conversation flow, coordinates tool execution, handles events, and integrates with session storage. You create one runner instance at application startup and reuse it for all streaming sessions.
+El [Runner](https://google.github.io/adk-docs/runtime/) proporciona el runtime para el `Agent`. Gestiona el flujo de conversación, coordina ejecución de herramientas, maneja eventos e integra con almacenamiento de sesiones. Creas una instancia de runner al inicio de la aplicación y la reutilizas para todas las sesiones de streaming.
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L50" target="_blank">main.py:50,53</a>'
+```python title='Implementación de Demo: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L50" target="_blank">main.py:50,53</a>'
 from google.adk.runners import Runner
 
 APP_NAME = "bidi-demo"
 
-# Define your runner
+# Define tu runner
 runner = Runner(
     app_name=APP_NAME,
     agent=agent,
@@ -492,51 +492,51 @@ runner = Runner(
 )
 ```
 
-The `app_name` parameter is required and identifies your application in session storage. All sessions for your application are organized under this name.
+El parámetro `app_name` es requerido e identifica tu aplicación en almacenamiento de sesiones. Todas las sesiones para tu aplicación se organizan bajo este nombre.
 
-### Phase 2: Session Initialization
+### Fase 2: Inicialización de Sesión
 
-#### Get or Create Session
+#### Obtener o Crear Sesión
 
-ADK `Session` provides a "conversation thread" of the Bidi-streaming application. Just like you wouldn't start every text message from scratch, agents need context regarding the ongoing interaction. `Session` is the ADK object designed specifically to track and manage these individual conversation threads.
+La `Session` de ADK proporciona un "hilo de conversación" de la aplicación Bidi-streaming. Así como no comenzarías cada mensaje de texto desde cero, los agentes necesitan contexto respecto a la interacción en curso. `Session` es el objeto ADK diseñado específicamente para rastrear y gestionar estos hilos de conversación individuales.
 
-##### ADK `Session` vs Live API session
+##### `Session` de ADK vs sesión Live API
 
-ADK `Session` (managed by SessionService) provides **persistent conversation storage** across multiple Bidi-streaming sessions (can spans hours, days or even months), while Live API session (managed by Live API backend) is **a transient streaming context** that exists only during single Bidi-streaming event loop (spans minutes or hours typically) that we will discuss later. When the loop starts, ADK initializes the Live API session with history from the ADK `Session`, then updates the ADK `Session` as new events occur.
+La `Session` de ADK (gestionada por SessionService) proporciona **almacenamiento de conversación persistente** a través de múltiples sesiones Bidi-streaming (puede abarcar horas, días o incluso meses), mientras que la sesión Live API (gestionada por backend Live API) es **un contexto de streaming transitorio** que existe solo durante un único bucle de eventos Bidi-streaming (abarca minutos u horas típicamente) que discutiremos más adelante. Cuando el bucle inicia, ADK inicializa la sesión Live API con historial de la `Session` de ADK, luego actualiza la `Session` de ADK conforme ocurren nuevos eventos.
 
-!!! note "Learn More"
+!!! note "Aprende Más"
 
-    For a detailed comparison with sequence diagrams, see [Part 4: ADK `Session` vs Live API session](part4.md#adk-session-vs-live-api-session).
+    Para una comparación detallada con diagramas de secuencia, consulta [Parte 4: `Session` de ADK vs sesión Live API](part4.md#adk-session-vs-live-api-session).
 
-##### Session Identifiers Are Application-Defined
+##### Los Identificadores de Sesión Son Definidos por la Aplicación
 
-Sessions are identified by three parameters: `app_name`, `user_id`, and `session_id`. This three-level hierarchy enables multi-tenant applications where each user can have multiple concurrent sessions.
+Las sesiones se identifican por tres parámetros: `app_name`, `user_id` y `session_id`. Esta jerarquía de tres niveles habilita aplicaciones multi-tenant donde cada usuario puede tener múltiples sesiones concurrentes.
 
-Both `user_id` and `session_id` are **arbitrary string identifiers** that you define based on your application's needs. ADK performs no format validation beyond `.strip()` on `session_id`—you can use any string values that make sense for your application:
+Tanto `user_id` como `session_id` son **identificadores de cadena arbitrarios** que defines según las necesidades de tu aplicación. ADK no realiza validación de formato más allá de `.strip()` en `session_id`—puedes usar cualquier valor de cadena que tenga sentido para tu aplicación:
 
-- **`user_id` examples**: User UUIDs (`"550e8400-e29b-41d4-a716-446655440000"`), email addresses (`"alice@example.com"`), database IDs (`"user_12345"`), or simple identifiers (`"demo-user"`)
-- **`session_id` examples**: Custom session tokens, UUIDs, timestamp-based IDs (`"session_2025-01-27_143022"`), or simple identifiers (`"demo-session"`)
+- **Ejemplos de `user_id`**: UUIDs de usuario (`"550e8400-e29b-41d4-a716-446655440000"`), direcciones de email (`"alice@example.com"`), IDs de base de datos (`"user_12345"`), o identificadores simples (`"demo-user"`)
+- **Ejemplos de `session_id`**: Tokens de sesión personalizados, UUIDs, IDs basados en timestamp (`"session_2025-01-27_143022"`), o identificadores simples (`"demo-session"`)
 
-**Auto-generation**: If you pass `session_id=None` or an empty string to `create_session()`, ADK automatically generates a UUID for you (e.g., `"550e8400-e29b-41d4-a716-446655440000"`).
+**Auto-generación**: Si pasas `session_id=None` o una cadena vacía a `create_session()`, ADK genera automáticamente un UUID para ti (ej., `"550e8400-e29b-41d4-a716-446655440000"`).
 
-**Organizational hierarchy**: These identifiers organize sessions in a three-level structure:
+**Jerarquía organizacional**: Estos identificadores organizan sesiones en una estructura de tres niveles:
 
 ```text
 app_name → user_id → session_id → Session
 ```
 
-This design enables scenarios like:
+Este diseño habilita escenarios como:
 
-- Multi-tenant applications where different users have isolated conversation spaces
-- Single users with multiple concurrent chat threads (e.g., different topics)
-- Per-device or per-browser session isolation
+- Aplicaciones multi-tenant donde diferentes usuarios tienen espacios de conversación aislados
+- Usuarios individuales con múltiples hilos de chat concurrentes (ej., diferentes temas)
+- Aislamiento de sesión por dispositivo o por navegador
 
-##### Recommended Pattern: Get-or-Create
+##### Patrón Recomendado: Obtener-o-Crear
 
-The recommended production pattern is to check if a session exists first, then create it only if needed. This approach safely handles both new sessions and conversation resumption:
+El patrón de producción recomendado es verificar si una sesión existe primero, luego crearla solo si es necesario. Este enfoque maneja de manera segura tanto sesiones nuevas como reanudación de conversación:
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L155-L161" target="_blank">main.py:155-161</a>'
-# Get or create session (handles both new sessions and reconnections)
+```python title='Implementación de Demo: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L155-L161" target="_blank">main.py:155-161</a>'
+# Obtener o crear sesión (maneja tanto sesiones nuevas como reconexiones)
 session = await session_service.get_session(
     app_name=APP_NAME,
     user_id=user_id,
@@ -550,23 +550,23 @@ if not session:
     )
 ```
 
-This pattern works correctly in all scenarios:
+Este patrón funciona correctamente en todos los escenarios:
 
-- **New conversations**: If the session doesn't exist, it's created automatically
-- **Resuming conversations**: If the session already exists (e.g., reconnection after network interruption), the existing session is reused with full conversation history
-- **Idempotent**: Safe to call multiple times without errors
+- **Conversaciones nuevas**: Si la sesión no existe, se crea automáticamente
+- **Reanudando conversaciones**: Si la sesión ya existe (ej., reconexión después de interrupción de red), la sesión existente se reutiliza con historial completo de conversación
+- **Idempotente**: Seguro de llamar múltiples veces sin errores
 
-**Important**: The session must exist before calling `runner.run_live()` with the same identifiers. If the session doesn't exist, `run_live()` will raise `ValueError: Session not found`.
+**Importante**: La sesión debe existir antes de llamar `runner.run_live()` con los mismos identificadores. Si la sesión no existe, `run_live()` lanzará `ValueError: Session not found`.
 
-#### Create RunConfig
+#### Crear RunConfig
 
-[RunConfig](part4.md) defines the streaming behavior for this specific session—which modalities to use (text or audio), whether to enable transcription, voice activity detection, proactivity, and other advanced features.
+[RunConfig](part4.md) define el comportamiento de streaming para esta sesión específica—qué modalidades usar (texto o audio), si habilitar transcripción, detección de actividad de voz, proactividad y otras características avanzadas.
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L110-L124" target="_blank">main.py:110-124</a>'
+```python title='Implementación de Demo: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L110-L124" target="_blank">main.py:110-124</a>'
 from google.adk.agents.run_config import RunConfig, StreamingMode
 from google.genai import types
 
-# Native audio models require AUDIO response modality with audio transcription
+# Los modelos de audio nativo requieren modalidad de respuesta AUDIO con transcripción de audio
 response_modalities = ["AUDIO"]
 run_config = RunConfig(
     streaming_mode=StreamingMode.BIDI,
@@ -577,42 +577,42 @@ run_config = RunConfig(
 )
 ```
 
-`RunConfig` is **session-specific**—each streaming session can have different configuration. For example, one user might prefer text-only responses while another uses voice mode. See [Part 4: Understanding RunConfig](part4.md) for complete configuration options.
+`RunConfig` es **específico de sesión**—cada sesión de streaming puede tener diferente configuración. Por ejemplo, un usuario podría preferir respuestas solo de texto mientras otro usa modo de voz. Consulta [Parte 4: Entendiendo RunConfig](part4.md) para opciones completas de configuración.
 
-#### Create LiveRequestQueue
+#### Crear LiveRequestQueue
 
-`LiveRequestQueue` is the communication channel for sending messages to the agent during streaming. It's a thread-safe async queue that buffers user messages (text content, audio blobs, activity signals) for orderly processing.
+`LiveRequestQueue` es el canal de comunicación para enviar mensajes al agente durante streaming. Es una cola async segura para hilos que almacena en búfer mensajes de usuario (contenido de texto, blobs de audio, señales de actividad) para procesamiento ordenado.
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L163" target="_blank">main.py:163</a>'
+```python title='Implementación de Demo: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L163" target="_blank">main.py:163</a>'
 from google.adk.agents.live_request_queue import LiveRequestQueue
 
 live_request_queue = LiveRequestQueue()
 ```
 
-`LiveRequestQueue` is **session-specific and stateful**—you create a new queue for each streaming session and close it when the session ends. Unlike `Agent` and `Runner`, queues cannot be reused across sessions.
+`LiveRequestQueue` es **específico de sesión y con estado**—creas una nueva cola para cada sesión de streaming y la cierras cuando la sesión termina. A diferencia de `Agent` y `Runner`, las colas no pueden reutilizarse a través de sesiones.
 
-!!! warning "One Queue Per Session"
+!!! warning "Una Cola Por Sesión"
 
-    Never reuse a `LiveRequestQueue` across multiple streaming sessions. Each call to `run_live()` requires a fresh queue. Reusing queues can cause message ordering issues and state corruption.
+    Nunca reutilices un `LiveRequestQueue` a través de múltiples sesiones de streaming. Cada llamada a `run_live()` requiere una cola nueva. Reutilizar colas puede causar problemas de orden de mensajes y corrupción de estado.
 
-    The close signal persists in the queue (see [`live_request_queue.py:59-60`](https://github.com/google/adk-python/blob/fd2c0f556b786417a9f6add744827b07e7a06b7d/src/google/adk/agents/live_request_queue.py#L66-L67)) and terminates the sender loop (see [`base_llm_flow.py:264-266`](https://github.com/google/adk-python/blob/fd2c0f556b786417a9f6add744827b07e7a06b7d/src/google/adk/flows/llm_flows/base_llm_flow.py#L260-L262)). Reusing a queue would carry over this signal and any remaining messages from the previous session.
+    La señal de cierre persiste en la cola (ver [`live_request_queue.py:59-60`](https://github.com/google/adk-python/blob/fd2c0f556b786417a9f6add744827b07e7a06b7d/src/google/adk/agents/live_request_queue.py#L66-L67)) y termina el bucle de envío (ver [`base_llm_flow.py:264-266`](https://github.com/google/adk-python/blob/fd2c0f556b786417a9f6add744827b07e7a06b7d/src/google/adk/flows/llm_flows/base_llm_flow.py#L260-L262)). Reutilizar una cola trasladaría esta señal y cualquier mensaje restante de la sesión anterior.
 
-### Phase 3: Bidi-streaming with `run_live()` event loop
+### Fase 3: Bidi-streaming con bucle de eventos `run_live()`
 
-Once the streaming loop is running, you can send messages to the agent and receive responses **concurrently**—this is Bidi-streaming in action. The agent can be generating a response while you're sending new input, enabling natural interruption-based conversation.
+Una vez que el bucle de streaming está corriendo, puedes enviar mensajes al agente y recibir respuestas **concurrentemente**—esto es Bidi-streaming en acción. El agente puede estar generando una respuesta mientras estás enviando nueva entrada, habilitando conversación natural basada en interrupción.
 
-#### Send Messages to the Agent
+#### Enviar Mensajes al Agente
 
-Use `LiveRequestQueue` methods to send different types of messages to the agent during the streaming session:
+Usa métodos de `LiveRequestQueue` para enviar diferentes tipos de mensajes al agente durante la sesión de streaming:
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L169-L217" target="_blank">main.py:169-217</a>'
+```python title='Implementación de Demo: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L169-L217" target="_blank">main.py:169-217</a>'
 from google.genai import types
 
-# Send text content
+# Enviar contenido de texto
 content = types.Content(parts=[types.Part(text=json_message["text"])])
 live_request_queue.send_content(content)
 
-# Send audio blob
+# Enviar blob de audio
 audio_blob = types.Blob(
     mime_type="audio/pcm;rate=16000",
     data=audio_data
@@ -620,15 +620,15 @@ audio_blob = types.Blob(
 live_request_queue.send_realtime(audio_blob)
 ```
 
-These methods are **non-blocking**—they immediately add messages to the queue without waiting for processing. This enables smooth, responsive user experiences even during heavy AI processing.
+Estos métodos son **no bloqueantes**—inmediatamente agregan mensajes a la cola sin esperar procesamiento. Esto habilita experiencias de usuario suaves y responsivas incluso durante procesamiento pesado de IA.
 
-See [Part 2: Sending messages with LiveRequestQueue](part2.md) for detailed API documentation.
+Consulta [Parte 2: Enviando mensajes con LiveRequestQueue](part2.md) para documentación detallada de API.
 
-#### Receive and Process Events
+#### Recibir y Procesar Eventos
 
-The `run_live()` async generator continuously yields `Event` objects as the agent processes input and generates responses. Each event represents a discrete occurrence—partial text generation, audio chunks, tool execution, transcription, interruption, or turn completion.
+El generador async `run_live()` continuamente produce objetos `Event` conforme el agente procesa entrada y genera respuestas. Cada evento representa una ocurrencia discreta—generación de texto parcial, chunks de audio, ejecución de herramientas, transcripción, interrupción o completación de turno.
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L219-L234" target="_blank">main.py:219-234</a>'
+```python title='Implementación de Demo: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L219-L234" target="_blank">main.py:219-234</a>'
 async for event in runner.run_live(
     user_id=user_id,
     session_id=session_id,
@@ -639,33 +639,33 @@ async for event in runner.run_live(
     await websocket.send_text(event_json)
 ```
 
-Events are designed for **streaming delivery**—you receive partial responses as they're generated, not just complete messages. This enables real-time UI updates and responsive user experiences.
+Los eventos están diseñados para **entrega de streaming**—recibes respuestas parciales conforme se generan, no solo mensajes completos. Esto habilita actualizaciones de UI en tiempo real y experiencias de usuario responsivas.
 
-See [Part 3: Event handling with run_live()](part3.md) for comprehensive event handling patterns.
+Consulta [Parte 3: Manejo de eventos con run_live()](part3.md) para patrones comprensivos de manejo de eventos.
 
-### Phase 4: Terminate Live API session
+### Fase 4: Terminar sesión Live API
 
-When the streaming session should end (user disconnects, conversation completes, timeout occurs), close the queue gracefully to signal termination to terminate the Live API session.
+Cuando la sesión de streaming debe terminar (usuario se desconecta, conversación se completa, ocurre timeout), cierra la cola graciosamente para señalar terminación y terminar la sesión Live API.
 
-#### Close the Queue
+#### Cerrar la Cola
 
-Send a close signal through the queue to terminate the streaming loop:
+Envía una señal de cierre a través de la cola para terminar el bucle de streaming:
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L253" target="_blank">main.py:253</a>'
+```python title='Implementación de Demo: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L253" target="_blank">main.py:253</a>'
 live_request_queue.close()
 ```
 
-This signals `run_live()` to stop yielding events and exit the async generator loop. The agent completes any in-progress processing and the streaming session ends cleanly.
+Esto señala a `run_live()` que detenga producción de eventos y salga del bucle de generador async. El agente completa cualquier procesamiento en progreso y la sesión de streaming termina limpiamente.
 
-### FastAPI Application Example
+### Ejemplo de Aplicación FastAPI
 
-Here's a complete FastAPI WebSocket application showing all four phases integrated with proper Bidi-streaming. The key pattern is **upstream/downstream tasks**: the upstream task receives messages from WebSocket and sends them to `LiveRequestQueue`, while the downstream task receives `Event` objects from `run_live()` and sends them to WebSocket.
+Aquí hay una aplicación FastAPI WebSocket completa mostrando todas las cuatro fases integradas con Bidi-streaming apropiado. El patrón clave es **tareas upstream/downstream**: la tarea upstream recibe mensajes de WebSocket y los envía a `LiveRequestQueue`, mientras que la tarea downstream recibe objetos `Event` de `run_live()` y los envía a WebSocket.
 
-!!! note "Complete Demo Implementation"
+!!! note "Implementación de Demo Completa"
 
-    For the production-ready implementation with multimodal support (text, audio, image), see the complete [`main.py`](https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py) file.
+    Para la implementación lista para producción con soporte multimodal (texto, audio, imagen), consulta el archivo [`main.py`](https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py) completo.
 
-**Complete Implementation:**
+**Implementación Completa:**
 
 ```python
 import asyncio
@@ -678,17 +678,17 @@ from google.genai import types
 from google_search_agent.agent import agent
 
 # ========================================
-# Phase 1: Application Initialization (once at startup)
+# Fase 1: Inicialización de Aplicación (una vez al inicio)
 # ========================================
 
 APP_NAME = "bidi-demo"
 
 app = FastAPI()
 
-# Define your session service
+# Define tu servicio de sesión
 session_service = InMemorySessionService()
 
-# Define your runner
+# Define tu runner
 runner = Runner(
     app_name=APP_NAME,
     agent=agent,
@@ -696,7 +696,7 @@ runner = Runner(
 )
 
 # ========================================
-# WebSocket Endpoint
+# Endpoint WebSocket
 # ========================================
 
 @app.websocket("/ws/{user_id}/{session_id}")
@@ -704,10 +704,10 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str
     await websocket.accept()
 
     # ========================================
-    # Phase 2: Session Initialization (once per streaming session)
+    # Fase 2: Inicialización de Sesión (una vez por sesión de streaming)
     # ========================================
 
-    # Create RunConfig
+    # Crear RunConfig
     response_modalities = ["AUDIO"]
     run_config = RunConfig(
         streaming_mode=StreamingMode.BIDI,
@@ -717,7 +717,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str
         session_resumption=types.SessionResumptionConfig()
     )
 
-    # Get or create session
+    # Obtener o crear sesión
     session = await session_service.get_session(
         app_name=APP_NAME,
         user_id=user_id,
@@ -730,185 +730,41 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str
             session_id=session_id
         )
 
-    # Create LiveRequestQueue
+    # Crear LiveRequestQueue
     live_request_queue = LiveRequestQueue()
 
     # ========================================
-    # Phase 3: Active Session (concurrent bidirectional communication)
+    # Fase 3: Sesión Activa (comunicación bidireccional concurrente)
     # ========================================
 
     async def upstream_task() -> None:
-        """Receives messages from WebSocket and sends to LiveRequestQueue."""
+        """Recibe mensajes de WebSocket y envía a LiveRequestQueue."""
         try:
             while True:
-                # Receive text message from WebSocket
+                # Recibir mensaje de texto de WebSocket
                 data: str = await websocket.receive_text()
 
-                # Send to LiveRequestQueue
+                # Enviar a LiveRequestQueue
                 content = types.Content(parts=[types.Part(text=data)])
                 live_request_queue.send_content(content)
         except WebSocketDisconnect:
-            # Client disconnected - signal queue to close
+            # Cliente desconectado - señalar cola para cerrar
             pass
 
     async def downstream_task() -> None:
-        """Receives Events from run_live() and sends to WebSocket."""
+        """Recibe Events de run_live() y envía a WebSocket."""
         async for event in runner.run_live(
             user_id=user_id,
             session_id=session_id,
             live_request_queue=live_request_queue,
             run_config=run_config
         ):
-            # Send event as JSON to WebSocket
+            # Enviar evento como JSON a WebSocket
             await websocket.send_text(
                 event.model_dump_json(exclude_none=True, by_alias=True)
             )
 
-    # Run both tasks concurrently
+    # Ejecutar ambas tareas concurrentemente
     try:
         await asyncio.gather(
             upstream_task(),
-            downstream_task(),
-            return_exceptions=True
-        )
-    finally:
-        # ========================================
-        # Phase 4: Session Termination
-        # ========================================
-
-        # Always close the queue, even if exceptions occurred
-        live_request_queue.close()
-```
-
-!!! note "Async Context Required"
-
-    All ADK bidirectional streaming applications **must run in an async context**. This requirement comes from multiple components:
-
-    - **`run_live()`**: ADK's streaming method is an async generator with no synchronous wrapper (unlike `run()`)
-    - **Session operations**: `get_session()` and `create_session()` are async methods
-    - **WebSocket operations**: FastAPI's `websocket.accept()`, `receive_text()`, and `send_text()` are all async
-    - **Concurrent tasks**: The upstream/downstream pattern requires `asyncio.gather()` for concurrent execution
-
-    All code examples in this guide assume you're running in an async context (e.g., within an async function or coroutine). For consistency with ADK's official documentation patterns, examples show the core logic without boilerplate wrapper functions.
-
-### Key Concepts
-
-**Upstream Task (WebSocket → LiveRequestQueue)**
-
-The upstream task continuously receives messages from the WebSocket client and forwards them to the `LiveRequestQueue`. This enables the user to send messages to the agent at any time, even while the agent is generating a response.
-
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L169-L217" target="_blank">main.py:169-217</a>'
-async def upstream_task() -> None:
-    """Receives messages from WebSocket and sends to LiveRequestQueue."""
-    try:
-        while True:
-            data: str = await websocket.receive_text()
-            content = types.Content(parts=[types.Part(text=data)])
-            live_request_queue.send_content(content)
-    except WebSocketDisconnect:
-        pass  # Client disconnected
-```
-
-**Downstream Task (run_live() → WebSocket)**
-
-The downstream task continuously receives `Event` objects from `run_live()` and sends them to the WebSocket client. This streams the agent's responses, tool executions, transcriptions, and other events to the user in real-time.
-
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L219-L234" target="_blank">main.py:219-234</a>'
-async def downstream_task() -> None:
-    """Receives Events from run_live() and sends to WebSocket."""
-    async for event in runner.run_live(
-        user_id=user_id,
-        session_id=session_id,
-        live_request_queue=live_request_queue,
-        run_config=run_config
-    ):
-        await websocket.send_text(
-            event.model_dump_json(exclude_none=True, by_alias=True)
-        )
-```
-
-**Concurrent Execution with Cleanup**
-
-Both tasks run concurrently using `asyncio.gather()`, enabling true Bidi-streaming. The `try/finally` block ensures `LiveRequestQueue.close()` is called even if exceptions occur, minimizing the session resource usage.
-
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L238-L253" target="_blank">main.py:238-253</a>'
-try:
-    await asyncio.gather(
-        upstream_task(),
-        downstream_task(),
-        return_exceptions=True
-    )
-finally:
-    live_request_queue.close()  # Always cleanup
-```
-
-This pattern—concurrent upstream/downstream tasks with guaranteed cleanup—is the foundation of production-ready streaming applications. The lifecycle pattern (initialize once, stream many times) enables efficient resource usage and clean separation of concerns, with application components remaining stateless and reusable while session-specific state is isolated in `LiveRequestQueue`, `RunConfig`, and session records.
-
-#### Production Considerations
-
-This example shows the core pattern. For production applications, consider:
-
-- **Error handling (ADK)**: Add proper error handling for ADK streaming events. For details on error event handling, see [Part 3: Error Events](part3.md#error-events).
-    - Handle task cancellation gracefully by catching `asyncio.CancelledError` during shutdown
-    - Check exceptions from `asyncio.gather()` with `return_exceptions=True` - exceptions don't propagate automatically
-- **Error handling (Web)**: Handle web application-specific errors in upstream/downstream tasks. For example, with FastAPI you would need to:
-    - Catch `WebSocketDisconnect` (client disconnected), `ConnectionClosedError` (connection lost), and `RuntimeError` (sending to closed connection)
-    - Validate WebSocket connection state before sending with `websocket.client_state` to prevent errors when the connection is closed
-- **Authentication and authorization**: Implement authentication and authorization for your endpoints
-- **Rate limiting and quotas**: Add rate limiting and timeout controls. For guidance on concurrent sessions and quota management, see [Part 4: Concurrent Live API Sessions and Quota Management](part4.md#concurrent-live-api-sessions-and-quota-management).
-- **Structured logging**: Use structured logging for debugging.
-- **Persistent session services**: Consider using persistent session services (`DatabaseSessionService` or `VertexAiSessionService`). See the [ADK Session Services documentation](https://google.github.io/adk-docs/sessions/) for more details.
-
-## 1.6 What We Will Learn
-
-This guide takes you through ADK's Bidi-streaming architecture step by step, following the natural flow of streaming applications: how messages travel upstream from users to agents, how events flow downstream from agents to users, how to configure session behaviors, and how to implement multimodal features. Each part focuses on a specific component of the streaming architecture with practical patterns you can apply immediately:
-
-- **[Part 2: Sending messages with LiveRequestQueue](part2.md)** - Learn how ADK's `LiveRequestQueue` provides a unified interface for handling text, audio, and control messages. You'll understand the `LiveRequest` message model, how to send different types of content, manage user activity signals, and handle graceful session termination through a single, elegant API.
-
-- **[Part 3: Event handling with run_live()](part3.md)** - Master event handling in ADK's streaming architecture. Learn how to process different event types (text, audio, transcriptions, tool calls), manage conversation flow with interruption and turn completion signals, serialize events for network transport, and leverage ADK's automatic tool execution. Understanding event handling is essential for building responsive streaming applications.
-
-- **[Part 4: Understanding RunConfig](part4.md)** - Configure sophisticated streaming behaviors including multimodal interactions, intelligent proactivity, session resumption, and cost controls. Learn which features are available on different models and how to declaratively control your streaming sessions through RunConfig.
-
-- **[Part 5: How to Use Audio, Image and Video](part5.md)** - Implement voice and video features with ADK's multimodal capabilities. Understand audio specifications, streaming architectures, voice activity detection, audio transcription, and best practices for building natural voice-enabled AI experiences.
-
-### Prerequisites and Learning Resources
-
-For building an ADK Bidi-streaming application in production, we recommend having basic knowledge of the following technologies:
-
-**[ADK (Agent Development Kit)](https://google.github.io/adk-docs/)**
-
-Google's production-ready framework for building AI agents with streaming capabilities. ADK provides high-level abstractions for session management, tool orchestration, and state persistence, eliminating the need to implement low-level streaming infrastructure from scratch.
-
-**Live API ([Gemini Live API](https://ai.google.dev/gemini-api/docs/live) and [Vertex AI Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api))**
-
-Google's real-time conversational AI technology that enables low-latency bidirectional streaming with Gemini models. The Live API provides the underlying WebSocket-based protocol that powers ADK's streaming capabilities, handling multimodal input/output and natural conversation flow.
-
-**[Python Async Programming](https://docs.python.org/3/library/asyncio.html)**
-
-Python's built-in support for asynchronous programming using `async`/`await` syntax and the `asyncio` library. ADK streaming is built on async generators and coroutines, requiring familiarity with concepts like async functions, awaiting tasks, and concurrent execution with `asyncio.gather()`.
-
-**[Pydantic](https://docs.pydantic.dev/)**
-
-A Python library for data validation and settings management using Python type annotations. ADK uses Pydantic models extensively for structured data (like `Event`, `RunConfig`, and `Content`), providing type safety, automatic validation, and JSON serialization via `.model_dump_json()`.
-
-**[FastAPI](https://fastapi.tiangolo.com/)**
-
-A modern, high-performance Python web framework for building APIs with automatic OpenAPI documentation. FastAPI's native support for WebSockets and async request handling makes it ideal for building ADK streaming endpoints. FastAPI is included in the `adk-python` package and used by ADK's `adk web` tool for rapid prototyping. Alternative frameworks with WebSocket support (like Flask-SocketIO or Starlette) can also be used.
-
-**[WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)**
-
-A protocol providing full-duplex (two-way) communication channels over a single TCP connection. WebSockets enable real-time bidirectional data flow between clients and servers, making them the standard transport for streaming applications. Unlike HTTP request-response, WebSocket connections persist, allowing both parties to send messages at any time.
-
-**[SSE (Server-Sent Events)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)**
-
-A standard for servers to push data to web clients over HTTP. Unlike WebSockets, SSE is unidirectional (server-to-client only), making it simpler but less flexible. SSE is useful for streaming agent responses when you don't need client-to-server streaming, such as when user input comes through separate HTTP POST requests.
-
-While this guide covers ADK-specific concepts thoroughly, familiarity with these underlying technologies will help you build more robust production applications.
-
-## Summary
-
-In this introduction, you learned how ADK transforms complex real-time streaming infrastructure into a developer-friendly framework. We covered the fundamentals of Live API's bidirectional streaming capabilities, examined how ADK simplifies the streaming complexity through abstractions like `LiveRequestQueue`, `Runner`, and `run_live()`, and explored the complete application lifecycle from initialization through session termination. You now understand how ADK handles the heavy lifting—LLM-side streaming connection management, state persistence, platform differences, and event coordination—so you can focus on building intelligent agent experiences. With this foundation in place, you're ready to dive into the specifics of sending messages, handling events, configuring sessions, and implementing multimodal features in the following parts.
-
----
-
-[Next: Part 2: Sending Messages with LiveRequestQueue](part2.md) →

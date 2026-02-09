@@ -1,14 +1,12 @@
-# Community Resources
+# Recursos de la Comunidad
 
-Welcome! This page highlights resources built and maintained by the Agent
-Development Kit community.
+¡Bienvenido! Esta página destaca recursos construidos y mantenidos por la comunidad del Agent Development Kit.
 
 !!! info
 
-    Google and the ADK team do not provide support for the content linked in
-    these external community resources.
+    Google y el equipo de ADK no proporcionan soporte para el contenido vinculado en estos recursos externos de la comunidad.
 
-## Getting Started
+## Primeros Pasos
 
 <div class="resource-grid">
   <a href="https://www.youtube.com/watch?v=zgrOwow_uTQ" class="resource-card">
@@ -17,8 +15,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Video Demo</div>
-      <h3>📺 Introducing Agent Development Kit</h3>
-      <p>A demo of building a multi-agent travel planner, showcasing core design principles.</p>
+      <h3>📺 Presentando el Agent Development Kit</h3>
+      <p>Una demostración de la construcción de un planificador de viajes multi-agente, mostrando los principios básicos de diseño.</p>
     </div>
   </a>
   <a href="https://www.youtube.com/watch?v=44C8u0CDtSo" class="resource-card">
@@ -27,8 +25,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Video</div>
-      <h3>📺 Getting started with Agent Development Kit</h3>
-      <p>Learn the fundamentals of agent definition and how to run and debug your first agent.</p>
+      <h3>📺 Comenzando con el Agent Development Kit</h3>
+      <p>Aprende los fundamentos de la definición de agentes y cómo ejecutar y depurar tu primer agente.</p>
     </div>
   </a>
   <a href="https://www.youtube.com/watch?v=5ZmaWY7UX6k" class="resource-card">
@@ -37,19 +35,19 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Video</div>
-      <h3>📺 Getting Started with ADK Tools</h3>
-      <p>A guide to building a software bug assistant using tools like MCP and Google Search.</p>
+      <h3>📺 Comenzando con las Herramientas de ADK</h3>
+      <p>Una guía para construir un asistente de errores de software usando herramientas como MCP y Google Search.</p>
     </div>
   </a>
 </div>
 
-## ADK Community Calls
+## Llamadas de la Comunidad ADK
 
-!!! tip "Stay Connected"
+!!! tip "Mantente Conectado"
 
-    Join the [ADK Community Google Group](https://groups.google.com/g/adk-community) for updates, calendar invites, and to connect with the ADK community.
+    Únete al [Grupo de Google de la Comunidad ADK](https://groups.google.com/g/adk-community) para actualizaciones, invitaciones de calendario y para conectarte con la comunidad ADK.
 
-    See recent recordings below, or browse all past calls on our [YouTube playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5RR3).
+    Mira las grabaciones recientes a continuación, o explora todas las llamadas pasadas en nuestra [lista de reproducción de YouTube](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5RR3).
 
 <div class="resource-grid">
   <a href="https://www.youtube.com/watch?v=h9Lueiqo89E" class="resource-card">
@@ -58,8 +56,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Community Call</div>
-      <h3>📞 Jan 2026 Recording</h3>
-      <p>Discussions include Session Service schema for cross-language support, TypeScript multi-agent demo, API Registry for MCP servers, and third-party tool integrations.</p>
+      <h3>📞 Grabación de Enero 2026</h3>
+      <p>Las discusiones incluyen el esquema del Servicio de Sesión para soporte multi-lenguaje, demostración multi-agente en TypeScript, Registro de API para servidores MCP e integraciones de herramientas de terceros.</p>
     </div>
   </a>
   <a href="https://www.youtube.com/watch?v=cNVWhrbdn-E" class="resource-card">
@@ -68,8 +66,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Community Call</div>
-      <h3>📞 Dec 2025 Recording</h3>
-      <p>Discussions include the ADK TypeScript launch, Gemini 3 Flash support, bidirectional streaming for voice agents, and the Visual Builder UI.</p>
+      <h3>📞 Grabación de Diciembre 2025</h3>
+      <p>Las discusiones incluyen el lanzamiento de ADK TypeScript, soporte de Gemini 3 Flash, transmisión bidireccional para agentes de voz y la interfaz de usuario del Visual Builder.</p>
     </div>
   </a>
   <a href="https://www.youtube.com/watch?v=bftUz-WBqyw" class="resource-card">
@@ -78,14 +76,14 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Community Call</div>
-      <h3>📞 Nov 2025 Recording</h3>
-      <p>Discussions include the ADK Go launch, the reflect & retry plugin for error recovery, and time travel debugging for rewinding agent sessions.</p>
+      <h3>📞 Grabación de Noviembre 2025</h3>
+      <p>Las discusiones incluyen el lanzamiento de ADK Go, el plugin de reflexión y reintento para recuperación de errores, y la depuración de viaje en el tiempo para rebobinar sesiones de agentes.</p>
     </div>
   </a>
 
 </div>
 
-## Courses & Deep Dives
+## Cursos e Inmersiones Profundas
 
 <div class="resource-grid">
   <a href="https://www.kaggle.com/learn-guide/5-day-agents" class="resource-card">
@@ -94,8 +92,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Online Course</div>
-      <h3>🎓 5-Day AI Agents Intensive Course with Google</h3>
-      <p>Build with core ADK agent components including, models, tools, memory, evaluation, and deployment.</p>
+      <h3>🎓 Curso Intensivo de 5 Días de Agentes IA con Google</h3>
+      <p>Construye con componentes básicos de agentes ADK incluyendo modelos, herramientas, memoria, evaluación y despliegue.</p>
     </div>
   </a>
   <a href="https://www.youtube.com/watch?v=P4VFL9nIaIA" class="resource-card">
@@ -104,8 +102,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Video Course</div>
-      <h3>🎓 ADK Masterclass: Build AI Agents & Automate Workflows</h3>
-      <p>A complete crash course that takes you from beginner to expert with 12 hands-on examples.</p>
+      <h3>🎓 Masterclass de ADK: Construye Agentes IA y Automatiza Flujos de Trabajo</h3>
+      <p>Un curso intensivo completo que te lleva de principiante a experto con 12 ejemplos prácticos.</p>
     </div>
   </a>
   <a href="https://raphaelmansuy.github.io/adk_training/" class="resource-card">
@@ -114,8 +112,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Website</div>
-      <h3>🎓 ADK Training Hub</h3>
-      <p>Master ADK from first principles to production with comprehensive tutorials and examples.</p>
+      <h3>🎓 Centro de Entrenamiento ADK</h3>
+      <p>Domina ADK desde los primeros principios hasta la producción con tutoriales y ejemplos completos.</p>
     </div>
   </a>
   <a href="https://www.youtube.com/playlist?list=PLLrA_pU9-Gz2HwepRUVpq1TEPuYWo_fSi" class="resource-card">
@@ -124,8 +122,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">YouTube Playlist</div>
-      <h3>🎓 Master Agentic AI with ADK</h3>
-      <p>A step-by-step playlist covering everything from setup to deploying and scaling agents.</p>
+      <h3>🎓 Domina la IA Agéntica con ADK</h3>
+      <p>Una lista de reproducción paso a paso que cubre todo, desde la configuración hasta el despliegue y escalado de agentes.</p>
     </div>
   </a>
   <a href="https://www.youtube.com/playlist?list=PL6tW9BrhiPTAZts0W5nQS9dbW6VMnLKab" class="resource-card">
@@ -134,8 +132,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">YouTube Playlist</div>
-      <h3>🎓 Google ADK End-to-end Course</h3>
-      <p>Build, deploy, and scale production-ready agents with this in-depth course series.</p>
+      <h3>🎓 Curso Completo de Google ADK</h3>
+      <p>Construye, despliega y escala agentes listos para producción con esta serie de cursos en profundidad.</p>
     </div>
   </a>
   <a href="https://iamulya.one/tags/building-intelligent-agents-with-google-adk/" class="resource-card">
@@ -144,8 +142,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Blog Series</div>
-      <h3>🎓 Building Intelligent Agents with Google ADK</h3>
-      <p>A developer's guide to building intelligent agents with Google's code-first Python toolkit.</p>
+      <h3>🎓 Construyendo Agentes Inteligentes con Google ADK</h3>
+      <p>Una guía para desarrolladores sobre la construcción de agentes inteligentes con el kit de herramientas Python basado en código de Google.</p>
     </div>
   </a>
   <a href="https://github.com/arjunprabhulal/google-adk-masterclass" class="resource-card">
@@ -154,8 +152,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Online Course</div>
-      <h3>🎓 Google ADK Masterclass: Hands-on Series</h3>
-      <p>Build production-ready AI agents with 20 modules covering agents, workflows, tools, memory, and MCP integrations.</p>
+      <h3>🎓 Masterclass de Google ADK: Serie Práctica</h3>
+      <p>Construye agentes IA listos para producción con 20 módulos que cubren agentes, flujos de trabajo, herramientas, memoria e integraciones MCP.</p>
     </div>
   </a>
   <a href="https://www.youtube.com/playlist?list=PL0Zc2RFDZsM_MkHOzWNJpaT4EH5fQxA8n" class="resource-card">
@@ -164,13 +162,13 @@ Development Kit community.
       </div>
       <div class="card-content">
         <div class="type">YouTube Playlist</div>
-        <h3>📻️ ADK News - ADK Podcast in Japanese</h3>
-        <p>An auto-generated Japanese podcast about ADK, created by an ADK agent that covers commit logs, release notes, and blog posts.</p>
+        <h3>📻️ ADK News - Podcast de ADK en Japonés</h3>
+        <p>Un podcast japonés autogenerado sobre ADK, creado por un agente ADK que cubre registros de commits, notas de lanzamiento y publicaciones de blog.</p>
       </div>
     </a>
 </div>
 
-## Agent Tutorials and Demos
+## Tutoriales y Demostraciones de Agentes
 
 <div class="resource-grid">
   <a href="https://www.youtube.com/watch?v=efcUXoMX818" class="resource-card">
@@ -179,8 +177,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Video Tutorial</div>
-      <h3>📖 How to Build a Data Science Agent with ADK</h3>
-      <p>A deep dive into building a multi-agent system for database queries, Python analysis, and BigQuery ML.</p>
+      <h3>📖 Cómo Construir un Agente de Ciencia de Datos con ADK</h3>
+      <p>Una inmersión profunda en la construcción de un sistema multi-agente para consultas de bases de datos, análisis con Python y BigQuery ML.</p>
     </div>
   </a>
   <a href="https://www.youtube.com/watch?v=hPzjkQFV5yI" class="resource-card">
@@ -189,8 +187,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Video Tutorial</div>
-      <h3>📖 Build a Browser Use Agent with ADK and Selenium</h3>
-      <p>Learn to build an agent that enhances a retail website's product data by filling in missing information.</p>
+      <h3>📖 Construye un Agente de Uso de Navegador con ADK y Selenium</h3>
+      <p>Aprende a construir un agente que mejora los datos de productos de un sitio web minorista completando información faltante.</p>
     </div>
   </a>
   <a href="https://github.com/google/adk-docs/blob/main/examples/python/notebooks/shop_agent.ipynb" class="resource-card">
@@ -199,8 +197,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Jupyter Notebook</div>
-      <h3>📖 Build an E-commerce Recommendation Agent</h3>
-      <p>A tutorial on creating a simple multi-agent system for generative e-commerce recommendations.</p>
+      <h3>📖 Construye un Agente de Recomendaciones de Comercio Electrónico</h3>
+      <p>Un tutorial sobre la creación de un sistema multi-agente simple para recomendaciones generativas de comercio electrónico.</p>
     </div>
   </a>
   <a href="https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e" class="resource-card">
@@ -210,7 +208,7 @@ Development Kit community.
     <div class="card-content">
       <div class="type">Blog Post</div>
       <h3>📖 Google ADK + Vertex AI Live API</h3>
-      <p>Go beyond the ADK CLI by building real-time, streaming experiences with the Live API.</p>
+      <p>Ve más allá del CLI de ADK construyendo experiencias de transmisión en tiempo real con la Live API.</p>
     </div>
   </a>
   <a href="https://www.youtube.com/watch?v=LwHPYyw7u6U" class="resource-card">
@@ -219,8 +217,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Video Demo</div>
-      <h3>📺 Shopper's Concierge Demo</h3>
-      <p>See how AI agents can revolutionize shopping with personalized, real-time recommendations.</p>
+      <h3>📺 Demostración de Conserje de Compradores</h3>
+      <p>Descubre cómo los agentes IA pueden revolucionar las compras con recomendaciones personalizadas en tiempo real.</p>
     </div>
   </a>
   <a href="https://agentdirectory.folch.ai/" class="resource-card">
@@ -229,13 +227,13 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Gallery</div>
-      <h3>📖 ADK Agent Directory</h3>
-      <p>Discover and test production-ready ADK agents for web search, image generation, research, and more.</p>
+      <h3>📖 Directorio de Agentes ADK</h3>
+      <p>Descubre y prueba agentes ADK listos para producción para búsqueda web, generación de imágenes, investigación y más.</p>
     </div>
   </a>
 </div>
 
-## ADK for Java
+## ADK para Java
 
 <div class="resource-grid">
   <a href="https://www.youtube.com/watch?v=L6V6aQixOZU" class="resource-card">
@@ -244,8 +242,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Video Talk</div>
-      <h3>☕ Discover ADK Java for Building AI Agents</h3>
-      <p>A presentation to help you build your first AI agents in Java.</p>
+      <h3>☕ Descubre ADK Java para Construir Agentes IA</h3>
+      <p>Una presentación para ayudarte a construir tus primeros agentes IA en Java.</p>
     </div>
   </a>
   <a href="https://www.youtube.com/playlist?list=PLLMxXO6kMiNhP87WYQ8CeC3xpV3EnF9cu" class="resource-card">
@@ -254,8 +252,8 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">YouTube Playlist</div>
-      <h3>☕ Google ADK for Java Tutorials</h3>
-      <p>Step-by-step tutorials covering A2A, MCP, multi-agent systems, and callbacks in Java.</p>
+      <h3>☕ Tutoriales de Google ADK para Java</h3>
+      <p>Tutoriales paso a paso que cubren A2A, MCP, sistemas multi-agente y callbacks en Java.</p>
     </div>
   </a>
   <a href="https://codelabs.developers.google.com/adk-java-getting-started" class="resource-card">
@@ -264,26 +262,26 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Codelab</div>
-      <h3>☕ Build AI Agents with ADK for Java</h3>
-      <p>Move beyond simple LLM calls to create autonomous Java agents that reason, plan, and use tools.</p>
+      <h3>☕ Construye Agentes IA con ADK para Java</h3>
+      <p>Ve más allá de las simples llamadas a LLM para crear agentes Java autónomos que razonan, planifican y usan herramientas.</p>
     </div>
   </a>
 </div>
 
-## Translations
+## Traducciones
 
-Community-provided translations of the ADK documentation.
+Traducciones de la documentación de ADK proporcionadas por la comunidad.
 
 <ul class="translation-list">
-  <li><a href="https://adk.wiki/">🇨🇳 Chinese (中文) Documentation</a></li>
-  <li><a href="https://adk-labs.github.io/adk-docs/ko/">🇰🇷 Korean (한국어) Documentation</a></li>
-  <li><a href="https://adk-labs.github.io/adk-docs/ja/">🇯🇵 Japanese (日本語) Documentation</a></li>
+  <li><a href="https://adk.wiki/">🇨🇳 Documentación en Chino (中文)</a></li>
+  <li><a href="https://adk-labs.github.io/adk-docs/ko/">🇰🇷 Documentación en Coreano (한국어)</a></li>
+  <li><a href="https://adk-labs.github.io/adk-docs/ja/">🇯🇵 Documentación en Japonés (日本語)</a></li>
 </ul>
 
-## Contributing Your Resource
+## Contribuyendo Tu Recurso
 
-Have an ADK resource to share (tutorial, translation, tool, video, or example)?
+¿Tienes un recurso de ADK para compartir (tutorial, traducción, herramienta, video o ejemplo)?
 
-Refer to the steps in the **[Contributing Guide](contributing-guide.md)** for more information on how to get involved!
+¡Consulta los pasos en la **[Guía de Contribución](contributing-guide.md)** para obtener más información sobre cómo involucrarte!
 
-Thank you for your contributions to Agent Development Kit! ❤️
+¡Gracias por tus contribuciones al Agent Development Kit! ❤️

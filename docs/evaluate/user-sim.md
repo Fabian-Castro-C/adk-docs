@@ -1,22 +1,22 @@
-# User Simulation
+# Simulación de Usuario
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span>
 </div>
 
-When evaluating conversational agents, it is not always practical to use a fixed
-set of user prompts, as the conversation can proceed in unexpected ways.
-For example, if the agent needs the user to supply two values to perform a task,
-it may ask for those values one at a time or both at once.
-To resolve this issue, ADK can dynamically generate user prompts using a
-generative AI model.
+Al evaluar agentes conversacionales, no siempre es práctico utilizar un conjunto
+fijo de prompts de usuario, ya que la conversación puede proceder de maneras inesperadas.
+Por ejemplo, si el agente necesita que el usuario proporcione dos valores para realizar una tarea,
+puede solicitar esos valores uno a la vez o ambos a la vez.
+Para resolver este problema, ADK puede generar dinámicamente prompts de usuario utilizando un
+modelo de IA generativa.
 
-To use this feature, you must specify a
+Para usar esta función, debes especificar un
 [`ConversationScenario`](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/conversation_scenarios.py)
-which dictates the user's goals in their conversation with the agent.
-A sample conversation scenario for the
+que dicta los objetivos del usuario en su conversación con el agente.
+Un escenario de conversación de muestra para el agente
 [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world)
-agent is shown below:
+se muestra a continuación:
 
 ```json
 {
@@ -25,30 +25,30 @@ agent is shown below:
 }
 ```
 
-The `starting_prompt` in a conversation scenario specifies a fixed initial
-prompt that the user should use to start the conversation with the agent.
-Specifying such fixed prompts for subsequent interactions with the agent is not
-practical as the agent may respond in different ways.
-Instead, the `conversation_plan` provides a guideline for how the rest of the
-conversation with the agent should proceed.
-An LLM uses this conversation plan, along with the conversation history, to
-dynamically generate user prompts until it judges that the conversation is
-complete.
+El `starting_prompt` en un escenario de conversación especifica un prompt inicial
+fijo que el usuario debe usar para iniciar la conversación con el agente.
+Especificar tales prompts fijos para interacciones posteriores con el agente no es
+práctico ya que el agente puede responder de diferentes maneras.
+En su lugar, el `conversation_plan` proporciona una guía sobre cómo debe proceder el resto de la
+conversación con el agente.
+Un LLM utiliza este plan de conversación, junto con el historial de conversación, para
+generar dinámicamente prompts de usuario hasta que juzgue que la conversación está
+completa.
 
-!!! tip "Try it in Colab"
+!!! tip "Pruébalo en Colab"
 
-    Test this entire workflow yourself in an interactive notebook on
+    Prueba este flujo de trabajo completo tú mismo en un cuaderno interactivo sobre
     [Simulating User Conversations to Dynamically Evaluate ADK Agents](https://github.com/google/adk-samples/blob/main/python/notebooks/evaluation/user_simulation_in_adk_evals.ipynb).
-    You'll define a conversation scenario, run a "dry run" to check the
-    dialogue, and then perform a full evaluation to score the agent's responses.
+    Definirás un escenario de conversación, ejecutarás una "prueba en seco" para verificar el
+    diálogo, y luego realizarás una evaluación completa para calificar las respuestas del agente.
 
-## Example: Evaluating the [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world) agent with conversation scenarios
+## Ejemplo: Evaluando el agente [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world) con escenarios de conversación
 
-To add evaluation cases containing conversation scenarios to a new or existing
-[`EvalSet`](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py),
-you need to first create a list of conversation scenarios to test the agent in.
+Para agregar casos de evaluación que contengan escenarios de conversación a un
+[`EvalSet`](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) nuevo o existente,
+primero necesitas crear una lista de escenarios de conversación para probar el agente.
 
-Try saving the following to
+Intenta guardar lo siguiente en
 `contributing/samples/hello_world/conversation_scenarios.json`:
 
 ```json
@@ -66,9 +66,9 @@ Try saving the following to
 }
 ```
 
-You will also need a session input file containing information used during
-evaluation.
-Try saving the following to
+También necesitarás un archivo de entrada de sesión que contenga información utilizada durante
+la evaluación.
+Intenta guardar lo siguiente en
 `contributing/samples/hello_world/session_input.json`:
 
 ```json
@@ -78,15 +78,15 @@ Try saving the following to
 }
 ```
 
-Then, you can add the conversation scenarios to an `EvalSet`:
+Luego, puedes agregar los escenarios de conversación a un `EvalSet`:
 
 ```bash
-# (optional) create a new EvalSet
+# (opcional) crear un nuevo EvalSet
 adk eval_set create \
   contributing/samples/hello_world \
   eval_set_with_scenarios
 
-# add conversation scenarios to the EvalSet as new eval cases
+# agregar escenarios de conversación al EvalSet como nuevos casos de evaluación
 adk eval_set add_eval_case \
   contributing/samples/hello_world \
   eval_set_with_scenarios \
@@ -94,13 +94,13 @@ adk eval_set add_eval_case \
   --session_input_file contributing/samples/hello_world/session_input.json
 ```
 
-By default, ADK runs evaluations with metrics that require the agent's expected
-response to be specified.
-Since that is not the case for a dynamic conversation scenario, we will use an
+Por defecto, ADK ejecuta evaluaciones con métricas que requieren que se especifique la
+respuesta esperada del agente.
+Dado que ese no es el caso para un escenario de conversación dinámico, usaremos un
 [`EvalConfig`](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_config.py)
-with some alternate supported metrics.
+con algunas métricas alternativas soportadas.
 
-Try saving the following to
+Intenta guardar lo siguiente en
 `contributing/samples/hello_world/eval_config.json`:
 
 ```json
@@ -117,7 +117,7 @@ Try saving the following to
 }
 ```
 
-Finally, you can use the `adk eval` command to run the evaluation:
+Finalmente, puedes usar el comando `adk eval` para ejecutar la evaluación:
 
 ```bash
 adk eval \
@@ -127,16 +127,16 @@ adk eval \
     --print_detailed_results
 ```
 
-## User simulator configuration
+## Configuración del simulador de usuario
 
-You can override the default user simulator configuration to change the model,
-internal model behavior, and the maximum number of user-agent interactions.
-The below `EvalConfig` shows the default user simulator configuration:
+Puedes anular la configuración predeterminada del simulador de usuario para cambiar el modelo,
+el comportamiento interno del modelo y el número máximo de interacciones usuario-agente.
+El siguiente `EvalConfig` muestra la configuración predeterminada del simulador de usuario:
 
 ```json
 {
   "criteria": {
-    # same as before
+    # igual que antes
   },
   "user_simulator_config": {
     "model": "gemini-2.5-flash",
@@ -151,10 +151,10 @@ The below `EvalConfig` shows the default user simulator configuration:
 }
 ```
 
-* `model`: The model backing the user simulator.
-* `model_configuration`: A
+* `model`: El modelo que respalda el simulador de usuario.
+* `model_configuration`: Un
 [`GenerateContentConfig`](https://github.com/googleapis/python-genai/blob/6196b1b4251007e33661bb5d7dc27bafee3feefe/google/genai/types.py#L4295)
-which controls the model behavior.
-* `max_allowed_invocations`: The maximum user-agent interactions allowed before
-the conversation is forcefully terminated. This should be set to be greater than
-the longest reasonable user-agent interaction in your `EvalSet`.
+que controla el comportamiento del modelo.
+* `max_allowed_invocations`: El máximo de interacciones usuario-agente permitidas antes de
+que la conversación se termine forzosamente. Esto debe configurarse para ser mayor que
+la interacción usuario-agente más larga razonable en tu `EvalSet`.

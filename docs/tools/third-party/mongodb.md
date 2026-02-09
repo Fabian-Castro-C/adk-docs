@@ -10,33 +10,33 @@ catalog_icon: /adk-docs/assets/tools-mongodb.png
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [MongoDB MCP Server](https://github.com/mongodb-js/mongodb-mcp-server)
-connects your ADK agent to [MongoDB](https://www.mongodb.com/) databases and
-MongoDB Atlas clusters. This integration gives your agent the ability to query
-collections, manage databases, and interact with MongoDB Atlas infrastructure
-using natural language.
+El [servidor MCP de MongoDB](https://github.com/mongodb-js/mongodb-mcp-server)
+conecta tu agente ADK a bases de datos [MongoDB](https://www.mongodb.com/) y
+clústeres de MongoDB Atlas. Esta integración le da a tu agente la capacidad de consultar
+colecciones, administrar bases de datos e interactuar con la infraestructura de MongoDB Atlas
+usando lenguaje natural.
 
-## Use cases
+## Casos de uso
 
-- **Data Exploration and Analysis**: Query MongoDB collections using natural
-  language, run aggregations, and analyze document schemas without writing
-  complex queries manually.
+- **Exploración y análisis de datos**: Consulta colecciones de MongoDB usando lenguaje
+  natural, ejecuta agregaciones y analiza esquemas de documentos sin escribir
+  consultas complejas manualmente.
 
-- **Database Administration**: List databases and collections, create indexes,
-  manage users, and monitor database statistics through conversational commands.
+- **Administración de bases de datos**: Lista bases de datos y colecciones, crea índices,
+  administra usuarios y monitorea estadísticas de bases de datos a través de comandos conversacionales.
 
-- **Atlas Infrastructure Management**: Create and manage MongoDB Atlas clusters,
-  configure access lists, and view performance recommendations directly from
-  your agent.
+- **Gestión de infraestructura Atlas**: Crea y administra clústeres de MongoDB Atlas,
+  configura listas de acceso y visualiza recomendaciones de rendimiento directamente desde
+  tu agente.
 
-## Prerequisites
+## Prerrequisitos
 
-- **For database access**: A MongoDB connection string (local, self-hosted, or
-  Atlas cluster)
-- **For Atlas management**: A [MongoDB Atlas](https://www.mongodb.com/atlas)
-  service account with API credentials (client ID and secret)
+- **Para acceso a bases de datos**: Una cadena de conexión de MongoDB (local, auto-hospedada o
+  clúster de Atlas)
+- **Para gestión de Atlas**: Una cuenta de servicio de [MongoDB Atlas](https://www.mongodb.com/atlas)
+  con credenciales de API (ID de cliente y secreto)
 
-## Use with agent
+## Uso con el agente
 
 === "Python"
 
@@ -48,10 +48,10 @@ using natural language.
         from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
         from mcp import StdioServerParameters
 
-        # For database access, use a connection string:
+        # Para acceso a bases de datos, usa una cadena de conexión:
         CONNECTION_STRING = "mongodb://localhost:27017/myDatabase"
 
-        # For Atlas management, use API credentials:
+        # Para gestión de Atlas, usa credenciales de API:
         # ATLAS_CLIENT_ID = "YOUR_ATLAS_CLIENT_ID"
         # ATLAS_CLIENT_SECRET = "YOUR_ATLAS_CLIENT_SECRET"
 
@@ -67,12 +67,12 @@ using natural language.
                             args=[
                                 "-y",
                                 "mongodb-mcp-server",
-                                "--readOnly",  # Remove for write operations
+                                "--readOnly",  # Eliminar para operaciones de escritura
                             ],
                             env={
-                                # For database access, use:
+                                # Para acceso a bases de datos, usa:
                                 "MDB_MCP_CONNECTION_STRING": CONNECTION_STRING,
-                                # For Atlas management, use:
+                                # Para gestión de Atlas, usa:
                                 # "MDB_MCP_API_CLIENT_ID": ATLAS_CLIENT_ID,
                                 # "MDB_MCP_API_CLIENT_SECRET": ATLAS_CLIENT_SECRET,
                             },
@@ -91,10 +91,10 @@ using natural language.
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
 
-        // For database access, use a connection string:
+        // Para acceso a bases de datos, usa una cadena de conexión:
         const CONNECTION_STRING = "mongodb://localhost:27017/myDatabase";
 
-        // For Atlas management, use API credentials:
+        // Para gestión de Atlas, usa credenciales de API:
         // const ATLAS_CLIENT_ID = "YOUR_ATLAS_CLIENT_ID";
         // const ATLAS_CLIENT_SECRET = "YOUR_ATLAS_CLIENT_SECRET";
 
@@ -110,12 +110,12 @@ using natural language.
                         args: [
                             "-y",
                             "mongodb-mcp-server",
-                            "--readOnly", // Remove for write operations
+                            "--readOnly", // Eliminar para operaciones de escritura
                         ],
                         env: {
-                            // For database access, use:
+                            // Para acceso a bases de datos, usa:
                             MDB_MCP_CONNECTION_STRING: CONNECTION_STRING,
-                            // For Atlas management, use:
+                            // Para gestión de Atlas, usa:
                             // MDB_MCP_API_CLIENT_ID: ATLAS_CLIENT_ID,
                             // MDB_MCP_API_CLIENT_SECRET: ATLAS_CLIENT_SECRET,
                         },
@@ -127,83 +127,83 @@ using natural language.
         export { rootAgent };
         ```
 
-## Available tools
+## Herramientas disponibles
 
-### MongoDB database tools
+### Herramientas de bases de datos MongoDB
 
-Tool | Description
----- | -----------
-`find` | Run a find query against a MongoDB collection
-`aggregate` | Run an aggregation against a MongoDB collection
-`count` | Get the number of documents in a collection
-`list-databases` | List all databases for a MongoDB connection
-`list-collections` | List all collections for a given database
-`collection-schema` | Describe the schema for a collection
-`collection-indexes` | Describe the indexes for a collection
-`insert-many` | Insert documents into a collection
-`update-many` | Update documents matching a filter
-`delete-many` | Remove documents matching a filter
-`create-collection` | Create a new collection
-`drop-collection` | Remove a collection from the database
-`drop-database` | Remove a database
-`create-index` | Create an index for a collection
-`drop-index` | Drop an index from a collection
-`rename-collection` | Rename a collection
-`db-stats` | Get statistics for a database
-`explain` | Get query execution statistics
-`export` | Export query results in EJSON format
+Herramienta | Descripción
+----------- | -----------
+`find` | Ejecuta una consulta find contra una colección de MongoDB
+`aggregate` | Ejecuta una agregación contra una colección de MongoDB
+`count` | Obtiene el número de documentos en una colección
+`list-databases` | Lista todas las bases de datos para una conexión de MongoDB
+`list-collections` | Lista todas las colecciones para una base de datos dada
+`collection-schema` | Describe el esquema para una colección
+`collection-indexes` | Describe los índices para una colección
+`insert-many` | Inserta documentos en una colección
+`update-many` | Actualiza documentos que coinciden con un filtro
+`delete-many` | Elimina documentos que coinciden con un filtro
+`create-collection` | Crea una nueva colección
+`drop-collection` | Elimina una colección de la base de datos
+`drop-database` | Elimina una base de datos
+`create-index` | Crea un índice para una colección
+`drop-index` | Elimina un índice de una colección
+`rename-collection` | Renombra una colección
+`db-stats` | Obtiene estadísticas para una base de datos
+`explain` | Obtiene estadísticas de ejecución de consultas
+`export` | Exporta resultados de consultas en formato EJSON
 
-### MongoDB Atlas tools
+### Herramientas de MongoDB Atlas
 
 !!! note
 
-    Atlas tools require API credentials. Set `MDB_MCP_API_CLIENT_ID` and
-    `MDB_MCP_API_CLIENT_SECRET` environment variables to enable them.
+    Las herramientas de Atlas requieren credenciales de API. Establece las variables de entorno `MDB_MCP_API_CLIENT_ID` y
+    `MDB_MCP_API_CLIENT_SECRET` para habilitarlas.
 
-Tool | Description
----- | -----------
-`atlas-list-orgs` | List MongoDB Atlas organizations
-`atlas-list-projects` | List MongoDB Atlas projects
-`atlas-list-clusters` | List MongoDB Atlas clusters
-`atlas-inspect-cluster` | Inspect metadata of a cluster
-`atlas-list-db-users` | List database users
-`atlas-create-free-cluster` | Create a free Atlas cluster
-`atlas-create-project` | Create an Atlas project
-`atlas-create-db-user` | Create a database user
-`atlas-create-access-list` | Configure IP access list
-`atlas-inspect-access-list` | View IP access list entries
-`atlas-list-alerts` | List Atlas alerts
-`atlas-get-performance-advisor` | Get performance recommendations
+Herramienta | Descripción
+----------- | -----------
+`atlas-list-orgs` | Lista organizaciones de MongoDB Atlas
+`atlas-list-projects` | Lista proyectos de MongoDB Atlas
+`atlas-list-clusters` | Lista clústeres de MongoDB Atlas
+`atlas-inspect-cluster` | Inspecciona metadatos de un clúster
+`atlas-list-db-users` | Lista usuarios de base de datos
+`atlas-create-free-cluster` | Crea un clúster gratuito de Atlas
+`atlas-create-project` | Crea un proyecto de Atlas
+`atlas-create-db-user` | Crea un usuario de base de datos
+`atlas-create-access-list` | Configura lista de acceso IP
+`atlas-inspect-access-list` | Visualiza entradas de lista de acceso IP
+`atlas-list-alerts` | Lista alertas de Atlas
+`atlas-get-performance-advisor` | Obtiene recomendaciones de rendimiento
 
-## Configuration
+## Configuración
 
-### Environment variables
+### Variables de entorno
 
-Variable | Description
+Variable | Descripción
 -------- | -----------
-`MDB_MCP_CONNECTION_STRING` | MongoDB connection string for database access
-`MDB_MCP_API_CLIENT_ID` | Atlas API client ID for Atlas tools
-`MDB_MCP_API_CLIENT_SECRET` | Atlas API client secret for Atlas tools
-`MDB_MCP_READ_ONLY` | Enable read-only mode (`true` or `false`)
-`MDB_MCP_DISABLED_TOOLS` | Comma-separated list of tools to disable
-`MDB_MCP_LOG_PATH` | Directory for log files
+`MDB_MCP_CONNECTION_STRING` | Cadena de conexión de MongoDB para acceso a bases de datos
+`MDB_MCP_API_CLIENT_ID` | ID de cliente de API de Atlas para herramientas de Atlas
+`MDB_MCP_API_CLIENT_SECRET` | Secreto de cliente de API de Atlas para herramientas de Atlas
+`MDB_MCP_READ_ONLY` | Habilita modo de solo lectura (`true` o `false`)
+`MDB_MCP_DISABLED_TOOLS` | Lista separada por comas de herramientas a deshabilitar
+`MDB_MCP_LOG_PATH` | Directorio para archivos de registro
 
-### Read-only mode
+### Modo de solo lectura
 
-The `--readOnly` flag restricts the server to read, connect, and metadata
-operations only. This prevents any create, update, or delete operations,
-making it safe for data exploration without risk of accidental modifications.
+La bandera `--readOnly` restringe el servidor a operaciones de lectura, conexión y metadatos
+solamente. Esto previene cualquier operación de creación, actualización o eliminación,
+haciéndolo seguro para exploración de datos sin riesgo de modificaciones accidentales.
 
-### Disabling tools
+### Deshabilitar herramientas
 
-You can disable specific tools or categories using `MDB_MCP_DISABLED_TOOLS`:
+Puedes deshabilitar herramientas específicas o categorías usando `MDB_MCP_DISABLED_TOOLS`:
 
-- Tool names: `find`, `aggregate`, `insert-many`, etc.
-- Categories: `atlas` (all Atlas tools), `mongodb` (all database tools)
-- Operation types: `create`, `update`, `delete`, `read`, `metadata`
+- Nombres de herramientas: `find`, `aggregate`, `insert-many`, etc.
+- Categorías: `atlas` (todas las herramientas de Atlas), `mongodb` (todas las herramientas de base de datos)
+- Tipos de operación: `create`, `update`, `delete`, `read`, `metadata`
 
-## Additional resources
+## Recursos adicionales
 
-- [MongoDB MCP Server Repository](https://github.com/mongodb-js/mongodb-mcp-server)
-- [MongoDB Documentation](https://www.mongodb.com/docs/)
+- [Repositorio del servidor MCP de MongoDB](https://github.com/mongodb-js/mongodb-mcp-server)
+- [Documentación de MongoDB](https://www.mongodb.com/docs/)
 - [MongoDB Atlas](https://www.mongodb.com/atlas)

@@ -1,89 +1,86 @@
-# Evaluation Criteria
+# Criterios de Evaluación
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-This page outlines the evaluation criteria provided by ADK to assess agent
-performance, including tool use trajectory, response quality, and safety.
+Esta página describe los criterios de evaluación proporcionados por ADK para evaluar el
+rendimiento del agente, incluyendo la trayectoria de uso de herramientas, la calidad de la respuesta y la seguridad.
 
-Criterion                                | Description                                               | Reference-Based | Requires Rubrics | LLM-as-a-Judge | Supports [User Simulation](./user-sim.md)
+Criterio                                | Descripción                                               | Basado en Referencia | Requiere Rúbricas | LLM como Juez | Soporta [Simulación de Usuario](./user-sim.md)
 :--------------------------------------- | :-------------------------------------------------------- | :-------------- | :--------------- | :------------- | :----------------------------------------
-`tool_trajectory_avg_score`              | Exact match of tool call trajectory                       | Yes             | No               | No             | No
-`response_match_score`                   | ROUGE-1 similarity to reference response                  | Yes             | No               | No             | No
-`final_response_match_v2`                | LLM-judged semantic match to reference response           | Yes             | No               | Yes            | No
-`rubric_based_final_response_quality_v1` | LLM-judged final response quality based on custom rubrics | No              | Yes              | Yes            | Yes
-`rubric_based_tool_use_quality_v1`       | LLM-judged tool usage quality based on custom rubrics     | No              | Yes              | Yes            | Yes
-`hallucinations_v1`                      | LLM-judged groundedness of agent response against context | No              | No               | Yes            | Yes
-`safety_v1`                              | Safety/harmlessness of agent response                     | No              | No               | Yes            | Yes
-`per_turn_user_simulator_quality_v1`     | LLM-judged user simulator quality                         | No              | No               | Yes            | Yes
+`tool_trajectory_avg_score`              | Coincidencia exacta de la trayectoria de llamadas a herramientas                       | Sí             | No               | No             | No
+`response_match_score`                   | Similitud ROUGE-1 con respuesta de referencia                  | Sí             | No               | No             | No
+`final_response_match_v2`                | Coincidencia semántica juzgada por LLM con respuesta de referencia           | Sí             | No               | Sí            | No
+`rubric_based_final_response_quality_v1` | Calidad de respuesta final juzgada por LLM basada en rúbricas personalizadas | No              | Sí              | Sí            | Sí
+`rubric_based_tool_use_quality_v1`       | Calidad de uso de herramientas juzgada por LLM basada en rúbricas personalizadas     | No              | Sí              | Sí            | Sí
+`hallucinations_v1`                      | Fundamentación de la respuesta del agente juzgada por LLM contra el contexto | No              | No               | Sí            | Sí
+`safety_v1`                              | Seguridad/inofensividad de la respuesta del agente                     | No              | No               | Sí            | Sí
+`per_turn_user_simulator_quality_v1`     | Calidad del simulador de usuario juzgada por LLM                         | No              | No               | Sí            | Sí
 
 ## tool_trajectory_avg_score
 
-This criterion compares the sequence of tools called by the agent against a list
-of expected calls and computes an average score based on one of the match types:
-`EXACT`, `IN_ORDER`, or `ANY_ORDER`.
+Este criterio compara la secuencia de herramientas llamadas por el agente contra una lista
+de llamadas esperadas y calcula una puntuación promedio basada en uno de los tipos de coincidencia:
+`EXACT`, `IN_ORDER` o `ANY_ORDER`.
 
-#### When To Use This Criterion?
+#### ¿Cuándo Usar Este Criterio?
 
-This criterion is ideal for scenarios where agent correctness depends on tool
-calls. Depending on how strictly tool calls need to be followed, you can choose
-from one of three match types: `EXACT`, `IN_ORDER`, and `ANY_ORDER`.
+Este criterio es ideal para escenarios donde la corrección del agente depende de las llamadas
+a herramientas. Dependiendo de qué tan estrictamente deben seguirse las llamadas a herramientas, puedes elegir
+entre uno de tres tipos de coincidencia: `EXACT`, `IN_ORDER` y `ANY_ORDER`.
 
-This metric is particularly valuable for:
+Esta métrica es particularmente valiosa para:
 
-*   **Regression testing:** Ensuring that agent updates do not unintentionally
-    alter tool call behavior for established test cases.
-*   **Workflow validation:** Verifying that agents correctly follow predefined
-    workflows that require specific API calls in a specific order.
-*   **High-precision tasks:** Evaluating tasks where slight deviations in tool
-    parameters or call order can lead to significantly different or incorrect
-    outcomes.
+*   **Pruebas de regresión:** Asegurar que las actualizaciones del agente no alteren involuntariamente
+    el comportamiento de llamadas a herramientas para casos de prueba establecidos.
+*   **Validación de flujo de trabajo:** Verificar que los agentes sigan correctamente flujos de trabajo predefinidos
+    que requieren llamadas API específicas en un orden específico.
+*   **Tareas de alta precisión:** Evaluar tareas donde pequeñas desviaciones en los parámetros de herramientas
+    o el orden de llamadas pueden llevar a resultados significativamente diferentes o incorrectos.
 
-Use `EXACT` match when you need to enforce a specific tool execution path and
-consider any deviation—whether in tool name, arguments, or order—as a failure.
+Usa coincidencia `EXACT` cuando necesites imponer una ruta de ejecución de herramienta específica y
+considerar cualquier desviación—ya sea en el nombre de la herramienta, argumentos u orden—como un fallo.
 
-Use `IN_ORDER` match when you want to ensure certain key tool calls occur in a
-specific order, but allow for other tool calls to happen in between. This option is
-useful in assuring if certain key actions or tool calls occur and in certain order,
-leaving some scope for other tools calls to happen as well.
+Usa coincidencia `IN_ORDER` cuando quieras asegurar que ciertas llamadas clave a herramientas ocurran en un
+orden específico, pero permitir que otras llamadas a herramientas ocurran entre medio. Esta opción es
+útil para asegurar si ciertas acciones clave o llamadas a herramientas ocurren y en cierto orden,
+dejando algo de margen para que otras llamadas a herramientas ocurran también.
 
-Use `ANY_ORDER` match when you want to ensure certain key tool calls occur, but
-do not care about their order, and allow for other tool calls to happen in
-between. This criteria is helpful for cases where multiple tool calls about the
-same concept occur, like your agent issues 5 search queries. You don't really
-care the order in which the search queries are issued, till they occur.
+Usa coincidencia `ANY_ORDER` cuando quieras asegurar que ciertas llamadas clave a herramientas ocurran, pero
+no te importe su orden, y permitir que otras llamadas a herramientas ocurran entre medio. Este criterio es útil para casos donde ocurren múltiples llamadas a herramientas sobre el
+mismo concepto, como cuando tu agente emite 5 consultas de búsqueda. Realmente no te importa
+el orden en que se emiten las consultas de búsqueda, siempre que ocurran.
 
-#### Details
+#### Detalles
 
-For each invocation that is being evaluated, this criterion compares the list of
-tool calls produced by the agent against the list of expected tool calls using
-one of three match types. If the tool calls match based on the selected match
-type, a score of 1.0 is awarded for that invocation, otherwise the score is 0.0.
-The final value is the average of these scores across all invocations in the
-eval case.
+Para cada invocación que está siendo evaluada, este criterio compara la lista de
+llamadas a herramientas producidas por el agente contra la lista de llamadas esperadas a herramientas usando
+uno de tres tipos de coincidencia. Si las llamadas a herramientas coinciden según el tipo de coincidencia seleccionado, se otorga una puntuación de 1.0 para esa invocación, de lo contrario la puntuación es 0.0.
+El valor final es el promedio de estas puntuaciones en todas las invocaciones del
+caso de evaluación.
 
-The comparison can be done using one of following match types:
+La comparación puede hacerse usando uno de los siguientes tipos de coincidencia:
 
-*   **`EXACT`**: Requires a perfect match between the actual and expected tool
-    calls, with no extra or missing tool calls.
-*   **`IN_ORDER`**: Requires all tool calls from the expected list to be present
-    in the actual list, in the same order, but allows for other tool calls to
-    appear in between.
-*   **`ANY_ORDER`**: Requires all tool calls from the expected list to be
-    present in the actual list, in any order, and allows for other tool calls to
-    appear in between.
+*   **`EXACT`**: Requiere una coincidencia perfecta entre las llamadas a herramientas reales y esperadas,
+    sin llamadas a herramientas extras o faltantes.
+*   **`IN_ORDER`**: Requiere que todas las llamadas a herramientas de la lista esperada estén presentes
+    en la lista real, en el mismo orden, pero permite que otras llamadas a herramientas
+    aparezcan entre medio.
+*   **`ANY_ORDER`**: Requiere que todas las llamadas a herramientas de la lista esperada estén
+    presentes en la lista real, en cualquier orden, y permite que otras llamadas a herramientas
+    aparezcan entre medio.
 
-#### How To Use This Criterion?
+#### ¿Cómo Usar Este Criterio?
 
-By default, `tool_trajectory_avg_score` uses `EXACT` match type. You can specify
-just a threshold for this criterion in `EvalConfig` under the `criteria`
-dictionary for `EXACT` match type. The value should be a float between 0.0 and
-1.0, which represents the minimum acceptable score for the eval case to pass. If
-you expect tool trajectories to match exactly in all invocations, you should set
-the threshold to 1.0.
+Por defecto, `tool_trajectory_avg_score` usa el tipo de coincidencia `EXACT`. Puedes especificar
+solo un umbral para este criterio en `EvalConfig` bajo el diccionario `criteria`
+para el tipo de coincidencia `EXACT`. El valor debe ser un float entre 0.0 y
+1.0, que representa la puntuación mínima aceptable para que el caso de evaluación pase. Si
+esperas que las trayectorias de herramientas coincidan exactamente en todas las invocaciones, debes establecer
+el umbral en 1.0.
 
-Example `EvalConfig` entry for `EXACT` match:
+Ejemplo de entrada `EvalConfig` para coincidencia `EXACT`:
 
 ```json
 {
@@ -93,7 +90,7 @@ Example `EvalConfig` entry for `EXACT` match:
 }
 ```
 
-Or you could specify the `match_type` explicitly:
+O podrías especificar el `match_type` explícitamente:
 
 ```json
 {
@@ -107,10 +104,10 @@ Or you could specify the `match_type` explicitly:
 ```
 
 
-If you want to use `IN_ORDER` or `ANY_ORDER` match type, you can specify it via
-`match_type` field along with threshold.
+Si quieres usar el tipo de coincidencia `IN_ORDER` o `ANY_ORDER`, puedes especificarlo vía
+el campo `match_type` junto con el umbral.
 
-Example `EvalConfig` entry for `IN_ORDER` match:
+Ejemplo de entrada `EvalConfig` para coincidencia `IN_ORDER`:
 
 ```json
 {
@@ -123,7 +120,7 @@ Example `EvalConfig` entry for `IN_ORDER` match:
 }
 ```
 
-Example `EvalConfig` entry for `ANY_ORDER` match:
+Ejemplo de entrada `EvalConfig` para coincidencia `ANY_ORDER`:
 
 ```json
 {
@@ -136,39 +133,38 @@ Example `EvalConfig` entry for `ANY_ORDER` match:
 }
 ```
 
-#### Output And How To Interpret
+#### Salida Y Cómo Interpretar
 
-The output is a score between 0.0 and 1.0, where 1.0 indicates a perfect match
-between actual and expected tool trajectories for all invocations, and 0.0
-indicates a complete mismatch for all invocations. Higher scores are better. A
-score below 1.0 means that for at least one invocation, the agent's tool call
-trajectory deviated from the expected one.
+La salida es una puntuación entre 0.0 y 1.0, donde 1.0 indica una coincidencia perfecta
+entre las trayectorias de herramientas reales y esperadas para todas las invocaciones, y 0.0
+indica una falta total de coincidencia para todas las invocaciones. Puntuaciones más altas son mejores. Una
+puntuación por debajo de 1.0 significa que para al menos una invocación, la trayectoria de llamadas a herramientas del agente
+se desvió de la esperada.
 
 ## response_match_score
 
-This criterion evaluates if agent's final response matches a golden/expected
-final response using Rouge-1.
+Este criterio evalúa si la respuesta final del agente coincide con una respuesta final
+dorada/esperada usando Rouge-1.
 
-### When To Use This Criterion?
+### ¿Cuándo Usar Este Criterio?
 
-Use this criterion when you need a quantitative measure of how closely the
-agent's output matches the expected output in terms of content overlap.
+Usa este criterio cuando necesites una medida cuantitativa de qué tan cerca está
+la salida del agente de la salida esperada en términos de superposición de contenido.
 
-### Details
+### Detalles
 
-ROUGE-1 specifically measures the overlap of unigrams (single words) between the
-system-generated text (candidate summary) and the a reference text. It
-essentially checks how many individual words from the reference text are present
-in the candidate text. To learn more, see details on
+ROUGE-1 específicamente mide la superposición de unigramas (palabras individuales) entre el
+texto generado por el sistema (resumen candidato) y el texto de referencia. Básicamente verifica cuántas palabras individuales del texto de referencia están presentes
+en el texto candidato. Para aprender más, consulta los detalles sobre
 [ROUGE-1](https://github.com/google-research/google-research/tree/master/rouge).
 
-### How To Use This Criterion?
+### ¿Cómo Usar Este Criterio?
 
-You can specify a threshold for this criterion in `EvalConfig` under the
-`criteria` dictionary. The value should be a float between 0.0 and 1.0, which
-represents the minimum acceptable score for the eval case to pass.
+Puedes especificar un umbral para este criterio en `EvalConfig` bajo el
+diccionario `criteria`. El valor debe ser un float entre 0.0 y 1.0, que
+representa la puntuación mínima aceptable para que el caso de evaluación pase.
 
-Example `EvalConfig` entry:
+Ejemplo de entrada `EvalConfig`:
 
 ```json
 {
@@ -178,48 +174,46 @@ Example `EvalConfig` entry:
 }
 ```
 
-### Output And How To Interpret
+### Salida Y Cómo Interpretar
 
-Value range for this criterion is [0,1], with values closer to 1 more desirable.
+El rango de valores para este criterio es [0,1], siendo más deseables los valores más cercanos a 1.
 
 ## final_response_match_v2
 
-This criterion evaluates if the agent's final response matches a golden/expected
-final response using LLM as a judge.
+Este criterio evalúa si la respuesta final del agente coincide con una respuesta final
+dorada/esperada usando LLM como juez.
 
-### When To Use This Criterion?
+### ¿Cuándo Usar Este Criterio?
 
-Use this criterion when you need to evaluate the correctness of an agent's final
-response against a reference, but require flexibility in how the answer is
-presented. It is suitable for cases where different phrasings or formats are
-acceptable, as long as the core meaning and information match the reference.
-This criterion is a good choice for evaluating question-answering,
-summarization, or other generative tasks where semantic equivalence is more
-important than exact lexical overlap, making it a more sophisticated alternative
-to `response_match_score`.
+Usa este criterio cuando necesites evaluar la corrección de la respuesta final de un agente
+contra una referencia, pero requieras flexibilidad en cómo se presenta la respuesta. Es adecuado para casos donde diferentes formulaciones o formatos son
+aceptables, siempre que el significado central y la información coincidan con la referencia.
+Este criterio es una buena elección para evaluar respuesta a preguntas,
+resumen u otras tareas generativas donde la equivalencia semántica es más
+importante que la superposición léxica exacta, convirtiéndolo en una alternativa más sofisticada
+a `response_match_score`.
 
-### Details
+### Detalles
 
-This criterion uses a Large Language Model (LLM) as a judge to determine if the
-agent's final response is semantically equivalent to the provided reference
-response. It is designed to be more flexible than lexical matching metrics (like
-`response_match_score`), as it focuses on whether the agent's response contains
-the correct information, while tolerating differences in formatting, phrasing,
-or the inclusion of additional correct details.
+Este criterio usa un Modelo de Lenguaje Grande (LLM) como juez para determinar si la
+respuesta final del agente es semánticamente equivalente a la respuesta de referencia proporcionada. Está diseñado para ser más flexible que las métricas de coincidencia léxica (como
+`response_match_score`), ya que se enfoca en si la respuesta del agente contiene
+la información correcta, tolerando diferencias en formato, formulación
+o la inclusión de detalles correctos adicionales.
 
-For each invocation, the criterion prompts a judge LLM to rate the agent's
-response as "valid" or "invalid" compared to the reference. This is repeated
-multiple times for robustness (configurable via `num_samples`), and a majority
-vote determines if the invocation receives a score of 1.0 (valid) or 0.0
-(invalid). The final criterion score is the fraction of invocations deemed valid
-across the entire eval case.
+Para cada invocación, el criterio solicita a un LLM juez que califique la respuesta del agente
+como "válida" o "inválida" en comparación con la referencia. Esto se repite
+múltiples veces para robustez (configurable vía `num_samples`), y un voto de mayoría
+determina si la invocación recibe una puntuación de 1.0 (válida) o 0.0
+(inválida). La puntuación final del criterio es la fracción de invocaciones consideradas válidas
+en todo el caso de evaluación.
 
-### How To Use This Criterion?
+### ¿Cómo Usar Este Criterio?
 
-This criterion uses `LlmAsAJudgeCriterion`, allowing you to configure the
-evaluation threshold, the judge model, and the number of samples per invocation.
+Este criterio usa `LlmAsAJudgeCriterion`, permitiéndote configurar el
+umbral de evaluación, el modelo juez y el número de muestras por invocación.
 
-Example `EvalConfig` entry:
+Ejemplo de entrada `EvalConfig`:
 
 ```json
 {
@@ -236,49 +230,49 @@ Example `EvalConfig` entry:
 }
 ```
 
-### Output And How To Interpret
+### Salida Y Cómo Interpretar
 
-The criterion returns a score between 0.0 and 1.0. A score of 1.0 means the LLM
-judge considered the agent's final response to be valid for all invocations,
-while a score closer to 0.0 indicates that many responses were judged as invalid
-when compared to the reference responses. Higher values are better.
+El criterio retorna una puntuación entre 0.0 y 1.0. Una puntuación de 1.0 significa que el LLM
+juez consideró la respuesta final del agente como válida para todas las invocaciones,
+mientras que una puntuación más cercana a 0.0 indica que muchas respuestas fueron juzgadas como inválidas
+cuando se compararon con las respuestas de referencia. Valores más altos son mejores.
 
 ## rubric_based_final_response_quality_v1
 
-This criterion assesses the quality of an agent's final response against a
-user-defined set of rubrics using LLM as a judge.
+Este criterio evalúa la calidad de la respuesta final de un agente contra un
+conjunto de rúbricas definidas por el usuario usando LLM como juez.
 
-### When To Use This Criterion?
+### ¿Cuándo Usar Este Criterio?
 
-Use this criterion when you need to evaluate aspects of response quality that go
-beyond simple correctness or semantic equivalence with a reference. It is ideal
-for assessing nuanced attributes like tone, style, helpfulness, or adherence to
-specific conversational guidelines defined in your rubrics. This criterion is
-particularly useful when no single reference response exists, or when quality
-depends on multiple subjective factors.
+Usa este criterio cuando necesites evaluar aspectos de calidad de respuesta que van
+más allá de la simple corrección o equivalencia semántica con una referencia. Es ideal
+para evaluar atributos matizados como tono, estilo, utilidad o adherencia a
+pautas conversacionales específicas definidas en tus rúbricas. Este criterio es
+particularmente útil cuando no existe una única respuesta de referencia, o cuando la calidad
+depende de múltiples factores subjetivos.
 
-### Details
+### Detalles
 
-This criterion provides a flexible way to evaluate response quality based on
-specific criteria that you define as rubrics. For example, you could define
-rubrics to check if a response is concise, if it correctly infers user intent,
-or if it avoids jargon.
+Este criterio proporciona una forma flexible de evaluar la calidad de la respuesta basada en
+criterios específicos que defines como rúbricas. Por ejemplo, podrías definir
+rúbricas para verificar si una respuesta es concisa, si infiere correctamente la intención del usuario,
+o si evita jerga.
 
-The criterion uses an LLM-as-a-judge to evaluate the agent's final response
-against each rubric, producing a `yes` (1.0) or `no` (0.0) verdict for each.
-Like other LLM-based metrics, it samples the judge model multiple times per
-invocation and uses a majority vote to determine the score for each rubric in
-that invocation. The overall score for an invocation is the average of its
-rubric scores. The final criterion score for the eval case is the average of
-these overall scores across all invocations.
+El criterio usa un LLM como juez para evaluar la respuesta final del agente
+contra cada rúbrica, produciendo un veredicto `yes` (1.0) o `no` (0.0) para cada.
+Como otras métricas basadas en LLM, muestrea el modelo juez múltiples veces por
+invocación y usa un voto de mayoría para determinar la puntuación para cada rúbrica en
+esa invocación. La puntuación general para una invocación es el promedio de sus
+puntuaciones de rúbricas. La puntuación final del criterio para el caso de evaluación es el promedio de
+estas puntuaciones generales en todas las invocaciones.
 
-### How To Use This Criterion?
+### ¿Cómo Usar Este Criterio?
 
-This criterion uses `RubricsBasedCriterion`, which requires a list of rubrics to
-be provided in the `EvalConfig`. Each rubric should be defined with a unique ID
-and its content.
+Este criterio usa `RubricsBasedCriterion`, que requiere una lista de rúbricas a
+ser proporcionada en el `EvalConfig`. Cada rúbrica debe definirse con un ID único
+y su contenido.
 
-Example `EvalConfig` entry:
+Ejemplo de entrada `EvalConfig`:
 
 ```json
 {
@@ -308,50 +302,50 @@ Example `EvalConfig` entry:
 }
 ```
 
-### Output And How To Interpret
+### Salida Y Cómo Interpretar
 
-The criterion outputs an overall score between 0.0 and 1.0, where 1.0 indicates
-that the agent's responses satisfied all rubrics across all invocations, and 0.0
-indicates that no rubrics were satisfied. The results also include detailed
-per-rubric scores for each invocation. Higher values are better.
+El criterio genera una puntuación general entre 0.0 y 1.0, donde 1.0 indica
+que las respuestas del agente satisfacieron todas las rúbricas en todas las invocaciones, y 0.0
+indica que no se satisficieron rúbricas. Los resultados también incluyen
+puntuaciones detalladas por rúbrica para cada invocación. Valores más altos son mejores.
 
 ## rubric_based_tool_use_quality_v1
 
-This criterion assesses the quality of an agent's tool usage against a
-user-defined set of rubrics using LLM as a judge.
+Este criterio evalúa la calidad del uso de herramientas de un agente contra un
+conjunto de rúbricas definidas por el usuario usando LLM como juez.
 
-### When To Use This Criterion?
+### ¿Cuándo Usar Este Criterio?
 
-Use this criterion when you need to evaluate *how* an agent uses tools, rather
-than just *if* the final response is correct. It is ideal for assessing whether
-the agent selected the right tool, used the correct parameters, or followed a
-specific sequence of tool calls. This is useful for validating agent reasoning
-processes, debugging tool-use errors, and ensuring adherence to prescribed
-workflows, especially in cases where multiple tool-use paths could lead to a
-similar final answer but only one path is considered correct.
+Usa este criterio cuando necesites evaluar *cómo* un agente usa herramientas, en lugar
+de solo *si* la respuesta final es correcta. Es ideal para evaluar si
+el agente seleccionó la herramienta correcta, usó los parámetros correctos o siguió una
+secuencia específica de llamadas a herramientas. Esto es útil para validar procesos de razonamiento
+del agente, depurar errores en el uso de herramientas y asegurar adherencia a
+flujos de trabajo prescritos, especialmente en casos donde múltiples rutas de uso de herramientas podrían llevar a una
+respuesta final similar pero solo una ruta se considera correcta.
 
-### Details
+### Detalles
 
-This criterion provides a flexible way to evaluate tool usage based on specific
-rules that you define as rubrics. For example, you could define rubrics to check
-if a specific tool was called, if its parameters were correct, or if tools were
-called in a particular order.
+Este criterio proporciona una forma flexible de evaluar el uso de herramientas basada en
+reglas específicas que defines como rúbricas. Por ejemplo, podrías definir rúbricas para verificar
+si se llamó una herramienta específica, si sus parámetros eran correctos o si las herramientas se
+llamaron en un orden particular.
 
-The criterion uses an LLM-as-a-judge to evaluate the agent's tool calls and
-responses against each rubric, producing a `yes` (1.0) or `no` (0.0) verdict for
-each. Like other LLM-based metrics, it samples the judge model multiple times
-per invocation and uses a majority vote to determine the score for each rubric
-in that invocation. The overall score for an invocation is the average of its
-rubric scores. The final criterion score for the eval case is the average of
-these overall scores across all invocations.
+El criterio usa un LLM como juez para evaluar las llamadas a herramientas del agente y
+respuestas contra cada rúbrica, produciendo un veredicto `yes` (1.0) o `no` (0.0) para
+cada. Como otras métricas basadas en LLM, muestrea el modelo juez múltiples veces
+por invocación y usa un voto de mayoría para determinar la puntuación para cada rúbrica
+en esa invocación. La puntuación general para una invocación es el promedio de sus
+puntuaciones de rúbricas. La puntuación final del criterio para el caso de evaluación es el promedio de
+estas puntuaciones generales en todas las invocaciones.
 
-### How To Use This Criterion?
+### ¿Cómo Usar Este Criterio?
 
-This criterion uses `RubricsBasedCriterion`, which requires a list of rubrics to
-be provided in the `EvalConfig`. Each rubric should be defined with a unique ID
-and its content, describing a specific aspect of tool use to evaluate.
+Este criterio usa `RubricsBasedCriterion`, que requiere una lista de rúbricas a
+ser proporcionada en el `EvalConfig`. Cada rúbrica debe definirse con un ID único
+y su contenido, describiendo un aspecto específico del uso de herramientas a evaluar.
 
-Example `EvalConfig` entry:
+Ejemplo de entrada `EvalConfig`:
 
 ```json
 {
@@ -381,49 +375,47 @@ Example `EvalConfig` entry:
 }
 ```
 
-### Output And How To Interpret
+### Salida Y Cómo Interpretar
 
-The criterion outputs an overall score between 0.0 and 1.0, where 1.0 indicates
-that the agent's tool usage satisfied all rubrics across all invocations, and
-0.0 indicates that no rubrics were satisfied. The results also include detailed
-per-rubric scores for each invocation. Higher values are better.
+El criterio genera una puntuación general entre 0.0 y 1.0, donde 1.0 indica
+que el uso de herramientas del agente satisfizo todas las rúbricas en todas las invocaciones, y
+0.0 indica que no se satisficieron rúbricas. Los resultados también incluyen
+puntuaciones detalladas por rúbrica para cada invocación. Valores más altos son mejores.
 
 ## hallucinations_v1
 
-This criterion assesses whether a model response contains any false,
-contradictory, or unsupported claims.
+Este criterio evalúa si una respuesta del modelo contiene afirmaciones falsas,
+contradictorias o no respaldadas.
 
-### When To Use This Criterion?
+### ¿Cuándo Usar Este Criterio?
 
-Use this criterion to ensure the agent's response is grounded in the provided
-context (e.g., tool outputs, user query, instructions) and does not contain
-hallucinations.
+Usa este criterio para asegurar que la respuesta del agente esté fundamentada en el
+contexto proporcionado (ej., salidas de herramientas, consulta del usuario, instrucciones) y no contenga
+alucinaciones.
 
-### Details
+### Detalles
 
-This criterion assesses whether a model response contains any false,
-contradictory, or unsupported claims based on context that includes developer
-instructions, user prompt, tool definitions, and tool invocations and their
-results. It uses LLM-as-a-judge and follows a two-step process:
+Este criterio evalúa si una respuesta del modelo contiene afirmaciones falsas,
+contradictorias o no respaldadas basándose en el contexto que incluye
+instrucciones del desarrollador, prompt del usuario, definiciones de herramientas e invocaciones de herramientas y sus
+resultados. Usa LLM como juez y sigue un proceso de dos pasos:
 
-1.  **Segmenter**: Segments the agent response into individual sentences.
-2.  **Sentence Validator**: Evaluates each segmented sentence against the
-    provided context for grounding. Each sentence is labeled as `supported`,
-    `unsupported`, `contradictory`, `disputed` or `not_applicable`.
+1.  **Segmentador**: Segmenta la respuesta del agente en oraciones individuales.
+2.  **Validador de Oraciones**: Evalúa cada oración segmentada contra el
+    contexto proporcionado para fundamentación. Cada oración se etiqueta como `supported`,
+    `unsupported`, `contradictory`, `disputed` o `not_applicable`.
 
-The metric computes an Accuracy Score: the percentage of sentences that are
-`supported` or `not_applicable`. By default, only the final response is
-evaluated. If `evaluate_intermediate_nl_responses` is set to true in the
-criterion, intermediate natural language responses from agents are also
-evaluated.
+La métrica calcula una Puntuación de Precisión: el porcentaje de oraciones que son
+`supported` o `not_applicable`. Por defecto, solo se evalúa la respuesta final. Si `evaluate_intermediate_nl_responses` se establece en true en el
+criterio, también se evalúan las respuestas intermedias en lenguaje natural de los agentes.
 
-### How To Use This Criterion?
+### ¿Cómo Usar Este Criterio?
 
-This criterion uses `HallucinationsCriterion`, allowing you to configure the
-evaluation threshold, the judge model, the number of samples per invocation and
-whether to evaluate intermediate natural language responses.
+Este criterio usa `HallucinationsCriterion`, permitiéndote configurar el
+umbral de evaluación, el modelo juez, el número de muestras por invocación y
+si evaluar respuestas intermedias en lenguaje natural.
 
-Example `EvalConfig` entry:
+Ejemplo de entrada `EvalConfig`:
 
 ```json
 {
@@ -440,43 +432,41 @@ Example `EvalConfig` entry:
 
 ```
 
-### Output And How To Interpret
+### Salida Y Cómo Interpretar
 
-The criterion returns a score between 0.0 and 1.0. A score of 1.0 means all
-sentences in agent's response are grounded in the context, while a score closer
-to 0.0 indicates that many sentences are false, contradictory, or unsupported.
-Higher values are better.
+El criterio retorna una puntuación entre 0.0 y 1.0. Una puntuación de 1.0 significa que todas
+las oraciones en la respuesta del agente están fundamentadas en el contexto, mientras que una puntuación más cercana
+a 0.0 indica que muchas oraciones son falsas, contradictorias o no respaldadas.
+Valores más altos son mejores.
 
 ## safety_v1
 
-This criterion evaluates the safety (harmlessness) of an Agent's Response.
+Este criterio evalúa la seguridad (inofensividad) de la Respuesta de un Agente.
 
-### When To Use This Criterion?
+### ¿Cuándo Usar Este Criterio?
 
-This criterion should be used when you need to ensure that agent responses
-comply with safety guidelines and do not produce harmful or inappropriate
-content. It is essential for user-facing applications or any system where
-response safety is a priority.
+Este criterio debe usarse cuando necesites asegurar que las respuestas del agente
+cumplan con las pautas de seguridad y no produzcan contenido dañino o inapropiado. Es esencial para aplicaciones de cara al usuario o cualquier sistema donde
+la seguridad de la respuesta sea una prioridad.
 
-### Details
+### Detalles
 
-This criterion assesses whether the agent's response contains any harmful
-content, such as hate speech, harassment, or dangerous information. Unlike other
-metrics implemented natively within ADK, `safety_v1` delegates the evaluation to
-the Vertex AI General AI Eval SDK.
+Este criterio evalúa si la respuesta del agente contiene algún contenido dañino, como discurso de odio, acoso o información peligrosa. A diferencia de otras
+métricas implementadas nativamente dentro de ADK, `safety_v1` delega la evaluación al
+SDK de Vertex AI General AI Eval.
 
-### How To Use This Criterion?
+### ¿Cómo Usar Este Criterio?
 
-Using this criterion requires a Google Cloud Project. You must have
-`GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
-typically in an `.env` file in your agent's directory, for the Vertex AI SDK to
-function correctly.
+Usar este criterio requiere un Proyecto de Google Cloud. Debes tener
+las variables de entorno `GOOGLE_CLOUD_PROJECT` y `GOOGLE_CLOUD_LOCATION` establecidas,
+típicamente en un archivo `.env` en el directorio de tu agente, para que el SDK de Vertex AI
+funcione correctamente.
 
-You can specify a threshold for this criterion in `EvalConfig` under the
-`criteria` dictionary. The value should be a float between 0.0 and 1.0,
-representing the minimum safety score for a response to be considered passing.
+Puedes especificar un umbral para este criterio en `EvalConfig` bajo el
+diccionario `criteria`. El valor debe ser un float entre 0.0 y 1.0,
+representando la puntuación de seguridad mínima para que una respuesta se considere aprobada.
 
-Example `EvalConfig` entry:
+Ejemplo de entrada `EvalConfig`:
 
 ```json
 {
@@ -486,41 +476,39 @@ Example `EvalConfig` entry:
 }
 ```
 
-### Output And How To Interpret
+### Salida Y Cómo Interpretar
 
-The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
-that the response is safe, while scores closer to 0.0 indicate potential safety
-issues.
+El criterio retorna una puntuación entre 0.0 y 1.0. Puntuaciones más cercanas a 1.0 indican
+que la respuesta es segura, mientras que puntuaciones más cercanas a 0.0 indican potenciales problemas de seguridad.
 
 ## per_turn_user_simulator_quality_v1
 
-This criterion evaluates whether a user simulator is faithful to a conversation
-plan.
+Este criterio evalúa si un simulador de usuario es fiel a un plan de
+conversación.
 
-#### When To Use This Criterion?
+#### ¿Cuándo Usar Este Criterio?
 
-Use this criterion when you need to evaluate a user simulator in a multi-turn
-conversation. It is designed to assess whether the simulator follows the
-conversation plan defined in the `ConversationScenario`.
+Usa este criterio cuando necesites evaluar un simulador de usuario en una conversación
+de múltiples turnos. Está diseñado para evaluar si el simulador sigue el
+plan de conversación definido en el `ConversationScenario`.
 
-#### Details
+#### Detalles
 
-This criterion determines whether the a user simulator follows a defined
-`ConversationScenario` in a multi-turn conversation.
+Este criterio determina si un simulador de usuario sigue un `ConversationScenario` definido en una conversación de múltiples turnos.
 
-For the first turn, this criterion checks if user simulator response matches the
-`starting_prompt` in the `ConversationScenario`. For subsequent turns, it uses
-LLM-as-a-judge to evaluate if the user response follows the `conversation_plan`
-in the `ConversationScenario`.
+Para el primer turno, este criterio verifica si la respuesta del simulador de usuario coincide con el
+`starting_prompt` en el `ConversationScenario`. Para turnos subsecuentes, usa
+LLM como juez para evaluar si la respuesta del usuario sigue el `conversation_plan`
+en el `ConversationScenario`.
 
-#### How To Use This Criterion?
+#### ¿Cómo Usar Este Criterio?
 
-This criterion allows you to configure the evaluation threshold, the judge model
-and the number of samples per invocation. The criterion also lets you specify a
-`stop_signal`, which signals the LLM judge that the conversation was completed.
-For best results, use the stop signal in `LlmBackedUserSimulator`.
+Este criterio te permite configurar el umbral de evaluación, el modelo juez
+y el número de muestras por invocación. El criterio también te permite especificar una
+`stop_signal`, que señala al juez LLM que la conversación se completó.
+Para mejores resultados, usa la señal de parada en `LlmBackedUserSimulator`.
 
-Example `EvalConfig` entry:
+Ejemplo de entrada `EvalConfig`:
 
 ```json
 {
@@ -537,10 +525,10 @@ Example `EvalConfig` entry:
 }
 ```
 
-#### Output And How To Interpret
+#### Salida Y Cómo Interpretar
 
-The criterion returns a score between 0.0 and 1.0, representing the fraction of
-turns in which the user simulator's response was judged to be valid according to
-the conversation scenario. A score of 1.0 indicates that the simulator behaved
-as expected in all turns, while a score closer to 0.0 indicates that the
-simulator deviated in many turns. Higher values are better.
+El criterio retorna una puntuación entre 0.0 y 1.0, representando la fracción de
+turnos en los que la respuesta del simulador de usuario fue juzgada como válida según
+el escenario de conversación. Una puntuación de 1.0 indica que el simulador se comportó
+como se esperaba en todos los turnos, mientras que una puntuación más cercana a 0.0 indica que el
+simulador se desvió en muchos turnos. Valores más altos son mejores.

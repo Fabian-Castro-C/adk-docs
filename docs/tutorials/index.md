@@ -1,49 +1,41 @@
-# Build your agent with ADK
+# Construye tu agente con ADK
 
-Get started with the Agent Development Kit (ADK) through our collection of
-practical guides. These tutorials are designed in a simple, progressive,
-step-by-step fashion, introducing you to different ADK features and
-capabilities.
+Comienza con el Kit de Desarrollo de Agentes (ADK) a través de nuestra colección de guías prácticas. Estos tutoriales están diseñados de manera simple, progresiva y paso a paso, presentándote diferentes características y capacidades de ADK.
 
-This approach allows you to learn and build incrementally – starting with
-foundational concepts and gradually tackling more advanced agent development
-techniques. You'll explore how to apply these features effectively across
-various use cases, equipping you to build your own sophisticated agentic
-applications with ADK. Explore our collection below and happy building:
+Este enfoque te permite aprender y construir de manera incremental, comenzando con conceptos fundamentales y abordando gradualmente técnicas más avanzadas de desarrollo de agentes. Explorarás cómo aplicar estas características de manera efectiva en varios casos de uso, equipándote para construir tus propias aplicaciones agénticas sofisticadas con ADK. Explora nuestra colección a continuación y ¡feliz construcción!:
 
 <div class="grid cards" markdown>
 
--   :material-console-line: **Multi-tool agent**
+-   :material-console-line: **Agente multi-herramienta**
 
     ---
 
-    Create a workflow that uses multiple tools.
+    Crea un flujo de trabajo que utiliza múltiples herramientas.
 
-    [:octicons-arrow-right-24: Build a multi-tool agent](../get-started/quickstart.md)
+    [:octicons-arrow-right-24: Construye un agente multi-herramienta](../get-started/quickstart.md)
 
--   :material-console-line: **Agent team**
-
-    ---
-
-    Build an multi-agent workflow including agent delegation,
-    session management, and safety callbacks.
-
-    [:octicons-arrow-right-24: Build an agent team](../tutorials/agent-team.md)
-
--   :material-console-line: **Streaming agent**
+-   :material-console-line: **Equipo de agentes**
 
     ---
 
-    Create an agent for handling streamed content.
+    Construye un flujo de trabajo multi-agente que incluye delegación de agentes, gestión de sesiones y callbacks de seguridad.
 
-    [:octicons-arrow-right-24: Build a streaming agent](../get-started/streaming/index.md)
+    [:octicons-arrow-right-24: Construye un equipo de agentes](../tutorials/agent-team.md)
 
--   :material-rocket-launch-outline: **Discover sample agents**
+-   :material-console-line: **Agente de streaming**
 
     ---
 
-    Discover sample agents for retail, travel, customer service, and more!
+    Crea un agente para manejar contenido transmitido.
 
-    [:octicons-arrow-right-24: Discover adk-samples](https://github.com/google/adk-samples){:target="_blank"}
+    [:octicons-arrow-right-24: Construye un agente de streaming](../get-started/streaming/index.md)
+
+-   :material-rocket-launch-outline: **Descubre agentes de ejemplo**
+
+    ---
+
+    ¡Descubre agentes de ejemplo para retail, viajes, servicio al cliente y más!
+
+    [:octicons-arrow-right-24: Descubre adk-samples](https://github.com/google/adk-samples){:target="_blank"}
 
 </div>

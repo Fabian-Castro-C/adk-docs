@@ -1,16 +1,16 @@
-# Quickstart: Exposing a remote agent via A2A
+# Inicio rápido: Exponiendo un agente remoto mediante A2A
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go</span><span class="lst-preview">Experimental</span>
 </div>
 
-This quickstart covers the most common starting point for any developer: **"I have an agent. How do I expose it so that other agents can use my agent via A2A?"**. This is crucial for building complex multi-agent systems where different agents need to collaborate and interact.
+Este inicio rápido cubre el punto de partida más común para cualquier desarrollador: **"Tengo un agente. ¿Cómo lo expongo para que otros agentes puedan usar mi agente mediante A2A?"**. Esto es crucial para construir sistemas multi-agente complejos donde diferentes agentes necesitan colaborar e interactuar.
 
-## Overview
+## Descripción general
 
-This sample demonstrates how you can easily expose an ADK agent so that it can be then consumed by another agent using the A2A Protocol.
+Este ejemplo demuestra cómo puedes exponer fácilmente un agente ADK para que luego pueda ser consumido por otro agente usando el Protocolo A2A.
 
-In Go, you expose an agent by using the A2A launcher, which dynamically generates an agent card for you.
+En Go, expones un agente usando el lanzador A2A, que genera dinámicamente una tarjeta de agente para ti.
 
 ```text
 ┌─────────────────┐                             ┌───────────────────────────────┐
@@ -19,56 +19,56 @@ In Go, you expose an agent by using the A2A launcher, which dynamically generate
 └─────────────────┘                             └───────────────────────────────┘
 ```
 
-The sample consists of :
+El ejemplo consiste en:
 
-- **Remote Prime Agent** (`remote_a2a/check_prime_agent/main.go`): This is the agent that you want to expose so that other agents can use it via A2A. It is an agent that handles prime number checking. It becomes exposed using the A2A launcher.
-- **Root Agent** (`main.go`): A simple agent that is just calling the remote prime agent.
+- **Agente Primo Remoto** (`remote_a2a/check_prime_agent/main.go`): Este es el agente que deseas exponer para que otros agentes puedan usarlo mediante A2A. Es un agente que maneja la verificación de números primos. Se expone usando el lanzador A2A.
+- **Agente Raíz** (`main.go`): Un agente simple que simplemente llama al agente primo remoto.
 
-## Exposing the Remote Agent with the A2A Launcher
+## Exponiendo el Agente Remoto con el Lanzador A2A
 
-You can take an existing agent built using the Go ADK and make it A2A-compatible by using the A2A launcher.
+Puedes tomar un agente existente construido usando el ADK de Go y hacerlo compatible con A2A usando el lanzador A2A.
 
-### 1. Getting the Sample Code { #getting-the-sample-code }
+### 1. Obteniendo el Código de Ejemplo { #getting-the-sample-code }
 
-First, make sure you have Go installed and your environment is set up.
+Primero, asegúrate de tener Go instalado y tu entorno configurado.
 
-You can clone and navigate to the [**`a2a_basic`** sample](https://github.com/google/adk-docs/tree/main/examples/go/a2a_basic) here:
+Puedes clonar y navegar al ejemplo [**`a2a_basic`**](https://github.com/google/adk-docs/tree/main/examples/go/a2a_basic) aquí:
 
 ```bash
 cd examples/go/a2a_basic
 ```
 
-As you'll see, the folder structure is as follows:
+Como verás, la estructura de carpetas es la siguiente:
 
 ```text
 a2a_basic/
 ├── remote_a2a/
 │   └── check_prime_agent/
-│       └── main.go    # Remote Prime Agent
+│       └── main.go    # Agente Primo Remoto
 ├── go.mod
 ├── go.sum
-└── main.go            # Root agent
+└── main.go            # Agente raíz
 ```
 
-#### Root Agent (`a2a_basic/main.go`)
+#### Agente Raíz (`a2a_basic/main.go`)
 
-- **`newRootAgent`**: A local agent that connects to the remote A2A service.
+- **`newRootAgent`**: Un agente local que se conecta al servicio A2A remoto.
 
-#### Remote Prime Agent (`a2a_basic/remote_a2a/check_prime_agent/main.go`)
+#### Agente Primo Remoto (`a2a_basic/remote_a2a/check_prime_agent/main.go`)
 
-- **`checkPrimeTool`**: Function for prime number checking.
-- **`main`**: The main function that creates the agent and starts the A2A server.
+- **`checkPrimeTool`**: Función para verificación de números primos.
+- **`main`**: La función principal que crea el agente e inicia el servidor A2A.
 
-### 2. Start the Remote A2A Agent server { #start-the-remote-a2a-agent-server }
+### 2. Iniciar el servidor del Agente A2A Remoto { #start-the-remote-a2a-agent-server }
 
-You can now start the remote agent server, which will host the `check_prime_agent`:
+Ahora puedes iniciar el servidor del agente remoto, que alojará el `check_prime_agent`:
 
 ```bash
-# Start the remote agent
+# Iniciar el agente remoto
 go run remote_a2a/check_prime_agent/main.go
 ```
 
-Once executed, you should see something like:
+Una vez ejecutado, deberías ver algo como:
 
 ```shell
 2025/11/06 11:00:19 Starting A2A prime checker server on port 8001
@@ -78,38 +78,38 @@ Once executed, you should see something like:
 2025/11/06 11:00:19        a2a:  you can access A2A using jsonrpc protocol: http://localhost:8001
 ```
 
-### 3. Check that your remote agent is running { #check-that-your-remote-agent-is-running }
+### 3. Verificar que tu agente remoto está en ejecución { #check-that-your-remote-agent-is-running }
 
-You can check that your agent is up and running by visiting the agent card that was auto-generated by the A2A launcher:
+Puedes verificar que tu agente está activo y en ejecución visitando la tarjeta de agente que fue generada automáticamente por el lanzador A2A:
 
 [http://localhost:8001/.well-known/agent-card.json](http://localhost:8001/.well-known/agent-card.json)
 
-You should see the contents of the agent card.
+Deberías ver el contenido de la tarjeta del agente.
 
-### 4. Run the Main (Consuming) Agent { #run-the-main-consuming-agent }
+### 4. Ejecutar el Agente Principal (Consumidor) { #run-the-main-consuming-agent }
 
-Now that your remote agent is running, you can run the main agent.
+Ahora que tu agente remoto está en ejecución, puedes ejecutar el agente principal.
 
 ```bash
-# In a separate terminal, run the main agent
+# En una terminal separada, ejecuta el agente principal
 go run main.go
 ```
 
-#### How it works
+#### Cómo funciona
 
-The remote agent is exposed using the A2A launcher in the `main` function. The launcher takes care of starting the server and generating the agent card.
+El agente remoto se expone usando el lanzador A2A en la función `main`. El lanzador se encarga de iniciar el servidor y generar la tarjeta del agente.
 
 ```go title="remote_a2a/check_prime_agent/main.go"
 --8<-- "examples/go/a2a_basic/remote_a2a/check_prime_agent/main.go:a2a-launcher"
 ```
 
-## Example Interactions
+## Ejemplos de Interacciones
 
-Once both services are running, you can interact with the root agent to see how it calls the remote agent via A2A:
+Una vez que ambos servicios estén en ejecución, puedes interactuar con el agente raíz para ver cómo llama al agente remoto mediante A2A:
 
-**Prime Number Checking:**
+**Verificación de Números Primos:**
 
-This interaction uses a remote agent via A2A, the Prime Agent:
+Esta interacción usa un agente remoto mediante A2A, el Agente Primo:
 
 ```text
 User: roll a die and check if it's a prime
@@ -123,8 +123,8 @@ Bot: 3 is a prime number.
 ...
 ```
 
-## Next Steps
+## Próximos Pasos
 
-Now that you have created an agent that's exposing a remote agent via an A2A server, the next step is to learn how to consume it from another agent.
+Ahora que has creado un agente que expone un agente remoto mediante un servidor A2A, el siguiente paso es aprender cómo consumirlo desde otro agente.
 
-- [**A2A Quickstart (Consuming)**](./quickstart-consuming-go.md): Learn how your agent can use other agents using the A2A Protocol.
+- [**Inicio rápido de A2A (Consumo)**](./quickstart-consuming-go.md): Aprende cómo tu agente puede usar otros agentes usando el Protocolo A2A.

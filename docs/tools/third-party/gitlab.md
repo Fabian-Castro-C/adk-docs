@@ -1,49 +1,49 @@
 ---
 catalog_title: GitLab
-catalog_description: Perform semantic code search, inspect pipelines, manage merge requests
+catalog_description: Realiza búsquedas de código semánticas, inspecciona pipelines, gestiona merge requests
 catalog_icon: /adk-docs/assets/tools-gitlab.png
 ---
 
 # GitLab
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The
-[GitLab MCP Server](https://docs.gitlab.com/user/gitlab_duo/model_context_protocol/mcp_server/)
-connects your ADK agent directly to [GitLab.com](https://gitlab.com/) or your
-self-managed GitLab instance. This integration gives your agent the ability to
-manage issues and merge requests, inspect CI/CD pipelines, perform semantic code
-searches, and automate development workflows using natural language.
+El
+[Servidor MCP de GitLab](https://docs.gitlab.com/user/gitlab_duo/model_context_protocol/mcp_server/)
+conecta tu agente ADK directamente a [GitLab.com](https://gitlab.com/) o tu
+instancia de GitLab autogestionada. Esta integración le da a tu agente la capacidad de
+gestionar issues y merge requests, inspeccionar pipelines de CI/CD, realizar búsquedas de código
+semánticas, y automatizar flujos de trabajo de desarrollo usando lenguaje natural.
 
-## Use cases
+## Casos de uso
 
-- **Semantic Code Exploration**: Navigate your codebase using natural language.
-  Unlike standard text search, you can query the logic and intent of your code
-  to quickly understand complex implementations.
+- **Exploración de Código Semántica**: Navega tu código base usando lenguaje natural.
+  A diferencia de la búsqueda de texto estándar, puedes consultar la lógica e intención de tu código
+  para comprender rápidamente implementaciones complejas.
 
-- **Accelerate Merge Request Reviews**: Get up to speed on code changes
-  instantly. Retrieve full merge request contexts, analyze specific diffs, and
-  review commit history to provide faster, more meaningful feedback to your
-  team.
+- **Acelera Revisiones de Merge Request**: Ponte al día sobre cambios de código
+  instantáneamente. Recupera contextos completos de merge requests, analiza diffs específicos, y
+  revisa el historial de commits para proporcionar retroalimentación más rápida y significativa a tu
+  equipo.
 
-- **Troubleshoot CI/CD Pipelines**: Diagnose build failures without leaving your
-  chat. Inspect pipeline statuses and retrieve detailed job logs to pinpoint
-  exactly why a specific merge request or commit failed its checks.
+- **Soluciona Problemas de Pipelines de CI/CD**: Diagnostica fallos de compilación sin salir de tu
+  chat. Inspecciona estados de pipelines y recupera logs de trabajos detallados para identificar
+  exactamente por qué un merge request o commit específico falló sus verificaciones.
 
-## Prerequisites
+## Prerrequisitos
 
-- A GitLab account with a Premium or Ultimate subscription and
-  [GitLab Duo](https://docs.gitlab.com/user/gitlab_duo/) enabled
-- [Beta and experimental features](https://docs.gitlab.com/user/gitlab_duo/turn_on_off/#turn-on-beta-and-experimental-features)
-  enabled in your GitLab settings
+- Una cuenta de GitLab con una suscripción Premium o Ultimate y
+  [GitLab Duo](https://docs.gitlab.com/user/gitlab_duo/) habilitado
+- [Características beta y experimentales](https://docs.gitlab.com/user/gitlab_duo/turn_on_off/#turn-on-beta-and-experimental-features)
+  habilitadas en tu configuración de GitLab
 
-## Use with agent
+## Usar con agente
 
 === "Python"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```python
         from google.adk.agents import Agent
@@ -51,7 +51,7 @@ searches, and automate development workflows using natural language.
         from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
         from mcp import StdioServerParameters
 
-        # Replace with your instance URL if self-hosted (e.g., "gitlab.example.com")
+        # Reemplaza con la URL de tu instancia si es auto-hospedada (ej., "gitlab.example.com")
         GITLAB_INSTANCE_URL = "gitlab.com"
 
         root_agent = Agent(
@@ -80,12 +80,12 @@ searches, and automate development workflows using natural language.
 
 === "TypeScript"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
 
-        // Replace with your instance URL if self-hosted (e.g., "gitlab.example.com")
+        // Reemplaza con la URL de tu instancia si es auto-hospedada (ej., "gitlab.example.com")
         const GITLAB_INSTANCE_URL = "gitlab.com";
 
         const rootAgent = new LlmAgent({
@@ -114,27 +114,26 @@ searches, and automate development workflows using natural language.
 
 !!! note
 
-    When you run this agent for the first time, a browser window will open
-    automatically (and an authorization URL will be printed) requesting OAuth
-    permissions. You must approve this request to allow the agent to access your
-    GitLab data.
+    Cuando ejecutes este agente por primera vez, se abrirá automáticamente una ventana del navegador
+    (y se imprimirá una URL de autorización) solicitando permisos OAuth. Debes aprobar esta solicitud para permitir que el agente acceda a tus
+    datos de GitLab.
 
-## Available tools
+## Herramientas disponibles
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`get_mcp_server_version` | Returns the current version of the GitLab MCP server
-`create_issue` | Creates a new issue in a GitLab project
-`get_issue` | Retrieves detailed information about a specific GitLab issue
-`create_merge_request` | Creates a merge request in a project
-`get_merge_request` | Retrieves detailed information about a specific GitLab merge request
-`get_merge_request_commits` | Retrieves the list of commits in a specific merge request
-`get_merge_request_diffs` | Retrieves the diffs for a specific merge request
-`get_merge_request_pipelines` | Retrieves the pipelines for a specific merge request
-`get_pipeline_jobs` | Retrieves the jobs for a specific CI/CD pipeline
-`gitlab_search` | Searches for a term across the entire GitLab instance with the search API
-`semantic_code_search` | Searches for relevant code snippets in a project
+`get_mcp_server_version` | Devuelve la versión actual del servidor MCP de GitLab
+`create_issue` | Crea un nuevo issue en un proyecto de GitLab
+`get_issue` | Recupera información detallada sobre un issue específico de GitLab
+`create_merge_request` | Crea un merge request en un proyecto
+`get_merge_request` | Recupera información detallada sobre un merge request específico de GitLab
+`get_merge_request_commits` | Recupera la lista de commits en un merge request específico
+`get_merge_request_diffs` | Recupera los diffs para un merge request específico
+`get_merge_request_pipelines` | Recupera los pipelines para un merge request específico
+`get_pipeline_jobs` | Recupera los trabajos para un pipeline de CI/CD específico
+`gitlab_search` | Busca un término en toda la instancia de GitLab con la API de búsqueda
+`semantic_code_search` | Busca fragmentos de código relevantes en un proyecto
 
-## Additional resources
+## Recursos adicionales
 
-- [GitLab MCP Server Documentation](https://docs.gitlab.com/user/gitlab_duo/model_context_protocol/mcp_server/)
+- [Documentación del Servidor MCP de GitLab](https://docs.gitlab.com/user/gitlab_duo/model_context_protocol/mcp_server/)

@@ -10,30 +10,30 @@ catalog_icon: /adk-docs/assets/tools-hugging-face.png
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [Hugging Face MCP Server](https://github.com/huggingface/hf-mcp-server) can be used to connect
-your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
+El [Servidor MCP de Hugging Face](https://github.com/huggingface/hf-mcp-server) puede utilizarse para conectar
+tu agente ADK al Hugging Face Hub y miles de Aplicaciones de IA Gradio.
 
-## Use cases
+## Casos de uso
 
-- **Discover AI/ML Assets**: Search and filter the Hub for models, datasets, and
-  papers based on tasks, libraries, or keywords.
-- **Build Multi-Step Workflows**: Chain tools together, such as transcribing
-  audio with one tool and then summarizing the resulting text with another.
-- **Find AI Applications**: Search for Gradio Spaces that can perform a specific
-  task, like background removal or text-to-speech.
+- **Descubrir Recursos de IA/ML**: Buscar y filtrar el Hub por modelos, conjuntos de datos y
+  artículos basándose en tareas, bibliotecas o palabras clave.
+- **Construir Flujos de Trabajo Multi-Paso**: Encadenar herramientas juntas, como transcribir
+  audio con una herramienta y luego resumir el texto resultante con otra.
+- **Encontrar Aplicaciones de IA**: Buscar Espacios de Gradio que puedan realizar una tarea
+  específica, como eliminación de fondo o texto a voz.
 
-## Prerequisites
+## Requisitos previos
 
-- Create a [user access token](https://huggingface.co/settings/tokens) in
-  Hugging Face. Refer to the
-  [documentation](https://huggingface.co/docs/hub/en/security-tokens) for more
-  information.
+- Crear un [token de acceso de usuario](https://huggingface.co/settings/tokens) en
+  Hugging Face. Consulta la
+  [documentación](https://huggingface.co/docs/hub/en/security-tokens) para más
+  información.
 
-## Use with agent
+## Usar con agente
 
 === "Python"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```python
         from google.adk.agents import Agent
@@ -67,7 +67,7 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
         )
         ```
 
-    === "Remote MCP Server"
+    === "Servidor MCP Remoto"
 
         ```python
         from google.adk.agents import Agent
@@ -95,7 +95,7 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
 
 === "TypeScript"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -123,7 +123,7 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
         export { rootAgent };
         ```
 
-    === "Remote MCP Server"
+    === "Servidor MCP Remoto"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -148,47 +148,46 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
         export { rootAgent };
         ```
 
-## Available tools
+## Herramientas disponibles
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-Spaces Semantic Search | Find the best AI Apps via natural language queries
-Papers Semantic Search | Find ML Research Papers via natural language queries
-Model Search | Search for ML models with filters for task, library, etc…
-Dataset Search | Search for datasets with filters for author, tags, etc…
-Documentation Semantic Search | Search the Hugging Face documentation library
-Hub Repository Details | Get detailed information about Models, Datasets and Spaces
+Spaces Semantic Search | Encuentra las mejores Aplicaciones de IA mediante consultas en lenguaje natural
+Papers Semantic Search | Encuentra Artículos de Investigación de ML mediante consultas en lenguaje natural
+Model Search | Busca modelos de ML con filtros por tarea, biblioteca, etc.
+Dataset Search | Busca conjuntos de datos con filtros por autor, etiquetas, etc.
+Documentation Semantic Search | Busca en la biblioteca de documentación de Hugging Face
+Hub Repository Details | Obtiene información detallada sobre Modelos, Conjuntos de datos y Espacios
 
-## Configuration
+## Configuración
 
-To configure which tools are available in your Hugging Face Hub MCP server,
-visit the [MCP Settings Page](https://huggingface.co/settings/mcp) in your
-Hugging Face account.
+Para configurar qué herramientas están disponibles en tu servidor MCP de Hugging Face Hub,
+visita la [Página de Configuración MCP](https://huggingface.co/settings/mcp) en tu
+cuenta de Hugging Face.
 
 
-To configure the local MCP server, you can use the following environment
-variables:
+Para configurar el servidor MCP local, puedes usar las siguientes variables de
+entorno:
 
-- `TRANSPORT`: The transport type to use (`stdio`, `sse`, `streamableHttp`, or
+- `TRANSPORT`: El tipo de transporte a utilizar (`stdio`, `sse`, `streamableHttp`, o
   `streamableHttpJson`)
-- `DEFAULT_HF_TOKEN`: ⚠️ Requests are serviced with the `HF_TOKEN` received in
-  the Authorization: Bearer header. The DEFAULT_HF_TOKEN is used if no header
-  was sent. Only set this in Development / Test environments or for local STDIO
-  Deployments. ⚠️
-- If running with stdio transport, `HF_TOKEN` is used if `DEFAULT_HF_TOKEN` is
-  not set.
-- `HF_API_TIMEOUT`: Timeout for Hugging Face API requests in milliseconds
-  (default: 12500ms / 12.5 seconds)
-- `USER_CONFIG_API`: URL to use for User settings (defaults to Local front-end)
-- `MCP_STRICT_COMPLIANCE`: set to True for GET 405 rejects in JSON Mode (default
-  serves a welcome page).
-- `AUTHENTICATE_TOOL`: whether to include an Authenticate tool to issue an OAuth
-  challenge when called
-- `SEARCH_ENABLES_FETCH`: When set to true, automatically enables the
-  hf_doc_fetch tool whenever hf_doc_search is enabled
+- `DEFAULT_HF_TOKEN`: ⚠️ Las solicitudes se atienden con el `HF_TOKEN` recibido en
+  el encabezado Authorization: Bearer. El DEFAULT_HF_TOKEN se usa si no se envió ningún encabezado.
+  Solo establece esto en entornos de Desarrollo / Prueba o para Despliegues STDIO locales. ⚠️
+- Si se ejecuta con transporte stdio, se usa `HF_TOKEN` si `DEFAULT_HF_TOKEN` no está
+  establecido.
+- `HF_API_TIMEOUT`: Tiempo de espera para solicitudes de la API de Hugging Face en milisegundos
+  (por defecto: 12500ms / 12.5 segundos)
+- `USER_CONFIG_API`: URL a usar para configuración de Usuario (por defecto al front-end Local)
+- `MCP_STRICT_COMPLIANCE`: establecer en True para rechazos GET 405 en Modo JSON (por defecto
+  sirve una página de bienvenida).
+- `AUTHENTICATE_TOOL`: si se debe incluir una herramienta Authenticate para emitir un
+  desafío OAuth cuando se llama
+- `SEARCH_ENABLES_FETCH`: Cuando se establece en true, habilita automáticamente la
+  herramienta hf_doc_fetch cada vez que hf_doc_search está habilitada
 
 
-## Additional resources
+## Recursos adicionales
 
-- [Hugging Face MCP Server Repository](https://github.com/huggingface/hf-mcp-server)
-- [Hugging Face MCP Server Documentation](https://huggingface.co/docs/hub/en/hf-mcp-server)
+- [Repositorio del Servidor MCP de Hugging Face](https://github.com/huggingface/hf-mcp-server)
+- [Documentación del Servidor MCP de Hugging Face](https://huggingface.co/docs/hub/en/hf-mcp-server)

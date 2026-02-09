@@ -7,30 +7,30 @@ catalog_icon: /adk-docs/assets/tools-asana.png
 # Asana
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [Asana MCP Server](https://developers.asana.com/docs/using-asanas-mcp-server)
-connects your ADK agent to the [Asana](https://asana.com/) work management
-platform. This integration gives your agent the ability to manage projects,
-tasks, goals, and team collaboration using natural language.
+El [Servidor MCP de Asana](https://developers.asana.com/docs/using-asanas-mcp-server)
+conecta tu agente ADK a la plataforma de gestión de trabajo [Asana](https://asana.com/).
+Esta integración le da a tu agente la capacidad de gestionar proyectos,
+tareas, objetivos y colaboración en equipo usando lenguaje natural.
 
-## Use cases
+## Casos de uso
 
-- **Track Project Status**: Get real-time updates on project progress, view
-  status reports, and retrieve information about milestones and deadlines.
+- **Rastrear Estado de Proyectos**: Obtén actualizaciones en tiempo real sobre el progreso del proyecto, visualiza
+  informes de estado y recupera información sobre hitos y fechas límite.
 
-- **Manage Tasks**: Create, update, and organize tasks using natural language.
-  Let your agent handle task assignments, status changes, and priority updates.
+- **Gestionar Tareas**: Crea, actualiza y organiza tareas usando lenguaje natural.
+  Deja que tu agente maneje asignaciones de tareas, cambios de estado y actualizaciones de prioridad.
 
-- **Monitor Goals**: Access and update Asana Goals to track team objectives and
-  key results across your organization.
+- **Monitorear Objetivos**: Accede y actualiza los Objetivos de Asana para rastrear objetivos del equipo y
+  resultados clave en toda tu organización.
 
-## Prerequisites
+## Requisitos previos
 
-- An [Asana](https://asana.com/) account with access to a workspace
+- Una cuenta de [Asana](https://asana.com/) con acceso a un espacio de trabajo
 
-## Use with agent
+## Uso con agente
 
 === "Python"
 
@@ -95,28 +95,28 @@ tasks, goals, and team collaboration using natural language.
 
 !!! note
 
-    When you run this agent for the first time, a browser window opens
-    automatically to request access via OAuth. Alternatively, you can use the
-    authorization URL printed in the console. You must approve this request to
-    allow the agent to access your Asana data.
+    Cuando ejecutas este agente por primera vez, una ventana del navegador se abre
+    automáticamente para solicitar acceso mediante OAuth. Alternativamente, puedes usar la
+    URL de autorización impresa en la consola. Debes aprobar esta solicitud para
+    permitir que el agente acceda a tus datos de Asana.
 
-## Available tools
+## Herramientas disponibles
 
-Asana's MCP server includes 30+ tools organized by category. Tools are
-automatically discovered when your agent connects. Use the
-[ADK Web UI](/adk-docs/runtime/web-interface/) to view available tools in the
-trace graph after running your agent.
+El servidor MCP de Asana incluye más de 30 herramientas organizadas por categoría. Las herramientas se
+descubren automáticamente cuando tu agente se conecta. Usa la
+[Interfaz Web de ADK](/adk-docs/runtime/web-interface/) para ver las herramientas disponibles en el
+gráfico de trazas después de ejecutar tu agente.
 
-Category | Description
+Categoría | Descripción
 -------- | -----------
-Project tracking | Get project status updates and reports
-Task management | Create, update, and organize tasks
-User information | Access user details and assignments
-Goals | Track and update Asana Goals
-Team organization | Manage team structures and membership
-Object search | Quick typeahead search across Asana objects
+Rastreo de proyectos | Obtén actualizaciones de estado de proyectos e informes
+Gestión de tareas | Crea, actualiza y organiza tareas
+Información de usuarios | Accede a detalles de usuarios y asignaciones
+Objetivos | Rastrea y actualiza Objetivos de Asana
+Organización de equipos | Gestiona estructuras de equipos y membresía
+Búsqueda de objetos | Búsqueda rápida con autocompletado en objetos de Asana
 
-## Additional resources
+## Recursos adicionales
 
-- [Asana MCP Server Documentation](https://developers.asana.com/docs/using-asanas-mcp-server)
-- [Asana MCP Integration Guide](https://developers.asana.com/docs/integrating-with-asanas-mcp-server)
+- [Documentación del Servidor MCP de Asana](https://developers.asana.com/docs/using-asanas-mcp-server)
+- [Guía de Integración MCP de Asana](https://developers.asana.com/docs/integrating-with-asanas-mcp-server)

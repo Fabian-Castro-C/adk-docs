@@ -7,41 +7,41 @@ catalog_icon: /adk-docs/assets/tools-cartesia.png
 # Cartesia
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [Cartesia MCP Server](https://github.com/cartesia-ai/cartesia-mcp) connects
-your ADK agent to the [Cartesia](https://cartesia.ai/) AI audio platform. This
-integration gives your agent the ability to generate speech, localize voices
-across languages, and create audio content using natural language.
+El [Servidor MCP de Cartesia](https://github.com/cartesia-ai/cartesia-mcp) conecta
+tu agente ADK a la plataforma de audio de IA [Cartesia](https://cartesia.ai/). Esta
+integración le da a tu agente la capacidad de generar habla, localizar voces
+entre idiomas y crear contenido de audio usando lenguaje natural.
 
-## Use cases
+## Casos de uso
 
-- **Text-to-Speech Generation**: Convert text into natural-sounding speech
-  using Cartesia's diverse voice library, with control over voice selection and
-  output format.
+- **Generación de Texto a Voz**: Convierte texto en habla de sonido natural
+  usando la diversa biblioteca de voces de Cartesia, con control sobre la selección de voz y
+  formato de salida.
 
-- **Voice Localization**: Transform existing voices into different languages
-  while preserving the original speaker's characteristics—ideal for
-  multilingual content creation.
+- **Localización de Voz**: Transforma voces existentes a diferentes idiomas
+  mientras preserva las características del hablante original—ideal para
+  creación de contenido multilingüe.
 
-- **Audio Infill**: Fill gaps between audio segments to create smooth
-  transitions, useful for podcast editing or audiobook production.
+- **Relleno de Audio**: Llena espacios entre segmentos de audio para crear transiciones
+  suaves, útil para edición de podcasts o producción de audiolibros.
 
-- **Voice Transformation**: Convert audio clips to sound like different voices
-  from Cartesia's library.
+- **Transformación de Voz**: Convierte clips de audio para que suenen como diferentes voces
+  de la biblioteca de Cartesia.
 
-## Prerequisites
+## Requisitos previos
 
-- Sign up for a [Cartesia account](https://play.cartesia.ai/sign-in)
-- Generate an [API key](https://play.cartesia.ai/keys) from the Cartesia
-  playground
+- Regístrate para una [cuenta de Cartesia](https://play.cartesia.ai/sign-in)
+- Genera una [clave API](https://play.cartesia.ai/keys) desde el playground de
+  Cartesia
 
-## Use with agent
+## Uso con agente
 
 === "Python"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```python
         from google.adk.agents import Agent
@@ -63,7 +63,7 @@ across languages, and create audio content using natural language.
                             args=["cartesia-mcp"],
                             env={
                                 "CARTESIA_API_KEY": CARTESIA_API_KEY,
-                                # "OUTPUT_DIRECTORY": "/path/to/output",  # Optional
+                                # "OUTPUT_DIRECTORY": "/path/to/output",  # Opcional
                             }
                         ),
                         timeout=30,
@@ -75,7 +75,7 @@ across languages, and create audio content using natural language.
 
 === "TypeScript"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -94,7 +94,7 @@ across languages, and create audio content using natural language.
                         args: ["cartesia-mcp"],
                         env: {
                             CARTESIA_API_KEY: CARTESIA_API_KEY,
-                            // OUTPUT_DIRECTORY: "/path/to/output",  // Optional
+                            // OUTPUT_DIRECTORY: "/path/to/output",  // Opcional
                         },
                     },
                 }),
@@ -104,31 +104,31 @@ across languages, and create audio content using natural language.
         export { rootAgent };
         ```
 
-## Available tools
+## Herramientas disponibles
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`text_to_speech` | Convert text to audio using a specified voice
-`list_voices` | List all available Cartesia voices
-`get_voice` | Get details about a specific voice
-`clone_voice` | Clone a voice from audio samples
-`update_voice` | Update an existing voice
-`delete_voice` | Delete a voice from your library
-`localize_voice` | Transform a voice into a different language
-`voice_change` | Convert an audio file to use a different voice
-`infill` | Fill gaps between audio segments
+`text_to_speech` | Convierte texto a audio usando una voz especificada
+`list_voices` | Lista todas las voces disponibles de Cartesia
+`get_voice` | Obtiene detalles sobre una voz específica
+`clone_voice` | Clona una voz a partir de muestras de audio
+`update_voice` | Actualiza una voz existente
+`delete_voice` | Elimina una voz de tu biblioteca
+`localize_voice` | Transforma una voz a un idioma diferente
+`voice_change` | Convierte un archivo de audio para usar una voz diferente
+`infill` | Llena espacios entre segmentos de audio
 
-## Configuration
+## Configuración
 
-The Cartesia MCP server can be configured using environment variables:
+El servidor MCP de Cartesia puede configurarse usando variables de entorno:
 
-Variable | Description | Required
+Variable | Descripción | Requerida
 -------- | ----------- | --------
-`CARTESIA_API_KEY` | Your Cartesia API key | Yes
-`OUTPUT_DIRECTORY` | Directory to store generated audio files | No
+`CARTESIA_API_KEY` | Tu clave API de Cartesia | Sí
+`OUTPUT_DIRECTORY` | Directorio para almacenar archivos de audio generados | No
 
-## Additional resources
+## Recursos adicionales
 
-- [Cartesia MCP Server Repository](https://github.com/cartesia-ai/cartesia-mcp)
-- [Cartesia MCP Documentation](https://docs.cartesia.ai/integrations/mcp)
-- [Cartesia Playground](https://play.cartesia.ai/)
+- [Repositorio del Servidor MCP de Cartesia](https://github.com/cartesia-ai/cartesia-mcp)
+- [Documentación MCP de Cartesia](https://docs.cartesia.ai/integrations/mcp)
+- [Playground de Cartesia](https://play.cartesia.ai/)

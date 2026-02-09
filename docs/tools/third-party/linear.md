@@ -7,40 +7,40 @@ catalog_icon: /adk-docs/assets/tools-linear.png
 # Linear
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+  <span class="lst-supported">Compatible con ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [Linear MCP Server](https://linear.app/docs/mcp) connects your ADK agent to
-[Linear](https://linear.app/), a purpose-built tool for planning and building
-products. This integration gives your agent the ability to manage issues, track
-project cycles, and automate development workflows using natural language.
+El [Servidor MCP de Linear](https://linear.app/docs/mcp) conecta tu agente ADK a
+[Linear](https://linear.app/), una herramienta diseñada específicamente para planificar y construir
+productos. Esta integración le da a tu agente la capacidad de gestionar issues, rastrear
+ciclos de proyectos y automatizar flujos de trabajo de desarrollo usando lenguaje natural.
 
-## Use cases
+## Casos de uso
 
-- **Streamline Issue Management**: Create, update, and organize issues using
-  natural language. Let your agent handle logging bugs, assigning tasks, and
-  updating statuses.
+- **Optimiza la Gestión de Issues**: Crea, actualiza y organiza issues usando
+  lenguaje natural. Deja que tu agente se encargue de registrar bugs, asignar tareas y
+  actualizar estados.
 
-- **Track Projects and Cycles**: Get instant visibility into your team's
-  momentum. Query the status of active cycles, check project milestones, and
-  retrieve deadlines.
+- **Rastrea Proyectos y Ciclos**: Obtén visibilidad instantánea del progreso de tu equipo.
+  Consulta el estado de ciclos activos, verifica hitos de proyectos y
+  recupera fechas límite.
 
-- **Contextual Search & Summarization**: Quickly catch up on long discussion
-  threads or find specific project specifications. Your agent can search
-  documentation and summarize complex issues.
+- **Búsqueda Contextual y Resumen**: Ponte al día rápidamente con hilos de discusión largos
+  o encuentra especificaciones específicas de proyectos. Tu agente puede buscar
+  documentación y resumir issues complejos.
 
-## Prerequisites
+## Requisitos previos
 
-- [Sign up](https://linear.app/signup) for a Linear account
-- Generate an API key in
-  [Linear Settings > Security & access](https://linear.app/docs/security-and-access)
-  (if using API authentication)
+- [Regístrate](https://linear.app/signup) para obtener una cuenta de Linear
+- Genera una clave API en
+  [Configuración de Linear > Seguridad y acceso](https://linear.app/docs/security-and-access)
+  (si usas autenticación API)
 
-## Use with agent
+## Uso con agente
 
 === "Python"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```python
         from google.adk.agents import Agent
@@ -72,12 +72,12 @@ project cycles, and automate development workflows using natural language.
 
         !!! note
 
-            When you run this agent for the first time, a browser window will open
-            automatically to request access via OAuth. Alternatively, you can use
-            the authorization URL printed in the console. You must approve this
-            request to allow the agent to access your Linear data.
+            Cuando ejecutes este agente por primera vez, se abrirá automáticamente una ventana del navegador
+            para solicitar acceso vía OAuth. Alternativamente, puedes usar
+            la URL de autorización impresa en la consola. Debes aprobar esta
+            solicitud para permitir que el agente acceda a tus datos de Linear.
 
-    === "Remote MCP Server"
+    === "Servidor MCP Remoto"
 
         ```python
         from google.adk.agents import Agent
@@ -105,13 +105,13 @@ project cycles, and automate development workflows using natural language.
 
         !!! note
 
-            This code example uses an API key for authentication. To use a
-            browser-based OAuth authentication flow instead, remove the `headers`
-            parameter and run the agent.
+            Este ejemplo de código usa una clave API para autenticación. Para usar un
+            flujo de autenticación OAuth basado en navegador en su lugar, elimina el parámetro `headers`
+            y ejecuta el agente.
 
 === "TypeScript"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -136,12 +136,12 @@ project cycles, and automate development workflows using natural language.
 
         !!! note
 
-            When you run this agent for the first time, a browser window will open
-            automatically to request access via OAuth. Alternatively, you can use
-            the authorization URL printed in the console. You must approve this
-            request to allow the agent to access your Linear data.
+            Cuando ejecutes este agente por primera vez, se abrirá automáticamente una ventana del navegador
+            para solicitar acceso vía OAuth. Alternativamente, puedes usar
+            la URL de autorización impresa en la consola. Debes aprobar esta
+            solicitud para permitir que el agente acceda a tus datos de Linear.
 
-    === "Remote MCP Server"
+    === "Servidor MCP Remoto"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -168,39 +168,39 @@ project cycles, and automate development workflows using natural language.
 
         !!! note
 
-            This code example uses an API key for authentication. To use a
-            browser-based OAuth authentication flow instead, remove the `header`
-            property and run the agent.
+            Este ejemplo de código usa una clave API para autenticación. Para usar un
+            flujo de autenticación OAuth basado en navegador en su lugar, elimina la propiedad `header`
+            y ejecuta el agente.
 
-## Available tools
+## Herramientas disponibles
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`list_comments` | List comments on an issue
-`create_comment` | Create a comment on an issue
-`list_cycles` | List cycles in a project
-`get_document` | Get a document
-`list_documents` | List documents
-`get_issue` | Get an issue
-`list_issues` | List issues
-`create_issue` | Create an issue
-`update_issue` | Update an issue
-`list_issue_statuses` | List issue statuses
-`get_issue_status` | Get an issue status
-`list_issue_labels` | List issue labels
-`create_issue_label` | Create an issue label
-`list_projects` | List projects
-`get_project` | Get a project
-`create_project` | Create a project
-`update_project` | Update a project
-`list_project_labels` | List project labels
-`list_teams` | List teams
-`get_team` | Get a team
-`list_users` | List users
-`get_user` | Get a user
-`search_documentation` | Search documentation
+`list_comments` | Lista los comentarios en un issue
+`create_comment` | Crea un comentario en un issue
+`list_cycles` | Lista los ciclos en un proyecto
+`get_document` | Obtiene un documento
+`list_documents` | Lista los documentos
+`get_issue` | Obtiene un issue
+`list_issues` | Lista los issues
+`create_issue` | Crea un issue
+`update_issue` | Actualiza un issue
+`list_issue_statuses` | Lista los estados de issues
+`get_issue_status` | Obtiene un estado de issue
+`list_issue_labels` | Lista las etiquetas de issues
+`create_issue_label` | Crea una etiqueta de issue
+`list_projects` | Lista los proyectos
+`get_project` | Obtiene un proyecto
+`create_project` | Crea un proyecto
+`update_project` | Actualiza un proyecto
+`list_project_labels` | Lista las etiquetas de proyectos
+`list_teams` | Lista los equipos
+`get_team` | Obtiene un equipo
+`list_users` | Lista los usuarios
+`get_user` | Obtiene un usuario
+`search_documentation` | Busca en la documentación
 
-## Additional resources
+## Recursos adicionales
 
-- [Linear MCP Server Documentation](https://linear.app/docs/mcp)
-- [Linear Getting Started Guide](https://linear.app/docs/start-guide)
+- [Documentación del Servidor MCP de Linear](https://linear.app/docs/mcp)
+- [Guía de Inicio de Linear](https://linear.app/docs/start-guide)

@@ -7,38 +7,38 @@ catalog_icon: /adk-docs/assets/tools-chroma.png
 # Chroma
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [Chroma MCP Server](https://github.com/chroma-core/chroma-mcp) connects your
-ADK agent to [Chroma](https://www.trychroma.com/), an open-source embedding
-database. This integration gives your agent the ability to create collections,
-store documents, and retrieve information using semantic search, full text
-search, and metadata filtering.
+El [Servidor MCP de Chroma](https://github.com/chroma-core/chroma-mcp) conecta tu
+agente ADK a [Chroma](https://www.trychroma.com/), una base de datos de embeddings
+de código abierto. Esta integración le da a tu agente la capacidad de crear colecciones,
+almacenar documentos y recuperar información usando búsqueda semántica, búsqueda de texto
+completo y filtrado por metadatos.
 
-## Use cases
+## Casos de uso
 
-- **Semantic Memory for Agents**: Store conversation context, facts, or learned
-  information that agents can retrieve later using natural language queries.
+- **Memoria Semántica para Agentes**: Almacena contexto de conversación, hechos o información
+  aprendida que los agentes pueden recuperar más tarde usando consultas en lenguaje natural.
 
-- **Knowledge Base Retrieval**: Build a retrieval-augmented generation (RAG)
-  system by storing documents and retrieving relevant context for responses.
+- **Recuperación de Base de Conocimiento**: Construye un sistema de generación aumentada por
+  recuperación (RAG) almacenando documentos y recuperando contexto relevante para las respuestas.
 
-- **Persistent Context Across Sessions**: Maintain long-term memory across
-  conversations, allowing agents to reference past interactions and accumulated
-  knowledge.
+- **Contexto Persistente entre Sesiones**: Mantén memoria a largo plazo entre
+  conversaciones, permitiendo a los agentes referenciar interacciones pasadas y conocimiento
+  acumulado.
 
-## Prerequisites
+## Prerrequisitos
 
-- **For local storage**: A directory path to persist data
-- **For Chroma Cloud**: A [Chroma Cloud](https://www.trychroma.com/) account
-  with tenant ID, database name, and API key
+- **Para almacenamiento local**: Una ruta de directorio para persistir datos
+- **Para Chroma Cloud**: Una cuenta de [Chroma Cloud](https://www.trychroma.com/) 
+  con ID de tenant, nombre de base de datos y clave API
 
-## Use with agent
+## Uso con agente
 
 === "Python"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```python
         from google.adk.agents import Agent
@@ -46,10 +46,10 @@ search, and metadata filtering.
         from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
         from mcp import StdioServerParameters
 
-        # For local storage, use:
+        # Para almacenamiento local, usa:
         DATA_DIR = "/path/to/your/data/directory"
 
-        # For Chroma Cloud, use:
+        # Para Chroma Cloud, usa:
         # CHROMA_TENANT = "your-tenant-id"
         # CHROMA_DATABASE = "your-database-name"
         # CHROMA_API_KEY = "your-api-key"
@@ -65,12 +65,12 @@ search, and metadata filtering.
                             command="uvx",
                             args=[
                                 "chroma-mcp",
-                                # For local storage, use:
+                                # Para almacenamiento local, usa:
                                 "--client-type",
                                 "persistent",
                                 "--data-dir",
                                 DATA_DIR,
-                                # For Chroma Cloud, use:
+                                # Para Chroma Cloud, usa:
                                 # "--client-type",
                                 # "cloud",
                                 # "--tenant",
@@ -90,15 +90,15 @@ search, and metadata filtering.
 
 === "TypeScript"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
 
-        // For local storage, use:
+        // Para almacenamiento local, usa:
         const DATA_DIR = "/path/to/your/data/directory";
 
-        // For Chroma Cloud, use:
+        // Para Chroma Cloud, usa:
         // const CHROMA_TENANT = "your-tenant-id";
         // const CHROMA_DATABASE = "your-database-name";
         // const CHROMA_API_KEY = "your-api-key";
@@ -114,12 +114,12 @@ search, and metadata filtering.
                         command: "uvx",
                         args: [
                             "chroma-mcp",
-                            // For local storage, use:
+                            // Para almacenamiento local, usa:
                             "--client-type",
                             "persistent",
                             "--data-dir",
                             DATA_DIR,
-                            // For Chroma Cloud, use:
+                            // Para Chroma Cloud, usa:
                             // "--client-type",
                             // "cloud",
                             // "--tenant",
@@ -137,62 +137,62 @@ search, and metadata filtering.
         export { rootAgent };
         ```
 
-## Available tools
+## Herramientas disponibles
 
-### Collection management
+### Gestión de colecciones
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`chroma_list_collections` | List all collections with pagination support
-`chroma_create_collection` | Create a new collection with optional HNSW configuration
-`chroma_get_collection_info` | Get detailed information about a collection
-`chroma_get_collection_count` | Get the number of documents in a collection
-`chroma_modify_collection` | Update a collection's name or metadata
-`chroma_delete_collection` | Delete a collection
-`chroma_peek_collection` | View a sample of documents in a collection
+`chroma_list_collections` | Lista todas las colecciones con soporte de paginación
+`chroma_create_collection` | Crea una nueva colección con configuración HNSW opcional
+`chroma_get_collection_info` | Obtiene información detallada sobre una colección
+`chroma_get_collection_count` | Obtiene el número de documentos en una colección
+`chroma_modify_collection` | Actualiza el nombre o metadatos de una colección
+`chroma_delete_collection` | Elimina una colección
+`chroma_peek_collection` | Visualiza una muestra de documentos en una colección
 
-### Document operations
+### Operaciones de documentos
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`chroma_add_documents` | Add documents with optional metadata and custom IDs
-`chroma_query_documents` | Query documents using semantic search with advanced filtering
-`chroma_get_documents` | Retrieve documents by IDs or filters with pagination
-`chroma_update_documents` | Update existing documents' content, metadata, or embeddings
-`chroma_delete_documents` | Delete specific documents from a collection
+`chroma_add_documents` | Agrega documentos con metadatos opcionales e IDs personalizados
+`chroma_query_documents` | Consulta documentos usando búsqueda semántica con filtrado avanzado
+`chroma_get_documents` | Recupera documentos por IDs o filtros con paginación
+`chroma_update_documents` | Actualiza el contenido, metadatos o embeddings de documentos existentes
+`chroma_delete_documents` | Elimina documentos específicos de una colección
 
-## Configuration
+## Configuración
 
-The Chroma MCP server supports multiple client types to suit different needs:
+El servidor MCP de Chroma soporta múltiples tipos de cliente para adaptarse a diferentes necesidades:
 
-### Client types
+### Tipos de cliente
 
-Client Type | Description | Key Arguments
+Tipo de Cliente | Descripción | Argumentos Clave
 ----------- | ----------- | -------------
-`ephemeral` | In-memory storage, cleared on restart. Useful for testing. | None (default)
-`persistent` | File-based storage on your local machine | `--data-dir`
-`http` | Connect to a self-hosted Chroma server | `--host`, `--port`, `--ssl`, `--custom-auth-credentials`
-`cloud` | Connect to Chroma Cloud (api.trychroma.com) | `--tenant`, `--database`, `--api-key`
+`ephemeral` | Almacenamiento en memoria, se borra al reiniciar. Útil para pruebas. | Ninguno (predeterminado)
+`persistent` | Almacenamiento basado en archivos en tu máquina local | `--data-dir`
+`http` | Conecta a un servidor Chroma auto-hospedado | `--host`, `--port`, `--ssl`, `--custom-auth-credentials`
+`cloud` | Conecta a Chroma Cloud (api.trychroma.com) | `--tenant`, `--database`, `--api-key`
 
-### Environment variables
+### Variables de entorno
 
-You can also configure the client using environment variables. Command-line
-arguments take precedence over environment variables.
+También puedes configurar el cliente usando variables de entorno. Los argumentos de línea de
+comandos tienen precedencia sobre las variables de entorno.
 
-Variable | Description
+Variable | Descripción
 -------- | -----------
-`CHROMA_CLIENT_TYPE` | Client type: `ephemeral`, `persistent`, `http`, or `cloud`
-`CHROMA_DATA_DIR` | Path for persistent local storage
-`CHROMA_TENANT` | Tenant ID for Chroma Cloud
-`CHROMA_DATABASE` | Database name for Chroma Cloud
-`CHROMA_API_KEY` | API key for Chroma Cloud
-`CHROMA_HOST` | Host for self-hosted HTTP client
-`CHROMA_PORT` | Port for self-hosted HTTP client
-`CHROMA_SSL` | Enable SSL for HTTP client (`true` or `false`)
-`CHROMA_DOTENV_PATH` | Path to `.env` file (defaults to `.chroma_env`)
+`CHROMA_CLIENT_TYPE` | Tipo de cliente: `ephemeral`, `persistent`, `http`, o `cloud`
+`CHROMA_DATA_DIR` | Ruta para almacenamiento local persistente
+`CHROMA_TENANT` | ID de tenant para Chroma Cloud
+`CHROMA_DATABASE` | Nombre de base de datos para Chroma Cloud
+`CHROMA_API_KEY` | Clave API para Chroma Cloud
+`CHROMA_HOST` | Host para cliente HTTP auto-hospedado
+`CHROMA_PORT` | Puerto para cliente HTTP auto-hospedado
+`CHROMA_SSL` | Habilitar SSL para cliente HTTP (`true` o `false`)
+`CHROMA_DOTENV_PATH` | Ruta al archivo `.env` (predeterminado `.chroma_env`)
 
-## Additional resources
+## Recursos adicionales
 
-- [Chroma MCP Server Repository](https://github.com/chroma-core/chroma-mcp)
-- [Chroma Documentation](https://docs.trychroma.com/)
+- [Repositorio del Servidor MCP de Chroma](https://github.com/chroma-core/chroma-mcp)
+- [Documentación de Chroma](https://docs.trychroma.com/)
 - [Chroma Cloud](https://www.trychroma.com/)

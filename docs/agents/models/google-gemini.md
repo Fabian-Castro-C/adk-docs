@@ -1,35 +1,35 @@
-# Google Gemini models for ADK agents
+# Modelos Google Gemini para agentes ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-ADK supports the Google Gemini family of generative AI models that provide a
-powerful set of models with a wide range of features. ADK provides support for many
-Gemini features, including
-[Code Execution](/adk-docs/tools/gemini-api/code-execution/),
-[Google Search](/adk-docs/tools/gemini-api/google-search/),
-[Context caching](/adk-docs/context/caching/),
-[Computer use](/adk-docs/tools/gemini-api/computer-use/)
-and the [Interactions API](#interactions-api).
+ADK soporta la familia Google Gemini de modelos de IA generativa que proporcionan un
+poderoso conjunto de modelos con una amplia gama de características. ADK proporciona soporte para muchas
+características de Gemini, incluyendo
+[Ejecución de código](/adk-docs/tools/gemini-api/code-execution/),
+[Búsqueda de Google](/adk-docs/tools/gemini-api/google-search/),
+[Caché de contexto](/adk-docs/context/caching/),
+[Uso de computadora](/adk-docs/tools/gemini-api/computer-use/)
+y la [API de Interacciones](#interactions-api).
 
-## Get started
+## Comenzar
 
-The following code examples show a basic implementation for using Gemini models
-in your agents:
+Los siguientes ejemplos de código muestran una implementación básica para usar modelos Gemini
+en tus agentes:
 
 === "Python"
 
     ```python
     from google.adk.agents import LlmAgent
 
-    # --- Example using a stable Gemini Flash model ---
+    # --- Ejemplo usando un modelo Gemini Flash estable ---
     agent_gemini_flash = LlmAgent(
-        # Use the latest stable Flash model identifier
+        # Usar el identificador del modelo Flash estable más reciente
         model="gemini-2.5-flash",
         name="gemini_flash_agent",
         instruction="You are a fast and helpful Gemini assistant.",
-        # ... other agent parameters
+        # ... otros parámetros del agente
     )
     ```
 
@@ -38,7 +38,7 @@ in your agents:
     ```typescript
     import {LlmAgent} from '@google/adk';
 
-    // --- Example #2: using a powerful Gemini Pro model with API Key in model ---
+    // --- Ejemplo #2: usando un poderoso modelo Gemini Pro con Clave API en el modelo ---
     export const rootAgent = new LlmAgent({
       name: 'hello_time_agent',
       model: 'gemini-2.5-flash',
@@ -62,143 +62,143 @@ in your agents:
 === "Java"
 
     ```java
-    // --- Example #1: using a stable Gemini Flash model with ENV variables---
+    // --- Ejemplo #1: usando un modelo Gemini Flash estable con variables ENV ---
     LlmAgent agentGeminiFlash =
         LlmAgent.builder()
-            // Use the latest stable Flash model identifier
-            .model("gemini-2.5-flash") // Set ENV variables to use this model
+            // Usar el identificador del modelo Flash estable más reciente
+            .model("gemini-2.5-flash") // Establecer variables ENV para usar este modelo
             .name("gemini_flash_agent")
             .instruction("You are a fast and helpful Gemini assistant.")
-            // ... other agent parameters
+            // ... otros parámetros del agente
             .build();
     ```
 
 
-## Gemini model authentication
+## Autenticación de modelos Gemini
 
-This section covers authenticating with Google's Gemini models, either through Google AI Studio for rapid development or Google Cloud Vertex AI for enterprise applications. This is the most direct way to use Google's flagship models within ADK.
+Esta sección cubre la autenticación con los modelos Gemini de Google, ya sea a través de Google AI Studio para desarrollo rápido o Google Cloud Vertex AI para aplicaciones empresariales. Esta es la forma más directa de usar los modelos insignia de Google dentro de ADK.
 
-**Integration Method:** Once you are authenticated using one of the below methods, you can pass the model's identifier string directly to the
-`model` parameter of `LlmAgent`.
+**Método de integración:** Una vez que estés autenticado usando uno de los métodos siguientes, puedes pasar la cadena identificadora del modelo directamente al
+parámetro `model` de `LlmAgent`.
 
 
 !!! tip
 
-    The `google-genai` library, used internally by ADK for Gemini models, can connect
-    through either Google AI Studio or Vertex AI.
+    La biblioteca `google-genai`, usada internamente por ADK para modelos Gemini, puede conectarse
+    a través de Google AI Studio o Vertex AI.
 
-    **Model support for voice/video streaming**
+    **Soporte de modelos para streaming de voz/video**
 
-    In order to use voice/video streaming in ADK, you will need to use Gemini
-    models that support the Live API. You can find the **model ID(s)** that
-    support the Gemini Live API in the documentation:
+    Para usar streaming de voz/video en ADK, necesitarás usar modelos Gemini
+    que soporten la Live API. Puedes encontrar el **ID(s) de modelo** que
+    soportan la Gemini Live API en la documentación:
 
     - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
     - [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
 ### Google AI Studio
 
-This is the simplest method and is recommended for getting started quickly.
+Este es el método más simple y es recomendado para comenzar rápidamente.
 
-*   **Authentication Method:** API Key
-*   **Setup:**
-    1.  **Get an API key:** Obtain your key from [Google AI Studio](https://aistudio.google.com/apikey).
-    2.  **Set environment variables:** Create a `.env` file (Python) or `.properties` (Java) in your project's root directory and add the following lines. ADK will automatically load this file.
+*   **Método de autenticación:** Clave API
+*   **Configuración:**
+    1.  **Obtén una clave API:** Obtén tu clave desde [Google AI Studio](https://aistudio.google.com/apikey).
+    2.  **Establece variables de entorno:** Crea un archivo `.env` (Python) o `.properties` (Java) en el directorio raíz de tu proyecto y agrega las siguientes líneas. ADK cargará automáticamente este archivo.
 
         ```shell
         export GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY"
         export GOOGLE_GENAI_USE_VERTEXAI=FALSE
         ```
 
-        (or)
+        (o)
 
-        Pass these variables during the model initialization via the `Client` (see example below).
+        Pasa estas variables durante la inicialización del modelo a través del `Client` (ver ejemplo abajo).
 
-* **Models:** Find all available models on the
-  [Google AI for Developers site](https://ai.google.dev/gemini-api/docs/models).
+* **Modelos:** Encuentra todos los modelos disponibles en el
+  [sitio de Google AI para Desarrolladores](https://ai.google.dev/gemini-api/docs/models).
 
 ### Google Cloud Vertex AI
 
-For scalable and production-oriented use cases, Vertex AI is the recommended platform. Gemini on Vertex AI supports enterprise-grade features, security, and compliance controls. Based on your development environment and usecase, *choose one of the below methods to authenticate*.
+Para casos de uso escalables y orientados a producción, Vertex AI es la plataforma recomendada. Gemini en Vertex AI soporta características de grado empresarial, seguridad y controles de cumplimiento. Basándose en tu entorno de desarrollo y caso de uso, *elige uno de los métodos siguientes para autenticarte*.
 
-**Pre-requisites:** A Google Cloud Project with [Vertex AI enabled](https://console.cloud.google.com/apis/enableflow;apiid=aiplatform.googleapis.com).
+**Prerrequisitos:** Un Proyecto de Google Cloud con [Vertex AI habilitado](https://console.cloud.google.com/apis/enableflow;apiid=aiplatform.googleapis.com).
 
-### **Method A: User Credentials (for Local Development)**
+### **Método A: Credenciales de Usuario (para Desarrollo Local)**
 
-1.  **Install the gcloud CLI:** Follow the official [installation instructions](https://cloud.google.com/sdk/docs/install).
-2.  **Log in using ADC:** This command opens a browser to authenticate your user account for local development.
+1.  **Instala el CLI de gcloud:** Sigue las [instrucciones de instalación](https://cloud.google.com/sdk/docs/install) oficiales.
+2.  **Inicia sesión usando ADC:** Este comando abre un navegador para autenticar tu cuenta de usuario para desarrollo local.
     ```bash
     gcloud auth application-default login
     ```
-3.  **Set environment variables:**
+3.  **Establece variables de entorno:**
     ```shell
     export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
-    export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
+    export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # ej., us-central1
     ```
 
-    Explicitly tell the library to use Vertex AI:
+    Indica explícitamente a la biblioteca que use Vertex AI:
 
     ```shell
     export GOOGLE_GENAI_USE_VERTEXAI=TRUE
     ```
 
-4. **Models:** Find available model IDs in the
-  [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
+4. **Modelos:** Encuentra IDs de modelos disponibles en la
+  [documentación de Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
 
-### **Method B: Vertex AI Express Mode**
-[Vertex AI Express Mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview) offers a simplified, API-key-based setup for rapid prototyping.
+### **Método B: Modo Express de Vertex AI**
+[Vertex AI Express Mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview) ofrece una configuración simplificada basada en clave API para prototipado rápido.
 
-1.  **Sign up for Express Mode** to get your API key.
-2.  **Set environment variables:**
+1.  **Regístrate en Express Mode** para obtener tu clave API.
+2.  **Establece variables de entorno:**
     ```shell
     export GOOGLE_API_KEY="PASTE_YOUR_EXPRESS_MODE_API_KEY_HERE"
     export GOOGLE_GENAI_USE_VERTEXAI=TRUE
     ```
 
-### **Method C: Service Account (for Production & Automation)**
+### **Método C: Cuenta de Servicio (para Producción y Automatización)**
 
-For deployed applications, a service account is the standard method.
+Para aplicaciones desplegadas, una cuenta de servicio es el método estándar.
 
-1.  [**Create a Service Account**](https://cloud.google.com/iam/docs/service-accounts-create#console) and grant it the `Vertex AI User` role.
-2.  **Provide credentials to your application:**
-    *   **On Google Cloud:** If you are running the agent in Cloud Run, GKE, VM or other Google Cloud services, the environment can automatically provide the service account credentials. You don't have to create a key file.
-    *   **Elsewhere:** Create a [service account key file](https://cloud.google.com/iam/docs/keys-create-delete#console) and point to it with an environment variable:
+1.  [**Crea una Cuenta de Servicio**](https://cloud.google.com/iam/docs/service-accounts-create#console) y otórgale el rol de `Vertex AI User`.
+2.  **Proporciona credenciales a tu aplicación:**
+    *   **En Google Cloud:** Si estás ejecutando el agente en Cloud Run, GKE, VM u otros servicios de Google Cloud, el entorno puede proporcionar automáticamente las credenciales de la cuenta de servicio. No tienes que crear un archivo de clave.
+    *   **En otro lugar:** Crea un [archivo de clave de cuenta de servicio](https://cloud.google.com/iam/docs/keys-create-delete#console) y apunta a él con una variable de entorno:
         ```bash
         export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/keyfile.json"
         ```
-    Instead of the key file, you can also authenticate the service account using Workload Identity. But this is outside the scope of this guide.
+    En lugar del archivo de clave, también puedes autenticar la cuenta de servicio usando Workload Identity. Pero esto está fuera del alcance de esta guía.
 
-!!! warning "Secure Your Credentials"
+!!! warning "Asegura Tus Credenciales"
 
-    Service account credentials or API keys are powerful credentials. Never
-    expose them publicly. Use a secret manager such as [Google Cloud Secret
-    Manager](https://cloud.google.com/security/products/secret-manager) to store
-    and access them securely in production.
+    Las credenciales de cuenta de servicio o claves API son credenciales poderosas. Nunca
+    las expongas públicamente. Usa un gestor de secretos como [Google Cloud Secret
+    Manager](https://cloud.google.com/security/products/secret-manager) para almacenar
+    y acceder a ellas de forma segura en producción.
 
-!!! note "Gemini model versions"
+!!! note "Versiones de modelos Gemini"
 
-    Always check the official Gemini documentation for the latest model names,
-    including specific preview versions if needed. Preview models might have
-    different availability or quota limitations.
+    Siempre verifica la documentación oficial de Gemini para los nombres de modelos más recientes,
+    incluyendo versiones preview específicas si es necesario. Los modelos preview pueden tener
+    diferentes disponibilidades o limitaciones de cuota.
 
-## Troubleshooting
+## Solución de problemas
 
-### Error Code 429 - RESOURCE_EXHAUSTED
+### Código de Error 429 - RESOURCE_EXHAUSTED
 
-This error usually happens if the number of your requests exceeds the capacity allocated to process requests.
+Este error generalmente ocurre si el número de tus solicitudes excede la capacidad asignada para procesar solicitudes.
 
-To mitigate this, you can do one of the following:
+Para mitigar esto, puedes hacer uno de los siguientes:
 
-1.  Request higher quota limits for the model you are trying to use.
+1.  Solicitar límites de cuota más altos para el modelo que estás intentando usar.
 
-2.  Enable client-side retries. Retries allow the client to automatically retry the request after a delay, which can help if the quota issue is temporary.
+2.  Habilitar reintentos del lado del cliente. Los reintentos permiten al cliente reintentar automáticamente la solicitud después de un retraso, lo que puede ayudar si el problema de cuota es temporal.
 
-    There are two ways you can set retry options:
+    Hay dos formas en que puedes establecer opciones de reintento:
 
-    **Option 1:** Set retry options on the Agent as a part of generate_content_config.
+    **Opción 1:** Establece opciones de reintento en el Agente como parte de generate_content_config.
 
-    You would use this option if you are instantiating this model adapter by
-    yourself.
+    Usarías esta opción si estás instanciando este adaptador de modelo por
+    ti mismo.
 
     ```python
     root_agent = Agent(
@@ -215,10 +215,10 @@ To mitigate this, you can do one of the following:
         )
     ```
 
-    **Option 2:** Retry options on this model adapter.
+    **Opción 2:** Opciones de reintento en este adaptador de modelo.
 
-    You would use this option if you were instantiating the instance of adapter
-    by yourself.
+    Usarías esta opción si estuvieras instanciando la instancia del adaptador
+    por ti mismo.
 
     ```python
     from google.genai import types
@@ -232,21 +232,20 @@ To mitigate this, you can do one of the following:
     )
     ```
 
-## Gemini Interactions API {#interactions-api}
+## API de Interacciones de Gemini {#interactions-api}
 
 <div class="language-support-tag" title="Java ADK currently supports Gemini and Anthropic models.">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span>
 </div>
 
-The Gemini [Interactions API](https://ai.google.dev/gemini-api/docs/interactions)
-is an alternative to the ***generateContent*** inference API, which provides
-stateful conversation capabilities, allowing you to chain interactions using a
-`previous_interaction_id` instead of sending the full conversation history with
-each request. Using this feature can be more efficient for long conversations.
+La [API de Interacciones](https://ai.google.dev/gemini-api/docs/interactions) de Gemini
+es una alternativa a la API de inferencia ***generateContent***, que proporciona
+capacidades de conversación con estado, permitiéndote encadenar interacciones usando un
+`previous_interaction_id` en lugar de enviar el historial completo de la conversación con
+cada solicitud. Usar esta característica puede ser más eficiente para conversaciones largas.
 
-You can enable the Interactions API by setting the `use_interactions_api=True`
-parameter in the Gemini model configuration, as shown in the following code
-snippet:
+Puedes habilitar la API de Interacciones estableciendo el parámetro `use_interactions_api=True`
+en la configuración del modelo Gemini, como se muestra en el siguiente fragmento de código:
 
 ```python
 from google.adk.agents.llm_agent import Agent
@@ -256,33 +255,32 @@ from google.adk.tools.google_search_tool import GoogleSearchTool
 root_agent = Agent(
     model=Gemini(
         model="gemini-2.5-flash",
-        use_interactions_api=True,  # Enable Interactions API
+        use_interactions_api=True,  # Habilitar API de Interacciones
     ),
     name="interactions_test_agent",
     tools=[
-        GoogleSearchTool(bypass_multi_tools_limit=True),  # Converted to function tool
-        get_current_weather,  # Custom function tool
+        GoogleSearchTool(bypass_multi_tools_limit=True),  # Convertida a herramienta de función
+        get_current_weather,  # Herramienta de función personalizada
     ],
 )
 ```
 
-For a complete code sample, see the
-[Interactions API sample](https://github.com/google/adk-python/tree/main/contributing/samples/interactions_api).
+Para un ejemplo de código completo, consulta la
+[muestra de API de Interacciones](https://github.com/google/adk-python/tree/main/contributing/samples/interactions_api).
 
-### Known limitations
+### Limitaciones conocidas
 
-The Interactions API **does not** support mixing custom function calling tools with
-built-in tools, such as the
-[Google Search](/adk-docs/tools/built-in-tools/#google-search),
-tool, within the same agent. You can work around this limitation by configuring the
-the built-in tool to operate as a custom tool using the `bypass_multi_tools_limit`
-parameter:
+La API de Interacciones **no** soporta mezclar herramientas de llamado de función personalizadas con
+herramientas integradas, como la
+herramienta [Búsqueda de Google](/adk-docs/tools/built-in-tools/#google-search),
+dentro del mismo agente. Puedes solucionar esta limitación configurando la
+herramienta integrada para operar como una herramienta personalizada usando el parámetro `bypass_multi_tools_limit`:
 
 ```python
-# Use bypass_multi_tools_limit=True to convert google_search to a function tool
+# Usar bypass_multi_tools_limit=True para convertir google_search a una herramienta de función
 GoogleSearchTool(bypass_multi_tools_limit=True)
 ```
 
-In this example, this option converts the built-in google_search to a function
-calling tool (via GoogleSearchAgentTool), which allows it to work alongside
-custom function tools.
+En este ejemplo, esta opción convierte la google_search integrada en una herramienta de llamado
+de función (a través de GoogleSearchAgentTool), lo que le permite trabajar junto con
+herramientas de función personalizadas.

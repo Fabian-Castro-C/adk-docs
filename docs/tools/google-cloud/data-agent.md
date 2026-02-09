@@ -4,31 +4,31 @@ catalog_description: Analyze data with AI-powered agents
 catalog_icon: /adk-docs/assets/tools-vertex-ai.png
 ---
 
-# Data Agents tools for ADK
+# Herramientas de Data Agents para ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.23.0</span>
+  <span class="lst-supported">Compatible con ADK</span><span class="lst-python">Python v1.23.0</span>
 </div>
 
-These are a set of tools aimed to provide integration with Data Agents powered by [Conversational Analytics API](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/overview).
+Estas son un conjunto de herramientas destinadas a proporcionar integración con Data Agents impulsados por [Conversational Analytics API](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/overview).
 
-Data Agents are AI-powered agents that help you analyze your data using natural language. When configuring a Data Agent, you can choose from supported data sources, including **BigQuery**, **Looker**, and **Looker Studio**.
+Los Data Agents son agentes impulsados por IA que te ayudan a analizar tus datos usando lenguaje natural. Al configurar un Data Agent, puedes elegir entre fuentes de datos compatibles, incluyendo **BigQuery**, **Looker** y **Looker Studio**.
 
-**Prerequisites**
+**Requisitos previos**
 
-Before using these tools, you must build and configure your Data Agents in Google Cloud:
+Antes de usar estas herramientas, debes construir y configurar tus Data Agents en Google Cloud:
 
-* [Build a data agent using HTTP and Python](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/build-agent-http)
-* [Build a data agent using the Python SDK](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/build-agent-sdk)
-* [Create a data agent in BigQuery Studio](https://docs.cloud.google.com/bigquery/docs/create-data-agents#create_a_data_agent)
+* [Construir un data agent usando HTTP y Python](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/build-agent-http)
+* [Construir un data agent usando el SDK de Python](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/build-agent-sdk)
+* [Crear un data agent en BigQuery Studio](https://docs.cloud.google.com/bigquery/docs/create-data-agents#create_a_data_agent)
 
-The `DataAgentToolset` includes the following tools:
+El `DataAgentToolset` incluye las siguientes herramientas:
 
-* **`list_accessible_data_agents`**: Lists Data Agents you have permission to access in the configured GCP project.
-* **`get_data_agent_info`**: Retrieves details about a specific Data Agent given its full resource name.
-* **`ask_data_agent`**: Chats with a specific Data Agent using natural language.
+* **`list_accessible_data_agents`**: Lista los Data Agents a los que tienes permiso de acceso en el proyecto GCP configurado.
+* **`get_data_agent_info`**: Recupera detalles sobre un Data Agent específico dado su nombre de recurso completo.
+* **`ask_data_agent`**: Chatea con un Data Agent específico usando lenguaje natural.
 
-They are packaged in the toolset `DataAgentToolset`.
+Están empaquetadas en el conjunto de herramientas `DataAgentToolset`.
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/data_agent.py"

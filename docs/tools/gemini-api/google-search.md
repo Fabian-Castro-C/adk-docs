@@ -4,23 +4,23 @@ catalog_description: Perform web searches using Google Search with Gemini
 catalog_icon: /adk-docs/assets/tools-google-search.png
 ---
 
-# Google Search tool for ADK
+# Herramienta Google Search para ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-The `google_search` tool allows the agent to perform web searches using Google Search. The `google_search` tool is only compatible with Gemini 2 models. For further details of the tool, see [Understanding Google Search grounding](/adk-docs/grounding/google_search_grounding/).
+La herramienta `google_search` permite al agente realizar búsquedas web usando Google Search. La herramienta `google_search` solo es compatible con modelos Gemini 2. Para más detalles sobre la herramienta, consulta [Entendiendo la fundamentación de Google Search](/adk-docs/grounding/google_search_grounding/).
 
-!!! warning "Additional requirements when using the `google_search` tool"
-    When you use grounding with Google Search, and you receive Search suggestions in your response, you must display the Search suggestions in production and in your applications.
-    For more information on grounding with Google Search, see Grounding with Google Search documentation for [Google AI Studio](https://ai.google.dev/gemini-api/docs/grounding/search-suggestions) or [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions). The UI code (HTML) is returned in the Gemini response as `renderedContent`, and you will need to show the HTML in your app, in accordance with the policy.
+!!! warning "Requisitos adicionales al usar la herramienta `google_search`"
+    Cuando usas fundamentación con Google Search, y recibes sugerencias de búsqueda en tu respuesta, debes mostrar las sugerencias de búsqueda en producción y en tus aplicaciones.
+    Para más información sobre fundamentación con Google Search, consulta la documentación de fundamentación con Google Search para [Google AI Studio](https://ai.google.dev/gemini-api/docs/grounding/search-suggestions) o [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions). El código de UI (HTML) se devuelve en la respuesta de Gemini como `renderedContent`, y necesitarás mostrar el HTML en tu aplicación, de acuerdo con la política.
 
-!!! warning "Warning: Single tool per agent limitation"
+!!! warning "Advertencia: Limitación de una sola herramienta por agente"
 
-    This tool can only be used ***by itself*** within an agent instance.
-    For more information about this limitation and workarounds, see
-    [Limitations for ADK tools](/adk-docs/tools/limitations/#one-tool-one-agent).
+    Esta herramienta solo puede ser usada ***por sí misma*** dentro de una instancia de agente.
+    Para más información sobre esta limitación y soluciones alternativas, consulta
+    [Limitaciones para herramientas ADK](/adk-docs/tools/limitations/#one-tool-one-agent).
 
 === "Python"
 

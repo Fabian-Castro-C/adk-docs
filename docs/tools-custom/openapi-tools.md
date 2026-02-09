@@ -1,81 +1,81 @@
-# Integrate REST APIs with OpenAPI
+# Integra APIs REST con OpenAPI
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+  <span class="lst-supported">Compatible con ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-ADK simplifies interacting with external REST APIs by automatically generating callable tools directly from an [OpenAPI Specification (v3.x)](https://swagger.io/specification/). This eliminates the need to manually define individual function tools for each API endpoint.
+ADK simplifica la interacción con APIs REST externas generando automáticamente herramientas invocables directamente desde una [Especificación OpenAPI (v3.x)](https://swagger.io/specification/). Esto elimina la necesidad de definir manualmente herramientas de función individuales para cada endpoint de la API.
 
-!!! tip "Core Benefit"
-    Use `OpenAPIToolset` to instantly create agent tools (`RestApiTool`) from your existing API documentation (OpenAPI spec), enabling agents to seamlessly call your web services.
+!!! tip "Beneficio Principal"
+    Usa `OpenAPIToolset` para crear instantáneamente herramientas de agente (`RestApiTool`) desde tu documentación de API existente (especificación OpenAPI), permitiendo que los agentes llamen sin problemas a tus servicios web.
 
-## Key Components
+## Componentes Clave
 
-* **`OpenAPIToolset`**: This is the primary class you'll use. You initialize it with your OpenAPI specification, and it handles the parsing and generation of tools.
-* **`RestApiTool`**: This class represents a single, callable API operation (like `GET /pets/{petId}` or `POST /pets`). `OpenAPIToolset` creates one `RestApiTool` instance for each operation defined in your spec.
+* **`OpenAPIToolset`**: Esta es la clase principal que usarás. La inicializas con tu especificación OpenAPI, y maneja el análisis y generación de herramientas.
+* **`RestApiTool`**: Esta clase representa una única operación de API invocable (como `GET /pets/{petId}` o `POST /pets`). `OpenAPIToolset` crea una instancia de `RestApiTool` por cada operación definida en tu especificación.
 
-## How it Works
+## Cómo Funciona
 
-The process involves these main steps when you use `OpenAPIToolset`:
+El proceso involucra estos pasos principales cuando usas `OpenAPIToolset`:
 
-1. **Initialization & Parsing**:
-    * You provide the OpenAPI specification to `OpenAPIToolset` either as a Python dictionary, a JSON string, or a YAML string.
-    * The toolset internally parses the spec, resolving any internal references (`$ref`) to understand the complete API structure.
+1. **Inicialización y Análisis**:
+    * Proporcionas la especificación OpenAPI a `OpenAPIToolset` ya sea como un diccionario de Python, un string JSON, o un string YAML.
+    * El conjunto de herramientas analiza internamente la especificación, resolviendo cualquier referencia interna (`$ref`) para entender la estructura completa de la API.
 
-2. **Operation Discovery**:
-    * It identifies all valid API operations (e.g., `GET`, `POST`, `PUT`, `DELETE`) defined within the `paths` object of your specification.
+2. **Descubrimiento de Operaciones**:
+    * Identifica todas las operaciones de API válidas (ej., `GET`, `POST`, `PUT`, `DELETE`) definidas dentro del objeto `paths` de tu especificación.
 
-3. **Tool Generation**:
-    * For each discovered operation, `OpenAPIToolset` automatically creates a corresponding `RestApiTool` instance.
-    * **Tool Name**: Derived from the `operationId` in the spec (converted to `snake_case`, max 60 chars). If `operationId` is missing, a name is generated from the method and path.
-    * **Tool Description**: Uses the `summary` or `description` from the operation for the LLM.
-    * **API Details**: Stores the required HTTP method, path, server base URL, parameters (path, query, header, cookie), and request body schema internally.
+3. **Generación de Herramientas**:
+    * Por cada operación descubierta, `OpenAPIToolset` crea automáticamente una instancia correspondiente de `RestApiTool`.
+    * **Nombre de Herramienta**: Derivado del `operationId` en la especificación (convertido a `snake_case`, máximo 60 caracteres). Si falta `operationId`, se genera un nombre desde el método y la ruta.
+    * **Descripción de Herramienta**: Usa el `summary` o `description` de la operación para el LLM.
+    * **Detalles de API**: Almacena internamente el método HTTP requerido, ruta, URL base del servidor, parámetros (path, query, header, cookie), y esquema del cuerpo de la petición.
 
-4. **`RestApiTool` Functionality**: Each generated `RestApiTool`:
-    * **Schema Generation**: Dynamically creates a `FunctionDeclaration` based on the operation's parameters and request body. This schema tells the LLM how to call the tool (what arguments are expected).
-    * **Execution**: When called by the LLM, it constructs the correct HTTP request (URL, headers, query params, body) using the arguments provided by the LLM and the details from the OpenAPI spec. It handles authentication (if configured) and executes the API call using the `requests` library.
-    * **Response Handling**: Returns the API response (typically JSON) back to the agent flow.
+4. **Funcionalidad de `RestApiTool`**: Cada `RestApiTool` generado:
+    * **Generación de Esquema**: Crea dinámicamente una `FunctionDeclaration` basada en los parámetros de la operación y el cuerpo de la petición. Este esquema le dice al LLM cómo llamar la herramienta (qué argumentos se esperan).
+    * **Ejecución**: Cuando es llamado por el LLM, construye la petición HTTP correcta (URL, headers, parámetros de query, body) usando los argumentos proporcionados por el LLM y los detalles de la especificación OpenAPI. Maneja la autenticación (si está configurada) y ejecuta la llamada a la API usando la librería `requests`.
+    * **Manejo de Respuesta**: Devuelve la respuesta de la API (típicamente JSON) de vuelta al flujo del agente.
 
-5. **Authentication**: You can configure global authentication (like API keys or OAuth - see [Authentication](/adk-docs/tools/authentication/) for details) when initializing `OpenAPIToolset`. This authentication configuration is automatically applied to all generated `RestApiTool` instances.
+5. **Autenticación**: Puedes configurar autenticación global (como claves API u OAuth - ver [Authentication](/adk-docs/tools/authentication/) para detalles) al inicializar `OpenAPIToolset`. Esta configuración de autenticación se aplica automáticamente a todas las instancias de `RestApiTool` generadas.
 
-## Usage Workflow
+## Flujo de Trabajo de Uso
 
-Follow these steps to integrate an OpenAPI spec into your agent:
+Sigue estos pasos para integrar una especificación OpenAPI en tu agente:
 
-1. **Obtain Spec**: Get your OpenAPI specification document (e.g., load from a `.json` or `.yaml` file, fetch from a URL).
-2. **Instantiate Toolset**: Create an `OpenAPIToolset` instance, passing the spec content and type (`spec_str`/`spec_dict`, `spec_str_type`). Provide authentication details (`auth_scheme`, `auth_credential`) if required by the API.
+1. **Obtener Especificación**: Obtén tu documento de especificación OpenAPI (ej., cargar desde un archivo `.json` o `.yaml`, obtener desde una URL).
+2. **Instanciar Conjunto de Herramientas**: Crea una instancia de `OpenAPIToolset`, pasando el contenido de la especificación y el tipo (`spec_str`/`spec_dict`, `spec_str_type`). Proporciona detalles de autenticación (`auth_scheme`, `auth_credential`) si la API lo requiere.
 
     ```python
     from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
 
-    # Example with a JSON string
-    openapi_spec_json = '...' # Your OpenAPI JSON string
+    # Ejemplo con un string JSON
+    openapi_spec_json = '...' # Tu string JSON de OpenAPI
     toolset = OpenAPIToolset(spec_str=openapi_spec_json, spec_str_type="json")
 
-    # Example with a dictionary
-    # openapi_spec_dict = {...} # Your OpenAPI spec as a dict
+    # Ejemplo con un diccionario
+    # openapi_spec_dict = {...} # Tu especificación OpenAPI como dict
     # toolset = OpenAPIToolset(spec_dict=openapi_spec_dict)
     ```
 
-3. **Add to Agent**: Include the retrieved tools in your `LlmAgent`'s `tools` list.
+3. **Agregar al Agente**: Incluye las herramientas recuperadas en la lista `tools` de tu `LlmAgent`.
 
     ```python
     from google.adk.agents import LlmAgent
 
     my_agent = LlmAgent(
         name="api_interacting_agent",
-        model="gemini-2.0-flash", # Or your preferred model
-        tools=[toolset], # Pass the toolset
-        # ... other agent config ...
+        model="gemini-2.0-flash", # O tu modelo preferido
+        tools=[toolset], # Pasa el conjunto de herramientas
+        # ... otra configuración del agente ...
     )
     ```
 
-4. **Instruct Agent**: Update your agent's instructions to inform it about the new API capabilities and the names of the tools it can use (e.g., `list_pets`, `create_pet`). The tool descriptions generated from the spec will also help the LLM.
-5. **Run Agent**: Execute your agent using the `Runner`. When the LLM determines it needs to call one of the APIs, it will generate a function call targeting the appropriate `RestApiTool`, which will then handle the HTTP request automatically.
+4. **Instruir al Agente**: Actualiza las instrucciones de tu agente para informarle sobre las nuevas capacidades de API y los nombres de las herramientas que puede usar (ej., `list_pets`, `create_pet`). Las descripciones de herramientas generadas desde la especificación también ayudarán al LLM.
+5. **Ejecutar Agente**: Ejecuta tu agente usando el `Runner`. Cuando el LLM determine que necesita llamar a una de las APIs, generará una llamada de función apuntando a la `RestApiTool` apropiada, que luego manejará la petición HTTP automáticamente.
 
-## Example
+## Ejemplo
 
-This example demonstrates generating tools from a simple Pet Store OpenAPI spec (using `httpbin.org` for mock responses) and interacting with them via an agent.
+Este ejemplo demuestra la generación de herramientas desde una especificación OpenAPI simple de Pet Store (usando `httpbin.org` para respuestas simuladas) e interactuando con ellas a través de un agente.
 
 ???+ "Code: Pet Store API"
 

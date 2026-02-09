@@ -1,142 +1,142 @@
-# Deploy to Cloud Run
+# Desplegar en Cloud Run
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
 </div>
 
 [Cloud Run](https://cloud.google.com/run)
-is a fully managed platform that enables you to run your code directly on top of Google's scalable infrastructure.
+es una plataforma totalmente administrada que te permite ejecutar tu código directamente sobre la infraestructura escalable de Google.
 
-To deploy your agent, you can use either the `adk deploy cloud_run` command _(recommended for Python)_, or with `gcloud run deploy` command through Cloud Run.
+Para desplegar tu agente, puedes usar el comando `adk deploy cloud_run` _(recomendado para Python)_, o con el comando `gcloud run deploy` a través de Cloud Run.
 
-## Agent sample
+## Ejemplo de agente
 
-For each of the commands, we will reference the `Capital Agent` sample defined on the [LLM agent](../agents/llm-agents.md) page. We will assume it's in a directory (eg: `capital_agent`).
+Para cada uno de los comandos, haremos referencia al ejemplo `Capital Agent` definido en la página [Agente LLM](../agents/llm-agents.md). Asumiremos que está en un directorio (ej: `capital_agent`).
 
-To proceed, confirm that your agent code is configured as follows:
+Para continuar, confirma que el código de tu agente esté configurado de la siguiente manera:
 
 === "Python"
 
-    1. Agent code is in a file called `agent.py` within your agent directory.
-    2. Your agent variable is named `root_agent`.
-    3. `__init__.py` is within your agent directory and contains `from . import agent`.
-    4. Your `requirements.txt` file is present in the agent directory.
+    1. El código del agente está en un archivo llamado `agent.py` dentro del directorio de tu agente.
+    2. Tu variable de agente se llama `root_agent`.
+    3. `__init__.py` está dentro del directorio de tu agente y contiene `from . import agent`.
+    4. Tu archivo `requirements.txt` está presente en el directorio del agente.
 
 === "Go"
 
-    1. Your application's entry point (the main package and main() function) is in a
-       single Go file. Using main.go is a strong convention.
-    2. Your agent instance is passed to a launcher configuration, typically using
-       agent.NewSingleLoader(yourAgent). The adkgo tool uses this launcher to start
-       your agent with the correct services.
-    3. Your go.mod and go.sum files are present in your project directory to manage
-       dependencies.
+    1. El punto de entrada de tu aplicación (el paquete main y la función main()) está en un
+       único archivo Go. Usar main.go es una convención fuerte.
+    2. Tu instancia del agente se pasa a una configuración de lanzador, típicamente usando
+       agent.NewSingleLoader(yourAgent). La herramienta adkgo usa este lanzador para iniciar
+       tu agente con los servicios correctos.
+    3. Tus archivos go.mod y go.sum están presentes en el directorio de tu proyecto para gestionar
+       las dependencias.
 
-    Refer to the following section for more details. You can also find a [sample app](https://github.com/google/adk-docs/tree/main/examples/go/cloud-run) in the Github repo.
+    Consulta la siguiente sección para más detalles. También puedes encontrar una [aplicación de ejemplo](https://github.com/google/adk-docs/tree/main/examples/go/cloud-run) en el repositorio de Github.
 
 === "Java"
 
-    1. Agent code is in a file called `CapitalAgent.java` within your agent directory.
-    2. Your agent variable is global and follows the format `public static final BaseAgent ROOT_AGENT`.
-    3. Your agent definition is present in a static class method.
+    1. El código del agente está en un archivo llamado `CapitalAgent.java` dentro del directorio de tu agente.
+    2. Tu variable de agente es global y sigue el formato `public static final BaseAgent ROOT_AGENT`.
+    3. La definición de tu agente está presente en un método de clase estático.
 
-    Refer to the following section for more details. You can also find a [sample app](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run) in the Github repo.
+    Consulta la siguiente sección para más detalles. También puedes encontrar una [aplicación de ejemplo](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run) en el repositorio de Github.
 
 
-## Environment variables
+## Variables de entorno
 
-Set your environment variables as described in the [Setup and Installation](../get-started/installation.md) guide.
+Configura tus variables de entorno como se describe en la guía [Configuración e Instalación](../get-started/installation.md).
 
 ```bash
 export GOOGLE_CLOUD_PROJECT=your-project-id
-export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
+export GOOGLE_CLOUD_LOCATION=us-central1 # O tu ubicación preferida
 export GOOGLE_GENAI_USE_VERTEXAI=True
 ```
 
-_(Replace `your-project-id` with your actual GCP project ID)_
+_(Reemplaza `your-project-id` con tu ID de proyecto GCP real)_
 
-Alternatively you can also use an API key from AI Studio
+Alternativamente, también puedes usar una clave API de AI Studio
 
 ```bash
 export GOOGLE_CLOUD_PROJECT=your-project-id
-export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
+export GOOGLE_CLOUD_LOCATION=us-central1 # O tu ubicación preferida
 export GOOGLE_GENAI_USE_VERTEXAI=FALSE
 export GOOGLE_API_KEY=your-api-key
 ```
-*(Replace `your-project-id` with your actual GCP project ID and `your-api-key` with your actual API key from AI Studio)*
+*(Reemplaza `your-project-id` con tu ID de proyecto GCP real y `your-api-key` con tu clave API real de AI Studio)*
 
-## Prerequisites
+## Prerrequisitos
 
-1. You should have a Google Cloud project. You need to know your:
-    1. Project name (i.e. "my-project")
-    1. Project location (i.e. "us-central1")
-    1. Service account (i.e. "1234567890-compute@developer.gserviceaccount.com")
+1. Debes tener un proyecto de Google Cloud. Necesitas conocer tu:
+    1. Nombre del proyecto (ej. "my-project")
+    1. Ubicación del proyecto (ej. "us-central1")
+    1. Cuenta de servicio (ej. "1234567890-compute@developer.gserviceaccount.com")
     1. GOOGLE_API_KEY 
 
-## Secret
+## Secreto
 
-Please make sure you have created a secret which can be read by your service account.
+Por favor, asegúrate de haber creado un secreto que pueda ser leído por tu cuenta de servicio.
 
-### Entry for GOOGLE_API_KEY secret
+### Entrada para el secreto GOOGLE_API_KEY
 
-You can create your secret manually or use CLI:
+Puedes crear tu secreto manualmente o usar CLI:
 ```bash
-echo "<<put your GOOGLE_API_KEY here>>" | gcloud secrets create GOOGLE_API_KEY --project=my-project --data-file=-
+echo "<<pon tu GOOGLE_API_KEY aquí>>" | gcloud secrets create GOOGLE_API_KEY --project=my-project --data-file=-
 ```
 
-### Permissions to read
-You should give appropriate permission for you service account to read this secret.
+### Permisos para leer
+Debes otorgar el permiso apropiado para que tu cuenta de servicio lea este secreto.
 ```bash
 gcloud secrets add-iam-policy-binding GOOGLE_API_KEY --member="serviceAccount:1234567890-compute@developer.gserviceaccount.com" --role="roles/secretmanager.secretAccessor" --project=my-project
 ```
 
-## Deployment payload {#payload}
+## Carga útil de despliegue {#payload}
 
-When you deploy your ADK agent workflow to the Google Cloud Run,
-the following content is uploaded to the service:
+Cuando despliegas tu flujo de trabajo del agente ADK en Google Cloud Run,
+el siguiente contenido se carga al servicio:
 
-- Your ADK agent code
-- Any dependencies declared in your ADK agent code
-- ADK API server code version used by your agent
+- Tu código del agente ADK
+- Cualquier dependencia declarada en tu código del agente ADK
+- Versión del código del servidor API de ADK usado por tu agente
 
-The default deployment *does not* include the ADK web user interface libraries,
-unless you specify it as deployment setting, such as the `--with_ui` option for
-`adk deploy cloud_run` command.
+El despliegue predeterminado *no* incluye las bibliotecas de la interfaz de usuario web de ADK,
+a menos que lo especifiques como una configuración de despliegue, como la opción `--with_ui` para
+el comando `adk deploy cloud_run`.
 
-## Deployment commands
+## Comandos de despliegue
 
 === "Python - adk CLI"
 
     ###  adk CLI
 
-    The `adk deploy cloud_run` command deploys your agent code to Google Cloud Run.
+    El comando `adk deploy cloud_run` despliega tu código de agente en Google Cloud Run.
 
-    Ensure you have authenticated with Google Cloud (`gcloud auth login` and `gcloud config set project <your-project-id>`).
+    Asegúrate de haberte autenticado con Google Cloud (`gcloud auth login` y `gcloud config set project <your-project-id>`).
 
-    #### Setup environment variables
+    #### Configurar variables de entorno
 
-    Optional but recommended: Setting environment variables can make the deployment commands cleaner.
+    Opcional pero recomendado: Configurar variables de entorno puede hacer que los comandos de despliegue sean más limpios.
 
     ```bash
-    # Set your Google Cloud Project ID
+    # Configura tu ID de Proyecto de Google Cloud
     export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
 
-    # Set your desired Google Cloud Location
-    export GOOGLE_CLOUD_LOCATION="us-central1" # Example location
+    # Configura tu Ubicación de Google Cloud deseada
+    export GOOGLE_CLOUD_LOCATION="us-central1" # Ubicación de ejemplo
 
-    # Set the path to your agent code directory
-    export AGENT_PATH="./capital_agent" # Assuming capital_agent is in the current directory
+    # Configura la ruta al directorio del código de tu agente
+    export AGENT_PATH="./capital_agent" # Asumiendo que capital_agent está en el directorio actual
 
-    # Set a name for your Cloud Run service (optional)
+    # Configura un nombre para tu servicio de Cloud Run (opcional)
     export SERVICE_NAME="capital-agent-service"
 
-    # Set an application name (optional)
+    # Configura un nombre de aplicación (opcional)
     export APP_NAME="capital_agent_app"
     ```
 
-    #### Command usage
+    #### Uso del comando
 
-    ##### Minimal command
+    ##### Comando mínimo
 
     ```bash
     adk deploy cloud_run \
@@ -145,7 +145,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     $AGENT_PATH
     ```
 
-    ##### Full command with optional flags
+    ##### Comando completo con banderas opcionales
 
     ```bash
     adk deploy cloud_run \
@@ -157,57 +157,57 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     $AGENT_PATH
     ```
 
-    ##### Arguments
+    ##### Argumentos
 
-    * `AGENT_PATH`: (Required) Positional argument specifying the path to the directory containing your agent's source code (e.g., `$AGENT_PATH` in the examples, or `capital_agent/`). This directory must contain at least an `__init__.py` and your main agent file (e.g., `agent.py`).
+    * `AGENT_PATH`: (Requerido) Argumento posicional que especifica la ruta al directorio que contiene el código fuente de tu agente (ej., `$AGENT_PATH` en los ejemplos, o `capital_agent/`). Este directorio debe contener al menos un `__init__.py` y tu archivo principal del agente (ej., `agent.py`).
 
-    ##### Options
+    ##### Opciones
 
-    * `--project TEXT`: (Required) Your Google Cloud project ID (e.g., `$GOOGLE_CLOUD_PROJECT`).
-    * `--region TEXT`: (Required) The Google Cloud location for deployment (e.g., `$GOOGLE_CLOUD_LOCATION`, `us-central1`).
-    * `--service_name TEXT`: (Optional) The name for the Cloud Run service (e.g., `$SERVICE_NAME`). Defaults to `adk-default-service-name`.
-    * `--app_name TEXT`: (Optional) The application name for the ADK API server (e.g., `$APP_NAME`). Defaults to the name of the directory specified by `AGENT_PATH` (e.g., `capital_agent` if `AGENT_PATH` is `./capital_agent`).
-    * `--agent_engine_id TEXT`: (Optional) If you are using a managed session service via Vertex AI Agent Engine, provide its resource ID here.
-    * `--port INTEGER`: (Optional) The port number the ADK API server will listen on within the container. Defaults to 8000.
-    * `--with_ui`: (Optional) If included, deploys the ADK dev UI alongside the agent API server. By default, only the API server is deployed.
-    * `--temp_folder TEXT`: (Optional) Specifies a directory for storing intermediate files generated during the deployment process. Defaults to a timestamped folder in the system's temporary directory. *(Note: This option is generally not needed unless troubleshooting issues).*
-    * `--help`: Show the help message and exit.
+    * `--project TEXT`: (Requerido) Tu ID de proyecto de Google Cloud (ej., `$GOOGLE_CLOUD_PROJECT`).
+    * `--region TEXT`: (Requerido) La ubicación de Google Cloud para el despliegue (ej., `$GOOGLE_CLOUD_LOCATION`, `us-central1`).
+    * `--service_name TEXT`: (Opcional) El nombre para el servicio de Cloud Run (ej., `$SERVICE_NAME`). Por defecto es `adk-default-service-name`.
+    * `--app_name TEXT`: (Opcional) El nombre de la aplicación para el servidor API de ADK (ej., `$APP_NAME`). Por defecto es el nombre del directorio especificado por `AGENT_PATH` (ej., `capital_agent` si `AGENT_PATH` es `./capital_agent`).
+    * `--agent_engine_id TEXT`: (Opcional) Si estás usando un servicio de sesión administrado a través de Vertex AI Agent Engine, proporciona su ID de recurso aquí.
+    * `--port INTEGER`: (Opcional) El número de puerto en el que el servidor API de ADK escuchará dentro del contenedor. Por defecto es 8000.
+    * `--with_ui`: (Opcional) Si se incluye, despliega la interfaz de usuario de desarrollo de ADK junto con el servidor API del agente. Por defecto, solo se despliega el servidor API.
+    * `--temp_folder TEXT`: (Opcional) Especifica un directorio para almacenar archivos intermedios generados durante el proceso de despliegue. Por defecto es una carpeta con marca de tiempo en el directorio temporal del sistema. *(Nota: Esta opción generalmente no se necesita a menos que estés solucionando problemas).*
+    * `--help`: Muestra el mensaje de ayuda y sale.
 
-    ##### Authenticated access
-    During the deployment process, you might be prompted: `Allow unauthenticated invocations to [your-service-name] (y/N)?`.
+    ##### Acceso autenticado
+    Durante el proceso de despliegue, se te podría preguntar: `Allow unauthenticated invocations to [your-service-name] (y/N)?`.
 
-    * Enter `y` to allow public access to your agent's API endpoint without authentication.
-    * Enter `N` (or press Enter for the default) to require authentication (e.g., using an identity token as shown in the "Testing your agent" section).
+    * Ingresa `y` para permitir acceso público al endpoint API de tu agente sin autenticación.
+    * Ingresa `N` (o presiona Enter para el predeterminado) para requerir autenticación (ej., usando un token de identidad como se muestra en la sección "Probando tu agente").
 
-    Upon successful execution, the command deploys your agent to Cloud Run and provide the URL of the deployed service.
+    Tras una ejecución exitosa, el comando despliega tu agente en Cloud Run y proporciona la URL del servicio desplegado.
 
 === "Python - gcloud CLI"
 
-    ### gcloud CLI for Python
+    ### gcloud CLI para Python
 
-    Alternatively, you can deploy using the standard `gcloud run deploy` command with a `Dockerfile`. This method requires more manual setup compared to the `adk` command but offers flexibility, particularly if you want to embed your agent within a custom [FastAPI](https://fastapi.tiangolo.com/) application.
+    Alternativamente, puedes desplegar usando el comando estándar `gcloud run deploy` con un `Dockerfile`. Este método requiere más configuración manual en comparación con el comando `adk` pero ofrece flexibilidad, particularmente si deseas integrar tu agente dentro de una aplicación personalizada de [FastAPI](https://fastapi.tiangolo.com/).
 
-    Ensure you have authenticated with Google Cloud (`gcloud auth login` and `gcloud config set project <your-project-id>`).
+    Asegúrate de haberte autenticado con Google Cloud (`gcloud auth login` y `gcloud config set project <your-project-id>`).
 
-    #### Project Structure
+    #### Estructura del proyecto
 
-    Organize your project files as follows:
+    Organiza los archivos de tu proyecto de la siguiente manera:
 
     ```txt
     your-project-directory/
     ├── capital_agent/
     │   ├── __init__.py
-    │   └── agent.py       # Your agent code (see "Agent sample" tab)
-    ├── main.py            # FastAPI application entry point
-    ├── requirements.txt   # Python dependencies
-    └── Dockerfile         # Container build instructions
+    │   └── agent.py       # Tu código del agente (ver pestaña "Agent sample")
+    ├── main.py            # Punto de entrada de la aplicación FastAPI
+    ├── requirements.txt   # Dependencias de Python
+    └── Dockerfile         # Instrucciones de construcción del contenedor
     ```
 
-    Create the following files (`main.py`, `requirements.txt`, `Dockerfile`) in the root of `your-project-directory/`.
+    Crea los siguientes archivos (`main.py`, `requirements.txt`, `Dockerfile`) en la raíz de `your-project-directory/`.
 
-    #### Code files
+    #### Archivos de código
 
-    1. This file sets up the FastAPI application using `get_fast_api_app()` from ADK:
+    1. Este archivo configura la aplicación FastAPI usando `get_fast_api_app()` de ADK:
 
         ```python title="main.py"
         import os
@@ -216,18 +216,18 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
         from fastapi import FastAPI
         from google.adk.cli.fast_api import get_fast_api_app
 
-        # Get the directory where main.py is located
+        # Obtiene el directorio donde se encuentra main.py
         AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
-        # Example session service URI (e.g., SQLite)
-        # Note: Use 'sqlite+aiosqlite' instead of 'sqlite' because DatabaseSessionService requires an async driver
+        # URI del servicio de sesión de ejemplo (ej., SQLite)
+        # Nota: Usa 'sqlite+aiosqlite' en lugar de 'sqlite' porque DatabaseSessionService requiere un controlador asíncrono
         SESSION_SERVICE_URI = "sqlite+aiosqlite:///./sessions.db"
-        # Example allowed origins for CORS
+        # Orígenes permitidos de ejemplo para CORS
         ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
-        # Set web=True if you intend to serve a web interface, False otherwise
+        # Configura web=True si pretendes servir una interfaz web, False de lo contrario
         SERVE_WEB_INTERFACE = True
 
-        # Call the function to get the FastAPI app instance
-        # Ensure the agent directory name ('capital_agent') matches your agent folder
+        # Llama a la función para obtener la instancia de la aplicación FastAPI
+        # Asegúrate de que el nombre del directorio del agente ('capital_agent') coincida con tu carpeta de agente
         app: FastAPI = get_fast_api_app(
             agents_dir=AGENT_DIR,
             session_service_uri=SESSION_SERVICE_URI,
@@ -235,27 +235,27 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
             web=SERVE_WEB_INTERFACE,
         )
 
-        # You can add more FastAPI routes or configurations below if needed
-        # Example:
+        # Puedes agregar más rutas o configuraciones de FastAPI a continuación si es necesario
+        # Ejemplo:
         # @app.get("/hello")
         # async def read_root():
         #     return {"Hello": "World"}
 
         if __name__ == "__main__":
-            # Use the PORT environment variable provided by Cloud Run, defaulting to 8080
+            # Usa la variable de entorno PORT proporcionada por Cloud Run, por defecto 8080
             uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
         ```
 
-        *Note: We specify `agent_dir` to the directory `main.py` is in and use `os.environ.get("PORT", 8080)` for Cloud Run compatibility.*
+        *Nota: Especificamos `agent_dir` al directorio en el que se encuentra `main.py` y usamos `os.environ.get("PORT", 8080)` para compatibilidad con Cloud Run.*
 
-    2. List the necessary Python packages:
+    2. Lista los paquetes de Python necesarios:
 
         ```txt title="requirements.txt"
         google-adk
-        # Add any other dependencies your agent needs
+        # Agrega cualquier otra dependencia que tu agente necesite
         ```
 
-    3. Define the container image:
+    3. Define la imagen del contenedor:
 
         ```dockerfile title="Dockerfile"
         FROM python:3.13-slim
@@ -276,26 +276,26 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
         CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port $PORT"]
         ```
 
-    #### Defining Multiple Agents
+    #### Definiendo múltiples agentes
 
-    You can define and deploy multiple agents within the same Cloud Run instance by creating separate folders in the root of `your-project-directory/`. Each folder represents one agent and must define a `root_agent` in its configuration.
+    Puedes definir y desplegar múltiples agentes dentro de la misma instancia de Cloud Run creando carpetas separadas en la raíz de `your-project-directory/`. Cada carpeta representa un agente y debe definir un `root_agent` en su configuración.
 
-    Example structure:
+    Estructura de ejemplo:
 
     ```txt
     your-project-directory/
     ├── capital_agent/
     │   ├── __init__.py
-    │   └── agent.py       # contains `root_agent` definition
+    │   └── agent.py       # contiene la definición de `root_agent`
     ├── population_agent/
     │   ├── __init__.py
-    │   └── agent.py       # contains `root_agent` definition
+    │   └── agent.py       # contiene la definición de `root_agent`
     └── ...
     ```
 
-    #### Deploy using `gcloud`
+    #### Desplegar usando `gcloud`
 
-    Navigate to `your-project-directory` in your terminal.
+    Navega a `your-project-directory` en tu terminal.
 
     ```bash
     gcloud run deploy capital-agent-service \
@@ -304,68 +304,68 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     --project $GOOGLE_CLOUD_PROJECT \
     --allow-unauthenticated \
     --set-env-vars="GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_VERTEXAI=$GOOGLE_GENAI_USE_VERTEXAI"
-    # Add any other necessary environment variables your agent might need
+    # Agrega cualquier otra variable de entorno necesaria que tu agente pueda necesitar
     ```
 
-    * `capital-agent-service`: The name you want to give your Cloud Run service.
-    * `--source .`: Tells gcloud to build the container image from the Dockerfile in the current directory.
-    * `--region`: Specifies the deployment region.
-    * `--project`: Specifies the GCP project.
-    * `--allow-unauthenticated`: Allows public access to the service. Remove this flag for private services.
-    * `--set-env-vars`: Passes necessary environment variables to the running container. Ensure you include all variables required by ADK and your agent (like API keys if not using Application Default Credentials).
+    * `capital-agent-service`: El nombre que deseas darle a tu servicio de Cloud Run.
+    * `--source .`: Le dice a gcloud que construya la imagen del contenedor desde el Dockerfile en el directorio actual.
+    * `--region`: Especifica la región de despliegue.
+    * `--project`: Especifica el proyecto GCP.
+    * `--allow-unauthenticated`: Permite acceso público al servicio. Elimina esta bandera para servicios privados.
+    * `--set-env-vars`: Pasa las variables de entorno necesarias al contenedor en ejecución. Asegúrate de incluir todas las variables requeridas por ADK y tu agente (como claves API si no estás usando Credenciales Predeterminadas de la Aplicación).
 
-    `gcloud` will build the Docker image, push it to Google Artifact Registry, and deploy it to Cloud Run. Upon completion, it will output the URL of your deployed service.
+    `gcloud` construirá la imagen de Docker, la enviará a Google Artifact Registry y la desplegará en Cloud Run. Al completarse, generará la URL de tu servicio desplegado.
 
-    For a full list of deployment options, see the [`gcloud run deploy` reference documentation](https://cloud.google.com/sdk/gcloud/reference/run/deploy).
+    Para una lista completa de opciones de despliegue, consulta la [documentación de referencia de `gcloud run deploy`](https://cloud.google.com/sdk/gcloud/reference/run/deploy).
 
 === "Go - adkgo CLI"
 
     ### adk CLI
 
-    The adkgo command is located in the google/adk-go repository under cmd/adkgo. Before using it, you need to build it from the root of the adk-go repository:
+    El comando adkgo se encuentra en el repositorio google/adk-go bajo cmd/adkgo. Antes de usarlo, necesitas construirlo desde la raíz del repositorio adk-go:
 
     `go build ./cmd/adkgo`
 
-    The adkgo deploy cloudrun command automates the deployment of your application. You do not need to provide your own Dockerfile.
+    El comando adkgo deploy cloudrun automatiza el despliegue de tu aplicación. No necesitas proporcionar tu propio Dockerfile.
 
-    #### Agent Code Structure
+    #### Estructura del código del agente
 
-    When using the adkgo tool, your main.go file must use the launcher framework. This is because the tool compiles your code and then runs the resulting executable with specific command-line arguments (like web, api, a2a) to start the required services. The launcher is designed to parse these arguments correctly.
+    Al usar la herramienta adkgo, tu archivo main.go debe usar el marco de lanzador. Esto se debe a que la herramienta compila tu código y luego ejecuta el ejecutable resultante con argumentos de línea de comandos específicos (como web, api, a2a) para iniciar los servicios requeridos. El lanzador está diseñado para analizar estos argumentos correctamente.
 
-    Your main.go should look like this:
+    Tu main.go debería verse así:
 
     ```go title="main.go"
     --8<-- "examples/go/cloud-run/main.go"
     ```
 
-    #### How it Works
-    1. The adkgo tool compiles your main.go into a statically linked binary for Linux.
-    2. It generates a Dockerfile that copies this binary into a minimal container.
-    3. It uses gcloud to build and deploy this container to Cloud Run.
-    4. After deployment, it starts a local proxy that securely connects to your new
-        service.
+    #### Cómo funciona
+    1. La herramienta adkgo compila tu main.go en un binario enlazado estáticamente para Linux.
+    2. Genera un Dockerfile que copia este binario en un contenedor mínimo.
+    3. Usa gcloud para construir y desplegar este contenedor en Cloud Run.
+    4. Después del despliegue, inicia un proxy local que se conecta de forma segura a tu nuevo
+        servicio.
 
-    Ensure you have authenticated with Google Cloud (`gcloud auth login` and `gcloud config set project <your-project-id>`).
+    Asegúrate de haberte autenticado con Google Cloud (`gcloud auth login` y `gcloud config set project <your-project-id>`).
 
-    #### Setup environment variables
+    #### Configurar variables de entorno
 
-    Optional but recommended: Setting environment variables can make the deployment commands cleaner.
+    Opcional pero recomendado: Configurar variables de entorno puede hacer que los comandos de despliegue sean más limpios.
 
     ```bash
-    # Set your Google Cloud Project ID
+    # Configura tu ID de Proyecto de Google Cloud
     export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
 
-    # Set your desired Google Cloud Location
+    # Configura tu Ubicación de Google Cloud deseada
     export GOOGLE_CLOUD_LOCATION="us-central1"
 
-    # Set the path to your agent's main Go file
+    # Configura la ruta al archivo Go principal de tu agente
     export AGENT_PATH="./examples/go/cloud-run/main.go"
 
-    # Set a name for your Cloud Run service
+    # Configura un nombre para tu servicio de Cloud Run
     export SERVICE_NAME="capital-agent-service"
     ```
 
-    #### Command usage
+    #### Uso del comando
 
     ```bash
     ./adkgo deploy cloudrun \
@@ -378,41 +378,41 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
         --a2a --api --webui
     ```
 
-    ##### Required
+    ##### Requerido
 
-    * `-p, --project_name`: Your Google Cloud project ID (e.g., $GOOGLE_CLOUD_PROJECT).
-    * `-r, --region`: The Google Cloud location for deployment (e.g., $GOOGLE_CLOUD_LOCATION, us-central1).
-    * `-s, --service_name`: The name for the Cloud Run service (e.g., $SERVICE_NAME).
-    * `-e, --entry_point_path`: Path to the main Go file containing your agent's source code (e.g., $AGENT_PATH).
+    * `-p, --project_name`: Tu ID de proyecto de Google Cloud (ej., $GOOGLE_CLOUD_PROJECT).
+    * `-r, --region`: La ubicación de Google Cloud para el despliegue (ej., $GOOGLE_CLOUD_LOCATION, us-central1).
+    * `-s, --service_name`: El nombre para el servicio de Cloud Run (ej., $SERVICE_NAME).
+    * `-e, --entry_point_path`: Ruta al archivo Go principal que contiene el código fuente de tu agente (ej., $AGENT_PATH).
 
-    ##### Optional
+    ##### Opcional
 
-    * `--proxy_port`: The local port for the authenticating proxy to listen on. Defaults to 8081.
-    * `--server_port`: The port number the server will listen on within the Cloud Run container. Defaults to 8080.
-    * `--a2a`: If included, enables Agent2Agent communication. Enabled by default.
-    * `--a2a_agent_url`: A2A agent card URL as advertised in the public agent card. This flag is only valid when used with the --a2a flag.
-    * `--api`: If included, deploys the ADK API server. Enabled by default.
-    * `--webui`: If included, deploys the ADK dev UI alongside the agent API server. Enabled by default.
-    * `--temp_dir`: Temp directory for build artifacts. Defaults to os.TempDir().
-    * `--help`: Show the help message and exit.
+    * `--proxy_port`: El puerto local para que el proxy de autenticación escuche. Por defecto es 8081.
+    * `--server_port`: El número de puerto en el que el servidor escuchará dentro del contenedor de Cloud Run. Por defecto es 8080.
+    * `--a2a`: Si se incluye, habilita la comunicación Agent2Agent. Habilitado por defecto.
+    * `--a2a_agent_url`: URL de la tarjeta del agente A2A como se anuncia en la tarjeta pública del agente. Esta bandera solo es válida cuando se usa con la bandera --a2a.
+    * `--api`: Si se incluye, despliega el servidor API de ADK. Habilitado por defecto.
+    * `--webui`: Si se incluye, despliega la interfaz de usuario de desarrollo de ADK junto con el servidor API del agente. Habilitado por defecto.
+    * `--temp_dir`: Directorio temporal para artefactos de construcción. Por defecto es os.TempDir().
+    * `--help`: Muestra el mensaje de ayuda y sale.
 
-    ##### Authenticated access
-    The service is deployed with --no-allow-unauthenticated by default.
+    ##### Acceso autenticado
+    El servicio se despliega con --no-allow-unauthenticated por defecto.
 
-    Upon successful execution, the command deploys your agent to Cloud Run and provide a local URL to access the service through the proxy.
+    Tras una ejecución exitosa, el comando despliega tu agente en Cloud Run y proporciona una URL local para acceder al servicio a través del proxy.
 
 === "Java - gcloud CLI"
 
-    ### gcloud CLI for Java
+    ### gcloud CLI para Java
 
-    You can deploy Java Agents using the standard `gcloud run deploy` command and a `Dockerfile`. This is the current recommended way to deploy Java Agents to Google Cloud Run.
+    Puedes desplegar agentes Java usando el comando estándar `gcloud run deploy` y un `Dockerfile`. Esta es la forma recomendada actualmente para desplegar agentes Java en Google Cloud Run.
 
-    Ensure you are [authenticated](https://cloud.google.com/docs/authentication/gcloud) with Google Cloud.
-    Specifically, run the commands `gcloud auth login` and `gcloud config set project <your-project-id>` from your terminal.
+    Asegúrate de estar [autenticado](https://cloud.google.com/docs/authentication/gcloud) con Google Cloud.
+    Específicamente, ejecuta los comandos `gcloud auth login` y `gcloud config set project <your-project-id>` desde tu terminal.
 
-    #### Project Structure
+    #### Estructura del proyecto
 
-    Organize your project files as follows:
+    Organiza los archivos de tu proyecto de la siguiente manera:
 
     ```txt
     your-project-directory/
@@ -421,26 +421,25 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     │       └── java/
     │             └── agents/
     │                 ├── capitalagent/
-    │                     └── CapitalAgent.java    # Your agent code
-    ├── pom.xml                                    # Java adk and adk-dev dependencies
-    └── Dockerfile                                 # Container build instructions
+    │                     └── CapitalAgent.java    # Tu código del agente
+    ├── pom.xml                                    # Dependencias de adk y adk-dev de Java
+    └── Dockerfile                                 # Instrucciones de construcción del contenedor
     ```
 
-    Create the `pom.xml` and `Dockerfile` in the root of your project directory. Your Agent code file (`CapitalAgent.java`) inside a directory as shown above.
+    Crea el `pom.xml` y el `Dockerfile` en la raíz del directorio de tu proyecto. Tu archivo de código del agente (`CapitalAgent.java`) dentro de un directorio como se muestra arriba.
 
-    #### Code files
+    #### Archivos de código
 
-    1. This is our Agent definition. This is the same code as present in [LLM agent](../agents/llm-agents.md) with two caveats:
+    1. Esta es nuestra definición de agente. Este es el mismo código que está presente en [Agente LLM](../agents/llm-agents.md) con dos salvedades:
 
-           * The Agent is now initialized as a **global public static final variable**.
+           * El agente ahora se inicializa como una **variable global public static final**.
 
-           * The definition of the agent can be exposed in a static method or inlined during declaration.
+           * La definición del agente puede exponerse en un método estático o en línea durante la declaración.
 
-        See the code for the `CapitalAgent` example in the 
-        [examples](https://github.com/google/adk-docs/blob/main/examples/java/cloud-run/src/main/java/agents/capitalagent/CapitalAgent.java) 
-        repository.
+        Consulta el código para el ejemplo `CapitalAgent` en el 
+        repositorio de [ejemplos](https://github.com/google/adk-docs/blob/main/examples/java/cloud-run/src/main/java/agents/capitalagent/CapitalAgent.java).
 
-    2. Add the following dependencies and plugin to the pom.xml file.
+    2. Agrega las siguientes dependencias y plugin al archivo pom.xml.
 
         ```xml title="pom.xml"
         <dependencies>
@@ -467,15 +466,15 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
         </plugin>
         ```
 
-    3.  Define the container image:
+    3.  Define la imagen del contenedor:
 
         ```dockerfile title="Dockerfile"
         --8<-- "examples/java/cloud-run/Dockerfile"
         ```
 
-    #### Deploy using `gcloud`
+    #### Desplegar usando `gcloud`
 
-    Navigate to `your-project-directory` in your terminal.
+    Navega a `your-project-directory` en tu terminal.
 
     ```bash
     gcloud run deploy capital-agent-service \
@@ -484,89 +483,89 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     --project $GOOGLE_CLOUD_PROJECT \
     --allow-unauthenticated \
     --set-env-vars="GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_VERTEXAI=$GOOGLE_GENAI_USE_VERTEXAI"
-    # Add any other necessary environment variables your agent might need
+    # Agrega cualquier otra variable de entorno necesaria que tu agente pueda necesitar
     ```
 
-    * `capital-agent-service`: The name you want to give your Cloud Run service.
-    * `--source .`: Tells gcloud to build the container image from the Dockerfile in the current directory.
-    * `--region`: Specifies the deployment region.
-    * `--project`: Specifies the GCP project.
-    * `--allow-unauthenticated`: Allows public access to the service. Remove this flag for private services.
-    * `--set-env-vars`: Passes necessary environment variables to the running container. Ensure you include all variables required by ADK and your agent (like API keys if not using Application Default Credentials).
+    * `capital-agent-service`: El nombre que deseas darle a tu servicio de Cloud Run.
+    * `--source .`: Le dice a gcloud que construya la imagen del contenedor desde el Dockerfile en el directorio actual.
+    * `--region`: Especifica la región de despliegue.
+    * `--project`: Especifica el proyecto GCP.
+    * `--allow-unauthenticated`: Permite acceso público al servicio. Elimina esta bandera para servicios privados.
+    * `--set-env-vars`: Pasa las variables de entorno necesarias al contenedor en ejecución. Asegúrate de incluir todas las variables requeridas por ADK y tu agente (como claves API si no estás usando Credenciales Predeterminadas de la Aplicación).
 
-    `gcloud` will build the Docker image, push it to Google Artifact Registry, and deploy it to Cloud Run. Upon completion, it will output the URL of your deployed service.
+    `gcloud` construirá la imagen de Docker, la enviará a Google Artifact Registry y la desplegará en Cloud Run. Al completarse, generará la URL de tu servicio desplegado.
 
-    For a full list of deployment options, see the [`gcloud run deploy` reference documentation](https://cloud.google.com/sdk/gcloud/reference/run/deploy).
+    Para una lista completa de opciones de despliegue, consulta la [documentación de referencia de `gcloud run deploy`](https://cloud.google.com/sdk/gcloud/reference/run/deploy).
 
-## Testing your agent
+## Probando tu agente
 
-Once your agent is deployed to Cloud Run, you can interact with it via the deployed UI (if enabled) or directly with its API endpoints using tools like `curl`. You'll need the service URL provided after deployment.
+Una vez que tu agente esté desplegado en Cloud Run, puedes interactuar con él a través de la interfaz de usuario desplegada (si está habilitada) o directamente con sus endpoints API usando herramientas como `curl`. Necesitarás la URL del servicio proporcionada después del despliegue.
 
 === "UI Testing"
 
-    ### UI Testing
+    ### Pruebas de interfaz de usuario
 
-    If you deployed your agent with the UI enabled:
+    Si desplegaste tu agente con la interfaz de usuario habilitada:
 
-    *   **adk CLI:** You included the `--webui` flag during deployment.
-    *   **gcloud CLI:** You set `SERVE_WEB_INTERFACE = True` in your `main.py`.
+    *   **adk CLI:** Incluiste la bandera `--webui` durante el despliegue.
+    *   **gcloud CLI:** Configuraste `SERVE_WEB_INTERFACE = True` en tu `main.py`.
 
-    You can test your agent by simply navigating to the Cloud Run service URL provided after deployment in your web browser.
+    Puedes probar tu agente simplemente navegando a la URL del servicio de Cloud Run proporcionada después del despliegue en tu navegador web.
 
     ```bash
-    # Example URL format
+    # Formato de URL de ejemplo
     # https://your-service-name-abc123xyz.a.run.app
     ```
 
-    The ADK dev UI allows you to interact with your agent, manage sessions, and view execution details directly in the browser.
+    La interfaz de usuario de desarrollo de ADK te permite interactuar con tu agente, gestionar sesiones y ver detalles de ejecución directamente en el navegador.
 
-    To verify your agent is working as intended, you can:
+    Para verificar que tu agente está funcionando como se esperaba, puedes:
 
-    1. Select your agent from the dropdown menu.
-    2. Type a message and verify that you receive an expected response from your agent.
+    1. Seleccionar tu agente del menú desplegable.
+    2. Escribir un mensaje y verificar que recibes una respuesta esperada de tu agente.
 
-    If you experience any unexpected behavior, check the [Cloud Run](https://console.cloud.google.com/run) console logs.
+    Si experimentas algún comportamiento inesperado, revisa los registros de la consola de [Cloud Run](https://console.cloud.google.com/run).
 
 === "API Testing (curl)"
 
-    ### API Testing (curl)
+    ### Pruebas de API (curl)
 
-    You can interact with the agent's API endpoints using tools like `curl`. This is useful for programmatic interaction or if you deployed without the UI.
+    Puedes interactuar con los endpoints API del agente usando herramientas como `curl`. Esto es útil para interacción programática o si desplegaste sin la interfaz de usuario.
 
-    You'll need the service URL provided after deployment and potentially an identity token for authentication if your service isn't set to allow unauthenticated access.
+    Necesitarás la URL del servicio proporcionada después del despliegue y potencialmente un token de identidad para autenticación si tu servicio no está configurado para permitir acceso no autenticado.
 
-    #### Set the application URL
+    #### Configurar la URL de la aplicación
 
-    Replace the example URL with the actual URL of your deployed Cloud Run service.
+    Reemplaza la URL de ejemplo con la URL real de tu servicio de Cloud Run desplegado.
 
     ```bash
     export APP_URL="YOUR_CLOUD_RUN_SERVICE_URL"
-    # Example: export APP_URL="https://adk-default-service-name-abc123xyz.a.run.app"
+    # Ejemplo: export APP_URL="https://adk-default-service-name-abc123xyz.a.run.app"
     ```
 
-    #### Get an identity token (if needed)
+    #### Obtener un token de identidad (si es necesario)
 
-    If your service requires authentication (i.e., you didn't use `--allow-unauthenticated` with `gcloud` or answered 'N' to the prompt with `adk`), obtain an identity token.
+    Si tu servicio requiere autenticación (es decir, no usaste `--allow-unauthenticated` con `gcloud` o respondiste 'N' a la pregunta con `adk`), obtén un token de identidad.
 
     ```bash
     export TOKEN=$(gcloud auth print-identity-token)
     ```
 
-    *If your service allows unauthenticated access, you can omit the `-H "Authorization: Bearer $TOKEN"` header from the `curl` commands below.*
+    *Si tu servicio permite acceso no autenticado, puedes omitir el encabezado `-H "Authorization: Bearer $TOKEN"` de los comandos `curl` a continuación.*
 
-    #### List available apps
+    #### Listar aplicaciones disponibles
 
-    Verify the deployed application name.
+    Verifica el nombre de la aplicación desplegada.
 
     ```bash
     curl -X GET -H "Authorization: Bearer $TOKEN" $APP_URL/list-apps
     ```
 
-    *(Adjust the `app_name` in the following commands based on this output if needed. The default is often the agent directory name, e.g., `capital_agent`)*.
+    *(Ajusta el `app_name` en los siguientes comandos según esta salida si es necesario. El predeterminado es a menudo el nombre del directorio del agente, ej., `capital_agent`)*.
 
-    #### Create or Update a Session
+    #### Crear o actualizar una sesión
 
-    Initialize or update the state for a specific user and session. Replace `capital_agent` with your actual app name if different. The values `user_123` and `session_abc` are example identifiers; you can replace them with your desired user and session IDs.
+    Inicializa o actualiza el estado para un usuario y sesión específicos. Reemplaza `capital_agent` con el nombre real de tu aplicación si es diferente. Los valores `user_123` y `session_abc` son identificadores de ejemplo; puedes reemplazarlos con tus IDs de usuario y sesión deseados.
 
     ```bash
     curl -X POST -H "Authorization: Bearer $TOKEN" \
@@ -575,9 +574,9 @@ Once your agent is deployed to Cloud Run, you can interact with it via the deplo
         -d '{"preferred_language": "English", "visit_count": 5}'
     ```
 
-    #### Run the Agent
+    #### Ejecutar el agente
 
-    Send a prompt to your agent. Replace `capital_agent` with your app name and adjust the user/session IDs and prompt as needed.
+    Envía un prompt a tu agente. Reemplaza `capital_agent` con el nombre de tu aplicación y ajusta los IDs de usuario/sesión y el prompt según sea necesario.
 
     ```bash
     curl -X POST -H "Authorization: Bearer $TOKEN" \
@@ -597,5 +596,5 @@ Once your agent is deployed to Cloud Run, you can interact with it via the deplo
         }'
     ```
 
-    * Set `"streaming": true` if you want to receive Server-Sent Events (SSE).
-    * The response will contain the agent's execution events, including the final answer.
+    * Configura `"streaming": true` si deseas recibir Eventos Enviados por el Servidor (SSE).
+    * La respuesta contendrá los eventos de ejecución del agente, incluyendo la respuesta final.

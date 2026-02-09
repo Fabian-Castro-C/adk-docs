@@ -1,20 +1,20 @@
-# Build a streaming agent with Java
+# Construye un agente con streaming usando Java
 
-This quickstart guide will walk you through the process of creating a basic agent and leveraging ADK Streaming with Java to facilitate low-latency, bidirectional voice interactions.
+Esta guía de inicio rápido te guiará a través del proceso de creación de un agente básico y el aprovechamiento del ADK Streaming con Java para facilitar interacciones de voz bidireccionales de baja latencia.
 
-You'll begin by setting up your Java and Maven environment, structuring your project, and defining the necessary dependencies. Following this, you'll create a simple `ScienceTeacherAgent`, test its text-based streaming capabilities using the Dev UI, and then progress to enabling live audio communication, transforming your agent into an interactive voice-driven application.
+Comenzarás configurando tu entorno de Java y Maven, estructurando tu proyecto y definiendo las dependencias necesarias. Después de esto, crearás un simple `ScienceTeacherAgent`, probarás sus capacidades de streaming basado en texto usando la Dev UI, y luego progresarás hacia la habilitación de comunicación de audio en vivo, transformando tu agente en una aplicación interactiva impulsada por voz.
 
-## **Create your first agent** {#create-your-first-agent}
+## **Crea tu primer agente** {#create-your-first-agent}
 
-### **Prerequisites**
+### **Prerrequisitos**
 
-* In this getting started guide, you will be programming in Java. Check if **Java** is installed on your machine. Ideally, you should be using Java 17 or more (you can check that by typing **java \-version**)
+* En esta guía de inicio, programarás en Java. Verifica si **Java** está instalado en tu máquina. Idealmente, deberías estar usando Java 17 o superior (puedes verificarlo escribiendo **java \-version**)
 
-* You’ll also be using the **Maven** build tool for Java. So be sure to have [Maven installed](https://maven.apache.org/install.html) on your machine before going further (this is the case for Cloud Top or Cloud Shell, but not necessarily for your laptop).
+* También estarás usando la herramienta de construcción **Maven** para Java. Así que asegúrate de tener [Maven instalado](https://maven.apache.org/install.html) en tu máquina antes de continuar (este es el caso para Cloud Top o Cloud Shell, pero no necesariamente para tu laptop).
 
-### **Prepare the project structure**
+### **Prepara la estructura del proyecto**
 
-To get started with ADK Java, let’s create a Maven project with the following directory structure:
+Para comenzar con ADK Java, creemos un proyecto Maven con la siguiente estructura de directorios:
 
 ```
 adk-agents/
@@ -26,14 +26,14 @@ adk-agents/
                 └── ScienceTeacherAgent.java
 ```
 
-Follow the instructions in [Installation](../../get-started/installation.md) page to add `pom.xml` for using the ADK package.
+Sigue las instrucciones en la página de [Instalación](../../get-started/installation.md) para agregar `pom.xml` para usar el paquete ADK.
 
 !!! Note
-    Feel free to use whichever name you like for the root directory of your project (instead of adk-agents)
+    Siéntete libre de usar el nombre que prefieras para el directorio raíz de tu proyecto (en lugar de adk-agents)
 
-### **Running a compilation**
+### **Ejecutando una compilación**
 
-Let’s see if Maven is happy with this build, by running a compilation (**mvn compile** command):
+Veamos si Maven está satisfecho con esta construcción, ejecutando una compilación (comando **mvn compile**):
 
 ```shell
 $ mvn compile
@@ -57,11 +57,11 @@ $ mvn compile
 [INFO] ------------------------------------------------------------------------
 ```
 
-Looks like the project is set up properly for compilation\!
+¡Parece que el proyecto está configurado correctamente para la compilación!
 
-### **Creating an agent**
+### **Creando un agente**
 
-Create the **ScienceTeacherAgent.java** file under the `src/main/java/agents/` directory with the following content:
+Crea el archivo **ScienceTeacherAgent.java** bajo el directorio `src/main/java/agents/` con el siguiente contenido:
 
 ```java
 package samples.liveaudio;
@@ -69,20 +69,20 @@ package samples.liveaudio;
 import com.google.adk.agents.BaseAgent;
 import com.google.adk.agents.LlmAgent;
 
-/** Science teacher agent. */
+/** Agente profesor de ciencias. */
 public class ScienceTeacherAgent {
 
-  // Field expected by the Dev UI to load the agent dynamically
-  // (the agent must be initialized at declaration time)
+  // Campo esperado por la Dev UI para cargar el agente dinámicamente
+  // (el agente debe ser inicializado en el momento de la declaración)
   public static final BaseAgent ROOT_AGENT = initAgent();
 
-  // Please fill in the latest model id that supports live API from
+  // Por favor completa el ID del modelo más reciente que soporte la API en vivo desde
   // https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming/#supported-models
   public static BaseAgent initAgent() {
     return LlmAgent.builder()
         .name("science-app")
         .description("Science teacher agent")
-        .model("...") // Pleaase fill in the latest model id for live API
+        .model("...") // Por favor completa el ID del modelo más reciente para la API en vivo
         .instruction("""
             You are a helpful science teacher that explains
             science concepts to kids and teenagers.
@@ -92,30 +92,30 @@ public class ScienceTeacherAgent {
 }
 ```
 
-We will use `Dev UI` to run this agent later. For the tool to automatically recognize the agent, its Java class has to comply with the following two rules:
+Usaremos `Dev UI` para ejecutar este agente más adelante. Para que la herramienta reconozca automáticamente el agente, su clase Java debe cumplir con las siguientes dos reglas:
 
-* The agent should be stored in a global **public static** variable named **ROOT\_AGENT** of type **BaseAgent** and initialized at declaration time.
-* The agent definition has to be a **static** method so it can be loaded during the class initialization by the dynamic compiling classloader.
+* El agente debe almacenarse en una variable global **public static** llamada **ROOT\_AGENT** de tipo **BaseAgent** e inicializada en el momento de la declaración.
+* La definición del agente tiene que ser un método **static** para que pueda ser cargado durante la inicialización de la clase por el classloader de compilación dinámica.
 
-## **Run agent with Dev UI** {#run-agent-with-adk-web-server}
+## **Ejecuta el agente con Dev UI** {#run-agent-with-adk-web-server}
 
-`Dev UI` is a web server where you can quickly run and test your agents for development purpose, without building your own UI application for the agents.
+`Dev UI` es un servidor web donde puedes ejecutar y probar rápidamente tus agentes con fines de desarrollo, sin construir tu propia aplicación de interfaz de usuario para los agentes.
 
-### **Define environment variables**
+### **Define variables de entorno**
 
-To run the server, you’ll need to export two environment variables:
+Para ejecutar el servidor, necesitarás exportar dos variables de entorno:
 
-* a Gemini key that you can [get from AI Studio](https://ai.google.dev/gemini-api/docs/api-key),
-* a variable to specify we’re not using Vertex AI this time.
+* una clave de Gemini que puedes [obtener de AI Studio](https://ai.google.dev/gemini-api/docs/api-key),
+* una variable para especificar que no estamos usando Vertex AI esta vez.
 
 ```shell
 export GOOGLE_GENAI_USE_VERTEXAI=FALSE
 export GOOGLE_API_KEY=YOUR_API_KEY
 ```
 
-### **Run Dev UI**
+### **Ejecuta Dev UI**
 
-Run the following command from the terminal to launch the Dev UI.
+Ejecuta el siguiente comando desde la terminal para lanzar la Dev UI.
 
 ```console title="terminal"
 mvn exec:java \
@@ -124,49 +124,49 @@ mvn exec:java \
     -Dexec.classpathScope="compile"
 ```
 
-**Step 1:** Open the URL provided (usually `http://localhost:8080` or
-`http://127.0.0.1:8080`) directly in your browser.
+**Paso 1:** Abre la URL proporcionada (usualmente `http://localhost:8080` o
+`http://127.0.0.1:8080`) directamente en tu navegador.
 
-**Step 2.** In the top-left corner of the UI, you can select your agent in
-the dropdown. Select "science-app".
+**Paso 2.** En la esquina superior izquierda de la interfaz de usuario, puedes seleccionar tu agente en
+el menú desplegable. Selecciona "science-app".
 
-!!!note "Troubleshooting"
+!!!note "Solución de problemas"
 
-    If you do not see "science-app" in the dropdown menu, make sure you
-    are running the `mvn` command from the root of your maven project.
+    Si no ves "science-app" en el menú desplegable, asegúrate de que
+    estés ejecutando el comando `mvn` desde la raíz de tu proyecto maven.
 
-!!! warning "Caution: ADK Web for development only"
+!!! warning "Precaución: ADK Web solo para desarrollo"
 
-    ADK Web is ***not meant for use in production deployments***. You should
-    use ADK Web for development and debugging purposes only.
+    ADK Web ***no está destinado para uso en implementaciones de producción***. Debes
+    usar ADK Web solo con fines de desarrollo y depuración.
 
-## Try Dev UI with voice and video
+## Prueba Dev UI con voz y video
 
-With your favorite browser, navigate to: [http://127.0.0.1:8080/](http://127.0.0.1:8080/)
+Con tu navegador favorito, navega a: [http://127.0.0.1:8080/](http://127.0.0.1:8080/)
 
-You should see the following interface:
+Deberías ver la siguiente interfaz:
 
 ![Dev UI](../../assets/quickstart-streaming-devui.png)
 
-Click the microphone button to enable the voice input, and ask a question `What's the electron?` in voice. You will hear the answer in voice in real-time.
+Haz clic en el botón del micrófono para habilitar la entrada de voz, y haz una pregunta `What's the electron?` con la voz. Escucharás la respuesta en voz en tiempo real.
 
-To try with video, reload the web browser, click the camera button to enable the video input, and ask questions like "What do you see?". The agent will answer what they see in the video input.
+Para probar con video, recarga el navegador web, haz clic en el botón de la cámara para habilitar la entrada de video, y haz preguntas como "What do you see?". El agente responderá lo que ve en la entrada de video.
 
-### Caveat
+### Advertencia
 
-- You can not use text chat with the native-audio models. You will see errors when entering text messages on `adk web`.
+- No puedes usar el chat de texto con los modelos de audio nativo. Verás errores al ingresar mensajes de texto en `adk web`.
 
-### Stop the tool
+### Detén la herramienta
 
-Stop the tool by pressing `Ctrl-C` on the console.
+Detén la herramienta presionando `Ctrl-C` en la consola.
 
-## **Run agent with a custom live audio app** {#run-agent-with-live-audio}
+## **Ejecuta el agente con una aplicación de audio en vivo personalizada** {#run-agent-with-live-audio}
 
-Now, let's try audio streaming with the agent and a custom live audio application.
+Ahora, probemos el streaming de audio con el agente y una aplicación de audio en vivo personalizada.
 
-### **A Maven pom.xml build file for Live Audio**
+### **Un archivo de construcción Maven pom.xml para Audio en Vivo**
 
-Replace your existing pom.xml with the following.
+Reemplaza tu pom.xml existente con el siguiente.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -189,7 +189,7 @@ Replace your existing pom.xml with the following.
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>17</java.version>
     <auto-value.version>1.11.0</auto-value.version>
-    <!-- Main class for exec-maven-plugin -->
+    <!-- Clase principal para exec-maven-plugin -->
     <exec.mainClass>samples.liveaudio.LiveAudioRun</exec.mainClass>
     <google-adk.version>0.1.0</google-adk.version>
   </properties>
@@ -215,7 +215,7 @@ Replace your existing pom.xml with the following.
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>1.2</version> <!-- Or use a property if defined in a parent POM -->
+      <version>1.2</version> <!-- O usa una propiedad si está definida en un POM padre -->
     </dependency>
   </dependencies>
 
@@ -271,9 +271,9 @@ Replace your existing pom.xml with the following.
 </project>
 ```
 
-### **Creating Live Audio Run tool**
+### **Creando la herramienta Live Audio Run**
 
-Create the **LiveAudioRun.java** file under the `src/main/java/` directory with the following content. This tool runs the agent on it with live audio input and output.
+Crea el archivo **LiveAudioRun.java** bajo el directorio `src/main/java/` con el siguiente contenido. Esta herramienta ejecuta el agente con entrada y salida de audio en vivo.
 
 ```java
 
@@ -314,7 +314,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import agents.ScienceTeacherAgent;
 
-/** Main class to demonstrate running the {@link LiveAudioAgent} for a voice conversation. */
+/** Clase principal para demostrar la ejecución del {@link LiveAudioAgent} para una conversación de voz. */
 public final class LiveAudioRun {
   private final String userId;
   private final String sessionId;
@@ -371,11 +371,11 @@ public final class LiveAudioRun {
     AtomicBoolean conversationEnded = new AtomicBoolean(false);
     ExecutorService executorService = Executors.newFixedThreadPool(2);
 
-    // Task for capturing microphone input
+    // Tarea para capturar entrada de micrófono
     Future<?> microphoneTask =
         executorService.submit(() -> captureAndSendMicrophoneAudio(liveRequestQueue, isRunning));
 
-    // Task for processing agent responses and playing audio
+    // Tarea para procesar respuestas del agente y reproducir audio
     Future<?> outputTask =
         executorService.submit(
             () -> {
@@ -388,7 +388,7 @@ public final class LiveAudioRun {
               }
             });
 
-    // Wait for user to press Enter to stop the conversation
+    // Esperar a que el usuario presione Enter para detener la conversación
     System.out.println("Conversation started. Press Enter to stop...");
     System.in.read();
 
@@ -396,7 +396,7 @@ public final class LiveAudioRun {
     isRunning.set(false);
 
     try {
-      // Give some time for ongoing processing to complete
+      // Dar algo de tiempo para que el procesamiento en curso se complete
       microphoneTask.get(2, TimeUnit.SECONDS);
       outputTask.get(2, TimeUnit.SECONDS);
     } catch (Exception e) {
@@ -477,7 +477,7 @@ public final class LiveAudioRun {
         event.content().ifPresent(content -> content.parts().ifPresent(parts -> parts.forEach(part -> playAudioData(part, finalSpeakerLine))));
       }
 
-      speakerLine = finalSpeakerLine; // Assign to outer variable for cleanup in finally block
+      speakerLine = finalSpeakerLine; // Asignar a la variable externa para limpieza en el bloque finally
     } catch (LineUnavailableException e) {
       System.err.println("Error accessing speaker: " + e.getMessage());
       e.printStackTrace();
@@ -549,15 +549,15 @@ public final class LiveAudioRun {
 }
 ```
 
-### **Run the Live Audio Run tool**
+### **Ejecuta la herramienta Live Audio Run**
 
-To run Live Audio Run tool, use the following command on the `adk-agents` directory:
+Para ejecutar la herramienta Live Audio Run, usa el siguiente comando en el directorio `adk-agents`:
 
 ```
 mvn compile exec:java
 ```
 
-Then you should see:
+Entonces deberías ver:
 
 ```
 $ mvn compile exec:java
@@ -568,11 +568,11 @@ Speaker initialized.
 Microphone initialized. Start speaking...
 ```
 
-With this message, the tool is ready to take voice input. Talk to the agent with a question like `What's the electron?`.
+Con este mensaje, la herramienta está lista para recibir entrada de voz. Habla con el agente con una pregunta como `What's the electron?`.
 
 !!! Caution
-    When you observe the agent keep speaking by itself and doesn't stop, try using earphones to suppress the echoing.
+    Cuando observes que el agente sigue hablando por sí mismo y no se detiene, intenta usar auriculares para suprimir el eco.
 
-## **Summary** {#summary}
+## **Resumen** {#summary}
 
-Streaming for ADK enables developers to create agents capable of low-latency, bidirectional voice and video communication, enhancing interactive experiences. The article demonstrates that text streaming is a built-in feature of ADK Agents, requiring no additional specific code, while also showcasing how to implement live audio conversations for real-time voice interaction with an agent. This allows for more natural and dynamic communication, as users can speak to and hear from the agent seamlessly.
+El Streaming para ADK permite a los desarrolladores crear agentes capaces de comunicación de voz y video bidireccional de baja latencia, mejorando las experiencias interactivas. El artículo demuestra que el streaming de texto es una característica integrada de los Agentes ADK, que no requiere código específico adicional, mientras también muestra cómo implementar conversaciones de audio en vivo para la interacción de voz en tiempo real con un agente. Esto permite una comunicación más natural y dinámica, ya que los usuarios pueden hablar y escuchar al agente sin problemas.

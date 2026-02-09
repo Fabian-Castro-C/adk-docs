@@ -10,38 +10,37 @@ catalog_icon: /adk-docs/assets/tools-elevenlabs.png
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [ElevenLabs MCP Server](https://github.com/elevenlabs/elevenlabs-mcp)
-connects your ADK agent to the [ElevenLabs](https://elevenlabs.io/) AI audio
-platform. This integration gives your agent the ability to generate speech,
-clone voices, transcribe audio, create sound effects, and build conversational
-AI experiences using natural language.
+El [Servidor MCP de ElevenLabs](https://github.com/elevenlabs/elevenlabs-mcp)
+conecta tu agente ADK a la plataforma de audio con IA [ElevenLabs](https://elevenlabs.io/). Esta integración le da a tu agente la capacidad de generar voz,
+clonar voces, transcribir audio, crear efectos de sonido y construir experiencias
+conversacionales de IA utilizando lenguaje natural.
 
 
-## Use cases
+## Casos de uso
 
-- **Text-to-Speech Generation**: Convert text into natural-sounding speech
-  using a variety of voices, with fine-grained control over stability, style,
-  and similarity settings.
+- **Generación de Texto a Voz**: Convierte texto en voz de sonido natural
+  utilizando una variedad de voces, con control detallado sobre estabilidad, estilo
+  y configuraciones de similitud.
 
-- **Voice Cloning & Design**: Clone voices from audio samples or generate new
-  voices from text descriptions of desired characteristics like age, gender,
-  accent, and tone.
+- **Clonación y Diseño de Voces**: Clona voces a partir de muestras de audio o genera nuevas
+  voces a partir de descripciones de texto de características deseadas como edad, género,
+  acento y tono.
 
-- **Audio Processing**: Isolate speech from background noise, convert audio to
-  sound like different voices, or transcribe speech to text with speaker
-  identification.
+- **Procesamiento de Audio**: Aísla el habla del ruido de fondo, convierte audio para
+  sonar como voces diferentes, o transcribe el habla a texto con
+  identificación de hablante.
 
-- **Sound Effects & Soundscapes**: Generate sound effects and ambient
-  soundscapes from text descriptions, such as "a thunderstorm in a dense jungle
-  with animals reacting to the weather."
+- **Efectos de Sonido y Paisajes Sonoros**: Genera efectos de sonido y paisajes
+  sonoros ambientales a partir de descripciones de texto, como "una tormenta eléctrica en una jungla densa
+  con animales reaccionando al clima."
 
-## Prerequisites
+## Prerrequisitos
 
-- Sign up for an [ElevenLabs account](https://elevenlabs.io/app/sign-up)
-- Generate an [API key](https://elevenlabs.io/app/settings/api-keys) from your
-  account settings
+- Regístrate para obtener una [cuenta de ElevenLabs](https://elevenlabs.io/app/sign-up)
+- Genera una [clave API](https://elevenlabs.io/app/settings/api-keys) desde la
+  configuración de tu cuenta
 
-## Use with agent
+## Uso con agente
 
 === "Python"
 
@@ -106,73 +105,73 @@ AI experiences using natural language.
         export { rootAgent };
         ```
 
-## Available tools
+## Herramientas disponibles
 
-### Text-to-speech and voice
+### Texto a voz y voz
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`text_to_speech` | Generate speech from text using a specified voice
-`speech_to_speech` | Transform audio to sound like a different voice
-`text_to_voice` | Generate a voice preview from text description
-`create_voice_from_preview` | Save a generated voice preview to your library
-`voice_clone` | Clone a voice from audio samples
-`get_voice` | Get details about a specific voice
-`search_voices` | Search for voices in your library
-`search_voice_library` | Search the public voice library
-`list_models` | List available text-to-speech models
+`text_to_speech` | Genera voz a partir de texto utilizando una voz especificada
+`speech_to_speech` | Transforma audio para sonar como una voz diferente
+`text_to_voice` | Genera una vista previa de voz a partir de una descripción de texto
+`create_voice_from_preview` | Guarda una vista previa de voz generada en tu biblioteca
+`voice_clone` | Clona una voz a partir de muestras de audio
+`get_voice` | Obtiene detalles sobre una voz específica
+`search_voices` | Busca voces en tu biblioteca
+`search_voice_library` | Busca en la biblioteca de voces pública
+`list_models` | Lista los modelos de texto a voz disponibles
 
-### Audio processing
+### Procesamiento de audio
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`speech_to_text` | Transcribe audio to text with speaker identification
-`text_to_sound_effects` | Generate sound effects from text descriptions
-`isolate_audio` | Separate speech from background noise and music
-`play_audio` | Play an audio file locally
-`compose_music` | Generate music from a description
-`create_composition_plan` | Create a plan for music composition
+`speech_to_text` | Transcribe audio a texto con identificación de hablante
+`text_to_sound_effects` | Genera efectos de sonido a partir de descripciones de texto
+`isolate_audio` | Separa el habla del ruido de fondo y la música
+`play_audio` | Reproduce un archivo de audio localmente
+`compose_music` | Genera música a partir de una descripción
+`create_composition_plan` | Crea un plan para composición musical
 
-### Conversational AI
+### IA conversacional
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`create_agent` | Create a conversational AI agent
-`get_agent` | Get details about a specific agent
-`list_agents` | List all your conversational AI agents
-`add_knowledge_base_to_agent` | Add a knowledge base to an agent
-`make_outbound_call` | Initiate an outbound phone call using an agent
-`list_phone_numbers` | List available phone numbers
-`get_conversation` | Get details about a specific conversation
-`list_conversations` | List all conversations
+`create_agent` | Crea un agente de IA conversacional
+`get_agent` | Obtiene detalles sobre un agente específico
+`list_agents` | Lista todos tus agentes de IA conversacional
+`add_knowledge_base_to_agent` | Agrega una base de conocimiento a un agente
+`make_outbound_call` | Inicia una llamada telefónica saliente utilizando un agente
+`list_phone_numbers` | Lista los números de teléfono disponibles
+`get_conversation` | Obtiene detalles sobre una conversación específica
+`list_conversations` | Lista todas las conversaciones
 
-### Account
+### Cuenta
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`check_subscription` | Check your subscription and credit usage
+`check_subscription` | Verifica tu suscripción y uso de créditos
 
-## Configuration
+## Configuración
 
-The ElevenLabs MCP server can be configured using environment variables:
+El servidor MCP de ElevenLabs se puede configurar usando variables de entorno:
 
-Variable | Description | Default
+Variable | Descripción | Por defecto
 -------- | ----------- | -------
-`ELEVENLABS_API_KEY` | Your ElevenLabs API key | Required
-`ELEVENLABS_MCP_BASE_PATH` | Base path for file operations | `~/Desktop`
-`ELEVENLABS_MCP_OUTPUT_MODE` | How generated files are returned | `files`
-`ELEVENLABS_API_RESIDENCY` | Data residency region (enterprise only) | `us`
+`ELEVENLABS_API_KEY` | Tu clave API de ElevenLabs | Requerido
+`ELEVENLABS_MCP_BASE_PATH` | Ruta base para operaciones de archivos | `~/Desktop`
+`ELEVENLABS_MCP_OUTPUT_MODE` | Cómo se devuelven los archivos generados | `files`
+`ELEVENLABS_API_RESIDENCY` | Región de residencia de datos (solo empresarial) | `us`
 
-### Output modes
+### Modos de salida
 
-The `ELEVENLABS_MCP_OUTPUT_MODE` environment variable supports three modes:
+La variable de entorno `ELEVENLABS_MCP_OUTPUT_MODE` admite tres modos:
 
-- **`files`** (default): Save files to disk and return file paths
-- **`resources`**: Return files as MCP resources (base64-encoded binary data)
-- **`both`**: Save files to disk AND return as MCP resources
+- **`files`** (por defecto): Guarda archivos en disco y devuelve rutas de archivos
+- **`resources`**: Devuelve archivos como recursos MCP (datos binarios codificados en base64)
+- **`both`**: Guarda archivos en disco Y devuelve como recursos MCP
 
-## Additional resources
+## Recursos adicionales
 
-- [ElevenLabs MCP Server Repository](https://github.com/elevenlabs/elevenlabs-mcp)
-- [Introducing ElevenLabs MCP](https://elevenlabs.io/blog/introducing-elevenlabs-mcp)
-- [ElevenLabs Documentation](https://elevenlabs.io/docs)
+- [Repositorio del Servidor MCP de ElevenLabs](https://github.com/elevenlabs/elevenlabs-mcp)
+- [Presentando ElevenLabs MCP](https://elevenlabs.io/blog/introducing-elevenlabs-mcp)
+- [Documentación de ElevenLabs](https://elevenlabs.io/docs)

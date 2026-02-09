@@ -1,25 +1,25 @@
-# Java Quickstart for ADK
+# Inicio Rápido de Java para ADK
 
-This guide shows you how to get up and running with Agent Development Kit
-for Java. Before you start, make sure you have the following installed:
+Esta guía te muestra cómo empezar a trabajar con Agent Development Kit
+para Java. Antes de comenzar, asegúrate de tener instalado lo siguiente:
 
-*   Java 17 or later
-*   Maven 3.9 or later
+*   Java 17 o posterior
+*   Maven 3.9 o posterior
 
-## Create an agent project
+## Crear un proyecto de agente
 
-Create an agent project with the following files and directory structure:
+Crea un proyecto de agente con los siguientes archivos y estructura de directorios:
 
 ```none
 my_agent/
     src/main/java/com/example/agent/
-                        HelloTimeAgent.java # main agent code
-                        AgentCliRunner.java # command-line interface
-    pom.xml                                 # project configuration
-    .env                                    # API keys or project IDs
+                        HelloTimeAgent.java # código principal del agente
+                        AgentCliRunner.java # interfaz de línea de comandos
+    pom.xml                                 # configuración del proyecto
+    .env                                    # claves API o IDs de proyecto
 ```
 
-??? tip "Create this project structure using the command line"
+??? tip "Crear esta estructura de proyecto usando la línea de comandos"
 
     === "Windows"
 
@@ -40,12 +40,11 @@ my_agent/
             touch my_agent/pom.xml my_agent/.env
         ```
 
-### Define the agent code
+### Definir el código del agente
 
-Create the code for a basic agent, including a simple implementation of an ADK
-[Function Tool](/adk-docs/tools-custom/function-tools/), called `getCurrentTime()`.
-Add the following code to the `HelloTimeAgent.java` file in your project
-directory:
+Crea el código para un agente básico, incluyendo una implementación simple de una
+[Herramienta de Función](/adk-docs/tools-custom/function-tools/) de ADK, llamada `getCurrentTime()`.
+Agrega el siguiente código al archivo `HelloTimeAgent.java` en el directorio de tu proyecto:
 
 ```java title="my_agent/src/main/java/com/example/agent/HelloTimeAgent.java"
 package com.example.agent;
@@ -74,7 +73,7 @@ public class HelloTimeAgent {
             .build();
     }
 
-    /** Mock tool implementation */
+    /** Implementación simulada de herramienta */
     @Schema(description = "Get the current time for a given city")
     public static Map<String, String> getCurrentTime(
         @Schema(name = "city", description = "Name of the city to get the time for") String city) {
@@ -86,17 +85,17 @@ public class HelloTimeAgent {
 }
 ```
 
-!!! warning "Caution: Gemini 3 compatibility"
+!!! warning "Precaución: Compatibilidad con Gemini 3"
 
-    ADK Java v0.3.0 and lower is not compatible with
+    ADK Java v0.3.0 e inferior no es compatible con
     [Gemini 3 Pro Preview](https://ai.google.dev/gemini-api/docs/models#gemini-3-pro)
-    due to thought signature changes for function calling. Use Gemini 2.5
-    or lower models instead.
+    debido a cambios en la firma de pensamiento para el llamado de funciones. Usa Gemini 2.5
+    o modelos inferiores en su lugar.
 
-### Configure project and dependencies
+### Configurar proyecto y dependencias
 
-An ADK agent project requires this dependency in your
-`pom.xml` project file:
+Un proyecto de agente ADK requiere esta dependencia en tu
+archivo de proyecto `pom.xml`:
 
 ```xml title="my_agent/pom.xml (partial)"
 <dependencies>
@@ -108,12 +107,12 @@ An ADK agent project requires this dependency in your
 </dependencies>
 ```
 
-Update the `pom.xml` project file to include this dependency and
-additional settings with the following configuration code:
+Actualiza el archivo de proyecto `pom.xml` para incluir esta dependencia y
+configuraciones adicionales con el siguiente código de configuración:
 
-??? info "Complete `pom.xml` configuration for project"
-    The following code shows a complete `pom.xml` configuration for
-    this project:
+??? info "Configuración completa de `pom.xml` para el proyecto"
+    El siguiente código muestra una configuración completa de `pom.xml` para
+    este proyecto:
 
     ```xml title="my_agent/pom.xml"
     <?xml version="1.0" encoding="UTF-8"?>
@@ -126,7 +125,7 @@ additional settings with the following configuration code:
         <artifactId>adk-agents</artifactId>
         <version>1.0-SNAPSHOT</version>
 
-        <!-- Specify the version of Java you'll be using -->
+        <!-- Especifica la versión de Java que usarás -->
         <properties>
             <maven.compiler.source>17</maven.compiler.source>
             <maven.compiler.target>17</maven.compiler.target>
@@ -134,13 +133,13 @@ additional settings with the following configuration code:
         </properties>
 
         <dependencies>
-            <!-- The ADK core dependency -->
+            <!-- La dependencia principal de ADK -->
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk</artifactId>
                 <version>0.3.0</version>
             </dependency>
-            <!-- The ADK dev web UI to debug your agent -->
+            <!-- La interfaz web de desarrollo de ADK para depurar tu agente -->
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk-dev</artifactId>
@@ -151,14 +150,14 @@ additional settings with the following configuration code:
     </project>
     ```
 
-### Set your API key
+### Configurar tu clave API
 
-This project uses the Gemini API, which requires an API key. If you
-don't already have Gemini API key, create a key in Google AI Studio on the
-[API Keys](https://aistudio.google.com/app/apikey) page.
+Este proyecto usa la API de Gemini, que requiere una clave API. Si no
+tienes ya una clave API de Gemini, crea una clave en Google AI Studio en la
+página de [Claves API](https://aistudio.google.com/app/apikey).
 
-In a terminal window, write your API key into your `.env` file of your project
-to set environment variables:
+En una ventana de terminal, escribe tu clave API en el archivo `.env` de tu proyecto
+para establecer las variables de entorno:
 
 === "MacOS / Linux"
 
@@ -172,17 +171,17 @@ to set environment variables:
     echo 'set GOOGLE_API_KEY="YOUR_API_KEY"' > env.bat
     ```
 
-??? tip "Using other AI models with ADK"
-    ADK supports the use of many generative AI models. For more
-    information on configuring other models in ADK agents, see
-    [Models & Authentication](/adk-docs/agents/models).
+??? tip "Usar otros modelos de IA con ADK"
+    ADK soporta el uso de muchos modelos de IA generativa. Para más
+    información sobre cómo configurar otros modelos en agentes ADK, consulta
+    [Modelos y Autenticación](/adk-docs/agents/models).
 
-### Create an agent command-line interface
+### Crear una interfaz de línea de comandos para el agente
 
-Create a `AgentCliRunner.java` class to allow you to run and interact with
-`HelloTimeAgent` from the command line. This code shows how to create a
-`RunConfig` object to run the agent and a `Session` object to interact with the
-running agent.
+Crea una clase `AgentCliRunner.java` para permitirte ejecutar e interactuar con
+`HelloTimeAgent` desde la línea de comandos. Este código muestra cómo crear un
+objeto `RunConfig` para ejecutar el agente y un objeto `Session` para interactuar con el
+agente en ejecución.
 
 ```java title="my_agent/src/main/java/com/example/agent/AgentCliRunner.java"
 package com.example.agent;
@@ -232,50 +231,50 @@ public class AgentCliRunner {
 }
 ```
 
-## Run your agent
+## Ejecutar tu agente
 
-You can run your ADK agent using the interactive command-line interface
-`AgentCliRunner` class you defined or the ADK web user interface provided by
-the ADK using the `AdkWebServer` class. Both these options allow you to test and
-interact with your agent.
+Puedes ejecutar tu agente ADK usando la interfaz de línea de comandos interactiva
+de la clase `AgentCliRunner` que definiste o la interfaz web de usuario de ADK proporcionada por
+ADK usando la clase `AdkWebServer`. Ambas opciones te permiten probar e
+interactuar con tu agente.
 
-### Run with command-line interface
+### Ejecutar con interfaz de línea de comandos
 
-Run your agent with the command-line interface `AgentCliRunner` class
-using the following Maven command:
+Ejecuta tu agente con la interfaz de línea de comandos de la clase `AgentCliRunner`
+usando el siguiente comando Maven:
 
 ```console
-# Remember to load keys and settings: source .env OR env.bat
+# Recuerda cargar las claves y configuraciones: source .env OR env.bat
 mvn compile exec:java -Dexec.mainClass="com.example.agent.AgentCliRunner"
 ```
 
 ![adk-run.png](/adk-docs/assets/adk-run.png)
 
-### Run with web interface
+### Ejecutar con interfaz web
 
-Run your agent with the ADK web interface using the following Maven command:
+Ejecuta tu agente con la interfaz web de ADK usando el siguiente comando Maven:
 
 ```console
-# Remember to load keys and settings: source .env OR env.bat
+# Recuerda cargar las claves y configuraciones: source .env OR env.bat
 mvn compile exec:java \
     -Dexec.mainClass="com.google.adk.web.AdkWebServer" \
     -Dexec.args="--adk.agents.source-dir=target --server.port=8000"
 ```
 
-This command starts a web server with a chat interface for your agent. You can
-access the web interface at (http://localhost:8000). Select your agent at the
-upper left corner and type a request.
+Este comando inicia un servidor web con una interfaz de chat para tu agente. Puedes
+acceder a la interfaz web en (http://localhost:8000). Selecciona tu agente en la
+esquina superior izquierda y escribe una solicitud.
 
 ![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
 
-!!! warning "Caution: ADK Web for development only"
+!!! warning "Precaución: ADK Web solo para desarrollo"
 
-    ADK Web is ***not meant for use in production deployments***. You should
-    use ADK Web for development and debugging purposes only.
+    ADK Web ***no está destinado para uso en implementaciones de producción***. Debes
+    usar ADK Web solo para propósitos de desarrollo y depuración.
 
-## Next: Build your agent
+## Siguiente: Construye tu agente
 
-Now that you have ADK installed and your first agent running, try building
-your own agent with our build guides:
+Ahora que tienes ADK instalado y tu primer agente ejecutándose, intenta construir
+tu propio agente con nuestras guías de construcción:
 
-*  [Build your agent](/adk-docs/tutorials/)
+*  [Construye tu agente](/adk-docs/tutorials/)

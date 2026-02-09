@@ -1,101 +1,101 @@
-# Introduction to A2A
+# Introducción a A2A
 
-As you build more complex agentic systems, you will find that a single agent
-is often not enough. You will want to create specialized agents that can
-collaborate to solve a problem. The [**Agent2Agent (A2A) Protocol**](https://a2a-protocol.org) is the
-standard that allows these agents to communicate with each other.
+A medida que construyes sistemas agénticos más complejos, descubrirás que un solo agente
+a menudo no es suficiente. Querrás crear agentes especializados que puedan
+colaborar para resolver un problema. El [**Protocolo Agent2Agent (A2A)**](https://a2a-protocol.org) es el
+estándar que permite que estos agentes se comuniquen entre sí.
 
-## When to Use A2A vs. Local Sub-Agents
+## Cuándo Usar A2A vs. Sub-Agentes Locales
 
-- **Local Sub-Agents:** These are agents that run *within the same application
-  process* as your main agent. They are like internal modules or libraries, used
-  to organize your code into logical, reusable components. Communication between
-  a main agent and its local sub-agents is very fast because it happens
-  directly in memory, without network overhead.
+- **Sub-Agentes Locales:** Estos son agentes que se ejecutan *dentro del mismo proceso de aplicación*
+  que tu agente principal. Son como módulos internos o bibliotecas, usados
+  para organizar tu código en componentes lógicos y reutilizables. La comunicación entre
+  un agente principal y sus sub-agentes locales es muy rápida porque ocurre
+  directamente en memoria, sin sobrecarga de red.
 
-- **Remote Agents (A2A):** These are independent agents that run as separate
-  services, communicating over a network. A2A defines the standard protocol
-  for this communication.
+- **Agentes Remotos (A2A):** Estos son agentes independientes que se ejecutan como servicios
+  separados, comunicándose a través de una red. A2A define el protocolo estándar
+  para esta comunicación.
 
-Consider using **A2A** when:
+Considera usar **A2A** cuando:
 
-- The agent you need to talk to is a **separate, standalone service** (e.g., a
-  specialized financial modeling agent).
-- The agent is maintained by a **different team or organization**.
-- You need to connect agents written in **different programming languages or
-  agent frameworks**.
-- You want to enforce a **strong, formal contract** (the A2A protocol) between
-  your system's components.
+- El agente con el que necesitas comunicarte es un **servicio separado e independiente** (por ejemplo, un
+  agente especializado en modelado financiero).
+- El agente es mantenido por un **equipo u organización diferente**.
+- Necesitas conectar agentes escritos en **diferentes lenguajes de programación o
+  frameworks de agentes**.
+- Quieres imponer un **contrato fuerte y formal** (el protocolo A2A) entre
+  los componentes de tu sistema.
 
-### When to Use A2A: Concrete Examples
+### Cuándo Usar A2A: Ejemplos Concretos
 
-- **Integrating with a Third-Party Service:** Your main agent needs to get
-  real-time stock prices from an external financial data provider. This
-  provider exposes its data through an A2A-compatible agent.
-- **Microservices Architecture:** You have a large system broken down into
-  smaller, independent services (e.g., an Order Processing Agent, an Inventory
-  Management Agent, a Shipping Agent). A2A is ideal for these services to
-  communicate with each other across network boundaries.
-- **Cross-Language Communication:** Your core business logic is in a Python
-  agent, but you have a legacy system or a specialized component written in Java
-  that you want to integrate as an agent. A2A provides the standardized
-  communication layer.
-- **Formal API Enforcement:** You are building a platform where different teams
-  contribute agents, and you need a strict contract for how these agents
-  interact to ensure compatibility and stability.
+- **Integración con un Servicio de Terceros:** Tu agente principal necesita obtener
+  precios de acciones en tiempo real de un proveedor externo de datos financieros. Este
+  proveedor expone sus datos a través de un agente compatible con A2A.
+- **Arquitectura de Microservicios:** Tienes un sistema grande dividido en
+  servicios más pequeños e independientes (por ejemplo, un Agente de Procesamiento de Pedidos, un Agente de
+  Gestión de Inventario, un Agente de Envío). A2A es ideal para que estos servicios
+  se comuniquen entre sí a través de límites de red.
+- **Comunicación Entre Lenguajes:** Tu lógica de negocio principal está en un agente
+  Python, pero tienes un sistema heredado o un componente especializado escrito en Java
+  que quieres integrar como un agente. A2A proporciona la capa de
+  comunicación estandarizada.
+- **Aplicación de API Formal:** Estás construyendo una plataforma donde diferentes equipos
+  contribuyen agentes, y necesitas un contrato estricto sobre cómo estos agentes
+  interactúan para asegurar compatibilidad y estabilidad.
 
-### When NOT to Use A2A: Concrete Examples (Prefer Local Sub-Agents)
+### Cuándo NO Usar A2A: Ejemplos Concretos (Prefiere Sub-Agentes Locales)
 
-- **Internal Code Organization:** You are breaking down a complex task within a
-  single agent into smaller, manageable functions or modules (e.g., a
-  `DataValidator` sub-agent that cleans input data before processing). These are
-  best handled as local sub-agents for performance and simplicity.
-- **Performance-Critical Internal Operations:** A sub-agent is responsible for a
-  high-frequency, low-latency operation that is tightly coupled with the main
-  agent's execution (e.g., a `RealTimeAnalytics` sub-agent that processes data
-  streams within the same application).
-- **Shared Memory/Context:** When sub-agents need direct access to the main
-  agent's internal state or shared memory for efficiency, A2A's network
-  overhead and serialization/deserialization would be counterproductive.
-- **Simple Helper Functions:** For small, reusable pieces of logic that don't
-  require independent deployment or complex state management, a simple function
-  or class within the same agent is more appropriate than a separate A2A agent.
+- **Organización de Código Interno:** Estás dividiendo una tarea compleja dentro de un
+  solo agente en funciones o módulos más pequeños y manejables (por ejemplo, un
+  sub-agente `DataValidator` que limpia datos de entrada antes de procesarlos). Estos se
+  manejan mejor como sub-agentes locales por rendimiento y simplicidad.
+- **Operaciones Internas Críticas de Rendimiento:** Un sub-agente es responsable de una
+  operación de alta frecuencia y baja latencia que está estrechamente acoplada con la
+  ejecución del agente principal (por ejemplo, un sub-agente `RealTimeAnalytics` que procesa flujos de datos
+  dentro de la misma aplicación).
+- **Memoria/Contexto Compartido:** Cuando los sub-agentes necesitan acceso directo al
+  estado interno del agente principal o memoria compartida por eficiencia, la sobrecarga de red de A2A y la
+  serialización/deserialización serían contraproducentes.
+- **Funciones Auxiliares Simples:** Para piezas pequeñas y reutilizables de lógica que no
+  requieren despliegue independiente o gestión de estado compleja, una simple función
+  o clase dentro del mismo agente es más apropiada que un agente A2A separado.
 
-## The A2A Workflow in ADK: A Simplified View
+## El Flujo de Trabajo A2A en ADK: Una Vista Simplificada
 
-Agent Development Kit (ADK) simplifies the process of building and connecting
-agents using the A2A protocol. Here's a straightforward breakdown of how it
-works:
+Agent Development Kit (ADK) simplifica el proceso de construir y conectar
+agentes usando el protocolo A2A. Aquí hay un desglose sencillo de cómo
+funciona:
 
-1. **Making an Agent Accessible (Exposing):** You start with an existing ADK
-    agent that you want other agents to be able to interact with. The ADK
-    provides a simple way to "expose" this agent, turning it into an
-    **A2AServer**. This server acts as a public interface, allowing other agents
-    to send requests to your agent over a network. Think of it like setting up a
-    web server for your agent.
+1. **Hacer un Agente Accesible (Exponer):** Comienzas con un agente ADK
+    existente con el que quieres que otros agentes puedan interactuar. El ADK
+    proporciona una forma simple de "exponer" este agente, convirtiéndolo en un
+    **A2AServer**. Este servidor actúa como una interfaz pública, permitiendo que otros agentes
+    envíen solicitudes a tu agente a través de una red. Piensa en ello como configurar un
+    servidor web para tu agente.
 
-2. **Connecting to an Accessible Agent (Consuming):** In a separate agent
-    (which could be running on the same machine or a different one), you'll use
-    a special ADK component called `RemoteA2aAgent`. This `RemoteA2aAgent` acts
-    as a client that knows how to communicate with the **A2AServer** you
-    exposed earlier. It handles all the complexities of network communication,
-    authentication, and data formatting behind the scenes.
+2. **Conectarse a un Agente Accesible (Consumir):** En un agente separado
+    (que podría estar ejecutándose en la misma máquina o en una diferente), usarás
+    un componente especial de ADK llamado `RemoteA2aAgent`. Este `RemoteA2aAgent` actúa
+    como un cliente que sabe cómo comunicarse con el **A2AServer** que
+    expusiste anteriormente. Maneja todas las complejidades de comunicación de red,
+    autenticación y formateo de datos detrás de escena.
 
-From your perspective as a developer, once you've set up this connection,
-interacting with the remote agent feels just like interacting with a local tool
-or function. The ADK abstracts away the network layer, making distributed agent
-systems as easy to work with as local ones.
+Desde tu perspectiva como desarrollador, una vez que has configurado esta conexión,
+interactuar con el agente remoto se siente como interactuar con una herramienta
+o función local. El ADK abstrae la capa de red, haciendo que los sistemas de agentes distribuidos
+sean tan fáciles de trabajar como los locales.
 
-## Visualizing the A2A Workflow
+## Visualizando el Flujo de Trabajo A2A
 
-To further clarify the A2A workflow, let's look at the "before and after" for
-both exposing and consuming agents, and then the combined system.
+Para aclarar aún más el flujo de trabajo A2A, veamos el "antes y después" tanto para
+exponer como consumir agentes, y luego el sistema combinado.
 
-### Exposing an Agent
+### Exponiendo un Agente
 
-**Before Exposing:**
-Your agent code runs as a standalone component, but in this scenario, you want
-to expose it so that other remote agents can interact with your agent.
+**Antes de Exponer:**
+Tu código de agente se ejecuta como un componente independiente, pero en este escenario, quieres
+exponerlo para que otros agentes remotos puedan interactuar con tu agente.
 
 ```text
 +-------------------+
@@ -104,9 +104,9 @@ to expose it so that other remote agents can interact with your agent.
 +-------------------+
 ```
 
-**After Exposing:**
-Your agent code is integrated with an `A2AServer` (an ADK component), making it
-accessible over a network to other remote agents.
+**Después de Exponer:**
+Tu código de agente se integra con un `A2AServer` (un componente ADK), haciéndolo
+accesible a través de una red a otros agentes remotos.
 
 ```text
 +-----------------+
@@ -128,12 +128,12 @@ accessible over a network to other remote agents.
 +-----------------------------+
 ```
 
-### Consuming an Agent
+### Consumiendo un Agente
 
-**Before Consuming:**
-Your agent (referred to as the "Root Agent" in this context) is the application
-you are developing that needs to interact with a remote agent. Before
-consuming, it lacks the direct mechanism to do so.
+**Antes de Consumir:**
+Tu agente (referido como el "Agente Raíz" en este contexto) es la aplicación
+que estás desarrollando que necesita interactuar con un agente remoto. Antes de
+consumir, carece del mecanismo directo para hacerlo.
 
 ```text
 +----------------------+         +-------------------------------------------------------------+
@@ -142,10 +142,10 @@ consuming, it lacks the direct mechanism to do so.
 +----------------------+         +-------------------------------------------------------------+
 ```
 
-**After Consuming:**
-Your Root Agent uses a `RemoteA2aAgent` (an ADK component that acts as a
-client-side proxy for the remote agent) to establish communication with the
-remote agent.
+**Después de Consumir:**
+Tu Agente Raíz usa un `RemoteA2aAgent` (un componente ADK que actúa como un
+proxy del lado del cliente para el agente remoto) para establecer comunicación con el
+agente remoto.
 
 ```text
 +----------------------+         +-----------------------------------+
@@ -160,10 +160,10 @@ remote agent.
       (Now talks to remote agent via RemoteA2aAgent)
 ```
 
-### Final System (Combined View)
+### Sistema Final (Vista Combinada)
 
-This diagram shows how the consuming and exposing parts connect to form a
-complete A2A system.
+Este diagrama muestra cómo las partes de consumo y exposición se conectan para formar un
+sistema A2A completo.
 
 ```text
 Consuming Side:
@@ -192,16 +192,16 @@ Exposing Side:
                                                +-------------------+
 ```
 
-## Concrete Use Case: Customer Service and Product Catalog Agents
+## Caso de Uso Concreto: Agentes de Servicio al Cliente y Catálogo de Productos
 
-Let's consider a practical example: a **Customer Service Agent** that needs to
-retrieve product information from a separate **Product Catalog Agent**.
+Consideremos un ejemplo práctico: un **Agente de Servicio al Cliente** que necesita
+recuperar información de productos de un **Agente de Catálogo de Productos** separado.
 
-### Before A2A
+### Antes de A2A
 
-Initially, your Customer Service Agent might not have a direct, standardized
-way to query the Product Catalog Agent, especially if it's a separate service
-or managed by a different team.
+Inicialmente, tu Agente de Servicio al Cliente podría no tener una forma directa y estandarizada
+de consultar el Agente de Catálogo de Productos, especialmente si es un servicio separado
+o administrado por un equipo diferente.
 
 ```text
 +-------------------------+         +--------------------------+
@@ -211,11 +211,11 @@ or managed by a different team.
       (No direct, standardized communication)
 ```
 
-### After A2A
+### Después de A2A
 
-By using the A2A Protocol, the Product Catalog Agent can expose its
-functionality as an A2A service. Your Customer Service Agent can then easily
-consume this service using ADK's `RemoteA2aAgent`.
+Al usar el Protocolo A2A, el Agente de Catálogo de Productos puede exponer su
+funcionalidad como un servicio A2A. Tu Agente de Servicio al Cliente puede entonces fácilmente
+consumir este servicio usando `RemoteA2aAgent` de ADK.
 
 ```text
 +-------------------------+         +-----------------------------------+
@@ -242,15 +242,15 @@ consume this service using ADK's `RemoteA2aAgent`.
                                                +------------------------+
 ```
 
-In this setup, first, the Product Catalog Agent needs to be exposed via an A2A
-Server. Then, the Customer Service Agent can simply call methods on the
-`RemoteA2aAgent` as if it were a tool, and the ADK handles all the underlying
-communication to the Product Catalog Agent. This allows for clear separation of
-concerns and easy integration of specialized agents.
+En esta configuración, primero, el Agente de Catálogo de Productos necesita ser expuesto a través de un
+Servidor A2A. Luego, el Agente de Servicio al Cliente puede simplemente llamar métodos en el
+`RemoteA2aAgent` como si fuera una herramienta, y el ADK maneja toda la
+comunicación subyacente con el Agente de Catálogo de Productos. Esto permite una clara separación de
+responsabilidades y una fácil integración de agentes especializados.
 
-## Next Steps
+## Próximos Pasos
 
-Now that you understand the "why" of A2A, let's dive into the "how."
+Ahora que entiendes el "por qué" de A2A, vamos a profundizar en el "cómo."
 
-- **Continue to the next guide:**
-  [Quickstart: Exposing Your Agent](./quickstart-exposing.md)
+- **Continúa con la siguiente guía:**
+  [Inicio Rápido: Exponiendo Tu Agente](./quickstart-exposing.md)

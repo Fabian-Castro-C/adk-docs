@@ -1,51 +1,51 @@
-# Workflow Agents
+# Agentes de Flujo de Trabajo
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
 </div>
 
-This section introduces "*workflow agents*" - **specialized agents that control the execution flow of its sub-agents**.
+Esta sección introduce los "*agentes de flujo de trabajo*" - **agentes especializados que controlan el flujo de ejecución de sus sub-agentes**.
 
-Workflow agents are specialized components in ADK designed purely for **orchestrating the execution flow of sub-agents**. Their primary role is to manage *how* and *when* other agents run, defining the control flow of a process.
+Los agentes de flujo de trabajo son componentes especializados en ADK diseñados puramente para **orquestar el flujo de ejecución de los sub-agentes**. Su rol principal es gestionar *cómo* y *cuándo* se ejecutan otros agentes, definiendo el flujo de control de un proceso.
 
-Unlike [LLM Agents](../llm-agents.md), which use Large Language Models for dynamic reasoning and decision-making, Workflow Agents operate based on **predefined logic**. They determine the execution sequence according to their type (e.g., sequential, parallel, loop) without consulting an LLM for the orchestration itself. This results in **deterministic and predictable execution patterns**.
+A diferencia de los [Agentes LLM](../llm-agents.md), que utilizan Modelos de Lenguaje Grandes para razonamiento dinámico y toma de decisiones, los Agentes de Flujo de Trabajo operan basándose en **lógica predefinida**. Determinan la secuencia de ejecución según su tipo (por ejemplo, secuencial, paralelo, bucle) sin consultar un LLM para la orquestación en sí. Esto resulta en **patrones de ejecución determinísticos y predecibles**.
 
-ADK provides three core workflow agent types, each implementing a distinct execution pattern:
+ADK proporciona tres tipos principales de agentes de flujo de trabajo, cada uno implementando un patrón de ejecución distinto:
 
 <div class="grid cards" markdown>
 
-- :material-console-line: **Sequential Agents**
+- :material-console-line: **Agentes Secuenciales**
 
     ---
 
-    Executes sub-agents one after another, in **sequence**.
+    Ejecuta sub-agentes uno tras otro, en **secuencia**.
 
-    [:octicons-arrow-right-24: Learn more](sequential-agents.md)
+    [:octicons-arrow-right-24: Aprender más](sequential-agents.md)
 
-- :material-console-line: **Loop Agents**
-
-    ---
-
-    **Repeatedly** executes its sub-agents until a specific termination condition is met.
-
-    [:octicons-arrow-right-24: Learn more](loop-agents.md)
-
-- :material-console-line: **Parallel Agents**
+- :material-console-line: **Agentes de Bucle**
 
     ---
 
-    Executes multiple sub-agents in **parallel**.
+    Ejecuta **repetidamente** sus sub-agentes hasta que se cumple una condición de terminación específica.
 
-    [:octicons-arrow-right-24: Learn more](parallel-agents.md)
+    [:octicons-arrow-right-24: Aprender más](loop-agents.md)
+
+- :material-console-line: **Agentes Paralelos**
+
+    ---
+
+    Ejecuta múltiples sub-agentes en **paralelo**.
+
+    [:octicons-arrow-right-24: Aprender más](parallel-agents.md)
 
 </div>
 
-## Why Use Workflow Agents?
+## ¿Por Qué Usar Agentes de Flujo de Trabajo?
 
-Workflow agents are essential when you need explicit control over how a series of tasks or agents are executed. They provide:
+Los agentes de flujo de trabajo son esenciales cuando necesitas control explícito sobre cómo se ejecuta una serie de tareas o agentes. Proporcionan:
 
-* **Predictability:** The flow of execution is guaranteed based on the agent type and configuration.
-* **Reliability:** Ensures tasks run in the required order or pattern consistently.
-* **Structure:** Allows you to build complex processes by composing agents within clear control structures.
+* **Predictibilidad:** El flujo de ejecución está garantizado según el tipo de agente y la configuración.
+* **Confiabilidad:** Asegura que las tareas se ejecuten en el orden o patrón requerido de manera consistente.
+* **Estructura:** Te permite construir procesos complejos componiendo agentes dentro de estructuras de control claras.
 
-While the workflow agent manages the control flow deterministically, the sub-agents it orchestrates can themselves be any type of agent, including intelligent LLM Agent instances. This allows you to combine structured process control with flexible, LLM-powered task execution.
+Mientras que el agente de flujo de trabajo gestiona el flujo de control de manera determinística, los sub-agentes que orquesta pueden ser ellos mismos de cualquier tipo de agente, incluidas instancias inteligentes de Agente LLM. Esto te permite combinar control de proceso estructurado con ejecución de tareas flexible impulsada por LLM.

@@ -1,69 +1,69 @@
-# Agent Observability with Monocle
+# Observabilidad de Agentes con Monocle
 
-[Monocle](https://github.com/monocle2ai/monocle) is an open-source observability platform for monitoring, debugging, and improving LLM applications and AI Agents. It provides comprehensive tracing capabilities for your Google ADK applications through automatic instrumentation. Monocle generates OpenTelemetry-compatible traces that can be exported to various destinations including local files or console output.
+[Monocle](https://github.com/monocle2ai/monocle) es una plataforma de observabilidad de código abierto para monitorear, depurar y mejorar aplicaciones LLM y Agentes de IA. Proporciona capacidades de trazado integrales para tus aplicaciones de Google ADK mediante instrumentación automática. Monocle genera trazas compatibles con OpenTelemetry que se pueden exportar a varios destinos, incluyendo archivos locales o salida por consola.
 
-## Overview
+## Descripción General
 
-Monocle automatically instruments Google ADK applications, allowing you to:
+Monocle instrumenta automáticamente las aplicaciones de Google ADK, permitiéndote:
 
-- **Trace agent interactions** - Automatically capture every agent run, tool call, and model request with full context and metadata
-- **Monitor execution flow** - Track agent state, delegation events, and execution flow through detailed traces
-- **Debug issues** - Analyze detailed traces to quickly identify bottlenecks, failed tool calls, and unexpected agent behavior
-- **Flexible export options** - Export traces to local files or console for analysis
-- **OpenTelemetry compatible** - Generate standard OpenTelemetry traces that work with any OTLP-compatible backend
+- **Rastrear interacciones de agentes** - Captura automáticamente cada ejecución de agente, llamada a herramienta y solicitud de modelo con contexto completo y metadatos
+- **Monitorear el flujo de ejecución** - Rastrea el estado del agente, eventos de delegación y flujo de ejecución mediante trazas detalladas
+- **Depurar problemas** - Analiza trazas detalladas para identificar rápidamente cuellos de botella, llamadas a herramientas fallidas y comportamiento inesperado del agente
+- **Opciones flexibles de exportación** - Exporta trazas a archivos locales o consola para su análisis
+- **Compatible con OpenTelemetry** - Genera trazas estándar de OpenTelemetry que funcionan con cualquier backend compatible con OTLP
 
-Monocle automatically instruments the following Google ADK components:
+Monocle instrumenta automáticamente los siguientes componentes de Google ADK:
 
-- **`BaseAgent.run_async`** - Captures agent execution, agent state, and delegation events
-- **`FunctionTool.run_async`** - Captures tool execution, including tool name, parameters, and results
-- **`Runner.run_async`** - Captures runner execution, including request context and execution flow
+- **`BaseAgent.run_async`** - Captura la ejecución del agente, el estado del agente y los eventos de delegación
+- **`FunctionTool.run_async`** - Captura la ejecución de herramientas, incluyendo nombre de herramienta, parámetros y resultados
+- **`Runner.run_async`** - Captura la ejecución del runner, incluyendo el contexto de solicitud y el flujo de ejecución
 
-## Installation
+## Instalación
 
-### 1. Install Required Packages { #install-required-packages }
+### 1. Instalar Paquetes Requeridos { #install-required-packages }
 
 ```bash
 pip install monocle_apptrace google-adk
 ```
 
-## Setup
+## Configuración
 
-### 1. Configure Monocle Telemetry { #configure-monocle-telemetry }
+### 1. Configurar Telemetría de Monocle { #configure-monocle-telemetry }
 
-Monocle automatically instruments Google ADK when you initialize telemetry. Simply call `setup_monocle_telemetry()` at the start of your application:
+Monocle instrumenta automáticamente Google ADK cuando inicializas la telemetría. Simplemente llama a `setup_monocle_telemetry()` al inicio de tu aplicación:
 
 ```python
 from monocle_apptrace import setup_monocle_telemetry
 
-# Initialize Monocle telemetry - automatically instruments Google ADK
+# Inicializar telemetría de Monocle - instrumenta automáticamente Google ADK
 setup_monocle_telemetry(workflow_name="my-adk-app")
 ```
 
-That's it! Monocle will automatically detect and instrument your Google ADK agents, tools, and runners.
+¡Eso es todo! Monocle detectará e instrumentará automáticamente tus agentes, herramientas y runners de Google ADK.
 
-### 2. Configure Exporters (Optional) { #configure-exporters }
+### 2. Configurar Exportadores (Opcional) { #configure-exporters }
 
-By default, Monocle exports traces to local JSON files. You can configure different exporters using environment variables.
+Por defecto, Monocle exporta trazas a archivos JSON locales. Puedes configurar diferentes exportadores usando variables de entorno.
 
-#### Export to Console (for debugging)
+#### Exportar a Consola (para depuración)
 
-Set the environment variable:
+Define la variable de entorno:
 
 ```bash
 export MONOCLE_EXPORTER="console"
 ```
 
-#### Export to Local Files (default)
+#### Exportar a Archivos Locales (predeterminado)
 
 ```bash
 export MONOCLE_EXPORTER="file"
 ```
 
-Or simply omit the `MONOCLE_EXPORTER` variable - it defaults to `file`.
+O simplemente omite la variable `MONOCLE_EXPORTER` - por defecto es `file`.
 
-## Observe
+## Observar
 
-Now that you have tracing setup, all Google ADK SDK requests will be automatically traced by Monocle.
+Ahora que tienes configurado el trazado, todas las solicitudes del SDK de Google ADK serán rastreadas automáticamente por Monocle.
 
 ```python
 from monocle_apptrace import setup_monocle_telemetry
@@ -71,18 +71,18 @@ from google.adk.agents import Agent
 from google.adk.runners import InMemoryRunner
 from google.genai import types
 
-# Initialize Monocle telemetry - must be called before using ADK
+# Inicializar telemetría de Monocle - debe llamarse antes de usar ADK
 setup_monocle_telemetry(workflow_name="weather_app")
 
-# Define a tool function
+# Definir una función de herramienta
 def get_weather(city: str) -> dict:
-    """Retrieves the current weather report for a specified city.
+    """Recupera el reporte del clima actual para una ciudad especificada.
 
     Args:
-        city (str): The name of the city for which to retrieve the weather report.
+        city (str): El nombre de la ciudad para la cual recuperar el reporte del clima.
 
     Returns:
-        dict: status and result or error msg.
+        dict: estado y resultado o mensaje de error.
     """
     if city.lower() == "new york":
         return {
@@ -98,7 +98,7 @@ def get_weather(city: str) -> dict:
             "error_message": f"Weather information for '{city}' is not available.",
         }
 
-# Create an agent with tools
+# Crear un agente con herramientas
 agent = Agent(
     name="weather_agent",
     model="gemini-2.0-flash-exp",
@@ -119,7 +119,7 @@ await session_service.create_session(
     session_id=session_id
 )
 
-# Run the agent (all interactions will be automatically traced)
+# Ejecutar el agente (todas las interacciones serán rastreadas automáticamente)
 async for event in runner.run_async(
     user_id=user_id,
     session_id=session_id,
@@ -131,77 +131,76 @@ async for event in runner.run_async(
         print(event.content.parts[0].text.strip())
 ```
 
-## Accessing Traces
+## Accediendo a las Trazas
 
-By default, Monocle generates traces in JSON files in the local directory `./monocle`. The file name format is:
+Por defecto, Monocle genera trazas en archivos JSON en el directorio local `./monocle`. El formato del nombre de archivo es:
 
 ```
 monocle_trace_{workflow_name}_{trace_id}_{timestamp}.json
 ```
 
-Each trace file contains an array of OpenTelemetry-compatible spans that capture:
+Cada archivo de traza contiene un array de spans compatibles con OpenTelemetry que capturan:
 
-- **Agent execution spans** - Agent state, delegation events, and execution flow
-- **Tool execution spans** - Tool name, input parameters, and output results
-- **LLM interaction spans** - Model calls, prompts, responses, and token usage (if using Gemini or other LLMs)
+- **Spans de ejecución de agente** - Estado del agente, eventos de delegación y flujo de ejecución
+- **Spans de ejecución de herramienta** - Nombre de herramienta, parámetros de entrada y resultados de salida
+- **Spans de interacción LLM** - Llamadas al modelo, prompts, respuestas y uso de tokens (si usas Gemini u otros LLMs)
 
-You can analyze these trace files using any OpenTelemetry-compatible tool or write custom analysis scripts.
+Puedes analizar estos archivos de traza usando cualquier herramienta compatible con OpenTelemetry o escribir scripts de análisis personalizados.
 
-## Visualizing Traces with VS Code Extension
+## Visualizando Trazas con la Extensión de VS Code
 
-The [Okahu Trace Visualizer](https://marketplace.visualstudio.com/items?itemName=OkahuAI.okahu-ai-observability) VS Code extension provides an interactive way to visualize and analyze Monocle-generated traces directly in Visual Studio Code.
+La extensión de VS Code [Okahu Trace Visualizer](https://marketplace.visualstudio.com/items?itemName=OkahuAI.okahu-ai-observability) proporciona una forma interactiva de visualizar y analizar trazas generadas por Monocle directamente en Visual Studio Code.
 
-### Installation
+### Instalación
 
-1. Open VS Code
-2. Press `Ctrl+P` (or `Cmd+P` on Mac) to open Quick Open
-3. Paste the following command and press Enter:
+1. Abre VS Code
+2. Presiona `Ctrl+P` (o `Cmd+P` en Mac) para abrir Quick Open
+3. Pega el siguiente comando y presiona Enter:
 
 ```
 ext install OkahuAI.okahu-ai-observability
 ```
 
-Alternatively, you can install it from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=OkahuAI.okahu-ai-observability).
+Alternativamente, puedes instalarlo desde el [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=OkahuAI.okahu-ai-observability).
 
-### Features
+### Características
 
-The extension provides:
+La extensión proporciona:
 
-- **Custom Activity Bar Panel** - Dedicated sidebar for trace file management
-- **Interactive File Tree** - Browse and select trace files with custom React UI
-- **Split View Analysis** - Gantt chart visualization alongside JSON data viewer
-- **Real-time Communication** - Seamless data flow between VS Code and React components
-- **VS Code Theming** - Fully integrated with VS Code's light/dark themes
+- **Panel Personalizado de Barra de Actividad** - Barra lateral dedicada para la gestión de archivos de traza
+- **Árbol de Archivos Interactivo** - Navega y selecciona archivos de traza con interfaz React personalizada
+- **Análisis en Vista Dividida** - Visualización de gráfico Gantt junto al visor de datos JSON
+- **Comunicación en Tiempo Real** - Flujo de datos sin interrupciones entre VS Code y componentes React
+- **Temas de VS Code** - Totalmente integrado con los temas claro/oscuro de VS Code
 
-### Usage
+### Uso
 
-1. After running your ADK application with Monocle tracing enabled, trace files will be generated in the `./monocle` directory
-2. Open the Okahu Trace Visualizer panel from the VS Code Activity Bar
-3. Browse and select trace files from the interactive file tree
-4. View your traces with:
-   - **Gantt chart visualization** - See the timeline and hierarchy of spans
-   - **JSON data viewer** - Inspect detailed span attributes and events
-   - **Token counts** - View token usage for LLM calls
-   - **Error badges** - Quickly identify failed operations
+1. Después de ejecutar tu aplicación ADK con el trazado de Monocle habilitado, los archivos de traza se generarán en el directorio `./monocle`
+2. Abre el panel Okahu Trace Visualizer desde la Barra de Actividad de VS Code
+3. Navega y selecciona archivos de traza desde el árbol de archivos interactivo
+4. Visualiza tus trazas con:
+   - **Visualización de gráfico Gantt** - Ve la línea de tiempo y jerarquía de spans
+   - **Visor de datos JSON** - Inspecciona atributos y eventos de span detallados
+   - **Conteos de tokens** - Ve el uso de tokens para llamadas LLM
+   - **Badges de error** - Identifica rápidamente operaciones fallidas
 
 ![Monocle VS Code Extension](../assets/monocle-vs-code-ext.png)
 
-## What Gets Traced
+## Qué se Rastrea
 
-Monocle automatically captures the following information from Google ADK:
+Monocle captura automáticamente la siguiente información de Google ADK:
 
-- **Agent Execution**: Agent state, delegation events, and execution flow
-- **Tool Calls**: Tool name, input parameters, and output results
-- **Runner Execution**: Request context and overall execution flow
-- **Timing Information**: Start time, end time, and duration for each operation
-- **Error Information**: Exceptions and error states
+- **Ejecución de Agente**: Estado del agente, eventos de delegación y flujo de ejecución
+- **Llamadas a Herramientas**: Nombre de herramienta, parámetros de entrada y resultados de salida
+- **Ejecución de Runner**: Contexto de solicitud y flujo de ejecución general
+- **Información de Tiempo**: Hora de inicio, hora de fin y duración de cada operación
+- **Información de Error**: Excepciones y estados de error
 
-All traces are generated in OpenTelemetry format, making them compatible with any OTLP-compatible observability backend.
+Todas las trazas se generan en formato OpenTelemetry, haciéndolas compatibles con cualquier backend de observabilidad compatible con OTLP.
 
-## Support and Resources
+## Soporte y Recursos
 
-- [Monocle Documentation](https://docs.okahu.ai/monocle_overview/)
-- [Monocle GitHub Repository](https://github.com/monocle2ai/monocle)
-- [Google ADK Travel Agent Example](https://github.com/okahu-demos/adk-travel-agent)
-- [Discord Community](https://discord.gg/D8vDbSUhJX)
-
+- [Documentación de Monocle](https://docs.okahu.ai/monocle_overview/)
+- [Repositorio GitHub de Monocle](https://github.com/monocle2ai/monocle)
+- [Ejemplo de Agente de Viajes de Google ADK](https://github.com/okahu-demos/adk-travel-agent)
+- [Comunidad de Discord](https://discord.gg/D8vDbSUhJX)

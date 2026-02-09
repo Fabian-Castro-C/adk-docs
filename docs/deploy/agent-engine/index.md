@@ -1,4 +1,4 @@
-# Deploy to Vertex AI Agent Engine
+# Desplegar en Vertex AI Agent Engine
 
 <div class="language-support-tag" title="Vertex AI Agent Engine currently supports only Python.">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
@@ -6,45 +6,45 @@
 
 Google Cloud Vertex AI
 [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
-is a set of modular services that help developers scale and govern agents in
-production. The Agent Engine runtime enables you to deploy agents in production
-with end-to-end managed infrastructure so you can focus on creating intelligent
-and impactful agents. When you deploy an ADK agent to Agent Engine, your code
-runs in the *Agent Engine runtime* environment, which is part of the larger set
-of agent services provided by the Agent Engine product.
+es un conjunto de servicios modulares que ayudan a los desarrolladores a escalar y gobernar agentes en
+producción. El runtime de Agent Engine te permite desplegar agentes en producción
+con infraestructura administrada de extremo a extremo para que puedas enfocarte en crear agentes
+inteligentes e impactantes. Cuando despliegas un agente ADK en Agent Engine, tu código
+se ejecuta en el entorno *runtime de Agent Engine*, que es parte del conjunto más amplio de
+servicios de agentes proporcionados por el producto Agent Engine.
 
-This guide includes the following deployment paths, which serve different
-purposes:
+Esta guía incluye las siguientes rutas de despliegue, que sirven para diferentes
+propósitos:
 
-*   **[Standard deployment](/adk-docs/deploy/agent-engine/deploy/)**: Follow
-    this standard deployment path if you have an existing Google Cloud project
-    and if you want to carefully manage deploying an ADK agent to the Agent
-    Engine runtime. This deployment path uses Cloud Console, ADK command line
-    interface, and provides step-by-step instructions. This path is recommended
-    for users who are already familiar with configuring Google Cloud projects,
-    and users preparing for production deployments.
+*   **[Despliegue estándar](/adk-docs/deploy/agent-engine/deploy/)**: Sigue
+    esta ruta de despliegue estándar si tienes un proyecto existente de Google Cloud
+    y si deseas gestionar cuidadosamente el despliegue de un agente ADK en el
+    runtime de Agent Engine. Esta ruta de despliegue utiliza Cloud Console, la interfaz de línea de
+    comandos de ADK, y proporciona instrucciones paso a paso. Esta ruta es recomendada
+    para usuarios que ya están familiarizados con la configuración de proyectos de Google Cloud,
+    y usuarios que se preparan para despliegues en producción.
 
-*   **[Agent Starter Pack deployment](/adk-docs/deploy/agent-engine/asp/)**:
-    Follow this accelerated deployment path if you do not have an existing
-    Google Cloud project and are creating a project specifically for development
-    and testing. The Agent Starter Pack (ASP) helps you deploy ADK projects
-    quickly and it configures Google Cloud services that are not strictly
-    necessary for running an ADK agent with the Agent Engine runtime.
+*   **[Despliegue con Agent Starter Pack](/adk-docs/deploy/agent-engine/asp/)**:
+    Sigue esta ruta de despliegue acelerada si no tienes un proyecto existente de
+    Google Cloud y estás creando un proyecto específicamente para desarrollo
+    y pruebas. El Agent Starter Pack (ASP) te ayuda a desplegar proyectos ADK
+    rápidamente y configura servicios de Google Cloud que no son estrictamente
+    necesarios para ejecutar un agente ADK con el runtime de Agent Engine.
 
-!!! note "Agent Engine service on Google Cloud"
+!!! note "Servicio Agent Engine en Google Cloud"
 
-    Agent Engine is a paid service and you may incur costs if you go
-    above the no-cost access tier. More information can be found on the
-    [Agent Engine pricing page](https://cloud.google.com/vertex-ai/pricing#vertex-ai-agent-engine).
+    Agent Engine es un servicio de pago y puedes incurrir en costos si superas
+    el nivel de acceso sin costo. Más información se puede encontrar en la
+    [página de precios de Agent Engine](https://cloud.google.com/vertex-ai/pricing#vertex-ai-agent-engine).
 
-## Deployment payload {#payload}
+## Carga útil de despliegue {#payload}
 
-When you deploy your ADK agent project to Agent Engine, the following content is
-uploaded to the service:
+Cuando despliegas tu proyecto de agente ADK en Agent Engine, el siguiente contenido se
+sube al servicio:
 
-- Your ADK agent code
-- Any dependencies declared in your ADK agent code
+- Tu código de agente ADK
+- Cualquier dependencia declarada en tu código de agente ADK
 
-The deployment *does not* include the ADK API server or the ADK web user
-interface libraries. The Agent Engine service provides the libraries for ADK API
-server functionality.
+El despliegue *no* incluye el servidor API de ADK o las bibliotecas de la interfaz de usuario
+web de ADK. El servicio Agent Engine proporciona las bibliotecas para la funcionalidad del
+servidor API de ADK.

@@ -1,114 +1,114 @@
-# Build a streaming agent with Python
+# Construye un agente con streaming usando Python
 
-With this quickstart, you'll learn to create a simple agent and use ADK Streaming to enable voice and video communication with it that is low-latency and bidirectional. We will install ADK, set up a basic "Google Search" agent, try running the agent with Streaming with `adk web` tool, and then explain how to build a simple asynchronous web app by yourself using ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/).
+Con esta guía rápida, aprenderás a crear un agente simple y usar ADK Streaming para habilitar la comunicación de voz y video con él, que es de baja latencia y bidireccional. Instalaremos ADK, configuraremos un agente básico de "Google Search", probaremos ejecutar el agente con Streaming con la herramienta `adk web`, y luego explicaremos cómo construir una aplicación web asíncrona simple por ti mismo usando ADK Streaming y [FastAPI](https://fastapi.tiangolo.com/).
 
-**Note:** This guide assumes you have experience using a terminal in Windows, Mac, and Linux environments.
+**Nota:** Esta guía asume que tienes experiencia usando una terminal en entornos Windows, Mac y Linux.
 
-## Supported models for voice/video streaming {#supported-models}
+## Modelos compatibles para streaming de voz/video {#supported-models}
 
-In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
+Para usar streaming de voz/video en ADK, necesitarás usar modelos de Gemini que soporten la API Live. Puedes encontrar los **ID(s) de modelo** que soportan la API Live de Gemini en la documentación:
 
-- [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
-- [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
+- [Google AI Studio: API Live de Gemini](https://ai.google.dev/gemini-api/docs/models#live-api)
+- [Vertex AI: API Live de Gemini](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
-## 1. Setup Environment & Install ADK { #setup-environment-install-adk }
+## 1. Configurar el Entorno e Instalar ADK { #setup-environment-install-adk }
 
-Create & Activate Virtual Environment (Recommended):
+Crear y Activar un Entorno Virtual (Recomendado):
 
 ```bash
-# Create
+# Crear
 python -m venv .venv
-# Activate (each new terminal)
+# Activar (cada nueva terminal)
 # macOS/Linux: source .venv/bin/activate
 # Windows CMD: .venv\Scripts\activate.bat
 # Windows PowerShell: .venv\Scripts\Activate.ps1
 ```
 
-Install ADK:
+Instalar ADK:
 
 ```bash
 pip install google-adk
 ```
 
-## 2. Project Structure { #project-structure }
+## 2. Estructura del Proyecto { #project-structure }
 
-Create the following folder structure with empty files:
+Crea la siguiente estructura de carpetas con archivos vacíos:
 
 ```console
-adk-streaming/  # Project folder
-└── app/ # the web app folder
-    ├── .env # Gemini API key
-    └── google_search_agent/ # Agent folder
-        ├── __init__.py # Python package
-        └── agent.py # Agent definition
+adk-streaming/  # Carpeta del proyecto
+└── app/ # la carpeta de la aplicación web
+    ├── .env # Clave API de Gemini
+    └── google_search_agent/ # Carpeta del agente
+        ├── __init__.py # Paquete Python
+        └── agent.py # Definición del agente
 ```
 
 ### agent.py
 
-Copy-paste the following code block into the `agent.py` file.
+Copia y pega el siguiente bloque de código en el archivo `agent.py`.
 
-For `model`, please double check the model ID as described earlier in the [Models section](#supported-models).
+Para `model`, por favor verifica el ID del modelo como se describe anteriormente en la [sección de Modelos](#supported-models).
 
 ```py
 from google.adk.agents import Agent
-from google.adk.tools import google_search  # Import the tool
+from google.adk.tools import google_search  # Importar la herramienta
 
 root_agent = Agent(
-   # A unique name for the agent.
+   # Un nombre único para el agente.
    name="basic_search_agent",
-   # The Large Language Model (LLM) that agent will use.
-   # Please fill in the latest model id that supports live from
+   # El Modelo de Lenguaje Grande (LLM) que el agente usará.
+   # Por favor completa el ID del modelo más reciente que soporte live desde
    # https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming/#supported-models
    model="...",
-   # A short description of the agent's purpose.
+   # Una descripción breve del propósito del agente.
    description="Agent to answer questions using Google Search.",
-   # Instructions to set the agent's behavior.
+   # Instrucciones para establecer el comportamiento del agente.
    instruction="You are an expert researcher. You always stick to the facts.",
-   # Add google_search tool to perform grounding with Google search.
+   # Agregar la herramienta google_search para realizar grounding con Google search.
    tools=[google_search]
 )
 ```
 
-`agent.py` is where all your agent(s)' logic will be stored, and you must have a `root_agent` defined.
+`agent.py` es donde se almacenará toda la lógica de tu(s) agente(s), y debes tener un `root_agent` definido.
 
-Notice how easily you integrated [grounding with Google Search](https://ai.google.dev/gemini-api/docs/grounding?lang=python#configure-search) capabilities.  The `Agent` class and the `google_search` tool handle the complex interactions with the LLM and grounding with the search API, allowing you to focus on the agent's *purpose* and *behavior*.
+Observa cómo integraste fácilmente las capacidades de [grounding con Google Search](https://ai.google.dev/gemini-api/docs/grounding?lang=python#configure-search). La clase `Agent` y la herramienta `google_search` manejan las interacciones complejas con el LLM y el grounding con la API de búsqueda, permitiéndote enfocarte en el *propósito* y *comportamiento* del agente.
 
 ![intro_components.png](../../assets/quickstart-streaming-tool.png)
 
-Copy-paste the following code block to `__init__.py` file.
+Copia y pega el siguiente bloque de código en el archivo `__init__.py`.
 
 ```py title="__init__.py"
 from . import agent
 ```
 
-## 3\. Set up the platform { #set-up-the-platform }
+## 3\. Configurar la plataforma { #set-up-the-platform }
 
-To run the agent, choose a platform from either Google AI Studio or Google Cloud Vertex AI:
+Para ejecutar el agente, elige una plataforma entre Google AI Studio o Google Cloud Vertex AI:
 
 === "Gemini - Google AI Studio"
-    1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
-    2. Open the **`.env`** file located inside (`app/`) and copy-paste the following code.
+    1. Obtén una clave API de [Google AI Studio](https://aistudio.google.com/apikey).
+    2. Abre el archivo **`.env`** ubicado dentro de (`app/`) y copia y pega el siguiente código.
 
         ```env title=".env"
         GOOGLE_GENAI_USE_VERTEXAI=FALSE
         GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
-    3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
+    3. Reemplaza `PASTE_YOUR_ACTUAL_API_KEY_HERE` con tu `API KEY` real.
 
 === "Gemini - Google Cloud Vertex AI"
-    1. You need an existing
-       [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) account and a
-       project.
-        * Set up a
-          [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
-        * Set up the
-          [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
-        * Authenticate to Google Cloud, from the terminal by running
+    1. Necesitas una cuenta existente de
+       [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) y un
+       proyecto.
+        * Configura un
+          [proyecto de Google Cloud](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
+        * Configura el
+          [CLI de gcloud](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
+        * Autentícate en Google Cloud, desde la terminal ejecutando
           `gcloud auth login`.
-        * [Enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-    2. Open the **`.env`** file located inside (`app/`). Copy-paste
-       the following code and update the project ID and location.
+        * [Habilita la API de Vertex AI](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
+    2. Abre el archivo **`.env`** ubicado dentro de (`app/`). Copia y pega
+       el siguiente código y actualiza el ID del proyecto y la ubicación.
 
         ```env title=".env"
         GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -116,15 +116,15 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
         GOOGLE_CLOUD_LOCATION=us-central1
         ```
 
-## 4. Try the agent with `adk web` { #try-the-agent-with-adk-web }
+## 4. Prueba el agente con `adk web` { #try-the-agent-with-adk-web }
 
-Now it's ready to try the agent. Run the following command to launch the **dev UI**. First, make sure to set the current directory to `app`:
+Ahora está listo para probar el agente. Ejecuta el siguiente comando para lanzar la **UI de desarrollo**. Primero, asegúrate de establecer el directorio actual en `app`:
 
 ```shell
 cd app
 ```
 
-Also, set `SSL_CERT_FILE` variable with the following command. This is required for the voice and video tests later.
+También, establece la variable `SSL_CERT_FILE` con el siguiente comando. Esto es necesario para las pruebas de voz y video más adelante.
 
 === "OS X &amp; Linux"
     ```bash
@@ -138,50 +138,50 @@ Also, set `SSL_CERT_FILE` variable with the following command. This is required 
 
 
 
-Then, run the dev UI:
+Luego, ejecuta la UI de desarrollo:
 
 ```shell
 adk web
 ```
 
-!!!info "Note for Windows users"
+!!!info "Nota para usuarios de Windows"
 
-    When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
+    Cuando encuentres el error `_make_subprocess_transport NotImplementedError`, considera usar `adk web --no-reload` en su lugar.
 
-!!! warning "Caution: ADK Web for development only"
+!!! warning "Precaución: ADK Web solo para desarrollo"
 
-    ADK Web is ***not meant for use in production deployments***. You should
-    use ADK Web for development and debugging purposes only.
+    ADK Web ***no está destinado para uso en despliegues de producción***. Deberías
+    usar ADK Web solo para propósitos de desarrollo y depuración.
 
-Open the URL provided (usually `http://localhost:8000` or
-`http://127.0.0.1:8000`) **directly in your browser**. This connection stays
-entirely on your local machine. Select `google_search_agent`.
+Abre la URL proporcionada (usualmente `http://localhost:8000` o
+`http://127.0.0.1:8000`) **directamente en tu navegador**. Esta conexión se mantiene
+completamente en tu máquina local. Selecciona `google_search_agent`.
 
-### Try with voice and video
+### Prueba con voz y video
 
-To try with voice, reload the web browser, click the microphone button to enable the voice input, and ask the the following questions in voice. The agent will use the google_search tool to get the latest information to answer those questions. You will hear the answer in voice in real-time.
+Para probar con voz, recarga el navegador web, haz clic en el botón del micrófono para habilitar la entrada de voz, y haz las siguientes preguntas por voz. El agente usará la herramienta google_search para obtener la información más reciente para responder esas preguntas. Escucharás la respuesta por voz en tiempo real.
 
 * What is the weather in New York?
 * What is the time in New York?
 * What is the weather in Paris?
 * What is the time in Paris?
 
-To try with video, reload the web browser, click the camera button to enable the video input, and ask questions like "What do you see?". The agent will answer what they see in the video input.
+Para probar con video, recarga el navegador web, haz clic en el botón de la cámara para habilitar la entrada de video, y haz preguntas como "What do you see?". El agente responderá qué ve en la entrada de video.
 
-#### Caveat
+#### Advertencia
 
-- You can not use text chat with the native-audio models. You will see errors when entering text messages on `adk web`.
+- No puedes usar chat de texto con los modelos de audio nativo. Verás errores al ingresar mensajes de texto en `adk web`.
 
-### Stop the tool
+### Detener la herramienta
 
-Stop `adk web` by pressing `Ctrl-C` on the console.
+Detén `adk web` presionando `Ctrl-C` en la consola.
 
-### Note on ADK Streaming
+### Nota sobre ADK Streaming
 
-The following features will be supported in the future versions of the ADK Streaming: Callback, LongRunningTool, ExampleTool, and Shell agent (e.g. SequentialAgent).
+Las siguientes características serán compatibles en futuras versiones de ADK Streaming: Callback, LongRunningTool, ExampleTool, y agente Shell (ej. SequentialAgent).
 
-Congratulations\! You've successfully created and interacted with your first Streaming agent using ADK\!
+¡Felicitaciones\! ¡Has creado e interactuado exitosamente con tu primer agente de Streaming usando ADK\!
 
-## Next steps: build custom streaming app
+## Próximos pasos: construir una aplicación de streaming personalizada
 
-The [Bidi-streaming development guide series](../../streaming/dev-guide/part1.md) gives an overview of the server and client code for a custom asynchronous web app built with ADK Streaming, enabling real-time, bidirectional audio and text communication.
+La [serie de guías de desarrollo de streaming bidireccional](../../streaming/dev-guide/part1.md) proporciona una visión general del código del servidor y del cliente para una aplicación web asíncrona personalizada construida con ADK Streaming, habilitando comunicación de audio y texto bidireccional en tiempo real.

@@ -1,22 +1,22 @@
-# Go Quickstart for ADK
+# Inicio Rápido de Go para ADK
 
-This guide shows you how to get up and running with Agent Development Kit
-for Go. Before you start, make sure you have the following installed:
+Esta guía te muestra cómo empezar a trabajar con el Kit de Desarrollo de Agentes
+para Go. Antes de comenzar, asegúrate de tener lo siguiente instalado:
 
-*   Go 1.24.4 or later
-*   ADK Go v0.2.0 or later
+*   Go 1.24.4 o posterior
+*   ADK Go v0.2.0 o posterior
 
-## Create an agent project
+## Crear un proyecto de agente
 
-Create an agent project with the following files and directory structure:
+Crea un proyecto de agente con los siguientes archivos y estructura de directorios:
 
 ```none
 my_agent/
-    agent.go    # main agent code
-    .env        # API keys or project IDs
+    agent.go    # código principal del agente
+    .env        # claves API o IDs de proyecto
 ```
 
-??? tip "Create this project structure using the command line"
+??? tip "Crea esta estructura de proyecto usando la línea de comandos"
 
     === "Windows"
 
@@ -34,11 +34,11 @@ my_agent/
             touch my_agent/.env
         ```
 
-### Define the agent code
+### Definir el código del agente
 
-Create the code for a basic agent that uses the built-in
-[Google Search tool](/adk-docs/tools/built-in-tools/#google-search). Add the
-following code to the `my_agent/agent.go` file in your project directory:
+Crea el código para un agente básico que utiliza la
+[herramienta de Búsqueda de Google](/adk-docs/tools/built-in-tools/#google-search) integrada. Agrega el
+siguiente código al archivo `my_agent/agent.go` en el directorio de tu proyecto:
 
 ```go title="my_agent/agent.go"
 package main
@@ -65,20 +65,20 @@ func main() {
 		APIKey: os.Getenv("GOOGLE_API_KEY"),
 	})
 	if err != nil {
-		log.Fatalf("Failed to create model: %v", err)
+		log.Fatalf("Failed to create model: %v", err) // Error al crear el modelo
 	}
 
 	timeAgent, err := llmagent.New(llmagent.Config{
 		Name:        "hello_time_agent",
 		Model:       model,
-		Description: "Tells the current time in a specified city.",
-		Instruction: "You are a helpful assistant that tells the current time in a city.",
+		Description: "Tells the current time in a specified city.", // Indica la hora actual en una ciudad especificada
+		Instruction: "You are a helpful assistant that tells the current time in a city.", // Eres un asistente útil que indica la hora actual en una ciudad
 		Tools: []tool.Tool{
 			geminitool.GoogleSearch{},
 		},
 	})
 	if err != nil {
-		log.Fatalf("Failed to create agent: %v", err)
+		log.Fatalf("Failed to create agent: %v", err) // Error al crear el agente
 	}
 
 	config := &launcher.Config{
@@ -87,89 +87,89 @@ func main() {
 
 	l := full.NewLauncher()
 	if err = l.Execute(ctx, config, os.Args[1:]); err != nil {
-		log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
+		log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax()) // Ejecución fallida
 	}
 }
 ```
 
-### Configure project and dependencies
+### Configurar el proyecto y las dependencias
 
-Use the `go mod` command to initialize the project modules and install the
-required packages based on the `import` statement in your agent code file:
+Usa el comando `go mod` para inicializar los módulos del proyecto e instalar los
+paquetes requeridos basándose en la declaración `import` en tu archivo de código del agente:
 
 ```console
 go mod init my-agent/main
 go mod tidy
 ```
 
-### Set your API key
+### Configurar tu clave API
 
-This project uses the Gemini API, which requires an API key. If you
-don't already have Gemini API key, create a key in Google AI Studio on the
-[API Keys](https://aistudio.google.com/app/apikey) page.
+Este proyecto utiliza la API de Gemini, que requiere una clave API. Si no
+tienes ya una clave API de Gemini, crea una clave en Google AI Studio en la
+página de [Claves API](https://aistudio.google.com/app/apikey).
 
-In a terminal window, write your API key into the `.env` or `env.bat` file of
-your project to set environment variables:
+En una ventana de terminal, escribe tu clave API en el archivo `.env` o `env.bat` de
+tu proyecto para establecer las variables de entorno:
 
 === "MacOS / Linux"
 
-    ```bash title="Update: my_agent/.env"
+    ```bash title="Actualizar: my_agent/.env"
     echo 'export GOOGLE_API_KEY="YOUR_API_KEY"' > .env
     ```
 
 === "Windows"
 
-    ```console title="Update: my_agent/env.bat"
+    ```console title="Actualizar: my_agent/env.bat"
     echo 'set GOOGLE_API_KEY="YOUR_API_KEY"' > env.bat
     ```
 
-??? tip "Using other AI models with ADK"
-    ADK supports the use of many generative AI models. For more
-    information on configuring other models in ADK agents, see
-    [Models & Authentication](/adk-docs/agents/models).
+??? tip "Usar otros modelos de IA con ADK"
+    ADK soporta el uso de muchos modelos de IA generativa. Para más
+    información sobre cómo configurar otros modelos en agentes ADK, consulta
+    [Modelos y Autenticación](/adk-docs/agents/models).
 
 
-## Run your agent
+## Ejecutar tu agente
 
-You can run your ADK agent using the interactive command-line interface
-you defined or the ADK web user interface provided by
-the ADK Go command line tool. Both these options allow you to test and
-interact with your agent.
+Puedes ejecutar tu agente ADK usando la interfaz de línea de comandos interactiva
+que definiste o la interfaz de usuario web de ADK proporcionada por
+la herramienta de línea de comandos de ADK Go. Ambas opciones te permiten probar e
+interactuar con tu agente.
 
-### Run with command-line interface
+### Ejecutar con interfaz de línea de comandos
 
-Run your agent using the following Go command:
+Ejecuta tu agente usando el siguiente comando de Go:
 
-```console title="Run from: my_agent/ directory"
-# Remember to load keys and settings: source .env OR env.bat
+```console title="Ejecutar desde: directorio my_agent/"
+# Recuerda cargar las claves y configuraciones: source .env O env.bat
 go run agent.go
 ```
 
 ![adk-run.png](/adk-docs/assets/adk-run.png)
 
-### Run with web interface
+### Ejecutar con interfaz web
 
-Run your agent with the ADK web interface using the following Go command:
+Ejecuta tu agente con la interfaz web de ADK usando el siguiente comando de Go:
 
-```console title="Run from: my_agent/ directory"
-# Remember to load keys and settings: source .env OR env.bat
+```console title="Ejecutar desde: directorio my_agent/"
+# Recuerda cargar las claves y configuraciones: source .env O env.bat
 go run agent.go web api webui
 ```
 
-This command starts a web server with a chat interface for your agent. You can
-access the web interface at (http://localhost:8080). Select your agent at the
-upper left corner and type a request.
+Este comando inicia un servidor web con una interfaz de chat para tu agente. Puedes
+acceder a la interfaz web en (http://localhost:8080). Selecciona tu agente en la
+esquina superior izquierda y escribe una solicitud.
 
 ![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
 
-!!! warning "Caution: ADK Web for development only"
+!!! warning "Precaución: ADK Web solo para desarrollo"
 
-    ADK Web is ***not meant for use in production deployments***. You should
-    use ADK Web for development and debugging purposes only.
+    ADK Web ***no está diseñado para uso en implementaciones de producción***. Deberías
+    usar ADK Web solo para propósitos de desarrollo y depuración.
 
-## Next: Build your agent
+## Siguiente: Construir tu agente
 
-Now that you have ADK installed and your first agent running, try building
-your own agent with our build guides:
+Ahora que tienes ADK instalado y tu primer agente ejecutándose, intenta construir
+tu propio agente con nuestras guías de construcción:
 
-*  [Build your agent](/adk-docs/tutorials/)
+*  [Construir tu agente](/adk-docs/tutorials/)

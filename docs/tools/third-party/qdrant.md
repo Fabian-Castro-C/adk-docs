@@ -10,29 +10,29 @@ catalog_icon: /adk-docs/assets/tools-qdrant.png
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [Qdrant MCP Server](https://github.com/qdrant/mcp-server-qdrant) connects
-your ADK agent to [Qdrant](https://qdrant.tech/), an open-source vector search engine. This integration gives your agent the ability to store and
-retrieve information using semantic search.
+El [Servidor MCP de Qdrant](https://github.com/qdrant/mcp-server-qdrant) conecta
+tu agente ADK a [Qdrant](https://qdrant.tech/), un motor de búsqueda vectorial de código abierto. Esta integración le brinda a tu agente la capacidad de almacenar y
+recuperar información usando búsqueda semántica.
 
-## Use cases
+## Casos de uso
 
-- **Semantic Memory for Agents**: Store conversation context, facts, or learned
-  information that agents can retrieve later using natural language queries.
+- **Memoria Semántica para Agentes**: Almacena contexto de conversaciones, hechos o información
+  aprendida que los agentes pueden recuperar más tarde usando consultas en lenguaje natural.
 
-- **Code Repository Search**: Build a searchable index of code snippets,
-  documentation, and implementation patterns that can be queried semantically.
+- **Búsqueda en Repositorios de Código**: Construye un índice buscable de fragmentos de código,
+  documentación y patrones de implementación que se pueden consultar semánticamente.
 
-- **Knowledge Base Retrieval**: Create a retrieval-augmented generation (RAG)
-  system by storing documents and retrieving relevant context for responses.
+- **Recuperación de Base de Conocimientos**: Crea un sistema de generación aumentada por recuperación (RAG)
+  almacenando documentos y recuperando contexto relevante para las respuestas.
 
-## Prerequisites
+## Requisitos previos
 
-- A running Qdrant instance. You can:
-    - Use [Qdrant Cloud](https://cloud.qdrant.io/) (managed service)
-    - Run locally with Docker: `docker run -p 6333:6333 qdrant/qdrant`
-- (Optional) A Qdrant API key for authentication
+- Una instancia de Qdrant en ejecución. Puedes:
+    - Usar [Qdrant Cloud](https://cloud.qdrant.io/) (servicio administrado)
+    - Ejecutar localmente con Docker: `docker run -p 6333:6333 qdrant/qdrant`
+- (Opcional) Una clave API de Qdrant para autenticación
 
-## Use with agent
+## Uso con el agente
 
 === "Python"
 
@@ -44,7 +44,7 @@ retrieve information using semantic search.
         from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
         from mcp import StdioServerParameters
 
-        QDRANT_URL = "http://localhost:6333"  # Or your Qdrant Cloud URL
+        QDRANT_URL = "http://localhost:6333"  # O tu URL de Qdrant Cloud
         COLLECTION_NAME = "my_collection"
         # QDRANT_API_KEY = "YOUR_QDRANT_API_KEY"
 
@@ -78,7 +78,7 @@ retrieve information using semantic search.
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
 
-        const QDRANT_URL = "http://localhost:6333"; // Or your Qdrant Cloud URL
+        const QDRANT_URL = "http://localhost:6333"; // O tu URL de Qdrant Cloud
         const COLLECTION_NAME = "my_collection";
         // const QDRANT_API_KEY = "YOUR_QDRANT_API_KEY";
 
@@ -105,31 +105,31 @@ retrieve information using semantic search.
         export { rootAgent };
         ```
 
-## Available tools
+## Herramientas disponibles
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`qdrant-store` | Store information in Qdrant with optional metadata
-`qdrant-find` | Search for relevant information using natural language queries
+`qdrant-store` | Almacena información en Qdrant con metadatos opcionales
+`qdrant-find` | Busca información relevante usando consultas en lenguaje natural
 
-## Configuration
+## Configuración
 
-The Qdrant MCP server can be configured using environment variables:
+El servidor MCP de Qdrant se puede configurar usando variables de entorno:
 
-Variable | Description | Default
+Variable | Descripción | Por defecto
 -------- | ----------- | -------
-`QDRANT_URL` | URL of the Qdrant server | `None` (required)
-`QDRANT_API_KEY` | API key for Qdrant Cloud authentication | `None`
-`COLLECTION_NAME` | Name of the collection to use | `None`
-`QDRANT_LOCAL_PATH` | Path for local persistent storage (alternative to URL) | `None`
-`EMBEDDING_MODEL` | Embedding model to use | `sentence-transformers/all-MiniLM-L6-v2`
-`EMBEDDING_PROVIDER` | Provider for embeddings (`fastembed` or `ollama`) | `fastembed`
-`TOOL_STORE_DESCRIPTION` | Custom description for the store tool | Default description
-`TOOL_FIND_DESCRIPTION` | Custom description for the find tool | Default description
+`QDRANT_URL` | URL del servidor de Qdrant | `None` (requerido)
+`QDRANT_API_KEY` | Clave API para autenticación en Qdrant Cloud | `None`
+`COLLECTION_NAME` | Nombre de la colección a usar | `None`
+`QDRANT_LOCAL_PATH` | Ruta para almacenamiento persistente local (alternativa a URL) | `None`
+`EMBEDDING_MODEL` | Modelo de embedding a usar | `sentence-transformers/all-MiniLM-L6-v2`
+`EMBEDDING_PROVIDER` | Proveedor para embeddings (`fastembed` o `ollama`) | `fastembed`
+`TOOL_STORE_DESCRIPTION` | Descripción personalizada para la herramienta store | Descripción por defecto
+`TOOL_FIND_DESCRIPTION` | Descripción personalizada para la herramienta find | Descripción por defecto
 
-### Custom tool descriptions
+### Descripciones de herramientas personalizadas
 
-You can customize the tool descriptions to guide the agent's behavior:
+Puedes personalizar las descripciones de las herramientas para guiar el comportamiento del agente:
 
 ```python
 env={
@@ -140,8 +140,8 @@ env={
 }
 ```
 
-## Additional resources
+## Recursos adicionales
 
-- [Qdrant MCP Server Repository](https://github.com/qdrant/mcp-server-qdrant)
-- [Qdrant Documentation](https://qdrant.tech/documentation/)
+- [Repositorio del Servidor MCP de Qdrant](https://github.com/qdrant/mcp-server-qdrant)
+- [Documentación de Qdrant](https://qdrant.tech/documentation/)
 - [Qdrant Cloud](https://cloud.qdrant.io/)

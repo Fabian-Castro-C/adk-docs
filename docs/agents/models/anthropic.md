@@ -1,21 +1,21 @@
-# Claude models for ADK agents
+# Modelos Claude para agentes ADK
 
 <div class="language-support-tag" title="Available for Java. Python support for direct Anthropic API (non-Vertex) is via LiteLLM.">
    <span class="lst-supported">Supported in ADK</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-You can integrate Anthropic's Claude models directly using an Anthropic API key
-or from a Vertex AI backend into your Java ADK applications by using the ADK's
-`Claude` wrapper class. You can also access Anthropic models through
-Google Cloud Vertex AI services. For more information, see the
-[Third-Party Models on Vertex AI](/adk-docs/agents/models/vertex/#third-party-models-on-vertex-ai-eg-anthropic-claude)
-section. You can also use Anthropic models through the
-[LiteLLM](/adk-docs/agents/models/litellm/) library for Python.
+Puedes integrar los modelos Claude de Anthropic directamente usando una clave API de Anthropic
+o desde un backend de Vertex AI en tus aplicaciones Java ADK utilizando la
+clase contenedora `Claude` del ADK. También puedes acceder a los modelos de Anthropic a través
+de los servicios de Google Cloud Vertex AI. Para más información, consulta la
+sección [Third-Party Models on Vertex AI](/adk-docs/agents/models/vertex/#third-party-models-on-vertex-ai-eg-anthropic-claude).
+También puedes usar modelos de Anthropic a través de la
+biblioteca [LiteLLM](/adk-docs/agents/models/litellm/) para Python.
 
-## Get started
+## Comenzar
 
-The following code examples show a basic implementation for using Gemini models
-in your agents:
+Los siguientes ejemplos de código muestran una implementación básica para usar modelos Gemini
+en tus agentes:
 
 ```java
 public static LlmAgent createAgent() {
@@ -36,36 +36,36 @@ public static LlmAgent createAgent() {
 }
 ```
 
-## Prerequisites
+## Requisitos previos
 
-1.  **Dependencies:**
-    *   **Anthropic SDK Classes (Transitive):** The Java ADK's `com.google.adk.models.Claude`
-    wrapper relies on classes from Anthropic's official Java SDK. These are typically included
-    as *transitive dependencies*. For more information, see the
+1.  **Dependencias:**
+    *   **Clases del SDK de Anthropic (Transitivas):** La clase contenedora `com.google.adk.models.Claude`
+    del Java ADK depende de clases del SDK oficial de Java de Anthropic. Estas se incluyen típicamente
+    como *dependencias transitivas*. Para más información, consulta el
     [Anthropic Java SDK](https://github.com/anthropics/anthropic-sdk-java).
 
-2.  **Anthropic API Key:**
-    *   Obtain an API key from Anthropic. Securely manage this key using a secret manager.
+2.  **Clave API de Anthropic:**
+    *   Obtén una clave API de Anthropic. Gestiona esta clave de forma segura usando un administrador de secretos.
 
-## Example implementation
+## Ejemplo de implementación
 
-Instantiate `com.google.adk.models.Claude`, providing the desired Claude model name and
-an `AnthropicOkHttpClient` configured with your API key. Then, pass the `Claude` instance
-to your `LlmAgent`, as shown in the following example:
+Instancia `com.google.adk.models.Claude`, proporcionando el nombre del modelo Claude deseado y
+un `AnthropicOkHttpClient` configurado con tu clave API. Luego, pasa la instancia `Claude`
+a tu `LlmAgent`, como se muestra en el siguiente ejemplo:
 
 ```java
 import com.anthropic.client.AnthropicClient;
 import com.google.adk.agents.LlmAgent;
 import com.google.adk.models.Claude;
-import com.anthropic.client.okhttp.AnthropicOkHttpClient; // From Anthropic's SDK
+import com.anthropic.client.okhttp.AnthropicOkHttpClient; // Del SDK de Anthropic
 
 public class DirectAnthropicAgent {
 
-  private static final String CLAUDE_MODEL_ID = "claude-3-7-sonnet-latest"; // Or your preferred Claude model
+  private static final String CLAUDE_MODEL_ID = "claude-3-7-sonnet-latest"; // O tu modelo Claude preferido
 
   public static LlmAgent createAgent() {
 
-    // It's recommended to load sensitive keys from a secure config
+    // Se recomienda cargar claves sensibles desde una configuración segura
     AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
         .apiKey("ANTHROPIC_API_KEY")
         .build();
@@ -79,7 +79,7 @@ public class DirectAnthropicAgent {
         .name("claude_direct_agent")
         .model(claudeModel)
         .instruction("You are a helpful AI assistant powered by Anthropic Claude.")
-        // ... other LlmAgent configurations
+        // ... otras configuraciones de LlmAgent
         .build();
   }
 

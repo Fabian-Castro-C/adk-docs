@@ -1,18 +1,18 @@
-# Use the API Server
+# Usar el Servidor API
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-Before you deploy your agent, you should test it to ensure that it is working as
-intended. Use the API server in ADK to expose your agents through a REST API for
-programmatic testing and integration.
+Antes de desplegar tu agente, debes probarlo para asegurarte de que funciona según
+lo previsto. Usa el servidor API en ADK para exponer tus agentes a través de una API REST para
+pruebas programáticas e integración.
 
 ![ADK API Server](../assets/adk-api-server.png)
 
-## Start the API server
+## Iniciar el servidor API
 
-Use the following command to run your agent in an ADK API server:
+Usa el siguiente comando para ejecutar tu agente en un servidor API de ADK:
 
 === "Python"
 
@@ -34,23 +34,23 @@ Use the following command to run your agent in an ADK API server:
 
 === "Java"
 
-    Make sure to update the port number.
+    Asegúrate de actualizar el número de puerto.
     === "Maven"
-        With Maven, compile and run the ADK web server:
+        Con Maven, compila y ejecuta el servidor web de ADK:
         ```console
         mvn compile exec:java \
          -Dexec.args="--adk.agents.source-dir=src/main/java/agents --server.port=8080"
         ```
     === "Gradle"
-        With Gradle, the `build.gradle` or `build.gradle.kts` build file should have the following Java plugin in its plugins section:
+        Con Gradle, el archivo de construcción `build.gradle` o `build.gradle.kts` debe tener el siguiente plugin de Java en su sección de plugins:
 
         ```groovy
         plugins {
             id('java')
-            // other plugins
+            // otros plugins
         }
         ```
-        Then, elsewhere in the build file, at the top-level, create a new task:
+        Luego, en otra parte del archivo de construcción, en el nivel superior, crea una nueva tarea:
 
         ```groovy
         tasks.register('runADKWebServer', JavaExec) {
@@ -61,41 +61,41 @@ Use the following command to run your agent in an ADK API server:
         }
         ```
 
-        Finally, on the command-line, run the following command:
+        Finalmente, en la línea de comandos, ejecuta el siguiente comando:
         ```console
         gradle runADKWebServer
         ```
 
 
-    In Java, both the Dev UI and the API server are bundled together.
+    En Java, tanto la Dev UI como el servidor API están empaquetados juntos.
 
-This command will launch a local web server, where you can run cURL commands or
-send API requests to test your agent. By default, the server runs on
+Este comando lanzará un servidor web local, donde puedes ejecutar comandos cURL o
+enviar peticiones API para probar tu agente. Por defecto, el servidor se ejecuta en
 `http://localhost:8000`.
 
-!!! tip "Advanced Usage and Debugging"
+!!! tip "Uso Avanzado y Depuración"
 
-    For a complete reference on all available endpoints, request/response formats, and tips for debugging (including how to use the interactive API documentation), see the **ADK API Server Guide** below.
+    Para una referencia completa de todos los endpoints disponibles, formatos de petición/respuesta, y consejos para depuración (incluyendo cómo usar la documentación interactiva de la API), consulta la **Guía del Servidor API de ADK** a continuación.
 
-## Test locally
+## Probar localmente
 
-Testing locally involves launching a local web server, creating a session, and
-sending queries to your agent. First, ensure you are in the correct working
-directory.
+Probar localmente implica lanzar un servidor web local, crear una sesión y
+enviar consultas a tu agente. Primero, asegúrate de estar en el directorio de trabajo
+correcto.
 
-For TypeScript, you should be inside the agent project directory itself.
+Para TypeScript, debes estar dentro del directorio del proyecto del agente.
 
 ```console
 parent_folder/
-└── my_sample_agent/  <-- For TypeScript, run commands from here
-    └── agent.py (or Agent.java or agent.ts)
+└── my_sample_agent/  <-- Para TypeScript, ejecuta comandos desde aquí
+    └── agent.py (o Agent.java o agent.ts)
 ```
 
-**Launch the Local Server**
+**Lanzar el Servidor Local**
 
-Next, launch the local server using the commands listed above.
+A continuación, lanza el servidor local usando los comandos listados anteriormente.
 
-The output should appear similar to:
+La salida debería aparecer similar a:
 
 === "Python"
 
@@ -124,12 +124,12 @@ The output should appear similar to:
     2025-05-13T23:32:08.981-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : AdkWebServer application started successfully.
     ```
 
-Your server is now running locally. Ensure you use the correct **_port number_** in all the subsequent commands.
+Tu servidor ahora se está ejecutando localmente. Asegúrate de usar el **_número de puerto_** correcto en todos los comandos subsiguientes.
 
-**Create a new session**
+**Crear una nueva sesión**
 
-With the API server still running, open a new terminal window or tab and create
-a new session with the agent using:
+Con el servidor API aún en ejecución, abre una nueva ventana o pestaña de terminal y crea
+una nueva sesión con el agente usando:
 
 ```shell
 curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123 \
@@ -137,20 +137,20 @@ curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_1
   -d '{"key1": "value1", "key2": 42}'
 ```
 
-Let's break down what's happening:
+Analicemos qué está sucediendo:
 
-* `http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123`: This
-  creates a new session for your agent `my_sample_agent`, which is the name of
-  the agent folder, for a user ID (`u_123`) and for a session ID (`s_123`). You
-  can replace `my_sample_agent` with the name of your agent folder. You can
-  replace `u_123` with a specific user ID, and `s_123` with a specific session
-  ID.
-* `{"key1": "value1", "key2": 42}`: This is optional. You can use
-  this to customize the agent's pre-existing state (dict) when creating the
-  session.
+* `http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123`: Esto
+  crea una nueva sesión para tu agente `my_sample_agent`, que es el nombre de
+  la carpeta del agente, para un ID de usuario (`u_123`) y para un ID de sesión (`s_123`). Puedes
+  reemplazar `my_sample_agent` con el nombre de la carpeta de tu agente. Puedes
+  reemplazar `u_123` con un ID de usuario específico, y `s_123` con un ID de sesión
+  específico.
+* `{"key1": "value1", "key2": 42}`: Esto es opcional. Puedes usar
+  esto para personalizar el estado (dict) preexistente del agente al crear la
+  sesión.
 
-This should return the session information if it was created successfully. The
-output should appear similar to:
+Esto debería devolver la información de la sesión si se creó exitosamente. La
+salida debería aparecer similar a:
 
 ```json
 {"id":"s_123","appName":"my_sample_agent","userId":"u_123","state":{"key1":"value1","key2":42},"events":[],"lastUpdateTime":1743711430.022186}
@@ -158,25 +158,25 @@ output should appear similar to:
 
 !!! info
 
-    You cannot create multiple sessions with exactly the same user ID and
-    session ID. If you try to, you may see a response, like:
-    `{"detail":"Session already exists: s_123"}`. To fix this, you can either
-    delete that session (e.g., `s_123`), or choose a different session ID.
+    No puedes crear múltiples sesiones con exactamente el mismo ID de usuario e
+    ID de sesión. Si lo intentas, puedes ver una respuesta como:
+    `{"detail":"Session already exists: s_123"}`. Para solucionar esto, puedes
+    eliminar esa sesión (ej., `s_123`), o elegir un ID de sesión diferente.
 
-**Send a query**
+**Enviar una consulta**
 
-There are two ways to send queries via POST to your agent, via the `/run` or
-`/run_sse` routes.
+Hay dos formas de enviar consultas vía POST a tu agente, a través de las rutas `/run` o
+`/run_sse`.
 
-* `POST http://localhost:8000/run`: collects all events as a list and returns the
-  list all at once. Suitable for most users (if you are unsure, we recommend
-  using this one).
-* `POST http://localhost:8000/run_sse`: returns as Server-Sent-Events, which is a
-  stream of event objects. Suitable for those who want to be notified as soon as
-  the event is available. With `/run_sse`, you can also set `streaming` to
-  `true` to enable token-level streaming.
+* `POST http://localhost:8000/run`: recopila todos los eventos como una lista y devuelve la
+  lista de una vez. Adecuado para la mayoría de los usuarios (si no estás seguro, recomendamos
+  usar este).
+* `POST http://localhost:8000/run_sse`: devuelve como Server-Sent-Events, que es un
+  flujo de objetos de eventos. Adecuado para aquellos que quieren ser notificados tan pronto como
+  el evento esté disponible. Con `/run_sse`, también puedes establecer `streaming` en
+  `true` para habilitar streaming a nivel de token.
 
-**Using `/run`**
+**Usando `/run`**
 
 ```shell
 curl -X POST http://localhost:8000/run \
@@ -194,16 +194,16 @@ curl -X POST http://localhost:8000/run \
 }'
 ```
 
-In TypeScript, currently only `camelCase` field names are supported (e.g. `appName`, `userId`, `sessionId`, etc.).
+En TypeScript, actualmente solo se admiten nombres de campo en `camelCase` (ej. `appName`, `userId`, `sessionId`, etc.).
 
-If using `/run`, you will see the full output of events at the same time, as a
-list, which should appear similar to:
+Si usas `/run`, verás la salida completa de eventos al mismo tiempo, como una
+lista, que debería aparecer similar a:
 
 ```json
 [{"content":{"parts":[{"functionCall":{"id":"af-e75e946d-c02a-4aad-931e-49e4ab859838","args":{"city":"new york"},"name":"get_weather"}}],"role":"model"},"invocationId":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"longRunningToolIds":[],"id":"2Btee6zW","timestamp":1743712220.385936},{"content":{"parts":[{"functionResponse":{"id":"af-e75e946d-c02a-4aad-931e-49e4ab859838","name":"get_weather","response":{"status":"success","report":"The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit)."}}}],"role":"user"},"invocationId":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"PmWibL2m","timestamp":1743712221.895042},{"content":{"parts":[{"text":"OK. The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).\n"}],"role":"model"},"invocationId":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"sYT42eVC","timestamp":1743712221.899018}]
 ```
 
-**Using `/run_sse`**
+**Usando `/run_sse`**
 
 ```shell
 curl -X POST http://localhost:8000/run_sse \
@@ -222,9 +222,9 @@ curl -X POST http://localhost:8000/run_sse \
 }'
 ```
 
-You can set `streaming` to `true` to enable token-level streaming, which means
-the response will be returned to you in multiple chunks and the output should
-appear similar to:
+Puedes establecer `streaming` en `true` para habilitar streaming a nivel de token, lo que significa
+que la respuesta será devuelta en múltiples fragmentos y la salida debería
+aparecer similar a:
 
 
 ```shell
@@ -234,7 +234,7 @@ data: {"content":{"parts":[{"functionResponse":{"id":"af-f83f8af9-f732-46b6-8cb5
 
 data: {"content":{"parts":[{"text":"OK. The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).\n"}],"role":"model"},"invocationId":"e-3f6d7765-5287-419e-9991-5fffa1a75565","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"rAnWGSiV","timestamp":1743712257.391317}
 ```
-**Send a query with a base64 encoded file using `/run` or `/run_sse`**
+**Enviar una consulta con un archivo codificado en base64 usando `/run` o `/run_sse`**
 
 ```shell
 curl -X POST http://localhost:8000/run \
@@ -264,79 +264,78 @@ curl -X POST http://localhost:8000/run \
 
 !!! info
 
-    If you are using `/run_sse`, you should see each event as soon as it becomes
-    available.
+    Si estás usando `/run_sse`, deberías ver cada evento tan pronto como esté
+    disponible.
 
-## Integrations
+## Integraciones
 
-ADK uses [Callbacks](../callbacks/index.md) to integrate with third-party
-observability tools. These integrations capture detailed traces of agent calls
-and interactions, which are crucial for understanding behavior, debugging
-issues, and evaluating performance.
+ADK usa [Callbacks](../callbacks/index.md) para integrarse con herramientas de
+observabilidad de terceros. Estas integraciones capturan trazas detalladas de llamadas de agentes
+e interacciones, que son cruciales para comprender el comportamiento, depurar
+problemas y evaluar el rendimiento.
 
-* [Comet Opik](https://github.com/comet-ml/opik) is an open-source LLM
-  observability and evaluation platform that
-  [natively supports ADK](https://www.comet.com/docs/opik/tracing/integrations/adk).
+* [Comet Opik](https://github.com/comet-ml/opik) es una plataforma de observabilidad y evaluación de LLM de código abierto que
+  [admite nativamente ADK](https://www.comet.com/docs/opik/tracing/integrations/adk).
 
-## Deploy your agent
+## Desplegar tu agente
 
-Now that you've verified the local operation of your agent, you're ready to move
-on to deploying your agent! Here are some ways you can deploy your agent:
+Ahora que has verificado la operación local de tu agente, estás listo para
+desplegar tu agente. Aquí hay algunas formas en que puedes desplegar tu agente:
 
-* Deploy to [Agent Engine](../deploy/agent-engine/index.md), a simple way to deploy
-  your ADK agents to a managed service in Vertex AI on Google Cloud.
-* Deploy to [Cloud Run](../deploy/cloud-run.md) and have full control over how
-  you scale and manage your agents using serverless architecture on Google
+* Desplegar en [Agent Engine](../deploy/agent-engine/index.md), una forma simple de desplegar
+  tus agentes de ADK a un servicio administrado en Vertex AI en Google Cloud.
+* Desplegar en [Cloud Run](../deploy/cloud-run.md) y tener control total sobre cómo
+  escalas y administras tus agentes usando arquitectura serverless en Google
   Cloud.
 
-## Interactive API docs
+## Documentación interactiva de la API
 
-The API server automatically generates interactive API documentation using Swagger UI. This is an invaluable tool for exploring endpoints, understanding request formats, and testing your agent directly from your browser.
+El servidor API genera automáticamente documentación interactiva de la API usando Swagger UI. Esta es una herramienta invaluable para explorar endpoints, comprender formatos de petición y probar tu agente directamente desde tu navegador.
 
-To access the interactive docs, start the API server and navigate to [http://localhost:8000/docs](http://localhost:8000/docs) in your web browser.
+Para acceder a la documentación interactiva, inicia el servidor API y navega a [http://localhost:8000/docs](http://localhost:8000/docs) en tu navegador web.
 
-You will see a complete, interactive list of all available API endpoints, which you can expand to see detailed information about parameters, request bodies, and response schemas. You can even click "Try it out" to send live requests to your running agents.
+Verás una lista completa e interactiva de todos los endpoints de API disponibles, que puedes expandir para ver información detallada sobre parámetros, cuerpos de petición y esquemas de respuesta. Incluso puedes hacer clic en "Try it out" para enviar peticiones en vivo a tus agentes en ejecución.
 
-## API endpoints
+## Endpoints de la API
 
-The following sections detail the primary endpoints for interacting with your agents.
+Las siguientes secciones detallan los endpoints principales para interactuar con tus agentes.
 
-!!! note "JSON Naming Convention"
-    - **Both Request and Response bodies** will use `camelCase` for field names (e.g., `"appName"`).
+!!! note "Convención de Nomenclatura JSON"
+    - **Tanto los cuerpos de Petición como de Respuesta** usarán `camelCase` para nombres de campo (ej., `"appName"`).
 
-### Utility endpoints
+### Endpoints de utilidad
 
-#### List available agents
+#### Listar agentes disponibles
 
-Returns a list of all agent applications discovered by the server.
+Devuelve una lista de todas las aplicaciones de agentes descubiertas por el servidor.
 
-*   **Method:** `GET`
-*   **Path:** `/list-apps`
+*   **Método:** `GET`
+*   **Ruta:** `/list-apps`
 
-**Example Request**
+**Ejemplo de Petición**
 ```shell
 curl -X GET http://localhost:8000/list-apps
 ```
 
-**Example Response**
+**Ejemplo de Respuesta**
 ```json
 ["my_sample_agent", "another_agent"]
 ```
 
 ---
 
-### Session management
+### Gestión de sesiones
 
-Sessions store the state and event history for a specific user's interaction with an agent.
+Las sesiones almacenan el estado y el historial de eventos para la interacción de un usuario específico con un agente.
 
-#### Update a session
+#### Actualizar una sesión
 
-Updates an existing session.
+Actualiza una sesión existente.
 
-*   **Method:** `PATCH`
-*   **Path:** `/apps/{app_name}/users/{user_id}/sessions/{session_id}`
+*   **Método:** `PATCH`
+*   **Ruta:** `/apps/{app_name}/users/{user_id}/sessions/{session_id}`
 
-**Request Body**
+**Cuerpo de la Petición**
 ```json
 {
   "stateDelta": {
@@ -346,64 +345,64 @@ Updates an existing session.
 }
 ```
 
-**Example Request**
+**Ejemplo de Petición**
 ```shell
 curl -X PATCH http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_abc \
   -H "Content-Type: application/json" \
   -d '{"stateDelta":{"visit_count": 5}}'
 ```
 
-**Example Response**
+**Ejemplo de Respuesta**
 ```json
 {"id":"s_abc","appName":"my_sample_agent","userId":"u_123","state":{"visit_count":5},"events":[],"lastUpdateTime":1743711430.022186}
 ```
 
-#### Get a session
+#### Obtener una sesión
 
-Retrieves the details of a specific session, including its current state and all associated events.
+Recupera los detalles de una sesión específica, incluyendo su estado actual y todos los eventos asociados.
 
-*   **Method:** `GET`
-*   **Path:** `/apps/{app_name}/users/{user_id}/sessions/{session_id}`
+*   **Método:** `GET`
+*   **Ruta:** `/apps/{app_name}/users/{user_id}/sessions/{session_id}`
 
-**Example Request**
+**Ejemplo de Petición**
 ```shell
 curl -X GET http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_abc
 ```
 
-**Example Response**
+**Ejemplo de Respuesta**
 ```json
 {"id":"s_abc","appName":"my_sample_agent","userId":"u_123","state":{"visit_count":5},"events":[...],"lastUpdateTime":1743711430.022186}
 ```
 
-#### Delete a session
+#### Eliminar una sesión
 
-Deletes a session and all of its associated data.
+Elimina una sesión y todos sus datos asociados.
 
-*   **Method:** `DELETE`
-*   **Path:** `/apps/{app_name}/users/{user_id}/sessions/{session_id}`
+*   **Método:** `DELETE`
+*   **Ruta:** `/apps/{app_name}/users/{user_id}/sessions/{session_id}`
 
-**Example Request**
+**Ejemplo de Petición**
 ```shell
 curl -X DELETE http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_abc
 ```
 
-**Example Response**
-A successful deletion returns an empty response with a `204 No Content` status code.
+**Ejemplo de Respuesta**
+Una eliminación exitosa devuelve una respuesta vacía con un código de estado `204 No Content`.
 
 ---
 
-### Agent execution
+### Ejecución del agente
 
-These endpoints are used to send a new message to an agent and get a response.
+Estos endpoints se usan para enviar un nuevo mensaje a un agente y obtener una respuesta.
 
-#### Run agent (single response)
+#### Ejecutar agente (respuesta única)
 
-Executes the agent and returns all generated events in a single JSON array after the run is complete.
+Ejecuta el agente y devuelve todos los eventos generados en un único array JSON después de que se complete la ejecución.
 
-*   **Method:** `POST`
-*   **Path:** `/run`
+*   **Método:** `POST`
+*   **Ruta:** `/run`
 
-**Request Body**
+**Cuerpo de la Petición**
 ```json
 {
   "appName": "my_sample_agent",
@@ -418,10 +417,10 @@ Executes the agent and returns all generated events in a single JSON array after
 }
 ```
 
-In TypeScript, currently only `camelCase` field names are supported (e.g.
+En TypeScript, actualmente solo se admiten nombres de campo en `camelCase` (ej.
 `appName`, `userId`, `sessionId`, etc.).
 
-**Example Request**
+**Ejemplo de Petición**
 ```shell
 curl -X POST http://localhost:8000/run \
   -H "Content-Type: application/json" \
@@ -436,15 +435,15 @@ curl -X POST http://localhost:8000/run \
   }'
 ```
 
-#### Run agent (streaming)
+#### Ejecutar agente (streaming)
 
-Executes the agent and streams events back to the client as they are generated using [Server-Sent Events (SSE)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events).
+Ejecuta el agente y transmite eventos de vuelta al cliente a medida que se generan usando [Server-Sent Events (SSE)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events).
 
-*   **Method:** `POST`
-*   **Path:** `/run_sse`
+*   **Método:** `POST`
+*   **Ruta:** `/run_sse`
 
-**Request Body**
-The request body is the same as for `/run`, with an additional optional `streaming` flag.
+**Cuerpo de la Petición**
+El cuerpo de la petición es el mismo que para `/run`, con una bandera opcional adicional `streaming`.
 ```json
 {
   "appName": "my_sample_agent",
@@ -459,9 +458,9 @@ The request body is the same as for `/run`, with an additional optional `streami
   "streaming": true
 }
 ```
-- `streaming`: (Optional) Set to `true` to enable token-level streaming for model responses. Defaults to `false`.
+- `streaming`: (Opcional) Establece en `true` para habilitar streaming a nivel de token para respuestas del modelo. Por defecto es `false`.
 
-**Example Request**
+**Ejemplo de Petición**
 ```shell
 curl -X POST http://localhost:8000/run_sse \
   -H "Content-Type: application/json" \

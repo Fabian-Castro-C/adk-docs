@@ -1,55 +1,55 @@
-# Understanding Vertex AI Search Grounding
+# Comprendiendo el Grounding con Vertex AI Search
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-[Vertex AI Search](/adk-docs/tools/google-cloud/vertex-ai-search/) is a powerful tool for the Agent Development Kit (ADK) that enables AI agents to access information from your private enterprise documents and data repositories. By connecting your agents to indexed enterprise content, you can provide users with answers grounded in your organization's knowledge base.
+[Vertex AI Search](/adk-docs/tools/google-cloud/vertex-ai-search/) es una herramienta poderosa para el Agent Development Kit (ADK) que permite a los agentes de IA acceder a información de tus documentos empresariales privados y repositorios de datos. Al conectar tus agentes a contenido empresarial indexado, puedes proporcionar a los usuarios respuestas fundamentadas en la base de conocimiento de tu organización.
 
-This feature is particularly valuable for enterprise-specific queries requiring information from internal documentation, policies, research papers, or any proprietary content that has been indexed in your [Vertex AI Search](https://cloud.google.com/enterprise-search) datastore. When your agent determines that information from your knowledge base is needed, it automatically searches your indexed documents and incorporates the results into its response with proper attribution.
+Esta característica es particularmente valiosa para consultas específicas de la empresa que requieren información de documentación interna, políticas, artículos de investigación o cualquier contenido propietario que haya sido indexado en tu datastore de [Vertex AI Search](https://cloud.google.com/enterprise-search). Cuando tu agente determina que se necesita información de tu base de conocimiento, automáticamente busca en tus documentos indexados e incorpora los resultados en su respuesta con la atribución apropiada.
 
-## What You'll Learn
+## Lo Que Aprenderás
 
-In this guide, you'll discover:
+En esta guía, descubrirás:
 
-- **Quick Setup**: How to create and run a Vertex AI Search-enabled agent from scratch
-- **Grounding Architecture**: The data flow and technical process behind enterprise document grounding
-- **Response Structure**: How to interpret grounded responses and their metadata
-- **Best Practices**: Guidelines for displaying citations and document references to users
+- **Configuración Rápida**: Cómo crear y ejecutar un agente habilitado con Vertex AI Search desde cero
+- **Arquitectura de Grounding**: El flujo de datos y proceso técnico detrás del grounding de documentos empresariales
+- **Estructura de Respuesta**: Cómo interpretar respuestas fundamentadas y sus metadatos
+- **Mejores Prácticas**: Directrices para mostrar citas y referencias de documentos a los usuarios
 
-## Vertex AI Search Grounding Quickstart
+## Inicio Rápido de Grounding con Vertex AI Search
 
-This quickstart guides you through creating an ADK agent with Vertex AI Search grounding feature. This quickstart assumes a local IDE (VS Code or PyCharm, etc.) with Python 3.10+ and terminal access.
+Este inicio rápido te guía a través de la creación de un agente ADK con la característica de grounding de Vertex AI Search. Este inicio rápido asume un IDE local (VS Code o PyCharm, etc.) con Python 3.10+ y acceso a terminal.
 
-### 1. Prepare Vertex AI Search { #prepare-vertex-ai-search }
+### 1. Preparar Vertex AI Search { #prepare-vertex-ai-search }
 
-If you already have a Vertex AI Search Data Store and its Data Store ID, you can skip this section. If not, follow the instruction in the [Get started with custom search](https://cloud.google.com/generative-ai-app-builder/docs/try-enterprise-search#unstructured-data) until the end of [Create a data store](https://cloud.google.com/generative-ai-app-builder/docs/try-enterprise-search#create_a_data_store), with selecting the `Unstructured data` tab. With this instruction, you will build a sample Data Store with earning report PDFs from the [Alphabet investor site](https://abc.xyz/).
+Si ya tienes un Data Store de Vertex AI Search y su ID de Data Store, puedes omitir esta sección. Si no, sigue las instrucciones en [Get started with custom search](https://cloud.google.com/generative-ai-app-builder/docs/try-enterprise-search#unstructured-data) hasta el final de [Create a data store](https://cloud.google.com/generative-ai-app-builder/docs/try-enterprise-search#create_a_data_store), seleccionando la pestaña `Unstructured data`. Con esta instrucción, construirás un Data Store de muestra con PDFs de informes de ganancias del [sitio de inversores de Alphabet](https://abc.xyz/).
 
-After finishing the Create a data store section, open the [Data Stores](https://console.cloud.google.com/gen-app-builder/data-stores/) and select the data store you created, and find the `Data store ID`:
+Después de terminar la sección Crear un data store, abre [Data Stores](https://console.cloud.google.com/gen-app-builder/data-stores/) y selecciona el data store que creaste, y encuentra el `Data store ID`:
 
 ![Vertex AI Search Data Store](../assets/vertex_ai_search_grd_data_store.png)
 
-Note this `Data store ID` as we will use this later.
+Anota este `Data store ID` ya que lo usaremos más adelante.
 
-### 2. Set up Environment & Install ADK { #set-up-environment-install-adk }
+### 2. Configurar el Entorno e Instalar ADK { #set-up-environment-install-adk }
 
-Below are the steps for setting up your environment and installing the ADK for both Python and TypeScript projects.
+A continuación se muestran los pasos para configurar tu entorno e instalar el ADK tanto para proyectos de Python como de TypeScript.
 
 === "Python"
 
-    Create & Activate Virtual Environment:
+    Crear y Activar Entorno Virtual:
 
     ```bash
-    # Create
+    # Crear
     python -m venv .venv
 
-    # Activate (each new terminal)
+    # Activar (cada nueva terminal)
     # macOS/Linux: source .venv/bin/activate
     # Windows CMD: .venv\\Scripts\\activate.bat
     # Windows PowerShell: .venv\\Scripts\\Activate.ps1
     ```
 
-    Install ADK:
+    Instalar ADK:
 
     ```bash
     pip install google-adk
@@ -57,54 +57,54 @@ Below are the steps for setting up your environment and installing the ADK for b
 
 === "TypeScript"
 
-    Create a new Node.js project:
+    Crear un nuevo proyecto Node.js:
     ```bash
     npm init -y
     ```
 
-    Install ADK:
+    Instalar ADK:
     ```bash
     npm install @google/adk
     ```
 
-### 3. Create Agent Project { #create-agent-project }
+### 3. Crear Proyecto de Agente { #create-agent-project }
 
-Under a project directory, run the following commands:
+Bajo un directorio de proyecto, ejecuta los siguientes comandos:
 
 === "OS X &amp; Linux"
     ```bash
-    # Step 1: Create a new directory for your agent
+    # Paso 1: Crear un nuevo directorio para tu agente
     mkdir vertex_search_agent
 
-    # Step 2: Create __init__.py for the agent
+    # Paso 2: Crear __init__.py para el agente
     echo "from . import agent" > vertex_search_agent/__init__.py
 
-    # Step 3: Create an agent.py (the agent definition) and .env (authentication config)
+    # Paso 3: Crear un agent.py (la definición del agente) y .env (configuración de autenticación)
     touch vertex_search_agent/agent.py .env
     ```
 
 === "Windows"
     ```shell
-    # Step 1: Create a new directory for your agent
+    # Paso 1: Crear un nuevo directorio para tu agente
     mkdir vertex_search_agent
 
-    # Step 2: Create __init__.py for the agent
+    # Paso 2: Crear __init__.py para el agente
     echo "from . import agent" > vertex_search_agent/__init__.py
 
-    # Step 3: Create an agent.py (the agent definition) and .env (authentication config)
+    # Paso 3: Crear un agent.py (la definición del agente) y .env (configuración de autenticación)
     type nul > vertex_search_agent\agent.py
     type nul > google_search_agent\.env
     ```
 
-#### Edit `agent.py`
+#### Editar `agent.py`
 
-Copy and paste the following code into `agent.py`, and replace `YOUR_PROJECT_ID` and `YOUR_DATASTORE_ID` at the `Configuration` part with your project ID and Data Store ID accordingly:
+Copia y pega el siguiente código en `agent.py`, y reemplaza `YOUR_PROJECT_ID` y `YOUR_DATASTORE_ID` en la parte de `Configuration` con tu ID de proyecto y ID de Data Store respectivamente:
 
 ```python title="vertex_search_agent/agent.py"
 from google.adk.agents import Agent
 from google.adk.tools import VertexAiSearchTool
 
-# Configuration
+# Configuración
 DATASTORE_ID = "projects/YOUR_PROJECT_ID/locations/global/collections/default_collection/dataStores/YOUR_DATASTORE_ID"
 
 root_agent = Agent(
@@ -116,7 +116,7 @@ root_agent = Agent(
 )
 ```
 
-Now you would have the following directory structure:
+Ahora tendrías la siguiente estructura de directorio:
 
 ```console
 my_project/
@@ -126,13 +126,13 @@ my_project/
     .env
 ```
 
-### 4. Authentication Setup { #authentication-setup }
+### 4. Configuración de Autenticación { #authentication-setup }
 
-**Note: Vertex AI Search requires Google Cloud Platform (Vertex AI) authentication. Google AI Studio is not supported for this tool.**
+**Nota: Vertex AI Search requiere autenticación de Google Cloud Platform (Vertex AI). Google AI Studio no es compatible con esta herramienta.**
 
-  * Set up the [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
-  * Authenticate to Google Cloud, from the terminal by running `gcloud auth login`.
-  * Open the **`.env`** file and copy-paste the following code and update the project ID and location.
+  * Configura el [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
+  * Autentícate en Google Cloud, desde la terminal ejecutando `gcloud auth login`.
+  * Abre el archivo **`.env`** y copia-pega el siguiente código y actualiza el ID del proyecto y la ubicación.
 
     ```env title=".env"
     GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -141,104 +141,104 @@ my_project/
     ```
 
 
-### 5. Run Your Agent { #run-your-agent }
+### 5. Ejecutar Tu Agente { #run-your-agent }
 
-There are multiple ways to interact with your agent:
+Hay múltiples formas de interactuar con tu agente:
 
 === "Dev UI (adk web)"
-    Run the following command to launch the **dev UI**.
+    Ejecuta el siguiente comando para lanzar la **dev UI**.
 
     ```shell
     adk web
     ```
 
-    !!!info "Note for Windows users"
+    !!!info "Nota para usuarios de Windows"
 
-        When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
+        Al encontrar el error `_make_subprocess_transport NotImplementedError`, considera usar `adk web --no-reload` en su lugar.
 
 
-    **Step 1:** Open the URL provided (usually `http://localhost:8000` or
-    `http://127.0.0.1:8000`) directly in your browser.
+    **Paso 1:** Abre la URL proporcionada (usualmente `http://localhost:8000` o
+    `http://127.0.0.1:8000`) directamente en tu navegador.
 
-    **Step 2.** In the top-left corner of the UI, you can select your agent in
-    the dropdown. Select "vertex_search_agent".
+    **Paso 2.** En la esquina superior izquierda de la UI, puedes seleccionar tu agente en
+    el menú desplegable. Selecciona "vertex_search_agent".
 
-    !!!note "Troubleshooting"
+    !!!note "Solución de problemas"
 
-        If you do not see "vertex_search_agent" in the dropdown menu, make sure you
-        are running `adk web` in the **parent folder** of your agent folder
-        (i.e. the parent folder of vertex_search_agent).
+        Si no ves "vertex_search_agent" en el menú desplegable, asegúrate de que
+        estás ejecutando `adk web` en la **carpeta padre** de tu carpeta de agente
+        (es decir, la carpeta padre de vertex_search_agent).
 
-    **Step 3.** Now you can chat with your agent using the textbox.
+    **Paso 3.** Ahora puedes chatear con tu agente usando el cuadro de texto.
 
 === "Terminal (adk run)"
 
-    Run the following command, to chat with your Vertex AI Search agent.
+    Ejecuta el siguiente comando, para chatear con tu agente de Vertex AI Search.
 
     ```
     adk run vertex_search_agent
     ```
-    To exit, use Cmd/Ctrl+C.
+    Para salir, usa Cmd/Ctrl+C.
 
-### Example prompts to try
+### Ejemplos de prompts para probar
 
-With those questions, you can confirm that the agent is actually calling Vertex AI Search
-to get information from the Alphabet reports:
+Con esas preguntas, puedes confirmar que el agente está realmente llamando a Vertex AI Search
+para obtener información de los informes de Alphabet:
 
-* What is the revenue of Google Cloud in 2022 Q1?
-* What about YouTube?
+* ¿Cuál es el ingreso de Google Cloud en el primer trimestre de 2022?
+* ¿Qué hay sobre YouTube?
 
 ![Vertex AI Search Grounding Data Flow](../assets/vertex_ai_search_grd_adk_web.png)
 
-You've successfully created and interacted with your Vertex AI Search agent using ADK!
+¡Has creado e interactuado exitosamente con tu agente de Vertex AI Search usando ADK!
 
-## How grounding with Vertex AI Search works
+## Cómo funciona el grounding con Vertex AI Search
 
-Grounding with Vertex AI Search is the process that connects your agent to your organization's indexed documents and data, allowing it to generate accurate responses based on private enterprise content. When a user's prompt requires information from your internal knowledge base, the agent's underlying LLM intelligently decides to invoke the `VertexAiSearchTool` to find relevant facts from your indexed documents.
+El grounding con Vertex AI Search es el proceso que conecta tu agente a los documentos y datos indexados de tu organización, permitiéndole generar respuestas precisas basadas en contenido empresarial privado. Cuando el prompt de un usuario requiere información de tu base de conocimiento interna, el LLM subyacente del agente decide inteligentemente invocar la `VertexAiSearchTool` para encontrar hechos relevantes de tus documentos indexados.
 
-### **Data Flow Diagram**
+### **Diagrama de Flujo de Datos**
 
-This diagram illustrates the step-by-step process of how a user query results in a grounded response.
+Este diagrama ilustra el proceso paso a paso de cómo una consulta de usuario resulta en una respuesta fundamentada.
 
 ![Vertex AI Search Grounding Data Flow](../assets/vertex_ai_search_grd_dataflow.png)
 
-### **Detailed Description**
+### **Descripción Detallada**
 
-The grounding agent uses the data flow described in the diagram to retrieve, process, and incorporate enterprise information into the final answer presented to the user.
+El agente de grounding utiliza el flujo de datos descrito en el diagrama para recuperar, procesar e incorporar información empresarial en la respuesta final presentada al usuario.
 
-1. **User Query**: An end-user interacts with your agent by asking a question about internal documents or enterprise data.
+1. **Consulta del Usuario**: Un usuario final interactúa con tu agente haciendo una pregunta sobre documentos internos o datos empresariales.
 
-2. **ADK Orchestration**: The Agent Development Kit orchestrates the agent's behavior and passes the user's message to the core of your agent.
+2. **Orquestación de ADK**: El Agent Development Kit orquesta el comportamiento del agente y pasa el mensaje del usuario al núcleo de tu agente.
 
-3. **LLM Analysis and Tool-Calling**: The agent's LLM (e.g., a Gemini model) analyzes the prompt. If it determines that information from your indexed documents is required, it triggers the grounding mechanism by calling the VertexAiSearchTool. This is ideal for answering queries about company policies, technical documentation, or proprietary research.
+3. **Análisis del LLM y Llamada de Herramientas**: El LLM del agente (por ejemplo, un modelo Gemini) analiza el prompt. Si determina que se requiere información de tus documentos indexados, activa el mecanismo de grounding llamando a la VertexAiSearchTool. Esto es ideal para responder consultas sobre políticas de la empresa, documentación técnica o investigación propietaria.
 
-4. **Vertex AI Search Service Interaction**: The VertexAiSearchTool interacts with your configured Vertex AI Search datastore, which contains your indexed enterprise documents. The service formulates and executes search queries against your private content.
+4. **Interacción con el Servicio de Vertex AI Search**: La VertexAiSearchTool interactúa con tu datastore configurado de Vertex AI Search, que contiene tus documentos empresariales indexados. El servicio formula y ejecuta consultas de búsqueda contra tu contenido privado.
 
-5. **Document Retrieval & Ranking**: Vertex AI Search retrieves and ranks the most relevant document chunks from your datastore based on semantic similarity and relevance scoring.
+5. **Recuperación y Clasificación de Documentos**: Vertex AI Search recupera y clasifica los fragmentos de documentos más relevantes de tu datastore basándose en similitud semántica y puntuación de relevancia.
 
-6. **Context Injection**: The search service integrates the retrieved document snippets into the model's context before the final response is generated. This crucial step allows the model to "reason" over your organization's factual data.
+6. **Inyección de Contexto**: El servicio de búsqueda integra los fragmentos de documentos recuperados en el contexto del modelo antes de que se genere la respuesta final. Este paso crucial permite al modelo "razonar" sobre los datos factuales de tu organización.
 
-7. **Grounded Response Generation**: The LLM, now informed by relevant enterprise content, generates a response that incorporates the retrieved information from your documents.
+7. **Generación de Respuesta Fundamentada**: El LLM, ahora informado por contenido empresarial relevante, genera una respuesta que incorpora la información recuperada de tus documentos.
 
-8. **Response Presentation with Sources**: The ADK receives the final grounded response, which includes the necessary source document references and groundingMetadata, and presents it to the user with attribution. This allows end-users to verify the information against your enterprise sources.
+8. **Presentación de Respuesta con Fuentes**: El ADK recibe la respuesta fundamentada final, que incluye las referencias de documentos fuente necesarias y groundingMetadata, y la presenta al usuario con atribución. Esto permite a los usuarios finales verificar la información contra tus fuentes empresariales.
 
-## Understanding grounding with Vertex AI Search response
+## Comprendiendo la respuesta de grounding con Vertex AI Search
 
-When the agent uses Vertex AI Search to ground a response, it returns detailed information that includes the final text answer and metadata about the documents used to generate that answer. This metadata is crucial for verifying the response and providing attribution to your enterprise sources.
+Cuando el agente usa Vertex AI Search para fundamentar una respuesta, devuelve información detallada que incluye la respuesta de texto final y metadatos sobre los documentos utilizados para generar esa respuesta. Estos metadatos son cruciales para verificar la respuesta y proporcionar atribución a tus fuentes empresariales.
 
-### Example of a Grounded Response
+### Ejemplo de una Respuesta Fundamentada
 
-The following is an example of the content object returned by the model after a grounded query against enterprise documents.
+Lo siguiente es un ejemplo del objeto de contenido devuelto por el modelo después de una consulta fundamentada contra documentos empresariales.
 
-**Final Answer Text:**
+**Texto de Respuesta Final:**
 
 ```
-"Developing models for a medical scribe presents several significant challenges, primarily due to the complex nature of medical documentation, the sensitive data involved, and the demanding requirements of clinical workflows. Key challenges include: **Accuracy and Reliability:** Medical documentation requires extremely high levels of accuracy, as errors can lead to misdiagnoses, incorrect treatments, and legal repercussions. Ensuring that AI models can reliably capture nuanced medical language, distinguish between subjective and objective information, and accurately transcribe physician-patient interactions is a major hurdle. **Natural Language Understanding (NLU) and Speech Recognition:** Medical conversations are often rapid, involve highly specialized jargon, acronyms, and abbreviations, and can be spoken by individuals with diverse accents or speech patterns... [response continues with detailed analysis of privacy, integration, and technical challenges]"
+"Desarrollar modelos para un escriba médico presenta varios desafíos significativos, principalmente debido a la naturaleza compleja de la documentación médica, los datos sensibles involucrados y los requisitos exigentes de los flujos de trabajo clínicos. Los desafíos clave incluyen: **Precisión y Confiabilidad:** La documentación médica requiere niveles extremadamente altos de precisión, ya que los errores pueden llevar a diagnósticos incorrectos, tratamientos incorrectos y repercusiones legales. Asegurar que los modelos de IA puedan capturar de manera confiable el lenguaje médico matizado, distinguir entre información subjetiva y objetiva, y transcribir con precisión las interacciones médico-paciente es un gran obstáculo. **Comprensión del Lenguaje Natural (NLU) y Reconocimiento de Voz:** Las conversaciones médicas son a menudo rápidas, involucran jerga altamente especializada, acrónimos y abreviaturas, y pueden ser habladas por individuos con diversos acentos o patrones de habla... [la respuesta continúa con análisis detallado de privacidad, integración y desafíos técnicos]"
 ```
 
-**Grounding Metadata Snippet:**
+**Fragmento de Metadatos de Grounding:**
 
-This is the grounding metadata you will receive. On `adk web`, you can find this on the `Response` tab:
+Estos son los metadatos de grounding que recibirás. En `adk web`, puedes encontrar esto en la pestaña `Response`:
 
 ```json
 {
@@ -258,7 +258,7 @@ This is the grounding metadata you will receive. On `adk web`, you can find this
           "id": "doc-ai-healthcare-ethics"
         }
       }
-      // ... additional documents
+      // ... documentos adicionales
     ],
     "groundingSupports": [
       {
@@ -266,74 +266,74 @@ This is the grounding metadata you will receive. On `adk web`, you can find this
         "segment": {
           "endIndex": 637,
           "startIndex": 433,
-          "text": "Ensuring that AI models can reliably capture nuanced medical language..."
+          "text": "Asegurar que los modelos de IA puedan capturar de manera confiable el lenguaje médico matizado..."
         }
       }
-      // ... additional supports linking text segments to source documents
+      // ... soportes adicionales que vinculan segmentos de texto a documentos fuente
     ],
     "retrievalQueries": [
       "challenges in natural language processing medical domain",
       "AI medical scribe challenges",
       "difficulties in developing AI for medical scribes"
-      // ... additional search queries executed
+      // ... consultas de búsqueda adicionales ejecutadas
     ]
   }
 }
 ```
 
-### How to Interpret the Response
+### Cómo Interpretar la Respuesta
 
-The metadata provides a link between the text generated by the model and the enterprise documents that support it. Here is a step-by-step breakdown:
+Los metadatos proporcionan un vínculo entre el texto generado por el modelo y los documentos empresariales que lo respaldan. Aquí hay un desglose paso a paso:
 
-- **groundingChunks**: This is a list of the enterprise documents the model consulted. Each chunk contains the document title, uri (document path), and id.
+- **groundingChunks**: Esta es una lista de los documentos empresariales que el modelo consultó. Cada fragmento contiene el título del documento, uri (ruta del documento) e id.
 
-- **groundingSupports**: This list connects specific sentences in the final answer back to the `groundingChunks`.
+- **groundingSupports**: Esta lista conecta oraciones específicas en la respuesta final con los `groundingChunks`.
 
-- **segment**: This object identifies a specific portion of the final text answer, defined by its `startIndex`, `endIndex`, and the `text` itself.
+- **segment**: Este objeto identifica una porción específica de la respuesta de texto final, definida por su `startIndex`, `endIndex` y el `text` en sí.
 
-- **groundingChunkIndices**: This array contains the index numbers that correspond to the sources listed in the `groundingChunks`. For example, the text about "HIPAA compliance" is supported by information from `groundingChunks` at index 1 (the "Regulatory and Ethical Hurdles" document).
+- **groundingChunkIndices**: Este arreglo contiene los números de índice que corresponden a las fuentes listadas en los `groundingChunks`. Por ejemplo, el texto sobre "cumplimiento de HIPAA" está respaldado por información de `groundingChunks` en el índice 1 (el documento "Regulatory and Ethical Hurdles").
 
-- **retrievalQueries**: This array shows the specific search queries that were executed against your datastore to find relevant information.
+- **retrievalQueries**: Este arreglo muestra las consultas de búsqueda específicas que se ejecutaron contra tu datastore para encontrar información relevante.
 
-## How to display grounding responses with Vertex AI Search
+## Cómo mostrar respuestas de grounding con Vertex AI Search
 
-Unlike Google Search grounding, Vertex AI Search grounding does not require specific display components. However, displaying citations and document references builds trust and allows users to verify information against your organization's authoritative sources.
+A diferencia del grounding de Google Search, el grounding de Vertex AI Search no requiere componentes de visualización específicos. Sin embargo, mostrar citas y referencias de documentos genera confianza y permite a los usuarios verificar la información contra las fuentes autorizadas de tu organización.
 
-### Optional Citation Display
+### Visualización de Citas Opcional
 
-Since grounding metadata is provided, you can choose to implement citation displays based on your application needs:
+Dado que se proporcionan metadatos de grounding, puedes elegir implementar visualizaciones de citas según las necesidades de tu aplicación:
 
-**Simple Text Display (Minimal Implementation):**
+**Visualización de Texto Simple (Implementación Mínima):**
 
 ```python
 for event in events:
     if event.is_final_response():
         print(event.content.parts[0].text)
 
-        # Optional: Show source count
+        # Opcional: Mostrar cantidad de fuentes
         if event.grounding_metadata:
-            print(f"\nBased on {len(event.grounding_metadata.grounding_chunks)} documents")
+            print(f"\nBasado en {len(event.grounding_metadata.grounding_chunks)} documentos")
 ```
 
-**Enhanced Citation Display (Optional):** You can implement interactive citations that show which documents support each statement. The grounding metadata provides all necessary information to map text segments to source documents.
+**Visualización de Citas Mejorada (Opcional):** Puedes implementar citas interactivas que muestren qué documentos respaldan cada declaración. Los metadatos de grounding proporcionan toda la información necesaria para mapear segmentos de texto a documentos fuente.
 
-### Implementation Considerations
+### Consideraciones de Implementación
 
-When implementing Vertex AI Search grounding displays:
+Al implementar visualizaciones de grounding de Vertex AI Search:
 
-1. **Document Access**: Verify user permissions for referenced documents
-2. **Simple Integration**: Basic text output requires no additional display logic
-3. **Optional Enhancements**: Add citations only if your use case benefits from source attribution
-4. **Document Links**: Convert document URIs to accessible internal links when needed
-5. **Search Queries**: The retrievalQueries array shows what searches were performed against your datastore
+1. **Acceso a Documentos**: Verifica los permisos de usuario para documentos referenciados
+2. **Integración Simple**: La salida de texto básica no requiere lógica de visualización adicional
+3. **Mejoras Opcionales**: Agrega citas solo si tu caso de uso se beneficia de la atribución de fuentes
+4. **Enlaces de Documentos**: Convierte URIs de documentos en enlaces internos accesibles cuando sea necesario
+5. **Consultas de Búsqueda**: El arreglo retrievalQueries muestra qué búsquedas se realizaron contra tu datastore
 
-## Summary
+## Resumen
 
-Vertex AI Search Grounding transforms AI agents from general-purpose assistants into enterprise-specific knowledge systems capable of providing accurate, source-attributed information from your organization's private documents. By integrating this feature into your ADK agents, you enable them to:
+El Grounding con Vertex AI Search transforma agentes de IA de asistentes de propósito general en sistemas de conocimiento específicos de la empresa capaces de proporcionar información precisa y atribuida a fuentes de los documentos privados de tu organización. Al integrar esta característica en tus agentes ADK, les permites:
 
-- Access proprietary information from your indexed document repositories
-- Provide source attribution for transparency and trust
-- Deliver comprehensive answers with verifiable enterprise facts
-- Maintain data privacy within your Google Cloud environment
+- Acceder a información propietaria de tus repositorios de documentos indexados
+- Proporcionar atribución de fuentes para transparencia y confianza
+- Entregar respuestas completas con hechos empresariales verificables
+- Mantener la privacidad de datos dentro de tu entorno de Google Cloud
 
-The grounding process seamlessly connects user queries to your organization's knowledge base, enriching responses with relevant context from your private documents while maintaining the conversational flow. With proper implementation, your agents become powerful tools for enterprise information discovery and decision-making.
+El proceso de grounding conecta sin problemas las consultas de usuarios con la base de conocimiento de tu organización, enriqueciendo las respuestas con contexto relevante de tus documentos privados mientras mantiene el flujo conversacional. Con la implementación adecuada, tus agentes se convierten en herramientas poderosas para el descubrimiento de información empresarial y la toma de decisiones.

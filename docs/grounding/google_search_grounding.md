@@ -1,49 +1,49 @@
-# Understanding Google Search Grounding
+# Comprendiendo Google Search Grounding
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-[Google Search Grounding tool](/adk-docs/tools/gemini-api/google-search/) is a powerful feature in the Agent Development Kit (ADK) that enables AI agents to access real-time, authoritative information from the web. By connecting your agents to Google Search, you can provide users with up-to-date answers backed by reliable sources.
+[Google Search Grounding tool](/adk-docs/tools/gemini-api/google-search/) es una característica poderosa en el Agent Development Kit (ADK) que permite a los agentes de IA acceder a información autorizada y en tiempo real desde la web. Al conectar tus agentes a Google Search, puedes proporcionar a los usuarios respuestas actualizadas respaldadas por fuentes confiables.
 
-This feature is particularly valuable for queries requiring current information like weather updates, news events, stock prices, or any facts that may have changed since the model's training data cutoff. When your agent determines that external information is needed, it automatically performs web searches and incorporates the results into its response with proper attribution.
+Esta característica es particularmente valiosa para consultas que requieren información actual como actualizaciones del clima, eventos de noticias, precios de acciones, o cualquier hecho que pueda haber cambiado desde la fecha límite de los datos de entrenamiento del modelo. Cuando tu agente determina que se necesita información externa, automáticamente realiza búsquedas web e incorpora los resultados en su respuesta con la atribución adecuada.
 
-## What You'll Learn
+## Lo que Aprenderás
 
-In this guide, you'll discover:
+En esta guía, descubrirás:
 
-- **Quick Setup**: How to create and run a Google Search-enabled agent from scratch
-- **Grounding Architecture**: The data flow and technical process behind web grounding
-- **Response Structure**: How to interpret grounded responses and their metadata
-- **Best Practices**: Guidelines for displaying search results and citations to users
+- **Configuración Rápida**: Cómo crear y ejecutar un agente habilitado para Google Search desde cero
+- **Arquitectura de Grounding**: El flujo de datos y proceso técnico detrás del grounding web
+- **Estructura de Respuesta**: Cómo interpretar respuestas fundamentadas y sus metadatos
+- **Mejores Prácticas**: Directrices para mostrar resultados de búsqueda y citaciones a los usuarios
 
-### Additional resource
+### Recurso adicional
 
-As an additional resource, the [Deep Search Agent Development Kit (ADK) Quickstart](https://github.com/google/adk-samples/tree/main/python/agents/deep-search) has a practical use of the Google Search grounding as a full stack application example.
+Como recurso adicional, el [Deep Search Agent Development Kit (ADK) Quickstart](https://github.com/google/adk-samples/tree/main/python/agents/deep-search) tiene un uso práctico del Google Search grounding como ejemplo de aplicación full stack.
 
-## Google Search Grounding Quickstart
+## Inicio Rápido de Google Search Grounding
 
-This quickstart guides you through creating an ADK agent with Google Search grounding feature. This quickstart assumes a local IDE (VS Code or PyCharm, etc.) with Python 3.10+ and terminal access.
+Este inicio rápido te guía a través de la creación de un agente ADK con la característica de Google Search grounding. Este inicio rápido asume un IDE local (VS Code o PyCharm, etc.) con Python 3.10+ y acceso a terminal.
 
-### 1. Set up Environment & Install ADK { #set-up-environment-install-adk }
+### 1. Configurar Entorno e Instalar ADK { #set-up-environment-install-adk }
 
-Below are the steps for setting up your environment and installing the ADK for both Python and TypeScript projects.
+A continuación se muestran los pasos para configurar tu entorno e instalar el ADK tanto para proyectos Python como TypeScript.
 
 === "Python"
 
-    Create & Activate Virtual Environment:
+    Crear y Activar Entorno Virtual:
 
     ```bash
-    # Create
+    # Crear
     python -m venv .venv
 
-    # Activate (each new terminal)
+    # Activar (cada nueva terminal)
     # macOS/Linux: source .venv/bin/activate
     # Windows CMD: .venv\Scripts\activate.bat
     # Windows PowerShell: .venv\Scripts\Activate.ps1
     ```
 
-    Install ADK:
+    Instalar ADK:
 
     ```bash
     pip install google-adk
@@ -51,50 +51,50 @@ Below are the steps for setting up your environment and installing the ADK for b
 
 === "TypeScript"
 
-    Create a new Node.js project:
+    Crear un nuevo proyecto Node.js:
     ```bash
     npm init -y
     ```
 
-    Install ADK:
+    Instalar ADK:
     ```bash
     npm install @google/adk
     ```
 
-### 2. Create Agent Project { #create-agent-project }
+### 2. Crear Proyecto de Agente { #create-agent-project }
 
-Under a project directory, run the following commands:
+Bajo un directorio de proyecto, ejecuta los siguientes comandos:
 
 === "OS X &amp; Linux"
     ```bash
-    # Step 1: Create a new directory for your agent
+    # Paso 1: Crear un nuevo directorio para tu agente
     mkdir google_search_agent
 
-    # Step 2: Create __init__.py for the agent
+    # Paso 2: Crear __init__.py para el agente
     echo "from . import agent" > google_search_agent/__init__.py
 
-    # Step 3: Create an agent.py (the agent definition) and .env (Gemini authentication config)
+    # Paso 3: Crear un agent.py (la definición del agente) y .env (config de autenticación de Gemini)
     touch google_search_agent/agent.py .env
     ```
 
 === "Windows"
     ```shell
-    # Step 1: Create a new directory for your agent
+    # Paso 1: Crear un nuevo directorio para tu agente
     mkdir google_search_agent
 
-    # Step 2: Create __init__.py for the agent
+    # Paso 2: Crear __init__.py para el agente
     echo "from . import agent" > google_search_agent/__init__.py
 
-    # Step 3: Create an agent.py (the agent definition) and .env (Gemini authentication config)
+    # Paso 3: Crear un agent.py (la definición del agente) y .env (config de autenticación de Gemini)
     type nul > google_search_agent\agent.py
     type nul > google_search_agent\.env
     ```
 
 
 
-#### Edit `agent.py` or `agent.ts`
+#### Editar `agent.py` o `agent.ts`
 
-Copy and paste the following code into `agent.py` or `agent.ts`:
+Copia y pega el siguiente código en `agent.py` o `agent.ts`:
 
 === "Python"
 
@@ -125,7 +125,7 @@ Copy and paste the following code into `agent.py` or `agent.ts`:
     });
     ```
 
-Now you would have the following directory structure:
+Ahora tendrías la siguiente estructura de directorios:
 
 === "Python"
 
@@ -148,33 +148,33 @@ Now you would have the following directory structure:
         .env
     ```
 
-### 3. Choose a platform { #choose-a-platform }
+### 3. Elegir una plataforma { #choose-a-platform }
 
-To run the agent, you need to select a platform that the agent will use for calling the Gemini model. Choose one from Google AI Studio or Vertex AI:
+Para ejecutar el agente, necesitas seleccionar una plataforma que el agente usará para llamar al modelo Gemini. Elige una entre Google AI Studio o Vertex AI:
 
 === "Gemini - Google AI Studio"
-    1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
-    2. When using Python, open the **`.env`** file and copy-paste the following code.
+    1. Obtén una API key desde [Google AI Studio](https://aistudio.google.com/apikey).
+    2. Cuando uses Python, abre el archivo **`.env`** y copia-pega el siguiente código.
 
         ```env title=".env"
         GOOGLE_GENAI_USE_VERTEXAI=FALSE
         GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
-    3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
+    3. Reemplaza `PASTE_YOUR_ACTUAL_API_KEY_HERE` con tu `API KEY` real.
 
 === "Gemini - Google Cloud Vertex AI"
-    1. You need an existing
-    [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) account and a
-    project.
-        * Set up a
-          [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
-        * Set up the
+    1. Necesitas una cuenta existente de
+    [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) y un
+    proyecto.
+        * Configura un
+          [proyecto de Google Cloud](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
+        * Configura el
           [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
-        * Authenticate to Google Cloud, from the terminal by running
+        * Autentícate en Google Cloud, desde la terminal ejecutando
           `gcloud auth login`.
-        * [Enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-    2. When using Python, open the **`.env`** file and copy-paste the following code and update the project ID and location.
+        * [Habilita la API de Vertex AI](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
+    2. Cuando uses Python, abre el archivo **`.env`** y copia-pega el siguiente código y actualiza el ID del proyecto y la ubicación.
 
         ```env title=".env"
         GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -182,99 +182,99 @@ To run the agent, you need to select a platform that the agent will use for call
         GOOGLE_CLOUD_LOCATION=LOCATION
         ```
 
-### 4. Run Your Agent { #run-your-agent }
+### 4. Ejecutar tu Agente { #run-your-agent }
 
-There are multiple ways to interact with your agent:
+Hay múltiples formas de interactuar con tu agente:
 
 === "Dev UI (adk web)"
-    Run the following command to launch the **dev UI**.
+    Ejecuta el siguiente comando para lanzar la **dev UI**.
 
     ```shell
     adk web
     ```
 
-    !!!info "Note for Windows users"
+    !!!info "Nota para usuarios de Windows"
 
-        When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
+        Cuando encuentres el `_make_subprocess_transport NotImplementedError`, considera usar `adk web --no-reload` en su lugar.
 
 
-    **Step 1:** Open the URL provided (usually `http://localhost:8000` or
-    `http://127.0.0.1:8000`) directly in your browser.
+    **Paso 1:** Abre la URL proporcionada (usualmente `http://localhost:8000` o
+    `http://127.0.0.1:8000`) directamente en tu navegador.
 
-    **Step 2.** In the top-left corner of the UI, you can select your agent in
-    the dropdown. Select "google_search_agent".
+    **Paso 2.** En la esquina superior izquierda de la UI, puedes seleccionar tu agente en
+    el menú desplegable. Selecciona "google_search_agent".
 
-    !!!note "Troubleshooting"
+    !!!note "Solución de problemas"
 
-        If you do not see "google_search_agent" in the dropdown menu, make sure you
-        are running `adk web` in the **parent folder** of your agent folder
-        (i.e. the parent folder of google_search_agent).
+        Si no ves "google_search_agent" en el menú desplegable, asegúrate de que
+        estás ejecutando `adk web` en la **carpeta padre** de la carpeta de tu agente
+        (es decir, la carpeta padre de google_search_agent).
 
-    **Step 3.** Now you can chat with your agent using the textbox.
+    **Paso 3.** Ahora puedes chatear con tu agente usando la caja de texto.
 
 === "Terminal (adk run)"
 
-    Run the following command, to chat with your Weather agent.
+    Ejecuta el siguiente comando, para chatear con tu agente Weather.
 
     ```
     adk run google_search_agent
     ```
-    To exit, use Cmd/Ctrl+C.
+    Para salir, usa Cmd/Ctrl+C.
 
-### Example prompts to try
+### Prompts de ejemplo para probar
 
-With those questions, you can confirm that the agent is actually calling Google Search
-to get the latest weather and time.
+Con esas preguntas, puedes confirmar que el agente está realmente llamando a Google Search
+para obtener el clima y la hora más recientes.
 
-* What is the weather in New York?
-* What is the time in New York?
-* What is the weather in Paris?
-* What is the time in Paris?
+* ¿Cuál es el clima en Nueva York?
+* ¿Qué hora es en Nueva York?
+* ¿Cuál es el clima en París?
+* ¿Qué hora es en París?
 
 ![Try the agent with adk web](../assets/google_search_grd_adk_web.png)
 
-You've successfully created and interacted with your Google Search agent using ADK!
+¡Has creado e interactuado exitosamente con tu agente de Google Search usando ADK!
 
-## How grounding with Google Search works
+## Cómo funciona el grounding con Google Search
 
-Grounding is the process that connects your agent to real-time information from the web, allowing it to generate more accurate and current responses. When a user's prompt requires information that the model was not trained on, or that is time-sensitive, the agent's underlying Large Language Model intelligently decides to invoke the google\_search tool to find the relevant facts
+Grounding es el proceso que conecta tu agente a información en tiempo real desde la web, permitiéndole generar respuestas más precisas y actuales. Cuando el prompt de un usuario requiere información sobre la que el modelo no fue entrenado, o que es sensible al tiempo, el Large Language Model subyacente del agente decide inteligentemente invocar la herramienta google\_search para encontrar los hechos relevantes
 
-### **Data Flow Diagram**
+### **Diagrama de Flujo de Datos**
 
-This diagram illustrates the step-by-step process of how a user query results in a grounded response.
+Este diagrama ilustra el proceso paso a paso de cómo una consulta de usuario resulta en una respuesta fundamentada.
 
 ![](../assets/google_search_grd_dataflow.png)
 
-### **Detailed Description**
+### **Descripción Detallada**
 
-The grounding agent uses the data flow described in the diagram to retrieve, process, and incorporate external information into the final answer presented to the user.
+El agente de grounding utiliza el flujo de datos descrito en el diagrama para recuperar, procesar e incorporar información externa en la respuesta final presentada al usuario.
 
-1. **User Query**: An end-user interacts with your agent by asking a question or giving a command.
-2. **ADK Orchestration** : The Agent Development Kit orchestrates the agent's behavior and passes the user's message to the core of your agent.
-3. **LLM Analysis and Tool-Calling** : The agent's LLM (e.g., a Gemini model) analyzes the prompt. If it determines that external, up-to-date information is required, it triggers the grounding mechanism by calling the
-    google\_search tool. This is ideal for answering queries about recent news, weather, or facts not present in the model's training data.
-4. **Grounding Service Interaction** : The google\_search tool interacts with an internal grounding service that formulates and sends one or more queries to the Google Search Index.
-5. **Context Injection**: The grounding service retrieves the relevant web pages and snippets. It then integrates these search results into the model's context
-    before the final response is generated. This crucial step allows the model to "reason" over factual, real-time data.
-6. **Grounded Response Generation**: The LLM, now informed by the fresh search results, generates a response that incorporates the retrieved information.
-7. **Response Presentation with Sources** : The ADK receives the final grounded response, which includes the necessary source URLs and
-   groundingMetadata, and presents it to the user with attribution. This allows end-users to verify the information and builds trust in the agent's answers.
+1. **Consulta del Usuario**: Un usuario final interactúa con tu agente haciendo una pregunta o dando un comando.
+2. **Orquestación ADK** : El Agent Development Kit orquesta el comportamiento del agente y pasa el mensaje del usuario al núcleo de tu agente.
+3. **Análisis LLM y Llamada a Herramientas** : El LLM del agente (por ejemplo, un modelo Gemini) analiza el prompt. Si determina que se requiere información externa y actualizada, activa el mecanismo de grounding llamando a la
+    herramienta google\_search. Esto es ideal para responder consultas sobre noticias recientes, clima o hechos no presentes en los datos de entrenamiento del modelo.
+4. **Interacción con el Servicio de Grounding** : La herramienta google\_search interactúa con un servicio interno de grounding que formula y envía una o más consultas al Índice de Google Search.
+5. **Inyección de Contexto**: El servicio de grounding recupera las páginas web y fragmentos relevantes. Luego integra estos resultados de búsqueda en el contexto del modelo
+    antes de que se genere la respuesta final. Este paso crucial permite que el modelo "razone" sobre datos fácticos y en tiempo real.
+6. **Generación de Respuesta Fundamentada**: El LLM, ahora informado por los resultados de búsqueda recientes, genera una respuesta que incorpora la información recuperada.
+7. **Presentación de Respuesta con Fuentes** : El ADK recibe la respuesta fundamentada final, que incluye las URLs de fuente necesarias y
+   groundingMetadata, y la presenta al usuario con atribución. Esto permite a los usuarios finales verificar la información y construye confianza en las respuestas del agente.
 
-### Understanding grounding with Google Search response
+### Comprendiendo la respuesta de grounding con Google Search
 
-When the agent uses Google Search to ground a response, it returns a detailed set of information that includes not only the final text answer but also the sources it used to generate that answer. This metadata is crucial for verifying the response and for providing attribution to the original sources.
+Cuando el agente utiliza Google Search para fundamentar una respuesta, devuelve un conjunto detallado de información que incluye no solo el texto de la respuesta final sino también las fuentes que utilizó para generar esa respuesta. Estos metadatos son cruciales para verificar la respuesta y para proporcionar atribución a las fuentes originales.
 
-#### **Example of a Grounded Response**
+#### **Ejemplo de una Respuesta Fundamentada**
 
-The following is an example of the content object returned by the model after a grounded query.
+Lo siguiente es un ejemplo del objeto de contenido devuelto por el modelo después de una consulta fundamentada.
 
-**Final Answer Text:**
+**Texto de Respuesta Final:**
 
 ```
 "Yes, Inter Miami won their last game in the FIFA Club World Cup. They defeated FC Porto 2-1 in their second group stage match. Their first game in the tournament was a 0-0 draw against Al Ahly FC. Inter Miami is scheduled to play their third group stage match against Palmeiras on Monday, June 23, 2025."
 ```
 
-**Grounding Metadata Snippet:**
+**Fragmento de Metadatos de Grounding:**
 
 ```json
 "groundingMetadata": {
@@ -314,36 +314,36 @@ The following is an example of the content object returned by the model after a 
 
 ```
 
-#### **How to Interpret the Response**
+#### **Cómo Interpretar la Respuesta**
 
-The metadata provides a link between the text generated by the model and the sources that support it. Here is a step-by-step breakdown:
+Los metadatos proporcionan un vínculo entre el texto generado por el modelo y las fuentes que lo respaldan. Aquí hay un desglose paso a paso:
 
-1. **groundingChunks**: This is a list of the web pages the model consulted. Each chunk contains the title of the webpage and a uri that links to the source.
-2. **groundingSupports**: This list connects specific sentences in the final answer back to the groundingChunks.
-   * **segment**: This object identifies a specific portion of the final text answer, defined by its startIndex, endIndex, and the text itself.
-   * **groundingChunkIndices**: This array contains the index numbers that correspond to the sources listed in the groundingChunks. For example, the sentence "They defeated FC Porto 2-1..." is supported by information from groundingChunks at index 0 and 1 (both from mlssoccer.com and intermiamicf.com).
+1. **groundingChunks**: Esta es una lista de las páginas web que el modelo consultó. Cada fragmento contiene el título de la página web y un uri que enlaza a la fuente.
+2. **groundingSupports**: Esta lista conecta oraciones específicas en la respuesta final de vuelta a los groundingChunks.
+   * **segment**: Este objeto identifica una porción específica del texto de respuesta final, definida por su startIndex, endIndex, y el texto en sí.
+   * **groundingChunkIndices**: Este array contiene los números de índice que corresponden a las fuentes listadas en los groundingChunks. Por ejemplo, la oración "They defeated FC Porto 2-1..." está respaldada por información de groundingChunks en los índices 0 y 1 (ambos de mlssoccer.com e intermiamicf.com).
 
-### How to display grounding responses with Google Search
+### Cómo mostrar respuestas de grounding con Google Search
 
-A critical part of using grounding is to correctly display the information, including citations and search suggestions, to the end-user. This builds trust and allows users to verify the information.
+Una parte crítica del uso de grounding es mostrar correctamente la información, incluyendo citaciones y sugerencias de búsqueda, al usuario final. Esto construye confianza y permite a los usuarios verificar la información.
 
 ![Responnses from Google Search](../assets/google_search_grd_resp.png)
 
-#### **Displaying Search Suggestions**
+#### **Mostrando Sugerencias de Búsqueda**
 
-The `searchEntryPoint` object in the `groundingMetadata` contains pre-formatted HTML for displaying search query suggestions. As seen in the example image, these are typically rendered as clickable chips that allow the user to explore related topics.
+El objeto `searchEntryPoint` en el `groundingMetadata` contiene HTML pre-formateado para mostrar sugerencias de consultas de búsqueda. Como se ve en la imagen de ejemplo, estas se renderizan típicamente como chips clicables que permiten al usuario explorar temas relacionados.
 
-**Rendered HTML from searchEntryPoint:** The metadata provides the necessary HTML and CSS to render the search suggestions bar, which includes the Google logo and chips for related queries like "When is the next FIFA Club World Cup" and "Inter Miami FIFA Club World Cup history". Integrating this HTML directly into your application's front end will display the suggestions as intended.
+**HTML Renderizado desde searchEntryPoint:** Los metadatos proporcionan el HTML y CSS necesarios para renderizar la barra de sugerencias de búsqueda, que incluye el logo de Google y chips para consultas relacionadas como "When is the next FIFA Club World Cup" y "Inter Miami FIFA Club World Cup history". Integrar este HTML directamente en el front end de tu aplicación mostrará las sugerencias como se pretende.
 
-For more information, consult [using Google Search Suggestions](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions) in Vertex AI documentation.
+Para más información, consulta [using Google Search Suggestions](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions) en la documentación de Vertex AI.
 
-## Summary
+## Resumen
 
-Google Search Grounding transforms AI agents from static knowledge repositories into dynamic, web-connected assistants capable of providing real-time, accurate information. By integrating this feature into your ADK agents, you enable them to:
+Google Search Grounding transforma a los agentes de IA de repositorios de conocimiento estáticos en asistentes dinámicos conectados a la web capaces de proporcionar información precisa en tiempo real. Al integrar esta característica en tus agentes ADK, les permites:
 
-- Access current information beyond their training data
-- Provide source attribution for transparency and trust
-- Deliver comprehensive answers with verifiable facts
-- Enhance user experience with relevant search suggestions
+- Acceder a información actual más allá de sus datos de entrenamiento
+- Proporcionar atribución de fuentes para transparencia y confianza
+- Entregar respuestas completas con hechos verificables
+- Mejorar la experiencia del usuario con sugerencias de búsqueda relevantes
 
-The grounding process seamlessly connects user queries to Google's vast search index, enriching responses with up-to-date context while maintaining the conversational flow. With proper implementation and display of grounded responses, your agents become powerful tools for information discovery and decision-making.
+El proceso de grounding conecta sin problemas las consultas de los usuarios al vasto índice de búsqueda de Google, enriqueciendo las respuestas con contexto actualizado mientras mantiene el flujo conversacional. Con la implementación y visualización adecuada de respuestas fundamentadas, tus agentes se convierten en herramientas poderosas para el descubrimiento de información y la toma de decisiones.

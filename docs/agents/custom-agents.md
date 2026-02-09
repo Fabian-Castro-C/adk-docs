@@ -1,188 +1,188 @@
-# Custom agents
+# Agentes personalizados
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-Custom agents provide the ultimate flexibility in ADK, allowing you to define **arbitrary orchestration logic** by inheriting directly from `BaseAgent` and implementing your own control flow. This goes beyond the predefined patterns of `SequentialAgent`, `LoopAgent`, and `ParallelAgent`, enabling you to build highly specific and complex agentic workflows.
+Los agentes personalizados proporcionan la máxima flexibilidad en ADK, permitiéndote definir **lógica de orquestación arbitraria** heredando directamente de `BaseAgent` e implementando tu propio flujo de control. Esto va más allá de los patrones predefinidos de `SequentialAgent`, `LoopAgent` y `ParallelAgent`, permitiéndote construir flujos de trabajo agénticos altamente específicos y complejos.
 
-!!! warning "Advanced Concept"
+!!! warning "Concepto Avanzado"
 
-    Building custom agents by directly implementing `_run_async_impl` (or its equivalent in other languages) provides powerful control but is more complex than using the predefined `LlmAgent` or standard `WorkflowAgent` types. We recommend understanding those foundational agent types first before tackling custom orchestration logic.
+    Construir agentes personalizados implementando directamente `_run_async_impl` (o su equivalente en otros lenguajes) proporciona un control poderoso pero es más complejo que usar los tipos predefinidos `LlmAgent` o `WorkflowAgent` estándar. Recomendamos comprender esos tipos de agentes fundamentales primero antes de abordar la lógica de orquestación personalizada.
 
-## Introduction: Beyond Predefined Workflows
+## Introducción: Más Allá de los Flujos de Trabajo Predefinidos
 
-### What is a Custom Agent?
+### ¿Qué es un Agente Personalizado?
 
-A Custom Agent is essentially any class you create that inherits from `google.adk.agents.BaseAgent` and implements its core execution logic within the `_run_async_impl` asynchronous method. You have complete control over how this method calls other agents (sub-agents), manages state, and handles events.
+Un Agente Personalizado es esencialmente cualquier clase que crees que hereda de `google.adk.agents.BaseAgent` e implementa su lógica de ejecución central dentro del método asíncrono `_run_async_impl`. Tienes control completo sobre cómo este método llama a otros agentes (sub-agentes), gestiona el estado y maneja eventos.
 
 !!! Note
-    The specific method name for implementing an agent's core asynchronous logic may vary slightly by SDK language (e.g., `runAsyncImpl` in Java, `_run_async_impl` in Python, or `runAsyncImpl` in TypeScript). Refer to the language-specific API documentation for details.
+    El nombre específico del método para implementar la lógica asíncrona central de un agente puede variar ligeramente según el lenguaje del SDK (por ejemplo, `runAsyncImpl` en Java, `_run_async_impl` en Python, o `runAsyncImpl` en TypeScript). Consulta la documentación de la API específica del lenguaje para más detalles.
 
-### Why Use Them?
+### ¿Por Qué Usarlos?
 
-While the standard [Workflow Agents](workflow-agents/index.md) (`SequentialAgent`, `LoopAgent`, `ParallelAgent`) cover common orchestration patterns, you'll need a Custom agent when your requirements include:
+Mientras que los [Agentes de Flujo de Trabajo](workflow-agents/index.md) estándar (`SequentialAgent`, `LoopAgent`, `ParallelAgent`) cubren patrones de orquestación comunes, necesitarás un agente Personalizado cuando tus requisitos incluyan:
 
-* **Conditional Logic:** Executing different sub-agents or taking different paths based on runtime conditions or the results of previous steps.
-* **Complex State Management:** Implementing intricate logic for maintaining and updating state throughout the workflow beyond simple sequential passing.
-* **External Integrations:** Incorporating calls to external APIs, databases, or custom libraries directly within the orchestration flow control.
-* **Dynamic Agent Selection:** Choosing which sub-agent(s) to run next based on dynamic evaluation of the situation or input.
-* **Unique Workflow Patterns:** Implementing orchestration logic that doesn't fit the standard sequential, parallel, or loop structures.
+* **Lógica Condicional:** Ejecutar diferentes sub-agentes o tomar diferentes rutas basándose en condiciones en tiempo de ejecución o los resultados de pasos anteriores.
+* **Gestión de Estado Compleja:** Implementar lógica intrincada para mantener y actualizar el estado a lo largo del flujo de trabajo más allá del simple paso secuencial.
+* **Integraciones Externas:** Incorporar llamadas a APIs externas, bases de datos o bibliotecas personalizadas directamente dentro del control de flujo de orquestación.
+* **Selección Dinámica de Agentes:** Elegir qué sub-agente(s) ejecutar a continuación basándose en la evaluación dinámica de la situación o entrada.
+* **Patrones de Flujo de Trabajo Únicos:** Implementar lógica de orquestación que no se ajusta a las estructuras estándar secuenciales, paralelas o de bucle.
 
 
 ![intro_components.png](../assets/custom-agent-flow.png)
 
 
-## Implementing Custom Logic:
+## Implementando Lógica Personalizada:
 
-The core of any custom agent is the method where you define its unique asynchronous behavior. This method allows you to orchestrate sub-agents and manage the flow of execution.
+El núcleo de cualquier agente personalizado es el método donde defines su comportamiento asíncrono único. Este método te permite orquestar sub-agentes y gestionar el flujo de ejecución.
 
 === "Python"
 
-      The heart of any custom agent is the `_run_async_impl` method. This is where you define its unique behavior.
+      El corazón de cualquier agente personalizado es el método `_run_async_impl`. Aquí es donde defines su comportamiento único.
 
-      * **Signature:** `async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:`
-      * **Asynchronous Generator:** It must be an `async def` function and return an `AsyncGenerator`. This allows it to `yield` events produced by sub-agents or its own logic back to the runner.
-      * **`ctx` (InvocationContext):** Provides access to crucial runtime information, most importantly `ctx.session.state`, which is the primary way to share data between steps orchestrated by your custom agent.
+      * **Firma:** `async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:`
+      * **Generador Asíncrono:** Debe ser una función `async def` y retornar un `AsyncGenerator`. Esto le permite hacer `yield` de eventos producidos por sub-agentes o su propia lógica de vuelta al ejecutor.
+      * **`ctx` (InvocationContext):** Proporciona acceso a información crucial en tiempo de ejecución, más importante aún `ctx.session.state`, que es la forma principal de compartir datos entre pasos orquestados por tu agente personalizado.
 
 === "TypeScript"
 
-    The heart of any custom agent is the `runAsyncImpl` method. This is where you define its unique behavior.
+    El corazón de cualquier agente personalizado es el método `runAsyncImpl`. Aquí es donde defines su comportamiento único.
 
-    *   **Signature:** `async* runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined>`
-    *   **Asynchronous Generator:** It must be an `async` generator function (`async*`).
-    *   **`ctx` (InvocationContext):** Provides access to crucial runtime information, most importantly `ctx.session.state`, which is the primary way to share data between steps orchestrated by your custom agent.
+    *   **Firma:** `async* runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined>`
+    *   **Generador Asíncrono:** Debe ser una función generadora `async` (`async*`).
+    *   **`ctx` (InvocationContext):** Proporciona acceso a información crucial en tiempo de ejecución, más importante aún `ctx.session.state`, que es la forma principal de compartir datos entre pasos orquestados por tu agente personalizado.
 
 === "Go"
 
-    In Go, you implement the `Run` method as part of a struct that satisfies the `agent.Agent` interface. The actual logic is typically a method on your custom agent struct.
+    En Go, implementas el método `Run` como parte de una estructura que satisface la interfaz `agent.Agent`. La lógica real es típicamente un método en la estructura de tu agente personalizado.
 
-    *   **Signature:** `Run(ctx agent.InvocationContext) iter.Seq2[*session.Event, error]`
-    *   **Iterator:** The `Run` method returns an iterator (`iter.Seq2`) that yields events and errors. This is the standard way to handle streaming results from an agent's execution.
-    *   **`ctx` (InvocationContext):** The `agent.InvocationContext` provides access to the session, including state, and other crucial runtime information.
-    *   **Session State:** You can access the session state through `ctx.Session().State()`.
+    *   **Firma:** `Run(ctx agent.InvocationContext) iter.Seq2[*session.Event, error]`
+    *   **Iterador:** El método `Run` retorna un iterador (`iter.Seq2`) que produce eventos y errores. Esta es la forma estándar de manejar resultados en streaming de la ejecución de un agente.
+    *   **`ctx` (InvocationContext):** El `agent.InvocationContext` proporciona acceso a la sesión, incluyendo el estado, y otra información crucial en tiempo de ejecución.
+    *   **Estado de la Sesión:** Puedes acceder al estado de la sesión a través de `ctx.Session().State()`.
 
 === "Java"
 
-    The heart of any custom agent is the `runAsyncImpl` method, which you override from `BaseAgent`.
+    El corazón de cualquier agente personalizado es el método `runAsyncImpl`, que sobrescribes desde `BaseAgent`.
 
-    *   **Signature:** `protected Flowable<Event> runAsyncImpl(InvocationContext ctx)`
-    *   **Reactive Stream (`Flowable`):** It must return an `io.reactivex.rxjava3.core.Flowable<Event>`. This `Flowable` represents a stream of events that will be produced by the custom agent's logic, often by combining or transforming multiple `Flowable` from sub-agents.
-    *   **`ctx` (InvocationContext):** Provides access to crucial runtime information, most importantly `ctx.session().state()`, which is a `java.util.concurrent.ConcurrentMap<String, Object>`. This is the primary way to share data between steps orchestrated by your custom agent.
+    *   **Firma:** `protected Flowable<Event> runAsyncImpl(InvocationContext ctx)`
+    *   **Flujo Reactivo (`Flowable`):** Debe retornar un `io.reactivex.rxjava3.core.Flowable<Event>`. Este `Flowable` representa un flujo de eventos que será producido por la lógica del agente personalizado, a menudo combinando o transformando múltiples `Flowable` de sub-agentes.
+    *   **`ctx` (InvocationContext):** Proporciona acceso a información crucial en tiempo de ejecución, más importante aún `ctx.session().state()`, que es un `java.util.concurrent.ConcurrentMap<String, Object>`. Esta es la forma principal de compartir datos entre pasos orquestados por tu agente personalizado.
 
-**Key Capabilities within the Core Asynchronous Method:**
+**Capacidades Clave dentro del Método Asíncrono Central:**
 
 === "Python"
 
-    1. **Calling Sub-Agents:** You invoke sub-agents (which are typically stored as instance attributes like `self.my_llm_agent`) using their `run_async` method and yield their events:
+    1. **Llamando a Sub-Agentes:** Invocas sub-agentes (que típicamente se almacenan como atributos de instancia como `self.my_llm_agent`) usando su método `run_async` y haces yield de sus eventos:
 
           ```python
           async for event in self.some_sub_agent.run_async(ctx):
-              # Optionally inspect or log the event
-              yield event # Pass the event up
+              # Opcionalmente inspeccionar o registrar el evento
+              yield event # Pasar el evento hacia arriba
           ```
 
-    2. **Managing State:** Read from and write to the session state dictionary (`ctx.session.state`) to pass data between sub-agent calls or make decisions:
+    2. **Gestionando el Estado:** Lee y escribe en el diccionario de estado de la sesión (`ctx.session.state`) para pasar datos entre llamadas a sub-agentes o tomar decisiones:
 
           ```python
-          # Read data set by a previous agent
+          # Leer datos establecidos por un agente anterior
           previous_result = ctx.session.state.get("some_key")
 
-          # Make a decision based on state
+          # Tomar una decisión basada en el estado
           if previous_result == "some_value":
-              # ... call a specific sub-agent ...
+              # ... llamar a un sub-agente específico ...
           else:
-              # ... call another sub-agent ...
+              # ... llamar a otro sub-agente ...
 
-          # Store a result for a later step (often done via a sub-agent's output_key)
+          # Almacenar un resultado para un paso posterior (a menudo hecho a través del output_key de un sub-agente)
           # ctx.session.state["my_custom_result"] = "calculated_value"
           ```
 
-    3. **Implementing Control Flow:** Use standard Python constructs (`if`/`elif`/`else`, `for`/`while` loops, `try`/`except`) to create sophisticated, conditional, or iterative workflows involving your sub-agents.
+    3. **Implementando Flujo de Control:** Usa construcciones estándar de Python (`if`/`elif`/`else`, bucles `for`/`while`, `try`/`except`) para crear flujos de trabajo sofisticados, condicionales o iterativos que involucren tus sub-agentes.
 
 === "TypeScript"
 
-    1.  **Calling Sub-Agents:** You invoke sub-agents (which are typically stored as instance properties like `this.myLlmAgent`) using their `run` method and yield their events:
+    1.  **Llamando a Sub-Agentes:** Invocas sub-agentes (que típicamente se almacenan como propiedades de instancia como `this.myLlmAgent`) usando su método `run` y haces yield de sus eventos:
 
         ```typescript
         for await (const event of this.someSubAgent.runAsync(ctx)) {
-            // Optionally inspect or log the event
-            yield event; // Pass the event up to the runner
+            // Opcionalmente inspeccionar o registrar el evento
+            yield event; // Pasar el evento hacia arriba al ejecutor
         }
         ```
 
-    2.  **Managing State:** Read from and write to the session state object (`ctx.session.state`) to pass data between sub-agent calls or make decisions:
+    2.  **Gestionando el Estado:** Lee y escribe en el objeto de estado de la sesión (`ctx.session.state`) para pasar datos entre llamadas a sub-agentes o tomar decisiones:
 
         ```typescript
-        // Read data set by a previous agent
+        // Leer datos establecidos por un agente anterior
         const previousResult = ctx.session.state['some_key'];
 
-        // Make a decision based on state
+        // Tomar una decisión basada en el estado
         if (previousResult === 'some_value') {
-          // ... call a specific sub-agent ...
+          // ... llamar a un sub-agente específico ...
         } else {
-          // ... call another sub-agent ...
+          // ... llamar a otro sub-agente ...
         }
 
-        // Store a result for a later step (often done via a sub-agent's outputKey)
+        // Almacenar un resultado para un paso posterior (a menudo hecho a través del outputKey de un sub-agente)
         // ctx.session.state['my_custom_result'] = 'calculated_value';
         ```
 
-    3. **Implementing Control Flow:** Use standard TypeScript/JavaScript constructs (`if`/`else`, `for`/`while` loops, `try`/`catch`) to create sophisticated, conditional, or iterative workflows involving your sub-agents.
+    3. **Implementando Flujo de Control:** Usa construcciones estándar de TypeScript/JavaScript (`if`/`else`, bucles `for`/`while`, `try`/`catch`) para crear flujos de trabajo sofisticados, condicionales o iterativos que involucren tus sub-agentes.
 
 === "Go"
 
-    1. **Calling Sub-Agents:** You invoke sub-agents by calling their `Run` method.
+    1. **Llamando a Sub-Agentes:** Invocas sub-agentes llamando a su método `Run`.
 
           ```go
-          // Example: Running one sub-agent and yielding its events
+          // Ejemplo: Ejecutando un sub-agente y haciendo yield de sus eventos
           for event, err := range someSubAgent.Run(ctx) {
               if err != nil {
-                  // Handle or propagate the error
+                  // Manejar o propagar el error
                   return
               }
-              // Yield the event up to the caller
+              // Hacer yield del evento hacia arriba al llamador
               if !yield(event, nil) {
                 return
               }
           }
           ```
 
-    2. **Managing State:** Read from and write to the session state to pass data between sub-agent calls or make decisions.
+    2. **Gestionando el Estado:** Lee y escribe en el estado de la sesión para pasar datos entre llamadas a sub-agentes o tomar decisiones.
           ```go
-          // The `ctx` (`agent.InvocationContext`) is passed directly to your agent's `Run` function.
-          // Read data set by a previous agent
+          // El `ctx` (`agent.InvocationContext`) se pasa directamente a la función `Run` de tu agente.
+          // Leer datos establecidos por un agente anterior
           previousResult, err := ctx.Session().State().Get("some_key")
           if err != nil {
-              // Handle cases where the key might not exist yet
+              // Manejar casos donde la clave podría no existir aún
           }
 
-          // Make a decision based on state
+          // Tomar una decisión basada en el estado
           if val, ok := previousResult.(string); ok && val == "some_value" {
-              // ... call a specific sub-agent ...
+              // ... llamar a un sub-agente específico ...
           } else {
-              // ... call another sub-agent ...
+              // ... llamar a otro sub-agente ...
           }
 
-          // Store a result for a later step
+          // Almacenar un resultado para un paso posterior
           if err := ctx.Session().State().Set("my_custom_result", "calculated_value"); err != nil {
-              // Handle error
+              // Manejar error
           }
           ```
 
-    3. **Implementing Control Flow:** Use standard Go constructs (`if`/`else`, `for`/`switch` loops, goroutines, channels) to create sophisticated, conditional, or iterative workflows involving your sub-agents.
+    3. **Implementando Flujo de Control:** Usa construcciones estándar de Go (`if`/`else`, bucles `for`/`switch`, goroutines, canales) para crear flujos de trabajo sofisticados, condicionales o iterativos que involucren tus sub-agentes.
 
 === "Java"
 
-    1. **Calling Sub-Agents:** You invoke sub-agents (which are typically stored as instance attributes or objects) using their asynchronous run method and return their event streams:
+    1. **Llamando a Sub-Agentes:** Invocas sub-agentes (que típicamente se almacenan como atributos de instancia u objetos) usando su método de ejecución asíncrono y retornas sus flujos de eventos:
 
-           You typically chain `Flowable`s from sub-agents using RxJava operators like `concatWith`, `flatMapPublisher`, or `concatArray`.
+           Típicamente encadenas `Flowable`s de sub-agentes usando operadores de RxJava como `concatWith`, `flatMapPublisher` o `concatArray`.
 
            ```java
-           // Example: Running one sub-agent
+           // Ejemplo: Ejecutando un sub-agente
            // return someSubAgent.runAsync(ctx);
 
-           // Example: Running sub-agents sequentially
+           // Ejemplo: Ejecutando sub-agentes secuencialmente
            Flowable<Event> firstAgentEvents = someSubAgent1.runAsync(ctx)
                .doOnNext(event -> System.out.println("Event from agent 1: " + event.id()));
 
@@ -193,53 +193,53 @@ The core of any custom agent is the method where you define its unique asynchron
 
            return firstAgentEvents.concatWith(secondAgentEvents);
            ```
-           The `Flowable.defer()` is often used for subsequent stages if their execution depends on the completion or state after prior stages.
+           El `Flowable.defer()` se usa a menudo para etapas subsiguientes si su ejecución depende de la finalización o estado después de etapas previas.
 
-    2. **Managing State:** Read from and write to the session state to pass data between sub-agent calls or make decisions. The session state is a `java.util.concurrent.ConcurrentMap<String, Object>` obtained via `ctx.session().state()`.
+    2. **Gestionando el Estado:** Lee y escribe en el estado de la sesión para pasar datos entre llamadas a sub-agentes o tomar decisiones. El estado de la sesión es un `java.util.concurrent.ConcurrentMap<String, Object>` obtenido mediante `ctx.session().state()`.
 
         ```java
-        // Read data set by a previous agent
+        // Leer datos establecidos por un agente anterior
         Object previousResult = ctx.session().state().get("some_key");
 
-        // Make a decision based on state
+        // Tomar una decisión basada en el estado
         if ("some_value".equals(previousResult)) {
-            // ... logic to include a specific sub-agent's Flowable ...
+            // ... lógica para incluir el Flowable de un sub-agente específico ...
         } else {
-            // ... logic to include another sub-agent's Flowable ...
+            // ... lógica para incluir el Flowable de otro sub-agente ...
         }
 
-        // Store a result for a later step (often done via a sub-agent's output_key)
+        // Almacenar un resultado para un paso posterior (a menudo hecho a través del output_key de un sub-agente)
         // ctx.session().state().put("my_custom_result", "calculated_value");
         ```
 
-    3. **Implementing Control Flow:** Use standard language constructs (`if`/`else`, loops, `try`/`catch`) combined with reactive operators (RxJava) to create sophisticated workflows.
+    3. **Implementando Flujo de Control:** Usa construcciones estándar del lenguaje (`if`/`else`, bucles, `try`/`catch`) combinadas con operadores reactivos (RxJava) para crear flujos de trabajo sofisticados.
 
-          *   **Conditional:** `Flowable.defer()` to choose which `Flowable` to subscribe to based on a condition, or `filter()` if you're filtering events within a stream.
-          *   **Iterative:** Operators like `repeat()`, `retry()`, or by structuring your `Flowable` chain to recursively call parts of itself based on conditions (often managed with `flatMapPublisher` or `concatMap`).
+          *   **Condicional:** `Flowable.defer()` para elegir a qué `Flowable` suscribirse basándose en una condición, o `filter()` si estás filtrando eventos dentro de un flujo.
+          *   **Iterativo:** Operadores como `repeat()`, `retry()`, o estructurando tu cadena `Flowable` para llamar recursivamente partes de sí misma basándose en condiciones (a menudo gestionado con `flatMapPublisher` o `concatMap`).
 
-## Managing Sub-Agents and State
+## Gestionando Sub-Agentes y Estado
 
-Typically, a custom agent orchestrates other agents (like `LlmAgent`, `LoopAgent`, etc.).
+Típicamente, un agente personalizado orquesta otros agentes (como `LlmAgent`, `LoopAgent`, etc.).
 
-* **Initialization:** You usually pass instances of these sub-agents into your custom agent's constructor and store them as instance fields/attributes (e.g., `this.story_generator = story_generator_instance` or `self.story_generator = story_generator_instance`). This makes them accessible within the custom agent's core asynchronous execution logic (such as: `_run_async_impl` method).
-* **Sub Agents List:** When initializing the `BaseAgent` using it's `super()` constructor, you should pass a `sub agents` list. This list tells the ADK framework about the agents that are part of this custom agent's immediate hierarchy. It's important for framework features like lifecycle management, introspection, and potentially future routing capabilities, even if your core execution logic (`_run_async_impl`) calls the agents directly via `self.xxx_agent`. Include the agents that your custom logic directly invokes at the top level.
-* **State:** As mentioned, `ctx.session.state` is the standard way sub-agents (especially `LlmAgent`s using `output key`) communicate results back to the orchestrator and how the orchestrator passes necessary inputs down.
+* **Inicialización:** Usualmente pasas instancias de estos sub-agentes al constructor de tu agente personalizado y los almacenas como campos/atributos de instancia (por ejemplo, `this.story_generator = story_generator_instance` o `self.story_generator = story_generator_instance`). Esto los hace accesibles dentro de la lógica de ejecución asíncrona central del agente personalizado (como el método `_run_async_impl`).
+* **Lista de Sub Agentes:** Al inicializar el `BaseAgent` usando su constructor `super()`, debes pasar una lista de `sub agents`. Esta lista le dice al framework ADK sobre los agentes que son parte de la jerarquía inmediata de este agente personalizado. Es importante para características del framework como gestión del ciclo de vida, introspección y potencialmente capacidades de enrutamiento futuras, incluso si tu lógica de ejecución central (`_run_async_impl`) llama a los agentes directamente a través de `self.xxx_agent`. Incluye los agentes que tu lógica personalizada invoca directamente en el nivel superior.
+* **Estado:** Como se mencionó, `ctx.session.state` es la forma estándar en que los sub-agentes (especialmente `LlmAgent`s usando `output key`) comunican resultados de vuelta al orquestador y cómo el orquestador pasa las entradas necesarias hacia abajo.
 
-## Design Pattern Example: `StoryFlowAgent`
+## Ejemplo de Patrón de Diseño: `StoryFlowAgent`
 
-Let's illustrate the power of custom agents with an example pattern: a multi-stage content generation workflow with conditional logic.
+Ilustremos el poder de los agentes personalizados con un ejemplo de patrón: un flujo de trabajo de generación de contenido multi-etapa con lógica condicional.
 
-**Goal:** Create a system that generates a story, iteratively refines it through critique and revision, performs final checks, and crucially, *regenerates the story if the final tone check fails*.
+**Objetivo:** Crear un sistema que genere una historia, la refine iterativamente a través de crítica y revisión, realice verificaciones finales y, crucialmente, *regenere la historia si la verificación de tono final falla*.
 
-**Why Custom?** The core requirement driving the need for a custom agent here is the **conditional regeneration based on the tone check**. Standard workflow agents don't have built-in conditional branching based on the outcome of a sub-agent's task. We need custom logic (`if tone == "negative": ...`) within the orchestrator.
+**¿Por Qué Personalizado?** El requisito central que impulsa la necesidad de un agente personalizado aquí es la **regeneración condicional basada en la verificación de tono**. Los agentes de flujo de trabajo estándar no tienen ramificación condicional incorporada basada en el resultado de la tarea de un sub-agente. Necesitamos lógica personalizada (`if tone == "negative": ...`) dentro del orquestador.
 
 ---
 
-### Part 1: Simplified custom agent Initialization { #part-1-simplified-custom-agent-initialization }
+### Parte 1: Inicialización simplificada del agente personalizado { #part-1-simplified-custom-agent-initialization }
 
 === "Python"
 
-    We define the `StoryFlowAgent` inheriting from `BaseAgent`. In `__init__`, we store the necessary sub-agents (passed in) as instance attributes and tell the `BaseAgent` framework about the top-level agents this custom agent will directly orchestrate.
+    Definimos el `StoryFlowAgent` heredando de `BaseAgent`. En `__init__`, almacenamos los sub-agentes necesarios (pasados) como atributos de instancia y le decimos al framework `BaseAgent` sobre los agentes de nivel superior que este agente personalizado orquestará directamente.
 
     ```python
     --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:init"
@@ -247,10 +247,10 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
 
 === "TypeScript"
 
-    We define the `StoryFlowAgent` by extending `BaseAgent`. In its constructor, we:
-    1.  Create any internal composite agents (like `LoopAgent` or `SequentialAgent`).
-    2.  Pass the list of all top-level sub-agents to the `super()` constructor.
-    3.  Store the sub-agents (passed in or created internally) as instance properties (e.g., `this.storyGenerator`) so they can be accessed in the custom `runImpl` logic.
+    Definimos el `StoryFlowAgent` extendiendo `BaseAgent`. En su constructor:
+    1.  Creamos cualquier agente compuesto interno (como `LoopAgent` o `SequentialAgent`).
+    2.  Pasamos la lista de todos los sub-agentes de nivel superior al constructor `super()`.
+    3.  Almacenamos los sub-agentes (pasados o creados internamente) como propiedades de instancia (por ejemplo, `this.storyGenerator`) para que puedan ser accedidos en la lógica `runImpl` personalizada.
 
     ```typescript
     --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts:init"
@@ -258,7 +258,7 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
 
 === "Go"
 
-    We define the `StoryFlowAgent` struct and a constructor. In the constructor, we store the necessary sub-agents and tell the `BaseAgent` framework about the top-level agents this custom agent will directly orchestrate.
+    Definimos la estructura `StoryFlowAgent` y un constructor. En el constructor, almacenamos los sub-agentes necesarios y le decimos al framework `BaseAgent` sobre los agentes de nivel superior que este agente personalizado orquestará directamente.
 
     ```go
     --8<-- "examples/go/snippets/agents/custom-agent/storyflow_agent.go:init"
@@ -266,7 +266,7 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
 
 === "Java"
 
-    We define the `StoryFlowAgentExample` by extending `BaseAgent`. In its **constructor**, we store the necessary sub-agent instances (passed as parameters) as instance fields. These top-level sub-agents, which this custom agent will directly orchestrate, are also passed to the `super` constructor of `BaseAgent` as a list.
+    Definimos el `StoryFlowAgentExample` extendiendo `BaseAgent`. En su **constructor**, almacenamos las instancias de sub-agentes necesarias (pasadas como parámetros) como campos de instancia. Estos sub-agentes de nivel superior, que este agente personalizado orquestará directamente, también se pasan al constructor `super` de `BaseAgent` como una lista.
 
     ```java
     --8<-- "examples/java/snippets/src/main/java/agents/StoryFlowAgentExample.java:init"
@@ -274,77 +274,77 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
 
 ---
 
-### Part 2: Defining the Custom Execution Logic { #part-2-defining-the-custom-execution-logic }
+### Parte 2: Definiendo la Lógica de Ejecución Personalizada { #part-2-defining-the-custom-execution-logic }
 
 === "Python"
 
-    This method orchestrates the sub-agents using standard Python async/await and control flow.
+    Este método orquesta los sub-agentes usando async/await estándar de Python y flujo de control.
 
     ```python
     --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:executionlogic"
     ```
-    **Explanation of Logic:**
+    **Explicación de la Lógica:**
 
-    1. The initial `story_generator` runs. Its output is expected to be in `ctx.session.state["current_story"]`.
-    2. The `loop_agent` runs, which internally calls the `critic` and `reviser` sequentially for `max_iterations` times. They read/write `current_story` and `criticism` from/to the state.
-    3. The `sequential_agent` runs, calling `grammar_check` then `tone_check`, reading `current_story` and writing `grammar_suggestions` and `tone_check_result` to the state.
-    4. **Custom Part:** The `if` statement checks the `tone_check_result` from the state. If it's "negative", the `story_generator` is called *again*, overwriting the `current_story` in the state. Otherwise, the flow ends.
+    1. El `story_generator` inicial se ejecuta. Se espera que su salida esté en `ctx.session.state["current_story"]`.
+    2. El `loop_agent` se ejecuta, que internamente llama al `critic` y `reviser` secuencialmente por `max_iterations` veces. Leen/escriben `current_story` y `criticism` desde/hacia el estado.
+    3. El `sequential_agent` se ejecuta, llamando a `grammar_check` y luego `tone_check`, leyendo `current_story` y escribiendo `grammar_suggestions` y `tone_check_result` al estado.
+    4. **Parte Personalizada:** La declaración `if` verifica el `tone_check_result` del estado. Si es "negative", el `story_generator` es llamado *nuevamente*, sobrescribiendo el `current_story` en el estado. De lo contrario, el flujo termina.
 
 === "TypeScript"
 
-    The `runImpl` method orchestrates the sub-agents using standard TypeScript `async`/`await` and control flow. The `runLiveImpl` is also added to handle live streaming scenarios.
+    El método `runImpl` orquesta los sub-agentes usando `async`/`await` estándar de TypeScript y flujo de control. El `runLiveImpl` también se agrega para manejar escenarios de transmisión en vivo.
 
     ```typescript
     --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts:executionlogic"
     ```
-    **Explanation of Logic:**
+    **Explicación de la Lógica:**
 
-    1.  The initial `storyGenerator` runs. Its output is expected to be in `ctx.session.state['current_story']`.
-    2.  The `loopAgent` runs, which internally calls the `critic` and `reviser` sequentially for `maxIterations` times. They read/write `current_story` and `criticism` from/to the state.
-    3.  The `sequentialAgent` runs, calling `grammarCheck` then `toneCheck`, reading `current_story` and writing `grammar_suggestions` and `tone_check_result` to the state.
-    4.  **Custom Part:** The `if` statement checks the `tone_check_result` from the state. If it's "negative", the `storyGenerator` is called *again*, overwriting the `current_story` in the state. Otherwise, the flow ends.
+    1.  El `storyGenerator` inicial se ejecuta. Se espera que su salida esté en `ctx.session.state['current_story']`.
+    2.  El `loopAgent` se ejecuta, que internamente llama al `critic` y `reviser` secuencialmente por `maxIterations` veces. Leen/escriben `current_story` y `criticism` desde/hacia el estado.
+    3.  El `sequentialAgent` se ejecuta, llamando a `grammarCheck` y luego `toneCheck`, leyendo `current_story` y escribiendo `grammar_suggestions` y `tone_check_result` al estado.
+    4.  **Parte Personalizada:** La declaración `if` verifica el `tone_check_result` del estado. Si es "negative", el `storyGenerator` es llamado *nuevamente*, sobrescribiendo el `current_story` en el estado. De lo contrario, el flujo termina.
 
 === "Go"
 
-    The `Run` method orchestrates the sub-agents by calling their respective `Run` methods in a loop and yielding their events.
+    El método `Run` orquesta los sub-agentes llamando a sus respectivos métodos `Run` en un bucle y haciendo yield de sus eventos.
 
     ```go
     --8<-- "examples/go/snippets/agents/custom-agent/storyflow_agent.go:executionlogic"
     ```
-    **Explanation of Logic:**
+    **Explicación de la Lógica:**
 
-    1. The initial `storyGenerator` runs. Its output is expected to be in the session state under the key `"current_story"`.
-    2. The `revisionLoopAgent` runs, which internally calls the `critic` and `reviser` sequentially for `max_iterations` times. They read/write `current_story` and `criticism` from/to the state.
-    3. The `postProcessorAgent` runs, calling `grammar_check` then `tone_check`, reading `current_story` and writing `grammar_suggestions` and `tone_check_result` to the state.
-    4. **Custom Part:** The code checks the `tone_check_result` from the state. If it's "negative", the `story_generator` is called *again*, overwriting the `current_story` in the state. Otherwise, the flow ends.
+    1. El `storyGenerator` inicial se ejecuta. Se espera que su salida esté en el estado de la sesión bajo la clave `"current_story"`.
+    2. El `revisionLoopAgent` se ejecuta, que internamente llama al `critic` y `reviser` secuencialmente por `max_iterations` veces. Leen/escriben `current_story` y `criticism` desde/hacia el estado.
+    3. El `postProcessorAgent` se ejecuta, llamando a `grammar_check` y luego `tone_check`, leyendo `current_story` y escribiendo `grammar_suggestions` y `tone_check_result` al estado.
+    4. **Parte Personalizada:** El código verifica el `tone_check_result` del estado. Si es "negative", el `story_generator` es llamado *nuevamente*, sobrescribiendo el `current_story` en el estado. De lo contrario, el flujo termina.
 
 === "Java"
 
-    The `runAsyncImpl` method orchestrates the sub-agents using RxJava's Flowable streams and operators for asynchronous control flow.
+    El método `runAsyncImpl` orquesta los sub-agentes usando flujos Flowable de RxJava y operadores para flujo de control asíncrono.
 
     ```java
     --8<-- "examples/java/snippets/src/main/java/agents/StoryFlowAgentExample.java:executionlogic"
     ```
-    **Explanation of Logic:**
+    **Explicación de la Lógica:**
 
-    1. The initial `storyGenerator.runAsync(invocationContext)` Flowable is executed. Its output is expected to be in `invocationContext.session().state().get("current_story")`.
-    2. The `loopAgent's` Flowable runs next (due to `Flowable.concatArray` and `Flowable.defer`). The LoopAgent internally calls the `critic` and `reviser` sub-agents sequentially for up to `maxIterations`. They read/write `current_story` and `criticism` from/to the state.
-    3. Then, the `sequentialAgent's` Flowable executes. It calls the `grammar_check` then `tone_check`, reading `current_story` and writing `grammar_suggestions` and `tone_check_result` to the state.
-    4. **Custom Part:** After the sequentialAgent completes, logic within a `Flowable.defer` checks the "tone_check_result" from `invocationContext.session().state()`. If it's "negative", the `storyGenerator` Flowable is *conditionally concatenated* and executed again, overwriting "current_story". Otherwise, an empty Flowable is used, and the overall workflow proceeds to completion.
+    1. El Flowable inicial `storyGenerator.runAsync(invocationContext)` se ejecuta. Se espera que su salida esté en `invocationContext.session().state().get("current_story")`.
+    2. El Flowable del `loopAgent` se ejecuta después (debido a `Flowable.concatArray` y `Flowable.defer`). El LoopAgent internamente llama a los sub-agentes `critic` y `reviser` secuencialmente hasta `maxIterations`. Leen/escriben `current_story` y `criticism` desde/hacia el estado.
+    3. Luego, el Flowable del `sequentialAgent` se ejecuta. Llama a `grammar_check` y luego `tone_check`, leyendo `current_story` y escribiendo `grammar_suggestions` y `tone_check_result` al estado.
+    4. **Parte Personalizada:** Después de que el sequentialAgent completa, la lógica dentro de un `Flowable.defer` verifica el "tone_check_result" de `invocationContext.session().state()`. Si es "negative", el Flowable del `storyGenerator` es *condicionalmente concatenado* y ejecutado nuevamente, sobrescribiendo "current_story". De lo contrario, se usa un Flowable vacío, y el flujo de trabajo general procede a completarse.
 
 ---
 
-### Part 3: Defining the LLM Sub-Agents { #part-3-defining-the-llm-sub-agents }
+### Parte 3: Definiendo los Sub-Agentes LLM { #part-3-defining-the-llm-sub-agents }
 
-These are standard `LlmAgent` definitions, responsible for specific tasks. Their `output key` parameter is crucial for placing results into the `session.state` where other agents or the custom orchestrator can access them.
+Estas son definiciones estándar de `LlmAgent`, responsables de tareas específicas. Su parámetro `output key` es crucial para colocar resultados en el `session.state` donde otros agentes o el orquestador personalizado puedan acceder a ellos.
 
-!!! tip "Direct State Injection in Instructions"
-    Notice the `story_generator`'s instruction. The `{var}` syntax is a placeholder. Before the instruction is sent to the LLM, the ADK framework automatically replaces (Example:`{topic}`) with the value of `session.state['topic']`. This is the recommended way to provide context to an agent, using templating in the instructions. For more details, see the [State documentation](../sessions/state.md#accessing-session-state-in-agent-instructions).
+!!! tip "Inyección Directa de Estado en Instrucciones"
+    Observa la instrucción del `story_generator`. La sintaxis `{var}` es un marcador de posición. Antes de que la instrucción sea enviada al LLM, el framework ADK reemplaza automáticamente (Ejemplo:`{topic}`) con el valor de `session.state['topic']`. Esta es la forma recomendada de proporcionar contexto a un agente, usando plantillas en las instrucciones. Para más detalles, consulta la [documentación de Estado](../sessions/state.md#accessing-session-state-in-agent-instructions).
 
 === "Python"
 
     ```python
-    GEMINI_2_FLASH = "gemini-2.0-flash" # Define model constant
+    GEMINI_2_FLASH = "gemini-2.0-flash" # Definir constante de modelo
     --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:llmagents"
     ```
 
@@ -368,9 +368,9 @@ These are standard `LlmAgent` definitions, responsible for specific tasks. Their
 
 ---
 
-### Part 4: Instantiating and Running the custom agent { #part-4-instantiating-and-running-the-custom-agent }
+### Parte 4: Instanciando y Ejecutando el agente personalizado { #part-4-instantiating-and-running-the-custom-agent }
 
-Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
+Finalmente, instancias tu `StoryFlowAgent` y usas el `Runner` como de costumbre.
 
 === "Python"
 
@@ -396,25 +396,25 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
     --8<-- "examples/java/snippets/src/main/java/agents/StoryFlowAgentExample.java:story_flow_agent"
     ```
 
-*(Note: The full runnable code, including imports and execution logic, can be found linked below.)*
+*(Nota: El código ejecutable completo, incluyendo imports y lógica de ejecución, se puede encontrar enlazado abajo.)*
 
 ---
 
-## Full Code Example
+## Ejemplo de Código Completo
 
 ???+ "Storyflow Agent"
 
     === "Python"
 
         ```python
-        # Full runnable code for the StoryFlowAgent example
+        # Código ejecutable completo para el ejemplo de StoryFlowAgent
         --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py"
         ```
 
     === "TypeScript"
 
         ```typescript
-        // Full runnable code for the StoryFlowAgent example
+        // Código ejecutable completo para el ejemplo de StoryFlowAgent
 
         --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts"
         ```
@@ -422,13 +422,13 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
     === "Go"
 
         ```go
-        # Full runnable code for the StoryFlowAgent example
+        # Código ejecutable completo para el ejemplo de StoryFlowAgent
         --8<-- "examples/go/snippets/agents/custom-agent/storyflow_agent.go:full_code"
         ```
 
     === "Java"
 
         ```java
-        # Full runnable code for the StoryFlowAgent example
+        # Código ejecutable completo para el ejemplo de StoryFlowAgent
         --8<-- "examples/java/snippets/src/main/java/agents/StoryFlowAgentExample.java:full_code"
         ```

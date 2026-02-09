@@ -4,42 +4,42 @@ catalog_description: Operate computer user interfaces using Gemini models
 catalog_icon: /adk-docs/assets/tools-gemini-spark.svg
 ---
 
-# Computer Use Toolset with Gemini API
+# Conjunto de Herramientas de Uso de Computadora con la API de Gemini
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span><span class="lst-preview">Preview</span>
+  <span class="lst-supported">Compatible con ADK</span><span class="lst-python">Python v1.17.0</span><span class="lst-preview">Vista previa</span>
 </div>
 
-The Computer Use Toolset allows an agent to operate a user interface
-of a computer, such as browsers, to complete tasks. This tool uses
-a specific Gemini model and the [Playwright](https://playwright.dev/)
-testing tool to control a Chromium browser and can interact with
-web pages by taking screenshots, clicking, typing, and navigating.
+El Conjunto de Herramientas de Uso de Computadora permite a un agente operar una interfaz de usuario
+de una computadora, como navegadores, para completar tareas. Esta herramienta utiliza
+un modelo específico de Gemini y la herramienta de pruebas [Playwright](https://playwright.dev/)
+para controlar un navegador Chromium y puede interactuar con
+páginas web tomando capturas de pantalla, haciendo clic, escribiendo y navegando.
 
-For more information about the computer use model, see
-Gemini API [Computer use](https://ai.google.dev/gemini-api/docs/computer-use)
-or the Google Cloud Vertex AI API
+Para más información sobre el modelo de uso de computadora, consulta
+la API de Gemini [Computer use](https://ai.google.dev/gemini-api/docs/computer-use)
+o la API de Vertex AI de Google Cloud
 [Computer use](https://cloud.google.com/vertex-ai/generative-ai/docs/computer-use).
 
-!!! example "Preview release"
-    The Computer Use model and tool is a Preview release. For
-    more information, see the
-    [launch stage descriptions](https://cloud.google.com/products#product-launch-stages).
+!!! example "Versión de vista previa"
+    El modelo y herramienta de Uso de Computadora es una versión de Vista previa. Para
+    más información, consulta las
+    [descripciones de etapas de lanzamiento](https://cloud.google.com/products#product-launch-stages).
 
-## Setup
+## Configuración
 
-You must install Playwright and its dependencies, including Chromium,
-to be able to use the Computer Use Toolset.
+Debes instalar Playwright y sus dependencias, incluyendo Chromium,
+para poder usar el Conjunto de Herramientas de Uso de Computadora.
 
-??? tip "Recommended: create and activate a Python virtual environment"
+??? tip "Recomendado: crear y activar un entorno virtual de Python"
 
-    Create a Python virtual environment:
+    Crea un entorno virtual de Python:
 
     ```shell
     python -m venv .venv
     ```
 
-    Activate the Python virtual environment:
+    Activa el entorno virtual de Python:
 
     === "Windows CMD"
 
@@ -59,30 +59,30 @@ to be able to use the Computer Use Toolset.
         source .venv/bin/activate
         ```
 
-To set up the required software libraries for the Computer Use Toolset:
+Para configurar las bibliotecas de software requeridas para el Conjunto de Herramientas de Uso de Computadora:
 
-1.  Install Python dependencies:
+1.  Instala las dependencias de Python:
     ```console
     pip install termcolor==3.1.0
     pip install playwright==1.52.0
     pip install browserbase==1.3.0
     pip install rich
     ```
-2.  Install the Playwright dependencies, including the Chromium browser:
+2.  Instala las dependencias de Playwright, incluyendo el navegador Chromium:
     ```console
     playwright install-deps chromium
     playwright install chromium
     ```
 
-## Use the tool
+## Usar la herramienta
 
-Use the Computer Use Toolset by adding it as a tool to your agent. When you
-configure the tool, you must provide a implementation of the `BaseComputer`
-class which defines an interface for an agent to use a computer. In the
-following example, the `PlaywrightComputer` class is defined for this purpose.
-You can find the code for this implementation in `playwright.py` file of the
-[computer_use](https://github.com/google/adk-python/blob/main/contributing/samples/computer_use/playwright.py)
-agent sample project.
+Usa el Conjunto de Herramientas de Uso de Computadora agregándolo como herramienta a tu agente. Cuando
+configures la herramienta, debes proporcionar una implementación de la clase `BaseComputer`
+que define una interfaz para que un agente use una computadora. En el
+siguiente ejemplo, la clase `PlaywrightComputer` se define para este propósito.
+Puedes encontrar el código para esta implementación en el archivo `playwright.py` del
+proyecto de muestra del agente
+[computer_use](https://github.com/google/adk-python/blob/main/contributing/samples/computer_use/playwright.py).
 
 ```python
 from google.adk import Agent
@@ -106,6 +106,6 @@ root_agent = Agent(
 )
 ```
 
-For a complete code example, see the
-[computer_use](https://github.com/google/adk-python/tree/main/contributing/samples/computer_use)
-agent sample project.
+Para un ejemplo de código completo, consulta el
+proyecto de muestra del agente
+[computer_use](https://github.com/google/adk-python/tree/main/contributing/samples/computer_use).

@@ -4,40 +4,40 @@ catalog_description: Link your agents to enterprise apps using Integration Conne
 catalog_icon: /adk-docs/assets/tools-apigee-integration.png
 ---
 
-# Application Integration Tools for ADK
+# Herramientas de Application Integration para ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.3.0</span>
 </div>
 
-With **ApplicationIntegrationToolset**, you can seamlessly give your agents
-secure and governed access to enterprise applications using Integration
-Connectors' 100+ pre-built connectors for systems like Salesforce, ServiceNow,
-JIRA, SAP, and more.
+Con **ApplicationIntegrationToolset**, puedes otorgar de manera transparente a tus agentes
+acceso seguro y gobernado a aplicaciones empresariales utilizando los más de 100 conectores
+preconstruidos de Integration Connectors para sistemas como Salesforce, ServiceNow,
+JIRA, SAP y más.
 
-It supports both on-premise and SaaS applications. In addition, you can turn
-your existing Application Integration process automations into agentic workflows
-by providing application integration workflows as tools to your ADK agents.
+Es compatible tanto con aplicaciones locales como SaaS. Además, puedes convertir
+tus automatizaciones de procesos existentes de Application Integration en flujos de trabajo
+agénticos proporcionando flujos de trabajo de integración de aplicaciones como herramientas para tus agentes ADK.
 
-Federated search within Application Integration lets you use ADK agents to query
-multiple enterprise applications and data sources simultaneously.
+La búsqueda federada dentro de Application Integration te permite usar agentes ADK para consultar
+múltiples aplicaciones empresariales y fuentes de datos simultáneamente.
 
-[:fontawesome-brands-youtube:{.youtube-red-icon} See how ADK Federated Search in Application Integration works in this video walkthrough](https://www.youtube.com/watch?v=JdlWOQe5RgU){: target="_blank" rel="noopener noreferrer"}
+[:fontawesome-brands-youtube:{.youtube-red-icon} Mira cómo funciona ADK Federated Search en Application Integration en este video tutorial](https://www.youtube.com/watch?v=JdlWOQe5RgU){: target="_blank" rel="noopener noreferrer"}
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/JdlWOQe5RgU?si=bFY_-jJ6Oliy5UMG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-## Prerequisites
+## Prerrequisitos
 
-### 1. Install ADK
+### 1. Instalar ADK
 
-Install Agent Development Kit following the steps in the
-[installation guide](/adk-docs/get-started/installation/).
+Instala Agent Development Kit siguiendo los pasos en la
+[guía de instalación](/adk-docs/get-started/installation/).
 
-### 2. Install CLI
+### 2. Instalar CLI
 
-Install the
+Instala la
 [Google Cloud CLI](https://cloud.google.com/sdk/docs/install#installation_instructions).
-To use the tool with default credentials, run the following commands:
+Para usar la herramienta con credenciales predeterminadas, ejecuta los siguientes comandos:
 
 ```shell
 gcloud config set project <project-id>
@@ -45,31 +45,31 @@ gcloud auth application-default login
 gcloud auth application-default set-quota-project <project-id>
 ```
 
-Replace `<project-id>` with the unique ID of your Google Cloud project.
+Reemplaza `<project-id>` con el ID único de tu proyecto de Google Cloud.
 
-### 3. Provision Application Integration workflow and publish Connection Tool
+### 3. Aprovisionar el flujo de trabajo de Application Integration y publicar Connection Tool
 
-Use an existing
-[Application Integration](https://cloud.google.com/application-integration/docs/overview)
-workflow or
+Usa un
+[flujo de trabajo de Application Integration](https://cloud.google.com/application-integration/docs/overview)
+existente o una conexión de
 [Integrations Connector](https://cloud.google.com/integration-connectors/docs/overview)
-connection you want to use with your agent. You can also create a new
-[Application Integration workflow](https://cloud.google.com/application-integration/docs/setup-application-integration)
-or a
-[connection](https://cloud.google.com/integration-connectors/docs/connectors/neo4j/configure#configure-the-connector).
+que desees usar con tu agente. También puedes crear un nuevo
+[flujo de trabajo de Application Integration](https://cloud.google.com/application-integration/docs/setup-application-integration)
+o una
+[conexión](https://cloud.google.com/integration-connectors/docs/connectors/neo4j/configure#configure-the-connector).
 
-Import and publish the
+Importa y publica la
 [Connection Tool](https://console.cloud.google.com/integrations/templates/connection-tool/locations/global)
-from the template library.
+desde la biblioteca de plantillas.
 
-**Note**: To use a connector from Integration Connectors, you need to provision
-the Application Integration in the same region as your connection.
+**Nota**: Para usar un conector de Integration Connectors, necesitas aprovisionar
+Application Integration en la misma región que tu conexión.
 
-### 4. Create project structure
+### 4. Crear estructura del proyecto
 
 === "Python"
 
-    Set up your project structure and create the required files:
+    Configura la estructura de tu proyecto y crea los archivos requeridos:
 
       ```console
       project_root_folder
@@ -80,11 +80,11 @@ the Application Integration in the same region as your connection.
           └── tools.py
       ```
 
-    When running the agent, make sure to run `adk web` from the `project_root_folder`.
+    Al ejecutar el agente, asegúrate de ejecutar `adk web` desde la `project_root_folder`.
 
 === "Java"
 
-    Set up your project structure and create the required files:
+    Configura la estructura de tu proyecto y crea los archivos requeridos:
 
       ```console
         project_root_folder
@@ -93,82 +93,81 @@ the Application Integration in the same region as your connection.
             └── pom.xml
       ```
 
-     When running the agent, make sure to run the commands from the `project_root_folder`.
+     Al ejecutar el agente, asegúrate de ejecutar los comandos desde la `project_root_folder`.
 
-### 5. Set roles and permissions
+### 5. Establecer roles y permisos
 
-To get the permissions that you need to set up
-**ApplicationIntegrationToolset**, you must have the following IAM roles on the
-project (common to both Integration Connectors and Application Integration
-Workflows):
+Para obtener los permisos que necesitas configurar para
+**ApplicationIntegrationToolset**, debes tener los siguientes roles de IAM en el
+proyecto (comunes tanto para Integration Connectors como para flujos de trabajo de Application Integration):
 
     - roles/integrations.integrationEditor
     - roles/connectors.invoker
     - roles/secretmanager.secretAccessor
 
-**Note:** When using Agent Engine (AE) for deployment, don't use
-`roles/integrations.integrationInvoker`, as it can result in 403 errors. Use
-`roles/integrations.integrationEditor` instead.
+**Nota:** Al usar Agent Engine (AE) para el despliegue, no uses
+`roles/integrations.integrationInvoker`, ya que puede resultar en errores 403. Usa
+`roles/integrations.integrationEditor` en su lugar.
 
-## Use Integration Connectors
+## Usar Integration Connectors
 
-Connect your agent to enterprise applications using
+Conecta tu agente a aplicaciones empresariales usando
 [Integration Connectors](https://cloud.google.com/integration-connectors/docs/overview).
 
-### Before you begin
+### Antes de comenzar
 
-**Note:** The *ExecuteConnection* integration is typically created automatically when you provision Application Integration in a given region. If the *ExecuteConnection* doesn't exist in the [list of integrations](https://console.cloud.google.com/integrations/list), you must follow these steps to create it:
+**Nota:** La integración *ExecuteConnection* generalmente se crea automáticamente cuando aprovisionas Application Integration en una región determinada. Si *ExecuteConnection* no existe en la [lista de integraciones](https://console.cloud.google.com/integrations/list), debes seguir estos pasos para crearla:
 
-1. To use a connector from Integration Connectors, click **QUICK SETUP** and [provision](https://console.cloud.google.com/integrations)
-   Application Integration in the same region as your connection.
+1. Para usar un conector de Integration Connectors, haz clic en **QUICK SETUP** y [aprovisiona](https://console.cloud.google.com/integrations)
+   Application Integration en la misma región que tu conexión.
 
    ![Google Cloud Tools](/adk-docs/assets/application-integration-overview.png)
 
 
 
-2. Go to the [Connection Tool](https://console.cloud.google.com/integrations/templates/connection-tool/locations/us-central1)
-   template in the template library and click **USE TEMPLATE**.
+2. Ve a la plantilla de [Connection Tool](https://console.cloud.google.com/integrations/templates/connection-tool/locations/us-central1)
+   en la biblioteca de plantillas y haz clic en **USE TEMPLATE**.
 
 
     ![Google Cloud Tools](/adk-docs/assets/use-connection-tool-template.png)
 
-3. Enter the Integration Name as *ExecuteConnection* (it is mandatory to use this exact integration name only).
-   Then, select the region to match your connection region and click **CREATE**.
+3. Ingresa el nombre de integración como *ExecuteConnection* (es obligatorio usar exactamente este nombre de integración).
+   Luego, selecciona la región para que coincida con tu región de conexión y haz clic en **CREATE**.
 
-4. Click **PUBLISH** to publish the integration in the <i>Application Integration</i> editor.
+4. Haz clic en **PUBLISH** para publicar la integración en el editor de <i>Application Integration</i>.
 
 
     ![Google Cloud Tools](/adk-docs/assets/publish-integration.png)
 
 
-### Create an Application Integration Toolset
+### Crear un Toolset de Application Integration
 
-To create an Application Integration Toolset for Integration Connectors, follow these steps:
+Para crear un Toolset de Application Integration para Integration Connectors, sigue estos pasos:
 
-1.  Create a tool with `ApplicationIntegrationToolset` in the `tools.py` file:
+1.  Crea una herramienta con `ApplicationIntegrationToolset` en el archivo `tools.py`:
 
     ```py
     from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
 
     connector_tool = ApplicationIntegrationToolset(
-        project="test-project", # TODO: replace with GCP project of the connection
-        location="us-central1", #TODO: replace with location of the connection
-        connection="test-connection", #TODO: replace with connection name
-        entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#empty list for actions means all operations on the entity are supported.
-        actions=["action1"], #TODO: replace with actions
-        service_account_json='{...}', # optional. Stringified json for service account key
+        project="test-project", # TODO: reemplazar con el proyecto GCP de la conexión
+        location="us-central1", #TODO: reemplazar con la ubicación de la conexión
+        connection="test-connection", #TODO: reemplazar con el nombre de la conexión
+        entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#lista vacía para acciones significa que todas las operaciones en la entidad están soportadas.
+        actions=["action1"], #TODO: reemplazar con las acciones
+        service_account_json='{...}', # opcional. Json convertido en cadena para la clave de la cuenta de servicio
         tool_name_prefix="tool_prefix2",
         tool_instructions="..."
     )
     ```
 
-    **Note:**
+    **Nota:**
 
-    * You can provide a service account to be used instead of default credentials by generating a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating), and providing the right [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account.
-    * To find the list of supported entities and actions for a connection, use the Connectors APIs: [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions) or [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes).
+    * Puedes proporcionar una cuenta de servicio para usar en lugar de las credenciales predeterminadas generando una [Clave de Cuenta de Servicio](https://cloud.google.com/iam/docs/keys-create-delete#creating), y proporcionando los [roles de IAM de Application Integration e Integration Connector](#prerequisites) correctos a la cuenta de servicio.
+    * Para encontrar la lista de entidades y acciones soportadas para una conexión, usa las APIs de Connectors: [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions) o [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes).
 
 
-    `ApplicationIntegrationToolset` supports `auth_scheme` and `auth_credential` for **dynamic OAuth2 authentication** for Integration Connectors. To use it, create a tool similar to this in the `tools.py` file:
+    `ApplicationIntegrationToolset` soporta `auth_scheme` y `auth_credential` para **autenticación OAuth2 dinámica** para Integration Connectors. Para usarlo, crea una herramienta similar a esta en el archivo `tools.py`:
 
     ```py
     from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
@@ -199,18 +198,18 @@ To create an Application Integration Toolset for Integration Connectors, follow 
     auth_credential = AuthCredential(
       auth_type=AuthCredentialTypes.OAUTH2,
       oauth2=OAuth2Auth(
-          client_id="...", #TODO: replace with client_id
-          client_secret="...", #TODO: replace with client_secret
+          client_id="...", #TODO: reemplazar con client_id
+          client_secret="...", #TODO: reemplazar con client_secret
       ),
     )
 
     connector_tool = ApplicationIntegrationToolset(
-        project="test-project", # TODO: replace with GCP project of the connection
-        location="us-central1", #TODO: replace with location of the connection
-        connection="test-connection", #TODO: replace with connection name
-        entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#empty list for actions means all operations on the entity are supported.
-        actions=["GET_calendars/%7BcalendarId%7D/events"], #TODO: replace with actions. this one is for list events
-        service_account_json='{...}', # optional. Stringified json for service account key
+        project="test-project", # TODO: reemplazar con el proyecto GCP de la conexión
+        location="us-central1", #TODO: reemplazar con la ubicación de la conexión
+        connection="test-connection", #TODO: reemplazar con el nombre de la conexión
+        entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#lista vacía para acciones significa que todas las operaciones en la entidad están soportadas.
+        actions=["GET_calendars/%7BcalendarId%7D/events"], #TODO: reemplazar con acciones. este es para listar eventos
+        service_account_json='{...}', # opcional. Json convertido en cadena para la clave de la cuenta de servicio
         tool_name_prefix="tool_prefix2",
         tool_instructions="...",
         auth_scheme=oauth_scheme,
@@ -219,7 +218,7 @@ To create an Application Integration Toolset for Integration Connectors, follow 
     ```
 
 
-2. Update the `agent.py` file and add tool to your agent:
+2. Actualiza el archivo `agent.py` y agrega la herramienta a tu agente:
 
     ```py
     from google.adk.agents.llm_agent import LlmAgent
@@ -233,54 +232,54 @@ To create an Application Integration Toolset for Integration Connectors, follow 
     )
     ```
 
-3. Configure  `__init__.py` to expose your agent:
+3. Configura `__init__.py` para exponer tu agente:
 
     ```py
     from . import agent
     ```
 
-4. Start the Google ADK Web UI and use your agent:
+4. Inicia la interfaz web de Google ADK y usa tu agente:
 
     ```shell
-    # make sure to run `adk web` from your project_root_folder
+    # asegúrate de ejecutar `adk web` desde tu project_root_folder
     adk web
     ```
 
-After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose
-   `my\_agent` agent (which is the same as the agent folder name).
+Después de completar los pasos anteriores, ve a [http://localhost:8000](http://localhost:8000), y elige
+   el agente `my\_agent` (que es el mismo que el nombre de la carpeta del agente).
 
 
-## Use Application Integration Workflows
+## Usar flujos de trabajo de Application Integration
 
-Use an existing
-[Application Integration](https://cloud.google.com/application-integration/docs/overview)
-workflow as a tool for your agent or create a new one.
+Usa un
+[flujo de trabajo de Application Integration](https://cloud.google.com/application-integration/docs/overview)
+existente como una herramienta para tu agente o crea uno nuevo.
 
 
-### 1. Create a tool
+### 1. Crear una herramienta
 
 === "Python"
 
-    To create a tool with `ApplicationIntegrationToolset` in the `tools.py` file, use the following code:
+    Para crear una herramienta con `ApplicationIntegrationToolset` en el archivo `tools.py`, usa el siguiente código:
 
       ```py
           integration_tool = ApplicationIntegrationToolset(
-              project="test-project", # TODO: replace with GCP project of the connection
-              location="us-central1", #TODO: replace with location of the connection
-              integration="test-integration", #TODO: replace with integration name
-              triggers=["api_trigger/test_trigger"],#TODO: replace with trigger id(s). Empty list would mean all api triggers in the integration to be considered.
-              service_account_json='{...}', #optional. Stringified json for service account key
+              project="test-project", # TODO: reemplazar con el proyecto GCP de la conexión
+              location="us-central1", #TODO: reemplazar con la ubicación de la conexión
+              integration="test-integration", #TODO: reemplazar con el nombre de la integración
+              triggers=["api_trigger/test_trigger"],#TODO: reemplazar con el/los ID(s) de trigger. Lista vacía significaría que todos los api triggers en la integración se consideran.
+              service_account_json='{...}', #opcional. Json convertido en cadena para la clave de la cuenta de servicio
               tool_name_prefix="tool_prefix1",
               tool_instructions="..."
           )
       ```
 
-      **Note:** You can provide a service account to be used instead of using default credentials. To do this, generate a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and provide the correct
-         [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account. For more details about the IAM roles, refer to the [Prerequisites](#prerequisites) section.
+      **Nota:** Puedes proporcionar una cuenta de servicio para usar en lugar de las credenciales predeterminadas. Para hacer esto, genera una [Clave de Cuenta de Servicio](https://cloud.google.com/iam/docs/keys-create-delete#creating) y proporciona los
+         [roles de IAM de Application Integration e Integration Connector](#prerequisites) correctos a la cuenta de servicio. Para más detalles sobre los roles de IAM, consulta la sección [Prerrequisitos](#prerequisites).
 
 === "Java"
 
-    To create a tool with `ApplicationIntegrationToolset` in the `tools.java` file, use the following code:
+    Para crear una herramienta con `ApplicationIntegrationToolset` en el archivo `tools.java`, usa el siguiente código:
 
       ```java
           import com.google.adk.tools.applicationintegrationtoolset.ApplicationIntegrationToolset;
@@ -319,13 +318,13 @@ workflow as a tool for your agent or create a new one.
           }
       ```
 
-      **Note:** You can provide a service account to be used instead of using default credentials. To do this, generate a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and provide the correct [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account. For more details about the IAM roles, refer to the [Prerequisites](#prerequisites) section.
+      **Nota:** Puedes proporcionar una cuenta de servicio para usar en lugar de las credenciales predeterminadas. Para hacer esto, genera una [Clave de Cuenta de Servicio](https://cloud.google.com/iam/docs/keys-create-delete#creating) y proporciona los [roles de IAM de Application Integration e Integration Connector](#prerequisites) correctos a la cuenta de servicio. Para más detalles sobre los roles de IAM, consulta la sección [Prerrequisitos](#prerequisites).
 
-### 2. Add the tool to your agent
+### 2. Agregar la herramienta a tu agente
 
 === "Python"
 
-    To update the `agent.py` file and add the tool to your agent, use the following code:
+    Para actualizar el archivo `agent.py` y agregar la herramienta a tu agente, usa el siguiente código:
 
       ```py
           from google.adk.agents.llm_agent import LlmAgent
@@ -341,7 +340,7 @@ workflow as a tool for your agent or create a new one.
 
 === "Java"
 
-    To update the `agent.java` file and add the tool to your agent, use the following code:
+    Para actualizar el archivo `agent.java` y agregar la herramienta a tu agente, usa el siguiente código:
 
       ```java
           import com.google.adk.agent.LlmAgent;
@@ -350,13 +349,13 @@ workflow as a tool for your agent or create a new one.
 
             public class MyAgent {
                 public static void main(String[] args) {
-                    // Assuming Tools class is defined as in the previous step
+                    // Asumiendo que la clase Tools está definida como en el paso anterior
                     ImmutableList<BaseTool> tools = ImmutableList.<BaseTool>builder()
                             .add(Tools.integrationTool)
                             .add(Tools.connectionsTool)
                             .build();
 
-                    // Finally, create your agent with the tools generated automatically.
+                    // Finalmente, crea tu agente con las herramientas generadas automáticamente.
                     LlmAgent rootAgent = LlmAgent.builder()
                             .name("science-teacher")
                             .description("Science teacher agent")
@@ -367,40 +366,40 @@ workflow as a tool for your agent or create a new one.
                             .tools(tools)
                             .build();
 
-                    // You can now use rootAgent to interact with the LLM
-                    // For example, you can start a conversation with the agent.
+                    // Ahora puedes usar rootAgent para interactuar con el LLM
+                    // Por ejemplo, puedes iniciar una conversación con el agente.
                 }
             }
         ```
 
-**Note:** To find the list of supported entities and actions for a
-        connection, use these Connector APIs: `listActions`, `listEntityTypes`.
+**Nota:** Para encontrar la lista de entidades y acciones soportadas para una
+        conexión, usa estas APIs de Connector: `listActions`, `listEntityTypes`.
 
-### 3. Expose your agent
+### 3. Exponer tu agente
 
 === "Python"
 
-    To configure `__init__.py` to expose your agent, use the following code:
+    Para configurar `__init__.py` para exponer tu agente, usa el siguiente código:
 
       ```py
           from . import agent
       ```
 
-### 4. Use your agent
+### 4. Usar tu agente
 
 === "Python"
 
-    To start the Google ADK Web UI and use your agent, use the following commands:
+    Para iniciar la interfaz web de Google ADK y usar tu agente, usa los siguientes comandos:
 
       ```shell
-          # make sure to run `adk web` from your project_root_folder
+          # asegúrate de ejecutar `adk web` desde tu project_root_folder
           adk web
       ```
-    After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose the `my_agent` agent (which is the same as the agent folder name).
+    Después de completar los pasos anteriores, ve a [http://localhost:8000](http://localhost:8000), y elige el agente `my_agent` (que es el mismo que el nombre de la carpeta del agente).
 
 === "Java"
 
-    To start the Google ADK Web UI and use your agent, use the following commands:
+    Para iniciar la interfaz web de Google ADK y usar tu agente, usa los siguientes comandos:
 
       ```bash
           mvn install
@@ -411,4 +410,4 @@ workflow as a tool for your agent or create a new one.
               -Dexec.classpathScope="compile"
       ```
 
-    After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose the `my_agent` agent (which is the same as the agent folder name).
+    Después de completar los pasos anteriores, ve a [http://localhost:8000](http://localhost:8000), y elige el agente `my_agent` (que es el mismo que el nombre de la carpeta del agente).

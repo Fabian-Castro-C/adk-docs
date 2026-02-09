@@ -3,9 +3,9 @@ hide:
   - toc
 ---
 
-# Tools and Integrations for Agents
+# Herramientas e Integraciones para Agentes
 
-Check out the following pre-built tools and integrations that you can use with ADK agents:
+Consulta las siguientes herramientas e integraciones preconfiguradas que puedes usar con agentes ADK:
 
 ### Gemini
 
@@ -15,37 +15,37 @@ Check out the following pre-built tools and integrations that you can use with A
 
 {{$ render_catalog('tools/google-cloud/*.md') $}}
 
-### Third-party
+### Terceros
 
 {{$ render_catalog('tools/third-party/*.md') $}}
 
-## Use pre-built tools with ADK agents
+## Usar herramientas preconfiguradas con agentes ADK
 
-Follow these general steps to include tools in your ADK agents:
+Sigue estos pasos generales para incluir herramientas en tus agentes ADK:
 
-1. **Import:** Import the desired tool from the tools module. This is
-   `agents.tools` in Python, `@google/adk` in TypeScript,
-   `google.golang.org/adk/tool` in Go, or `com.google.adk.tools` in Java.
-2. **Configure:** Initialize the tool, providing required parameters if any.
-3. **Register:** Add the initialized tool to the ***tools*** list of your Agent.
+1. **Importar:** Importa la herramienta deseada desde el módulo de herramientas. Esto es
+   `agents.tools` en Python, `@google/adk` en TypeScript,
+   `google.golang.org/adk/tool` en Go, o `com.google.adk.tools` en Java.
+2. **Configurar:** Inicializa la herramienta, proporcionando los parámetros requeridos si los hay.
+3. **Registrar:** Agrega la herramienta inicializada a la lista ***tools*** de tu Agente.
 
-Once added to an agent, the agent can decide to use the tool based on the user
-prompt and its instructions. The framework handles the execution of the
-tool when the agent calls it.
+Una vez agregada a un agente, el agente puede decidir usar la herramienta basándose en el prompt del usuario
+y sus instrucciones. El framework maneja la ejecución de la
+herramienta cuando el agente la llama.
 
-!!! note "Note: Limitations on using multiple tools"
-    Some ADK tools ***cannot be used with other tools in the same agent***.
-    For more information on tools with these limitations, see
-    [Limitations for ADK tools](/adk-docs/tools/limitations/#one-tool-one-agent).
+!!! note "Nota: Limitaciones al usar múltiples herramientas"
+    Algunas herramientas ADK ***no pueden ser usadas con otras herramientas en el mismo agente***.
+    Para más información sobre herramientas con estas limitaciones, consulta
+    [Limitaciones para herramientas ADK](/adk-docs/tools/limitations/#one-tool-one-agent).
 
-## Build tools for agents
+## Construir herramientas para agentes
 
-If the above tools don't meet your needs, you can build tools for your ADK
-workflows using the following guides:
+Si las herramientas anteriores no satisfacen tus necesidades, puedes construir herramientas para tus flujos de trabajo ADK
+usando las siguientes guías:
 
-*   **[Function Tools](/adk-docs/tools-custom/function-tools/)**: Build custom tools for
-    your specific ADK agent needs.
-*   **[MCP Tools](/adk-docs/tools-custom/mcp-tools/)**: Connect MCP servers as tools
-    for your ADK agents.
+*   **[Function Tools](/adk-docs/tools-custom/function-tools/)**: Construye herramientas personalizadas para
+    las necesidades específicas de tu agente ADK.
+*   **[MCP Tools](/adk-docs/tools-custom/mcp-tools/)**: Conecta servidores MCP como herramientas
+    para tus agentes ADK.
 *   **[OpenAPI Integration](/adk-docs/tools-custom/openapi-tools/)**:
-    Generate callable tools directly from an OpenAPI Specification.
+    Genera herramientas invocables directamente desde una Especificación OpenAPI.

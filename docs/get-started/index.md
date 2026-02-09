@@ -1,36 +1,34 @@
-# Get started
+# Primeros pasos
 
-Agent Development Kit (ADK) is designed to empower developers to quickly build,
-manage, evaluate and deploy AI-powered agents. These quick start guides get you
-set up and running a simple agent in less than 20 minutes.
+Agent Development Kit (ADK) está diseñado para capacitar a los desarrolladores a construir, gestionar, evaluar e implementar agentes impulsados por IA rápidamente. Estas guías de inicio rápido te permiten configurar y ejecutar un agente simple en menos de 20 minutos.
 
 <div class="grid cards" markdown>
 
--   :fontawesome-brands-python:{ .lg .middle } **Python Quickstart**
+-   :fontawesome-brands-python:{ .lg .middle } **Inicio Rápido de Python**
 
     ---
-    Create your first Python ADK agent in minutes.
+    Crea tu primer agente ADK de Python en minutos.
 
-    [:octicons-arrow-right-24: Start with Python](python.md) <br>
+    [:octicons-arrow-right-24: Comenzar con Python](python.md) <br>
 
--   :fontawesome-brands-golang:{ .lg .middle } **Go Quickstart**
-
-    ---
-    Create your first Go ADK agent in minutes.
-
-    [:octicons-arrow-right-24: Start with Go](go.md) <br>
-
--   :fontawesome-brands-java:{ .lg .middle } **Java Quickstart**
+-   :fontawesome-brands-golang:{ .lg .middle } **Inicio Rápido de Go**
 
     ---
-    Create your first Java ADK agent in minutes.
+    Crea tu primer agente ADK de Go en minutos.
 
-    [:octicons-arrow-right-24: Start with Java](java.md) <br>
+    [:octicons-arrow-right-24: Comenzar con Go](go.md) <br>
 
--   :fontawesome-brands-js:{ .lg .middle } **TypeScript Quickstart**
+-   :fontawesome-brands-java:{ .lg .middle } **Inicio Rápido de Java**
 
     ---
-    Create your first TypeScript ADK agent in minutes.
+    Crea tu primer agente ADK de Java en minutos.
 
-    [:octicons-arrow-right-24: Start with TypeScript](typescript.md) <br>
+    [:octicons-arrow-right-24: Comenzar con Java](java.md) <br>
+
+-   :fontawesome-brands-js:{ .lg .middle } **Inicio Rápido de TypeScript**
+
+    ---
+    Crea tu primer agente ADK de TypeScript en minutos.
+
+    [:octicons-arrow-right-24: Comenzar con TypeScript](typescript.md) <br>
 </div>

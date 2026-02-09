@@ -1,87 +1,58 @@
-# Introduction to Conversational Context: Session, State, and Memory
+# Introducción al Contexto Conversacional: Session, State y Memory
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
 </div>
 
-Meaningful, multi-turn conversations require agents to understand context. Just
-like humans, they need to recall the conversation history: what's been said and
-done to maintain continuity and avoid repetition. The Agent Development Kit
-(ADK) provides structured ways to manage this context through `Session`,
-`State`, and `Memory`.
+Las conversaciones significativas de múltiples turnos requieren que los agentes comprendan el contexto. Al igual que los humanos, necesitan recordar el historial de la conversación: lo que se ha dicho y hecho para mantener la continuidad y evitar repeticiones. El Agent Development Kit (ADK) proporciona formas estructuradas de gestionar este contexto a través de `Session`, `State` y `Memory`.
 
-## Core Concepts
+## Conceptos Fundamentales
 
-Think of different instances of your conversations with the agent as distinct
-**conversation threads**, potentially drawing upon **long-term knowledge**.
+Piensa en las diferentes instancias de tus conversaciones con el agente como **hilos de conversación** distintos, que potencialmente se basan en **conocimiento a largo plazo**.
 
-1.  **`Session`**: The Current Conversation Thread
+1.  **`Session`**: El Hilo de Conversación Actual
 
-    *   Represents a *single, ongoing interaction* between a user and your agent
-        system.
-    *   Contains the chronological sequence of messages and actions taken by the
-        agent (referred to `Events`) during *that specific interaction*.
-    *   A `Session` can also hold temporary data (`State`) relevant only *during
-        this conversation*.
+    *   Representa una *única interacción continua* entre un usuario y tu sistema de agente.
+    *   Contiene la secuencia cronológica de mensajes y acciones realizadas por el agente (referidas como `Events`) durante *esa interacción específica*.
+    *   Una `Session` también puede contener datos temporales (`State`) relevantes solo *durante esta conversación*.
 
-2.  **`State` (`session.state`)**: Data Within the Current Conversation
+2.  **`State` (`session.state`)**: Datos Dentro de la Conversación Actual
 
-    *   Data stored within a specific `Session`.
-    *   Used to manage information relevant *only* to the *current, active*
-        conversation thread (e.g., items in a shopping cart *during this chat*,
-        user preferences mentioned *in this session*).
+    *   Datos almacenados dentro de una `Session` específica.
+    *   Se utilizan para gestionar información relevante *solo* para el hilo de conversación *actual y activo* (por ejemplo, artículos en un carrito de compras *durante este chat*, preferencias del usuario mencionadas *en esta sesión*).
 
-3.  **`Memory`**: Searchable, Cross-Session Information
+3.  **`Memory`**: Información Consultable Entre Sesiones
 
-    *   Represents a store of information that might span *multiple past
-        sessions* or include external data sources.
-    *   It acts as a knowledge base the agent can *search* to recall information
-        or context beyond the immediate conversation.
+    *   Representa un almacén de información que puede abarcar *múltiples sesiones pasadas* o incluir fuentes de datos externas.
+    *   Actúa como una base de conocimiento que el agente puede *consultar* para recordar información o contexto más allá de la conversación inmediata.
 
-## Managing Context: Services
+## Gestión del Contexto: Servicios
 
-ADK provides services to manage these concepts:
+ADK proporciona servicios para gestionar estos conceptos:
 
-1.  **`SessionService`**: Manages the different conversation threads (`Session`
-    objects)
+1.  **`SessionService`**: Gestiona los diferentes hilos de conversación (objetos `Session`)
 
-    *   Handles the lifecycle: creating, retrieving, updating (appending
-        `Events`, modifying `State`), and deleting individual `Session`s.
+    *   Maneja el ciclo de vida: crear, recuperar, actualizar (añadiendo `Events`, modificando `State`) y eliminar `Session`s individuales.
 
-2.  **`MemoryService`**: Manages the Long-Term Knowledge Store (`Memory`)
+2.  **`MemoryService`**: Gestiona el Almacén de Conocimiento a Largo Plazo (`Memory`)
 
-    *   Handles ingesting information (often from completed `Session`s) into the
-        long-term store.
-    *   Provides methods to search this stored knowledge based on queries.
+    *   Maneja la ingesta de información (a menudo desde `Session`s completadas) en el almacén a largo plazo.
+    *   Proporciona métodos para buscar este conocimiento almacenado basándose en consultas.
 
-**Implementations**: ADK offers different implementations for both
-`SessionService` and `MemoryService`, allowing you to choose the storage backend
-that best fits your application's needs. Notably, **in-memory implementations**
-are provided for both services; these are designed specifically for **local
-testing and fast development**. It's important to remember that **all data
-stored using these in-memory options (sessions, state, or long-term knowledge)
-is lost when your application restarts**. For persistence and scalability beyond
-local testing, ADK also offers cloud-based and database service options.
+**Implementaciones**: ADK ofrece diferentes implementaciones tanto para `SessionService` como para `MemoryService`, permitiéndote elegir el backend de almacenamiento que mejor se adapte a las necesidades de tu aplicación. En particular, se proporcionan **implementaciones en memoria** para ambos servicios; estas están diseñadas específicamente para **pruebas locales y desarrollo rápido**. Es importante recordar que **todos los datos almacenados utilizando estas opciones en memoria (sesiones, estado o conocimiento a largo plazo) se pierden cuando tu aplicación se reinicia**. Para persistencia y escalabilidad más allá de las pruebas locales, ADK también ofrece opciones de servicios basados en la nube y bases de datos.
 
-**In Summary:**
+**En Resumen:**
 
-*   **`Session` & `State`**: Focus on the **current interaction** – the history
-    and data of the *single, active conversation*. Managed primarily by a
-    `SessionService`.
-*   **Memory**: Focuses on the **past and external information** – a *searchable
-    archive* potentially spanning across conversations. Managed by a
-    `MemoryService`.
+*   **`Session` & `State`**: Se centran en la **interacción actual** – el historial y datos de la *única conversación activa*. Gestionados principalmente por un `SessionService`.
+*   **Memory**: Se centra en la **información pasada y externa** – un *archivo consultable* que potencialmente abarca múltiples conversaciones. Gestionado por un `MemoryService`.
 
-## What's Next?
+## ¿Qué Sigue?
 
-In the following sections, we'll dive deeper into each of these components:
+En las siguientes secciones, profundizaremos en cada uno de estos componentes:
 
-*   **`Session`**: Understanding its structure and `Events`.
-*   **`State`**: How to effectively read, write, and manage session-specific
-    data.
-*   **`SessionService`**: Choosing the right storage backend for your sessions.
-*   **`MemoryService`**: Exploring options for storing and retrieving broader
-    context.
+*   **`Session`**: Comprender su estructura y `Events`.
+*   **`State`**: Cómo leer, escribir y gestionar eficazmente datos específicos de la sesión.
+*   **`SessionService`**: Elegir el backend de almacenamiento adecuado para tus sesiones.
+*   **`MemoryService`**: Explorar opciones para almacenar y recuperar contexto más amplio.
 
-Understanding these concepts is fundamental to building agents that can engage
-in complex, stateful, and context-aware conversations.
+Comprender estos conceptos es fundamental para construir agentes que puedan participar en conversaciones complejas, con estado y conscientes del contexto.

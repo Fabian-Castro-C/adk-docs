@@ -1,18 +1,18 @@
-# Installing ADK
+# Instalación de ADK
 
 === "Python"
 
-    ## Create & activate virtual environment
+    ## Crear y activar entorno virtual
 
-    We recommend creating a virtual Python environment using
+    Recomendamos crear un entorno virtual de Python usando
     [venv](https://docs.python.org/3/library/venv.html):
 
     ```shell
     python -m venv .venv
     ```
 
-    Now, you can activate the virtual environment using the appropriate command for
-    your operating system and environment:
+    Ahora, puedes activar el entorno virtual usando el comando apropiado para
+    tu sistema operativo y entorno:
 
     ```
     # Mac / Linux
@@ -25,13 +25,13 @@
     .venv\Scripts\Activate.ps1
     ```
 
-    ### Install ADK
+    ### Instalar ADK
 
     ```bash
     pip install google-adk
     ```
 
-    (Optional) Verify your installation:
+    (Opcional) Verifica tu instalación:
 
     ```bash
     pip show google-adk
@@ -39,7 +39,7 @@
 
 === "TypeScript"
 
-    ### Install ADK and ADK DevTools
+    ### Instalar ADK y ADK DevTools
 
     ```bash
     npm install @google/adk @google/adk-devtools
@@ -47,34 +47,34 @@
 
 === "Go"
 
-    ## Create a new Go module
+    ## Crear un nuevo módulo Go
 
-    If you are starting a new project, you can create a new Go module:
+    Si estás comenzando un nuevo proyecto, puedes crear un nuevo módulo Go:
 
     ```shell
     go mod init example.com/my-agent
     ```
 
-    ## Install ADK
+    ## Instalar ADK
 
-    To add the ADK to your project, run the following command:
+    Para agregar el ADK a tu proyecto, ejecuta el siguiente comando:
 
     ```shell
     go get google.golang.org/adk
     ```
 
-    This will add the ADK as a dependency to your `go.mod` file.
+    Esto agregará el ADK como una dependencia a tu archivo `go.mod`.
 
-    (Optional) Verify your installation by checking your `go.mod` file for the `google.golang.org/adk` entry.
+    (Opcional) Verifica tu instalación revisando tu archivo `go.mod` para la entrada `google.golang.org/adk`.
 
 === "Java"
 
-    You can either use maven or gradle to add the `google-adk` and `google-adk-dev` package.
+    Puedes usar maven o gradle para agregar los paquetes `google-adk` y `google-adk-dev`.
 
-    `google-adk` is the core Java ADK library. Java ADK also comes with a pluggable example SpringBoot server to run your agents seamlessly. This optional
-    package is present as part of `google-adk-dev`.
+    `google-adk` es la biblioteca principal de Java ADK. Java ADK también viene con un servidor SpringBoot de ejemplo conectable para ejecutar tus agentes sin problemas. Este paquete opcional
+    está presente como parte de `google-adk-dev`.
 
-    If you are using maven, add the following to your `pom.xml`:
+    Si estás usando maven, agrega lo siguiente a tu `pom.xml`:
 
     ```xml title="pom.xml"
     <?xml version="1.0" encoding="UTF-8"?>
@@ -87,7 +87,7 @@
         <artifactId>adk-agents</artifactId>
         <version>1.0-SNAPSHOT</version>
 
-        <!-- Specify the version of Java you'll be using -->
+        <!-- Especifica la versión de Java que usarás -->
         <properties>
             <maven.compiler.source>17</maven.compiler.source>
             <maven.compiler.target>17</maven.compiler.target>
@@ -95,13 +95,13 @@
         </properties>
 
         <dependencies>
-            <!-- The ADK core dependency -->
+            <!-- La dependencia principal de ADK -->
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk</artifactId>
                 <version>0.5.0</version>
             </dependency>
-            <!-- The ADK dev web UI to debug your agent -->
+            <!-- La interfaz web de desarrollo de ADK para depurar tu agente -->
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk-dev</artifactId>
@@ -112,9 +112,9 @@
     </project>
     ```
 
-    Here's a [complete pom.xml](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run/pom.xml) file for reference.
+    Aquí hay un [pom.xml completo](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run/pom.xml) como referencia.
 
-    If you are using gradle, add the dependency to your build.gradle:
+    Si estás usando gradle, agrega la dependencia a tu build.gradle:
 
     ```title="build.gradle"
     dependencies {
@@ -123,8 +123,8 @@
     }
     ```
 
-    You should also configure Gradle to pass `-parameters` to `javac`. (Alternatively, use `@Schema(name = "...")`).
+    También deberías configurar Gradle para pasar `-parameters` a `javac`. (Alternativamente, usa `@Schema(name = "...")`).
 
-## Next steps
+## Próximos pasos
 
-* Try creating your first agent with the [**Quickstart**](quickstart.md)
+* Intenta crear tu primer agente con el [**Inicio rápido**](quickstart.md)

@@ -1,18 +1,18 @@
-# Ollama model host for ADK agents
+# Alojamiento de modelos Ollama para agentes ADK
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-[Ollama](https://ollama.com/) is a tool that allows you to host and run
-open-source models locally. ADK integrates with Ollama-hosted models through the
-[LiteLLM](/adk-docs/agents/models/litellm/) model connector library.
+[Ollama](https://ollama.com/) es una herramienta que te permite alojar y ejecutar
+modelos de código abierto localmente. ADK se integra con modelos alojados en Ollama a través de la
+biblioteca de conectores de modelos [LiteLLM](/adk-docs/agents/models/litellm/).
 
-## Get started
+## Comenzar
 
-Use the LiteLLM wrapper to create agents with Ollama-hosted models. The
-following code example shows a basic implementation for using Gemma open
-models with your agents:
+Utiliza el wrapper de LiteLLM para crear agentes con modelos alojados en Ollama. El
+siguiente ejemplo de código muestra una implementación básica para usar modelos abiertos
+Gemma con tus agentes:
 
 ```py
 root_agent = Agent(
@@ -32,30 +32,30 @@ root_agent = Agent(
 )
 ```
 
-!!! warning "Warning: Use `ollama_chat`interface"
+!!! warning "Advertencia: Usa la interfaz `ollama_chat`"
 
-    Make sure you set the provider `ollama_chat` instead of `ollama`. Using
-    `ollama` can result in unexpected behaviors such as infinite tool call loops
-    and ignoring previous context.
+    Asegúrate de establecer el proveedor `ollama_chat` en lugar de `ollama`. Usar
+    `ollama` puede resultar en comportamientos inesperados como bucles infinitos de llamadas a herramientas
+    e ignorar el contexto previo.
 
-!!! tip "Use `OLLAMA_API_BASE` environment variable"
+!!! tip "Usa la variable de entorno `OLLAMA_API_BASE`"
 
-    Although you can specify the `api_base` parameter in LiteLLM for generation,
-    as of v1.65.5, the library relies on the environment variable for other API calls.
-    Therefore, you should set the `OLLAMA_API_BASE` environment variable for your
-    Ollama server URL to ensure all requests are routed correctly.
+    Aunque puedes especificar el parámetro `api_base` en LiteLLM para la generación,
+    desde la v1.65.5, la biblioteca depende de la variable de entorno para otras llamadas API.
+    Por lo tanto, debes establecer la variable de entorno `OLLAMA_API_BASE` para la
+    URL de tu servidor Ollama para asegurar que todas las solicitudes se enruten correctamente.
 
 ```bash
 export OLLAMA_API_BASE="http://localhost:11434"
 adk web
 ```
 
-## Model choice
+## Elección del modelo
 
-If your agent is relying on tools, make sure that you select a model with
-tool support from [Ollama website](https://ollama.com/search?c=tools).
-For reliable results, use a model with tool support.
-You can check tool support for the model using the following command:
+Si tu agente depende de herramientas, asegúrate de seleccionar un modelo con
+soporte de herramientas desde el [sitio web de Ollama](https://ollama.com/search?c=tools).
+Para resultados confiables, usa un modelo con soporte de herramientas.
+Puedes verificar el soporte de herramientas para el modelo usando el siguiente comando:
 
 ```bash
 ollama show mistral-small3.1
@@ -72,17 +72,17 @@ ollama show mistral-small3.1
     tools
 ```
 
-You should see **tools** listed under capabilities.
-You can also look at the template the model is using and tweak it based on your
-needs.
+Deberías ver **tools** listado bajo capabilities.
+También puedes ver la plantilla que el modelo está usando y ajustarla según tus
+necesidades.
 
 ```bash
 ollama show --modelfile llama3.2 > model_file_to_modify
 ```
 
-For instance, the default template for the above model inherently suggests that
-the model shall call a function all the time. This may result in an infinite
-loop of function calls.
+Por ejemplo, la plantilla predeterminada para el modelo anterior sugiere inherentemente que
+el modelo debe llamar a una función todo el tiempo. Esto puede resultar en un bucle
+infinito de llamadas a funciones.
 
 ```
 Given the following functions, please respond with a JSON for a function call
@@ -92,8 +92,8 @@ Respond in the format {"name": function name, "parameters": dictionary of
 argument name and its value}. Do not use variables.
 ```
 
-You can swap such prompts with a more descriptive one to prevent infinite tool
-call loops, for instance:
+Puedes reemplazar tales prompts con uno más descriptivo para prevenir bucles infinitos de
+llamadas a herramientas, por ejemplo:
 
 ```
 Review the user's prompt and the available functions listed below.
@@ -113,18 +113,18 @@ prompt in plain text, providing the answer or information requested. Do not
 output any JSON.
 ```
 
-Then you can create a new model with the following command:
+Luego puedes crear un nuevo modelo con el siguiente comando:
 
 ```bash
 ollama create llama3.2-modified -f model_file_to_modify
 ```
 
-## Use OpenAI provider
+## Usar el proveedor OpenAI
 
-Alternatively, you can use `openai` as the provider name. This approach
-requires setting the `OPENAI_API_BASE=http://localhost:11434/v1` and
-`OPENAI_API_KEY=anything` env variables instead of `OLLAMA_API_BASE`.
-Note that the `API_BASE` value has *`/v1`* at the end.
+Alternativamente, puedes usar `openai` como el nombre del proveedor. Este enfoque
+requiere establecer las variables de entorno `OPENAI_API_BASE=http://localhost:11434/v1` y
+`OPENAI_API_KEY=anything` en lugar de `OLLAMA_API_BASE`.
+Ten en cuenta que el valor de `API_BASE` tiene *`/v1`* al final.
 
 ```py
 root_agent = Agent(
@@ -150,17 +150,17 @@ export OPENAI_API_KEY=anything
 adk web
 ```
 
-### Debugging
+### Depuración
 
-You can see the request sent to the Ollama server by adding the following in
-your agent code just after imports.
+Puedes ver la solicitud enviada al servidor Ollama agregando lo siguiente en
+tu código de agente justo después de los imports.
 
 ```py
 import litellm
 litellm._turn_on_debug()
 ```
 
-Look for a line like the following:
+Busca una línea como la siguiente:
 
 ```bash
 Request Sent from LiteLLM:

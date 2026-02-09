@@ -1,71 +1,71 @@
 ---
 catalog_title: AG-UI
-catalog_description: Build interactive chat UIs with streaming, state sync, and agentic actions
+catalog_description: Crea interfaces de usuario de chat interactivas con streaming, sincronización de estado y acciones agénticas
 catalog_icon: /adk-docs/assets/tools-ag-ui.png
 ---
 
-# Build chat experiences with AG-UI and CopilotKit
+# Crea experiencias de chat con AG-UI y CopilotKit
 
-Turn your ADK agents into full-featured applications with rich, responsive UIs.
-[AG-UI](https://docs.ag-ui.com/) is an open protocol that handles streaming
-events, client state, and bi-directional communication between your agents and
-users.
+Convierte tus agentes ADK en aplicaciones completas con interfaces de usuario ricas y responsivas.
+[AG-UI](https://docs.ag-ui.com/) es un protocolo abierto que maneja eventos de
+streaming, estado del cliente y comunicación bidireccional entre tus agentes y
+usuarios.
 
-[AG-UI](https://github.com/ag-ui-protocol/ag-ui) provides a consistent interface
-to empower rich clients across technology stacks, from mobile to the web and
-even the command line. There are a number of different clients that support
+[AG-UI](https://github.com/ag-ui-protocol/ag-ui) proporciona una interfaz consistente
+para potenciar clientes ricos a través de pilas tecnológicas, desde móviles hasta la web e
+incluso la línea de comandos. Hay varios clientes diferentes que soportan
 AG-UI:
 
-- [CopilotKit](https://copilotkit.ai) provides tooling and components to tightly
-  integrate your agent with web applications
-- Clients for
+- [CopilotKit](https://copilotkit.ai) proporciona herramientas y componentes para integrar
+  estrechamente tu agente con aplicaciones web
+- Clientes para
   [Kotlin](https://github.com/ag-ui-protocol/ag-ui/tree/main/sdks/community/kotlin),
   [Java](https://github.com/ag-ui-protocol/ag-ui/tree/main/sdks/community/java),
   [Go](https://github.com/ag-ui-protocol/ag-ui/tree/main/sdks/community/go/example/client),
-  and [CLI
-  implementations](https://github.com/ag-ui-protocol/ag-ui/tree/main/apps/client-cli-example/src)
-  in TypeScript
+  e [implementaciones
+  CLI](https://github.com/ag-ui-protocol/ag-ui/tree/main/apps/client-cli-example/src)
+  en TypeScript
 
-This tutorial uses CopilotKit to create a sample app backed by an ADK agent that
-demonstrates some of the features supported by AG-UI.
+Este tutorial usa CopilotKit para crear una aplicación de ejemplo respaldada por un agente ADK que
+demuestra algunas de las características soportadas por AG-UI.
 
-## Quickstart
+## Inicio rápido
 
-To get started, let's create a sample application with an ADK agent and a simple
-web client:
+Para empezar, vamos a crear una aplicación de ejemplo con un agente ADK y un cliente
+web simple:
 
-1. Create the app:
+1. Crea la aplicación:
 
     ```bash
     npx copilotkit@latest create -f adk
     ```
 
-2. Set your Google API key:
+2. Establece tu clave de API de Google:
 
     ```bash
     export GOOGLE_API_KEY="your-api-key"
     ```
 
-3. Install dependencies and run:
+3. Instala las dependencias y ejecuta:
 
     ```bash
     npm install && npm run dev
     ```
 
-This starts two servers:
+Esto inicia dos servidores:
 
-- **http://localhost:3000** - The web UI (open this in your browser)
-- **http://localhost:8000** - The ADK agent API (backend only)
+- **http://localhost:3000** - La interfaz de usuario web (abre esto en tu navegador)
+- **http://localhost:8000** - La API del agente ADK (solo backend)
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to chat with
-your agent.
+Abre [http://localhost:3000](http://localhost:3000) en tu navegador para chatear con
+tu agente.
 
-## Features
+## Características
 
 ### Chat
 
-Chat is a familiar interface for exposing your agent, and AG-UI handles
-streaming messages between your users and agents:
+El chat es una interfaz familiar para exponer tu agente, y AG-UI maneja
+el streaming de mensajes entre tus usuarios y agentes:
 
 ```tsx title="src/app/page.tsx"
 <CopilotSidebar
@@ -78,13 +78,13 @@ streaming messages between your users and agents:
 />
 ```
 
-Learn more about the chat UI
-[in the CopilotKit docs](https://docs.copilotkit.ai/adk/agentic-chat-ui).
+Aprende más sobre la interfaz de usuario de chat
+[en los documentos de CopilotKit](https://docs.copilotkit.ai/adk/agentic-chat-ui).
 
-### Generative UI
+### Interfaz de Usuario Generativa
 
-AG-UI lets you share tool information with a Generative UI so that it can be
-displayed to users:
+AG-UI te permite compartir información de herramientas con una interfaz de usuario generativa para que pueda ser
+mostrada a los usuarios:
 
 ```tsx title="src/app/page.tsx"
 useRenderToolCall(
@@ -100,15 +100,15 @@ useRenderToolCall(
 );
 ```
 
-Learn more about Generative UI
-[in the CopilotKit docs](https://docs.copilotkit.ai/adk/generative-ui).
+Aprende más sobre la interfaz de usuario generativa
+[en los documentos de CopilotKit](https://docs.copilotkit.ai/adk/generative-ui).
 
-### Shared State
+### Estado compartido
 
-ADK agents can be stateful, and synchronizing that state between your agents and
-your UIs enables powerful and fluid user experiences. State can be synchronized
-both ways so agents are automatically aware of changes made by your user or
-other parts of your application:
+Los agentes ADK pueden tener estado, y sincronizar ese estado entre tus agentes y
+tus interfaces de usuario habilita experiencias de usuario poderosas y fluidas. El estado puede ser sincronizado
+en ambas direcciones para que los agentes sean automáticamente conscientes de los cambios realizados por tu usuario u
+otras partes de tu aplicación:
 
 ```tsx title="src/app/page.tsx"
 const { state, setState } = useCoAgent<AgentState>({
@@ -121,16 +121,16 @@ const { state, setState } = useCoAgent<AgentState>({
 })
 ```
 
-Learn more about shared state
-[in the CopilotKit docs](https://docs.copilotkit.ai/adk/shared-state).
+Aprende más sobre el estado compartido
+[en los documentos de CopilotKit](https://docs.copilotkit.ai/adk/shared-state).
 
-## Resources
+## Recursos
 
-To see what other features you can build into your UI with AG-UI, refer to the
-CopilotKit docs:
+Para ver qué otras características puedes construir en tu interfaz de usuario con AG-UI, consulta los
+documentos de CopilotKit:
 
-- [Agentic Generative UI](https://docs.copilotkit.ai/adk/generative-ui/agentic)
-- [Human in the Loop](https://docs.copilotkit.ai/adk/human-in-the-loop)
-- [Frontend Actions](https://docs.copilotkit.ai/adk/frontend-actions)
+- [Interfaz de Usuario Generativa Agéntica](https://docs.copilotkit.ai/adk/generative-ui/agentic)
+- [Humano en el Bucle](https://docs.copilotkit.ai/adk/human-in-the-loop)
+- [Acciones de Frontend](https://docs.copilotkit.ai/adk/frontend-actions)
 
-Or try them out in the [AG-UI Dojo](https://dojo.ag-ui.com).
+O pruébalas en el [AG-UI Dojo](https://dojo.ag-ui.com).

@@ -3,17 +3,17 @@ hide:
   - toc
 ---
 
-# Google Cloud Tools
+# Herramientas de Google Cloud
 
-Google Cloud tools make it easier to connect your agents to Google Cloud’s
-products and services. With just a few lines of code you can use these tools to
-connect your agents with:
+Las herramientas de Google Cloud facilitan la conexión de tus agentes a los
+productos y servicios de Google Cloud. Con solo unas pocas líneas de código puedes usar estas herramientas para
+conectar tus agentes con:
 
-* **Any custom APIs** that developers host in Apigee.
-* **100s** of **prebuilt connectors** to enterprise systems such as Salesforce,
-  Workday, and SAP.
-* **Automation workflows** built using application integration.
-* **Databases** such as Spanner, AlloyDB, Postgres and more using the MCP
-  Toolbox for databases.
+* **Cualquier API personalizada** que los desarrolladores alojen en Apigee.
+* **Cientos** de **conectores prediseñados** a sistemas empresariales como Salesforce,
+  Workday y SAP.
+* **Flujos de trabajo de automatización** construidos usando integración de aplicaciones.
+* **Bases de datos** como Spanner, AlloyDB, Postgres y más usando el MCP
+  Toolbox para bases de datos.
 
 {{$ render_catalog('tools/google-cloud/*.md') $}}

@@ -1,45 +1,45 @@
-# vLLM model host for ADK agents
+# Host de modelos vLLM para agentes ADK
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+    <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-Tools such as [vLLM](https://github.com/vllm-project/vllm) allow you to host
-models efficiently and serve them as an OpenAI-compatible API endpoint. You can
-use vLLM models through the [LiteLLM](/adk-docs/agents/models/litellm/) library
-for Python.
+Herramientas como [vLLM](https://github.com/vllm-project/vllm) te permiten alojar
+modelos de manera eficiente y servirlos como un endpoint de API compatible con OpenAI. Puedes
+usar modelos vLLM a través de la biblioteca [LiteLLM](/adk-docs/agents/models/litellm/)
+para Python.
 
-## Setup
+## Configuración
 
-1. **Deploy Model:** Deploy your chosen model using vLLM (or a similar tool).
-   Note the API base URL (e.g., `https://your-vllm-endpoint.run.app/v1`).
-    * *Important for ADK Tools:* When deploying, ensure the serving tool
-      supports and enables OpenAI-compatible tool/function calling. For vLLM,
-      this might involve flags like `--enable-auto-tool-choice` and potentially
-      a specific `--tool-call-parser`, depending on the model. Refer to the vLLM
-      documentation on Tool Use.
-2. **Authentication:** Determine how your endpoint handles authentication (e.g.,
-   API key, bearer token).
+1. **Desplegar Modelo:** Despliega tu modelo elegido usando vLLM (o una herramienta similar).
+   Anota la URL base de la API (ej., `https://your-vllm-endpoint.run.app/v1`).
+    * *Importante para Herramientas ADK:* Al desplegar, asegúrate de que la herramienta de servicio
+      soporte y habilite el llamado de herramientas/funciones compatible con OpenAI. Para vLLM,
+      esto podría involucrar flags como `--enable-auto-tool-choice` y potencialmente
+      un `--tool-call-parser` específico, dependiendo del modelo. Consulta la documentación
+      de vLLM sobre Uso de Herramientas.
+2. **Autenticación:** Determina cómo tu endpoint maneja la autenticación (ej.,
+   clave API, token bearer).
 
-## Integration Example
+## Ejemplo de Integración
 
-The following example shows how to use a vLLM endpoint with ADK agents.
+El siguiente ejemplo muestra cómo usar un endpoint vLLM con agentes ADK.
 
 ```python
 import subprocess
 from google.adk.agents import LlmAgent
 from google.adk.models.lite_llm import LiteLlm
 
-# --- Example Agent using a model hosted on a vLLM endpoint ---
+# --- Agente de ejemplo usando un modelo alojado en un endpoint vLLM ---
 
-# Endpoint URL provided by your vLLM deployment
+# URL del endpoint proporcionada por tu despliegue vLLM
 api_base_url = "https://your-vllm-endpoint.run.app/v1"
 
-# Model name as recognized by *your* vLLM endpoint configuration
-model_name_at_endpoint = "hosted_vllm/google/gemma-3-4b-it" # Example from vllm_test.py
+# Nombre del modelo como es reconocido por *tu* configuración de endpoint vLLM
+model_name_at_endpoint = "hosted_vllm/google/gemma-3-4b-it" # Ejemplo de vllm_test.py
 
-# Authentication (Example: using gcloud identity token for a Cloud Run deployment)
-# Adapt this based on your endpoint's security
+# Autenticación (Ejemplo: usando token de identidad de gcloud para un despliegue en Cloud Run)
+# Adapta esto según la seguridad de tu endpoint
 try:
     gcloud_token = subprocess.check_output(
         ["gcloud", "auth", "print-identity-token", "-q"]
@@ -47,19 +47,19 @@ try:
     auth_headers = {"Authorization": f"Bearer {gcloud_token}"}
 except Exception as e:
     print(f"Warning: Could not get gcloud token - {e}. Endpoint might be unsecured or require different auth.")
-    auth_headers = None # Or handle error appropriately
+    auth_headers = None # O maneja el error apropiadamente
 
 agent_vllm = LlmAgent(
     model=LiteLlm(
         model=model_name_at_endpoint,
         api_base=api_base_url,
-        # Pass authentication headers if needed
+        # Pasa encabezados de autenticación si es necesario
         extra_headers=auth_headers
-        # Alternatively, if endpoint uses an API key:
+        # Alternativamente, si el endpoint usa una clave API:
         # api_key="YOUR_ENDPOINT_API_KEY"
     ),
     name="vllm_agent",
     instruction="You are a helpful assistant running on a self-hosted vLLM endpoint.",
-    # ... other agent parameters
+    # ... otros parámetros del agente
 )
 ```

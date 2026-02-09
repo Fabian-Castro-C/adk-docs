@@ -1,50 +1,50 @@
-# Deploying Your Agent
+# Desplegando tu Agente
 
-Once you've built and tested your agent using ADK,
-the next step is to deploy it so it can be accessed, queried, and used in
-production or integrated with other applications. Deployment moves your agent
-from your local development machine to a scalable and reliable environment.
+Una vez que hayas construido y probado tu agente usando ADK,
+el siguiente paso es desplegarlo para que pueda ser accedido, consultado y usado en
+producción o integrado con otras aplicaciones. El despliegue mueve tu agente
+desde tu máquina de desarrollo local a un entorno escalable y confiable.
 
-<img src="../assets/deploy-agent.png" alt="Deploying your agent">
+<img src="../assets/deploy-agent.png" alt="Desplegando tu agente">
 
-## Deployment Options
+## Opciones de Despliegue
 
-Your ADK agent can be deployed to a range of different environments based
-on your needs for production readiness or custom flexibility:
+Tu agente ADK puede ser desplegado en una variedad de entornos diferentes basándose
+en tus necesidades de preparación para producción o flexibilidad personalizada:
 
-### Agent Engine in Vertex AI
+### Agent Engine en Vertex AI
 
-[Agent Engine](agent-engine/index.md) is a fully managed auto-scaling service on Google Cloud
-specifically designed for deploying, managing, and scaling AI agents built with
-frameworks such as ADK.
+[Agent Engine](agent-engine/index.md) es un servicio totalmente administrado con autoescalado en Google Cloud
+específicamente diseñado para desplegar, administrar y escalar agentes de IA construidos con
+frameworks como ADK.
 
-Learn more about [deploying your agent to Vertex AI Agent Engine](agent-engine/index.md).
+Aprende más sobre [desplegar tu agente en Vertex AI Agent Engine](agent-engine/index.md).
 
 ### Cloud Run
 
-[Cloud Run](https://cloud.google.com/run) is a managed auto-scaling compute platform on
-Google Cloud that enables you to run your agent as a container-based
-application.
+[Cloud Run](https://cloud.google.com/run) es una plataforma de computación administrada con autoescalado en
+Google Cloud que te permite ejecutar tu agente como una aplicación basada en
+contenedores.
 
-Learn more about [deploying your agent to Cloud Run](cloud-run.md).
+Aprende más sobre [desplegar tu agente en Cloud Run](cloud-run.md).
 
 ### Google Kubernetes Engine (GKE)
 
-[Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine) is a managed
-Kubernetes service of Google Cloud that allows you to run your agent in a containerized
-environment. GKE is a good option if you need more control over the deployment as well as
-for running Open Models.
+[Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine) es un servicio administrado
+de Kubernetes de Google Cloud que te permite ejecutar tu agente en un entorno contenedorizado.
+GKE es una buena opción si necesitas más control sobre el despliegue, así como
+para ejecutar Modelos Abiertos.
 
-Learn more about [deploying your agent to GKE](gke.md).
+Aprende más sobre [desplegar tu agente en GKE](gke.md).
 
-### Other Container-friendly Infrastructure
+### Otra Infraestructura Compatible con Contenedores
 
-You can manually package your Agent into a container image and then run it in
-any environment that supports container images.  For example you can run it
-locally in Docker or Podman. This is a good option if you prefer to run offline
-or disconnected, or otherwise in a system that has no connection to Google
+Puedes empaquetar manualmente tu Agente en una imagen de contenedor y luego ejecutarlo en
+cualquier entorno que soporte imágenes de contenedor. Por ejemplo, puedes ejecutarlo
+localmente en Docker o Podman. Esta es una buena opción si prefieres ejecutarlo sin conexión
+o desconectado, o de otra manera en un sistema que no tiene conexión a Google
 Cloud.
 
-Follow the instructions for [deploying your agent to Cloud Run](cloud-run.md#deployment-commands).
-In the "Deployment Commands" section for gcloud CLI, you will find an example FastAPI entry point and 
-Dockerfile.
+Sigue las instrucciones para [desplegar tu agente en Cloud Run](cloud-run.md#deployment-commands).
+En la sección "Comandos de Despliegue" para gcloud CLI, encontrarás un punto de entrada FastAPI de ejemplo y 
+un Dockerfile.

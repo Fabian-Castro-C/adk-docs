@@ -1,22 +1,22 @@
-# Use the Web Interface
+# Usa la interfaz web
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-The ADK web interface lets you test your agents directly in the browser. This
-tool provides a simple way to interactively develop and debug your agents.
+La interfaz web del ADK te permite probar tus agentes directamente en el navegador. Esta
+herramienta proporciona una forma simple de desarrollar y depurar tus agentes de manera interactiva.
 
 ![ADK Web Interface](../assets/adk-web-dev-ui-chat.png)
 
-!!! warning "Caution: ADK Web for development only"
+!!! warning "Precaución: ADK Web solo para desarrollo"
 
-    ADK Web is ***not meant for use in production deployments***. You should
-    use ADK Web for development and debugging purposes only.
+    ADK Web ***no está destinado para uso en despliegues de producción***. Deberías
+    usar ADK Web únicamente para propósitos de desarrollo y depuración.
 
-## Start the web interface
+## Inicia la interfaz web
 
-Use the following command to run your agent in the ADK web interface:
+Usa el siguiente comando para ejecutar tu agente en la interfaz web del ADK:
 
 === "Python"
 
@@ -38,23 +38,23 @@ Use the following command to run your agent in the ADK web interface:
 
 === "Java"
 
-    Make sure to update the port number.
+    Asegúrate de actualizar el número de puerto.
     === "Maven"
-        With Maven, compile and run the ADK web server:
+        Con Maven, compila y ejecuta el servidor web del ADK:
         ```console
         mvn compile exec:java \
          -Dexec.args="--adk.agents.source-dir=src/main/java/agents --server.port=8080"
         ```
     === "Gradle"
-        With Gradle, the `build.gradle` or `build.gradle.kts` build file should have the following Java plugin in its plugins section:
+        Con Gradle, el archivo de construcción `build.gradle` o `build.gradle.kts` debe tener el siguiente plugin de Java en su sección de plugins:
 
         ```groovy
         plugins {
             id('java')
-            // other plugins
+            // otros plugins
         }
         ```
-        Then, elsewhere in the build file, at the top-level, create a new task:
+        Luego, en otra parte del archivo de construcción, en el nivel superior, crea una nueva tarea:
 
         ```groovy
         tasks.register('runADKWebServer', JavaExec) {
@@ -65,15 +65,15 @@ Use the following command to run your agent in the ADK web interface:
         }
         ```
 
-        Finally, on the command-line, run the following command:
+        Finalmente, en la línea de comandos, ejecuta el siguiente comando:
         ```console
         gradle runADKWebServer
         ```
 
 
-    In Java, the Web Interface and the API server are bundled together.
+    En Java, la interfaz web y el servidor API están empaquetados juntos.
 
-The server starts on `http://localhost:8000` by default:
+El servidor inicia en `http://localhost:8000` por defecto:
 
 ```shell
 +-----------------------------------------------------------------------------+
@@ -83,26 +83,26 @@ The server starts on `http://localhost:8000` by default:
 +-----------------------------------------------------------------------------+
 ```
 
-## Features
+## Características
 
-Key features of the ADK web interface include:
+Las características clave de la interfaz web del ADK incluyen:
 
-- **Chat interface**: Send messages to your agents and view responses in real-time
-- **Session management**: Create and switch between sessions
-- **State inspection**: View and modify session state during development
-- **Event history**: Inspect all events generated during agent execution
+- **Interfaz de chat**: Envía mensajes a tus agentes y visualiza respuestas en tiempo real
+- **Gestión de sesiones**: Crea y cambia entre sesiones
+- **Inspección de estado**: Visualiza y modifica el estado de la sesión durante el desarrollo
+- **Historial de eventos**: Inspecciona todos los eventos generados durante la ejecución del agente
 
-## Common options
+## Opciones comunes
 
-| Option | Description | Default |
+| Opción | Descripción | Por defecto |
 |--------|-------------|---------|
-| `--port` | Port to run the server on | `8000` |
-| `--host` | Host binding address | `127.0.0.1` |
-| `--session_service_uri` | Custom session storage URI | In-memory |
-| `--artifact_service_uri` | Custom artifact storage URI | Local `.adk/artifacts` |
-| `--reload/--no-reload` | Enable auto-reload on code changes | `true` |
+| `--port` | Puerto en el que se ejecutará el servidor | `8000` |
+| `--host` | Dirección de enlace del host | `127.0.0.1` |
+| `--session_service_uri` | URI de almacenamiento de sesión personalizado | En memoria |
+| `--artifact_service_uri` | URI de almacenamiento de artefactos personalizado | Local `.adk/artifacts` |
+| `--reload/--no-reload` | Habilitar recarga automática en cambios de código | `true` |
 
-### Example with options
+### Ejemplo con opciones
 
 ```shell
 adk web --port 3000 --session_service_uri "sqlite:///sessions.db"

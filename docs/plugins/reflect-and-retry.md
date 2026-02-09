@@ -1,25 +1,25 @@
-# Reflect and Retry Tool Plugin
+# Plugin de Herramienta Reflect and Retry
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span>
 </div>
 
-The Reflect and Retry Tool plugin can help your agent recover from error
-responses from ADK [Tools](/adk-docs/tools-custom/) and automatically retry the
-tool request. This plugin intercepts tool failures, provides structured guidance
-to the AI model for reflection and correction, and retries the operation up to a
-configurable limit. This plugin can help you build more resilience into your
-agent workflows, including the following capabilities:
+El plugin Reflect and Retry Tool puede ayudar a tu agente a recuperarse de respuestas de error
+de las [Herramientas](/adk-docs/tools-custom/) de ADK y reintentar automáticamente la
+solicitud de herramienta. Este plugin intercepta fallos de herramientas, proporciona orientación estructurada
+al modelo de IA para reflexión y corrección, y reintenta la operación hasta un
+límite configurable. Este plugin puede ayudarte a construir más resiliencia en tus
+flujos de trabajo de agentes, incluyendo las siguientes capacidades:
 
-*   **Concurrency safe**: Uses locking to safely handle parallel tool executions.
-*   **Configurable scope**: Tracks failures per-invocation (default) or globally.
-*   **Granular tracking**: Failure counts are tracked per-tool.
-*   **Custom error extraction**: Supports detecting errors in normal tool responses.
+*   **Seguro para concurrencia**: Utiliza bloqueos para manejar de forma segura ejecuciones de herramientas paralelas.
+*   **Ámbito configurable**: Rastrea fallos por invocación (predeterminado) o globalmente.
+*   **Rastreo granular**: Los conteos de fallos se rastrean por herramienta.
+*   **Extracción de errores personalizada**: Soporta la detección de errores en respuestas normales de herramientas.
 
-## Add Reflect and Retry Plugin
+## Agregar Plugin Reflect and Retry
 
-Add this plugin to your ADK workflow by adding it to the plugins setting of your
-ADK project's App object, as shown below:
+Agrega este plugin a tu flujo de trabajo de ADK añadiéndolo a la configuración de plugins del
+objeto App de tu proyecto ADK, como se muestra a continuación:
 
 ```python
 from google.adk.apps.app import App
@@ -34,49 +34,49 @@ app = App(
 )
 ```
 
-With this configuration, if any tool called by an agent returns an error, the
-request is updated and tried again, up to a maximum of 3 attempts, per tool.
+Con esta configuración, si alguna herramienta llamada por un agente devuelve un error, la
+solicitud se actualiza e intenta de nuevo, hasta un máximo de 3 intentos, por herramienta.
 
-## Configuration settings
+## Configuraciones de ajustes
 
-The Reflect and Retry Plugin has the following configuration options:
+El Plugin Reflect and Retry tiene las siguientes opciones de configuración:
 
-*   **`max_retries`**: (optional) Total number of additional attempts the system
-    makes to receive a non-error response. Default value is 3.
-*   **`throw_exception_if_retry_exceeded`**: (optional) If set to `False`, the
-    system does not raise an error if the final retry attempt fails. Default
-    value is `True`.
-*   **`tracking_scope`**: (optional)
-    *   **`TrackingScope.INVOCATION`**: Track tool failures across a single
-        invocation and user. This value is the default.
-    *   **`TrackingScope.GLOBAL`**: Track tool failures across all invocations
-        and all users.
+*   **`max_retries`**: (opcional) Número total de intentos adicionales que el sistema
+    realiza para recibir una respuesta sin error. El valor predeterminado es 3.
+*   **`throw_exception_if_retry_exceeded`**: (opcional) Si se establece en `False`, el
+    sistema no genera un error si el intento de reintento final falla. El valor
+    predeterminado es `True`.
+*   **`tracking_scope`**: (opcional)
+    *   **`TrackingScope.INVOCATION`**: Rastrea fallos de herramientas a través de una sola
+        invocación y usuario. Este valor es el predeterminado.
+    *   **`TrackingScope.GLOBAL`**: Rastrea fallos de herramientas a través de todas las invocaciones
+        y todos los usuarios.
 
-### Advanced configuration
+### Configuración avanzada
 
-You can further modify the behavior of this plugin by extending the
-`ReflectAndRetryToolPlugin` class. The following code sample
-demonstrates a simple extension of the behavior by selecting
-responses with an error status:
+Puedes modificar aún más el comportamiento de este plugin extendiendo la
+clase `ReflectAndRetryToolPlugin`. El siguiente ejemplo de código
+demuestra una extensión simple del comportamiento seleccionando
+respuestas con un estado de error:
 
 ```python
 class CustomRetryPlugin(ReflectAndRetryToolPlugin):
   async def extract_error_from_result(self, *, tool, tool_args,tool_context,
   result):
-    # Detect error based on response content
+    # Detectar error basado en el contenido de la respuesta
     if result.get('status') == 'error':
         return result
-    return None  # No error detected
+    return None  # No se detectó error
 
-# add this modified plugin to your App object:
+# agrega este plugin modificado a tu objeto App:
 error_handling_plugin = CustomRetryPlugin(max_retries=5)
 ```
 
-## Next steps
+## Próximos pasos
 
-For complete code samples using the Reflect and Retry plugin, see the following: 
+Para ejemplos de código completos usando el plugin Reflect and Retry, consulta lo siguiente:
 
-*   [Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/basic)
-    code sample
-*   [Hallucinating function name](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/hallucinating_func_name)
-    code sample
+*   Ejemplo de código
+    [Básico](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/basic)
+*   Ejemplo de código
+    [Nombre de función alucinado](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/hallucinating_func_name)

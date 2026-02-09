@@ -1,90 +1,90 @@
-# State: The Session's Scratchpad
+# State: El Bloc de Notas de la Sesión
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-Within each `Session` (our conversation thread), the **`state`** attribute acts like the agent's dedicated scratchpad for that specific interaction. While `session.events` holds the full history, `session.state` is where the agent stores and updates dynamic details needed *during* the conversation.
+Dentro de cada `Session` (nuestro hilo de conversación), el atributo **`state`** actúa como el bloc de notas dedicado del agente para esa interacción específica. Mientras que `session.events` contiene el historial completo, `session.state` es donde el agente almacena y actualiza los detalles dinámicos necesarios *durante* la conversación.
 
-## What is `session.state`?
+## ¿Qué es `session.state`?
 
-Conceptually, `session.state` is a collection (dictionary or Map) holding key-value pairs. It's designed for information the agent needs to recall or track to make the current conversation effective:
+Conceptualmente, `session.state` es una colección (diccionario o Map) que contiene pares clave-valor. Está diseñado para información que el agente necesita recordar o rastrear para hacer efectiva la conversación actual:
 
-* **Personalize Interaction:** Remember user preferences mentioned earlier (e.g., `'user_preference_theme': 'dark'`).
-* **Track Task Progress:** Keep tabs on steps in a multi-turn process (e.g., `'booking_step': 'confirm_payment'`).
-* **Accumulate Information:** Build lists or summaries (e.g., `'shopping_cart_items': ['book', 'pen']`).
-* **Make Informed Decisions:** Store flags or values influencing the next response (e.g., `'user_is_authenticated': True`).
+* **Personalizar la Interacción:** Recordar preferencias del usuario mencionadas anteriormente (ej., `'user_preference_theme': 'dark'`).
+* **Rastrear el Progreso de Tareas:** Mantener un seguimiento de los pasos en un proceso de múltiples turnos (ej., `'booking_step': 'confirm_payment'`).
+* **Acumular Información:** Construir listas o resúmenes (ej., `'shopping_cart_items': ['book', 'pen']`).
+* **Tomar Decisiones Informadas:** Almacenar banderas o valores que influyen en la próxima respuesta (ej., `'user_is_authenticated': True`).
 
-### Key Characteristics of `State`
+### Características Clave de `State`
 
-1. **Structure: Serializable Key-Value Pairs**
+1. **Estructura: Pares Clave-Valor Serializables**
 
-    * Data is stored as `key: value`.
-    * **Keys:** Always strings (`str`). Use clear names (e.g., `'departure_city'`, `'user:language_preference'`).
-    * **Values:** Must be **serializable**. This means they can be easily saved and loaded by the `SessionService`. Stick to basic types in the specific languages (Python/Go/Java/TypeScript) like strings, numbers, booleans, and simple lists or dictionaries containing *only* these basic types. (See API documentation for precise details).
-    * **⚠️ Avoid Complex Objects:** **Do not store non-serializable objects** (custom class instances, functions, connections, etc.) directly in the state. Store simple identifiers if needed, and retrieve the complex object elsewhere.
+    * Los datos se almacenan como `key: value`.
+    * **Claves:** Siempre cadenas de texto (`str`). Usa nombres claros (ej., `'departure_city'`, `'user:language_preference'`).
+    * **Valores:** Deben ser **serializables**. Esto significa que pueden guardarse y cargarse fácilmente por el `SessionService`. Usa tipos básicos en los lenguajes específicos (Python/Go/Java/TypeScript) como cadenas, números, booleanos y listas o diccionarios simples que contengan *solo* estos tipos básicos. (Ver documentación de la API para detalles precisos).
+    * **⚠️ Evita Objetos Complejos:** **No almacenes objetos no serializables** (instancias de clases personalizadas, funciones, conexiones, etc.) directamente en el estado. Almacena identificadores simples si es necesario, y recupera el objeto complejo en otro lugar.
 
-2. **Mutability: It Changes**
+2. **Mutabilidad: Cambia**
 
-    * The contents of the `state` are expected to change as the conversation evolves.
+    * Se espera que el contenido del `state` cambie a medida que la conversación evoluciona.
 
-3. **Persistence: Depends on `SessionService`**
+3. **Persistencia: Depende del `SessionService`**
 
-    * Whether state survives application restarts depends on your chosen service:
+    * Si el estado sobrevive a los reinicios de la aplicación depende del servicio elegido:
 
-      * `InMemorySessionService`: **Not Persistent.** State is lost on restart.
-      * `DatabaseSessionService` / `VertexAiSessionService`: **Persistent.** State is saved reliably.
+      * `InMemorySessionService`: **No Persistente.** El estado se pierde al reiniciar.
+      * `DatabaseSessionService` / `VertexAiSessionService`: **Persistente.** El estado se guarda de forma confiable.
 
 !!! Note
-    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `session.state['current_intent'] = 'book_flight'` in Python,`context.State().Set("current_intent", "book_flight")` in Go, `session.state().put("current_intent", "book_flight)` in Java, or `context.state.set("current_intent", "book_flight")` in TypeScript). Refer to the language-specific API documentation for details.
+    Los parámetros específicos o nombres de métodos para las primitivas pueden variar ligeramente según el lenguaje del SDK (ej., `session.state['current_intent'] = 'book_flight'` en Python, `context.State().Set("current_intent", "book_flight")` en Go, `session.state().put("current_intent", "book_flight)` en Java, o `context.state.set("current_intent", "book_flight")` en TypeScript). Consulta la documentación de la API específica del lenguaje para detalles.
 
-### Organizing State with Prefixes: Scope Matters
+### Organizando el State con Prefijos: El Alcance Importa
 
-Prefixes on state keys define their scope and persistence behavior, especially with persistent services:
+Los prefijos en las claves del estado definen su alcance y comportamiento de persistencia, especialmente con servicios persistentes:
 
-* **No Prefix (Session State):**
+* **Sin Prefijo (Estado de Sesión):**
 
-    * **Scope:** Specific to the *current* session (`id`).
-    * **Persistence:** Only persists if the `SessionService` is persistent (`Database`, `VertexAI`).
-    * **Use Cases:** Tracking progress within the current task (e.g., `'current_booking_step'`), temporary flags for this interaction (e.g., `'needs_clarification'`).
-    * **Example:** `session.state['current_intent'] = 'book_flight'`
+    * **Alcance:** Específico a la sesión *actual* (`id`).
+    * **Persistencia:** Solo persiste si el `SessionService` es persistente (`Database`, `VertexAI`).
+    * **Casos de Uso:** Rastrear el progreso dentro de la tarea actual (ej., `'current_booking_step'`), banderas temporales para esta interacción (ej., `'needs_clarification'`).
+    * **Ejemplo:** `session.state['current_intent'] = 'book_flight'`
 
-* **`user:` Prefix (User State):**
+* **Prefijo `user:` (Estado de Usuario):**
 
-    * **Scope:** Tied to the `user_id`, shared across *all* sessions for that user (within the same `app_name`).
-    * **Persistence:** Persistent with `Database` or `VertexAI`. (Stored by `InMemory` but lost on restart).
-    * **Use Cases:** User preferences (e.g., `'user:theme'`), profile details (e.g., `'user:name'`).
-    * **Example:** `session.state['user:preferred_language'] = 'fr'`
+    * **Alcance:** Vinculado al `user_id`, compartido entre *todas* las sesiones para ese usuario (dentro del mismo `app_name`).
+    * **Persistencia:** Persistente con `Database` o `VertexAI`. (Almacenado por `InMemory` pero se pierde al reiniciar).
+    * **Casos de Uso:** Preferencias de usuario (ej., `'user:theme'`), detalles de perfil (ej., `'user:name'`).
+    * **Ejemplo:** `session.state['user:preferred_language'] = 'fr'`
 
-* **`app:` Prefix (App State):**
+* **Prefijo `app:` (Estado de Aplicación):**
 
-    * **Scope:** Tied to the `app_name`, shared across *all* users and sessions for that application.
-    * **Persistence:** Persistent with `Database` or `VertexAI`. (Stored by `InMemory` but lost on restart).
-    * **Use Cases:** Global settings (e.g., `'app:api_endpoint'`), shared templates.
-    * **Example:** `session.state['app:global_discount_code'] = 'SAVE10'`
+    * **Alcance:** Vinculado al `app_name`, compartido entre *todos* los usuarios y sesiones para esa aplicación.
+    * **Persistencia:** Persistente con `Database` o `VertexAI`. (Almacenado por `InMemory` pero se pierde al reiniciar).
+    * **Casos de Uso:** Configuraciones globales (ej., `'app:api_endpoint'`), plantillas compartidas.
+    * **Ejemplo:** `session.state['app:global_discount_code'] = 'SAVE10'`
 
-* **`temp:` Prefix (Temporary Invocation State):**
+* **Prefijo `temp:` (Estado de Invocación Temporal):**
 
-    * **Scope:** Specific to the current **invocation** (the entire process from an agent receiving user input to generating the final output for that input).
-    * **Persistence:** **Not Persistent.** Discarded after the invocation completes and does not carry over to the next one.
-    * **Use Cases:** Storing intermediate calculations, flags, or data passed between tool calls within a single invocation.
-    * **When Not to Use:** For information that must persist across different invocations, such as user preferences, conversation history summaries, or accumulated data.
-    * **Example:** `session.state['temp:raw_api_response'] = {...}`
+    * **Alcance:** Específico a la **invocación** actual (el proceso completo desde que un agente recibe la entrada del usuario hasta generar la salida final para esa entrada).
+    * **Persistencia:** **No Persistente.** Se descarta después de que la invocación se completa y no se traslada a la siguiente.
+    * **Casos de Uso:** Almacenar cálculos intermedios, banderas o datos pasados entre llamadas a herramientas dentro de una sola invocación.
+    * **Cuándo No Usar:** Para información que debe persistir entre diferentes invocaciones, como preferencias de usuario, resúmenes del historial de conversación o datos acumulados.
+    * **Ejemplo:** `session.state['temp:raw_api_response'] = {...}`
 
-!!! note "Sub-Agents and Invocation Context"
-    When a parent agent calls a sub-agent (e.g., using `SequentialAgent` or `ParallelAgent`), it passes its `InvocationContext` to the sub-agent. This means the entire chain of agent calls shares the same invocation ID and, therefore, the same `temp:` state.
+!!! note "Sub-Agentes y Contexto de Invocación"
+    Cuando un agente padre llama a un sub-agente (ej., usando `SequentialAgent` o `ParallelAgent`), pasa su `InvocationContext` al sub-agente. Esto significa que toda la cadena de llamadas de agentes comparte el mismo ID de invocación y, por lo tanto, el mismo estado `temp:`.
 
-**How the Agent Sees It:** Your agent code interacts with the *combined* state through the single `session.state` collection (dict/ Map). The `SessionService` handles fetching/merging state from the correct underlying storage based on prefixes.
+**Cómo lo Ve el Agente:** Tu código del agente interactúa con el estado *combinado* a través de la colección única `session.state` (dict/Map). El `SessionService` maneja la obtención/fusión del estado desde el almacenamiento subyacente correcto basándose en los prefijos.
 
-### Accessing Session State in Agent Instructions
+### Accediendo al Estado de Sesión en las Instrucciones del Agente
 
-When working with `LlmAgent` instances, you can directly inject session state values into the agent's instruction string using a simple templating syntax. This allows you to create dynamic and context-aware instructions without relying solely on natural language directives.
+Al trabajar con instancias de `LlmAgent`, puedes inyectar directamente valores del estado de sesión en la cadena de instrucción del agente usando una sintaxis de plantillas simple. Esto te permite crear instrucciones dinámicas y conscientes del contexto sin depender únicamente de directivas en lenguaje natural.
 
-#### Using `{key}` Templating
+#### Usando Plantillas `{key}`
 
-To inject a value from the session state, enclose the key of the desired state variable within curly braces: `{key}`. The framework will automatically replace this placeholder with the corresponding value from `session.state` before passing the instruction to the LLM.
+Para inyectar un valor del estado de sesión, encierra la clave de la variable de estado deseada entre llaves: `{key}`. El framework reemplazará automáticamente este marcador de posición con el valor correspondiente de `session.state` antes de pasar la instrucción al LLM.
 
-**Example:**
+**Ejemplo:**
 
 === "Python"
 
@@ -97,8 +97,8 @@ To inject a value from the session state, enclose the key of the desired state v
         instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
     )
 
-    # Assuming session.state['topic'] is set to "friendship", the LLM
-    # will receive the following instruction:
+    # Asumiendo que session.state['topic'] está configurado como "friendship", el LLM
+    # recibirá la siguiente instrucción:
     # "Write a short story about a cat, focusing on the theme: friendship."
     ```
 
@@ -113,8 +113,8 @@ To inject a value from the session state, enclose the key of the desired state v
         instruction: "Write a short story about a cat, focusing on the theme: {topic}."
     });
 
-    // Assuming session.state['topic'] is set to "friendship", the LLM
-    // will receive the following instruction:
+    // Asumiendo que session.state['topic'] está configurado como "friendship", el LLM
+    // recibirá la siguiente instrucción:
     // "Write a short story about a cat, focusing on the theme: friendship."
     ```
 
@@ -124,19 +124,19 @@ To inject a value from the session state, enclose the key of the desired state v
     --8<-- "examples/go/snippets/sessions/instruction_template/instruction_template_example.go:key_template"
     ```
 
-#### Important Considerations
+#### Consideraciones Importantes
 
-* Key Existence: Ensure that the key you reference in the instruction string exists in the session.state. If the key is missing, the agent will throw an error. To use a key that may or may not be present, you can include a question mark (?) after the key (e.g. {topic?}).
-* Data Types: The value associated with the key should be a string or a type that can be easily converted to a string.
-* Escaping: If you need to use literal curly braces in your instruction (e.g., for JSON formatting), you'll need to escape them.
+* Existencia de Clave: Asegúrate de que la clave que referencias en la cadena de instrucción exista en session.state. Si la clave falta, el agente arrojará un error. Para usar una clave que puede o no estar presente, puedes incluir un signo de interrogación (?) después de la clave (ej. {topic?}).
+* Tipos de Datos: El valor asociado con la clave debe ser una cadena de texto o un tipo que pueda convertirse fácilmente a una cadena.
+* Escapado: Si necesitas usar llaves literales en tu instrucción (ej., para formato JSON), necesitarás escaparlas.
 
-#### Bypassing State Injection with `InstructionProvider`
+#### Evitando la Inyección de Estado con `InstructionProvider`
 
-In some cases, you might want to use `{{` and `}}` literally in your instructions without triggering the state injection mechanism. For example, you might be writing instructions for an agent that helps with a templating language that uses the same syntax.
+En algunos casos, podrías querer usar `{{` y `}}` literalmente en tus instrucciones sin activar el mecanismo de inyección de estado. Por ejemplo, podrías estar escribiendo instrucciones para un agente que ayuda con un lenguaje de plantillas que usa la misma sintaxis.
 
-To achieve this, you can provide a function to the `instruction` parameter instead of a string. This function is called an `InstructionProvider`. When you use an `InstructionProvider`, the ADK will not attempt to inject state, and your instruction string will be passed to the model as-is.
+Para lograr esto, puedes proporcionar una función al parámetro `instruction` en lugar de una cadena. Esta función se llama `InstructionProvider`. Cuando usas un `InstructionProvider`, el ADK no intentará inyectar estado, y tu cadena de instrucción se pasará al modelo tal como está.
 
-The `InstructionProvider` function receives a `ReadonlyContext` object, which you can use to access session state or other contextual information if you need to build the instruction dynamically.
+La función `InstructionProvider` recibe un objeto `ReadonlyContext`, que puedes usar para acceder al estado de sesión u otra información contextual si necesitas construir la instrucción dinámicamente.
 
 === "Python"
 
@@ -144,10 +144,10 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
     from google.adk.agents import LlmAgent
     from google.adk.agents.readonly_context import ReadonlyContext
 
-    # This is an InstructionProvider
+    # Esto es un InstructionProvider
     def my_instruction_provider(context: ReadonlyContext) -> str:
-        # You can optionally use the context to build the instruction
-        # For this example, we'll return a static string with literal braces.
+        # Opcionalmente puedes usar el contexto para construir la instrucción
+        # Para este ejemplo, devolveremos una cadena estática con llaves literales.
         return "This is an instruction with {{literal_braces}} that will not be replaced."
 
     agent = LlmAgent(
@@ -162,10 +162,10 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
     ```typescript
     import { LlmAgent, ReadonlyContext } from "@google/adk";
 
-    // This is an InstructionProvider
+    // Esto es un InstructionProvider
     function myInstructionProvider(context: ReadonlyContext): string {
-        // You can optionally use the context to build the instruction
-        // For this example, we'll return a static string with literal braces.
+        // Opcionalmente puedes usar el contexto para construir la instrucción
+        // Para este ejemplo, devolveremos una cadena estática con llaves literales.
         return "This is an instruction with {{literal_braces}} that will not be replaced.";
     }
 
@@ -182,7 +182,7 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
     --8<-- "examples/go/snippets/sessions/instruction_provider/instruction_provider_example.go:bypass_state_injection"
     ```
 
-If you want to both use an `InstructionProvider` *and* inject state into your instructions, you can use the `inject_session_state` utility function.
+Si quieres tanto usar un `InstructionProvider` *como* inyectar estado en tus instrucciones, puedes usar la función de utilidad `inject_session_state`.
 
 === "Python"
 
@@ -193,7 +193,7 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
 
     async def my_dynamic_instruction_provider(context: ReadonlyContext) -> str:
         template = "This is a {adjective} instruction with {{literal_braces}}."
-        # This will inject the 'adjective' state variable but leave the literal braces.
+        # Esto inyectará la variable de estado 'adjective' pero dejará las llaves literales.
         return await instructions_utils.inject_session_state(template, context)
 
     agent = LlmAgent(
@@ -209,28 +209,28 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
     --8<-- "examples/go/snippets/sessions/instruction_provider/instruction_provider_example.go:manual_state_injection"
     ```
 
-**Benefits of Direct Injection**
+**Beneficios de la Inyección Directa**
 
-* Clarity: Makes it explicit which parts of the instruction are dynamic and based on session state.
-* Reliability: Avoids relying on the LLM to correctly interpret natural language instructions to access state.
-* Maintainability: Simplifies instruction strings and reduces the risk of errors when updating state variable names.
+* Claridad: Hace explícito qué partes de la instrucción son dinámicas y basadas en el estado de sesión.
+* Confiabilidad: Evita depender del LLM para interpretar correctamente instrucciones en lenguaje natural para acceder al estado.
+* Mantenibilidad: Simplifica las cadenas de instrucción y reduce el riesgo de errores al actualizar nombres de variables de estado.
 
-**Relation to Other State Access Methods**
+**Relación con Otros Métodos de Acceso al Estado**
 
-This direct injection method is specific to LlmAgent instructions. Refer to the following section for more information on other state access methods.
+Este método de inyección directo es específico para las instrucciones de LlmAgent. Consulta la siguiente sección para más información sobre otros métodos de acceso al estado.
 
-### How State is Updated: Recommended Methods
+### Cómo se Actualiza el Estado: Métodos Recomendados
 
-!!! note "The Right Way to Modify State"
-    When you need to change the session state, the correct and safest method is to **directly modify the `state` object on the `Context`** provided to your function (e.g., `callback_context.state['my_key'] = 'new_value'`). This is considered "direct state manipulation" in the right way, as the framework automatically tracks these changes.
+!!! note "La Forma Correcta de Modificar el Estado"
+    Cuando necesitas cambiar el estado de sesión, el método correcto y más seguro es **modificar directamente el objeto `state` en el `Context`** proporcionado a tu función (ej., `callback_context.state['my_key'] = 'new_value'`). Esto se considera "manipulación directa del estado" de la manera correcta, ya que el framework rastrea automáticamente estos cambios.
 
-    This is critically different from directly modifying the `state` on a `Session` object you retrieve from the `SessionService` (e.g., `my_session.state['my_key'] = 'new_value'`). **You should avoid this**, as it bypasses the ADK's event tracking and can lead to lost data. The "Warning" section at the end of this page has more details on this important distinction.
+    Esto es críticamente diferente de modificar directamente el `state` en un objeto `Session` que obtienes del `SessionService` (ej., `my_session.state['my_key'] = 'new_value'`). **Debes evitar esto**, ya que evita el seguimiento de eventos del ADK y puede llevar a la pérdida de datos. La sección "Advertencia" al final de esta página tiene más detalles sobre esta distinción importante.
 
-State should **always** be updated as part of adding an `Event` to the session history using `session_service.append_event()`. This ensures changes are tracked, persistence works correctly, and updates are thread-safe.
+El estado **siempre** debe actualizarse como parte de agregar un `Event` al historial de la sesión usando `session_service.append_event()`. Esto asegura que los cambios se rastreen, la persistencia funcione correctamente y las actualizaciones sean seguras para hilos.
 
-**1\. The Easy Way: `output_key` (for Agent Text Responses)**
+**1\. La Manera Fácil: `output_key` (para Respuestas de Texto del Agente)**
 
-This is the simplest method for saving an agent's final text response directly into the state. When defining your `LlmAgent`, specify the `output_key`:
+Este es el método más simple para guardar la respuesta de texto final de un agente directamente en el estado. Al definir tu `LlmAgent`, especifica el `output_key`:
 
 === "Python"
 
@@ -240,15 +240,15 @@ This is the simplest method for saving an agent's final text response directly i
     from google.adk.runners import Runner
     from google.genai.types import Content, Part
 
-    # Define agent with output_key
+    # Definir agente con output_key
     greeting_agent = LlmAgent(
         name="Greeter",
-        model="gemini-2.0-flash", # Use a valid model
+        model="gemini-2.0-flash", # Usa un modelo válido
         instruction="Generate a short, friendly greeting.",
-        output_key="last_greeting" # Save response to state['last_greeting']
+        output_key="last_greeting" # Guardar respuesta en state['last_greeting']
     )
 
-    # --- Setup Runner and Session ---
+    # --- Configurar Runner y Session ---
     app_name, user_id, session_id = "state_app", "user1", "session1"
     session_service = InMemorySessionService()
     runner = Runner(
@@ -261,20 +261,20 @@ This is the simplest method for saving an agent's final text response directly i
                                         session_id=session_id)
     print(f"Initial state: {session.state}")
 
-    # --- Run the Agent ---
-    # Runner handles calling append_event, which uses the output_key
-    # to automatically create the state_delta.
+    # --- Ejecutar el Agente ---
+    # Runner maneja la llamada a append_event, que usa el output_key
+    # para crear automáticamente el state_delta.
     user_message = Content(parts=[Part(text="Hello")])
     for event in runner.run(user_id=user_id,
                             session_id=session_id,
                             new_message=user_message):
         if event.is_final_response():
-          print(f"Agent responded.") # Response text is also in event.content
+          print(f"Agent responded.") # El texto de respuesta también está en event.content
 
-    # --- Check Updated State ---
+    # --- Verificar el Estado Actualizado ---
     updated_session = await session_service.get_session(app_name=APP_NAME, user_id=USER_ID, session_id=session_id)
     print(f"State after agent run: {updated_session.state}")
-    # Expected output might include: {'last_greeting': 'Hello there! How can I help you today?'}
+    # La salida esperada podría incluir: {'last_greeting': 'Hello there! How can I help you today?'}
     ```
 
 === "TypeScript"
@@ -283,15 +283,15 @@ This is the simplest method for saving an agent's final text response directly i
     import { LlmAgent, Runner, InMemorySessionService, isFinalResponse } from "@google/adk";
     import { Content } from "@google/genai";
 
-    // Define agent with outputKey
+    // Definir agente con outputKey
     const greetingAgent = new LlmAgent({
         name: "Greeter",
         model: "gemini-2.5-flash",
         instruction: "Generate a short, friendly greeting.",
-        outputKey: "last_greeting" // Save response to state['last_greeting']
+        outputKey: "last_greeting" // Guardar respuesta en state['last_greeting']
     });
 
-    // --- Setup Runner and Session ---
+    // --- Configurar Runner y Session ---
     const appName = "state_app";
     const userId = "user1";
     const sessionId = "session1";
@@ -308,9 +308,9 @@ This is the simplest method for saving an agent's final text response directly i
     });
     console.log(`Initial state: ${JSON.stringify(session.state)}`);
 
-    // --- Run the Agent ---
-    // Runner handles calling appendEvent, which uses the outputKey
-    // to automatically create the stateDelta.
+    // --- Ejecutar el Agente ---
+    // Runner maneja la llamada a appendEvent, que usa el outputKey
+    // para crear automáticamente el stateDelta.
     const userMessage: Content = { parts: [{ text: "Hello" }] };
     for await (const event of runner.runAsync({
         userId,
@@ -318,14 +318,14 @@ This is the simplest method for saving an agent's final text response directly i
         newMessage: userMessage
     })) {
         if (isFinalResponse(event)) {
-          console.log("Agent responded."); // Response text is also in event.content
+          console.log("Agent responded."); // El texto de respuesta también está en event.content
         }
     }
 
-    // --- Check Updated State ---
+    // --- Verificar el Estado Actualizado ---
     const updatedSession = await sessionService.getSession({ appName, userId, sessionId });
     console.log(`State after agent run: ${JSON.stringify(updatedSession?.state)}`);
-    // Expected output might include: {"last_greeting":"Hello there! How can I help you today?"}
+    // La salida esperada podría incluir: {"last_greeting":"Hello there! How can I help you today?"}
     ```
 
 === "Go"
@@ -340,11 +340,11 @@ This is the simplest method for saving an agent's final text response directly i
     --8<-- "examples/java/snippets/src/main/java/state/GreetingAgentExample.java:full_code"
     ```
 
-Behind the scenes, the `Runner` uses the `output_key` to create the necessary `EventActions` with a `state_delta` and calls `append_event`.
+Detrás de escena, el `Runner` usa el `output_key` para crear los `EventActions` necesarios con un `state_delta` y llama a `append_event`.
 
-**2\. The Standard Way: `EventActions.state_delta` (for Complex Updates)**
+**2\. La Manera Estándar: `EventActions.state_delta` (para Actualizaciones Complejas)**
 
-For more complex scenarios (updating multiple keys, non-string values, specific scopes like `user:` or `app:`, or updates not tied directly to the agent's final text), you manually construct the `state_delta` within `EventActions`.
+Para escenarios más complejos (actualizar múltiples claves, valores no string, alcances específicos como `user:` o `app:`, o actualizaciones no vinculadas directamente al texto final del agente), construyes manualmente el `state_delta` dentro de `EventActions`.
 
 === "Python"
 
@@ -354,7 +354,7 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     from google.genai.types import Part, Content
     import time
 
-    # --- Setup ---
+    # --- Configuración ---
     session_service = InMemorySessionService()
     app_name, user_id, session_id = "state_app_manual", "user2", "session2"
     session = await session_service.create_session(
@@ -365,37 +365,37 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     )
     print(f"Initial state: {session.state}")
 
-    # --- Define State Changes ---
+    # --- Definir Cambios de Estado ---
     current_time = time.time()
     state_changes = {
-        "task_status": "active",              # Update session state
-        "user:login_count": session.state.get("user:login_count", 0) + 1, # Update user state
-        "user:last_login_ts": current_time,   # Add user state
-        "temp:validation_needed": True        # Add temporary state (will be discarded)
+        "task_status": "active",              # Actualizar estado de sesión
+        "user:login_count": session.state.get("user:login_count", 0) + 1, # Actualizar estado de usuario
+        "user:last_login_ts": current_time,   # Agregar estado de usuario
+        "temp:validation_needed": True        # Agregar estado temporal (será descartado)
     }
 
-    # --- Create Event with Actions ---
+    # --- Crear Event con Actions ---
     actions_with_update = EventActions(state_delta=state_changes)
-    # This event might represent an internal system action, not just an agent response
+    # Este evento podría representar una acción interna del sistema, no solo una respuesta del agente
     system_event = Event(
         invocation_id="inv_login_update",
-        author="system", # Or 'agent', 'tool' etc.
+        author="system", # O 'agent', 'tool', etc.
         actions=actions_with_update,
         timestamp=current_time
-        # content might be None or represent the action taken
+        # content podría ser None o representar la acción tomada
     )
 
-    # --- Append the Event (This updates the state) ---
+    # --- Agregar el Event (Esto actualiza el estado) ---
     await session_service.append_event(session, system_event)
     print("`append_event` called with explicit state delta.")
 
-    # --- Check Updated State ---
+    # --- Verificar el Estado Actualizado ---
     updated_session = await session_service.get_session(app_name=app_name,
                                                 user_id=user_id,
                                                 session_id=session_id)
     print(f"State after event: {updated_session.state}")
-    # Expected: {'user:login_count': 1, 'task_status': 'active', 'user:last_login_ts': <timestamp>}
-    # Note: 'temp:validation_needed' is NOT present.
+    # Esperado: {'user:login_count': 1, 'task_status': 'active', 'user:last_login_ts': <timestamp>}
+    # Nota: 'temp:validation_needed' NO está presente.
     ```
 
 === "TypeScript"
@@ -403,7 +403,7 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     ```typescript
     import { InMemorySessionService, createEvent, createEventActions } from "@google/adk";
 
-    // --- Setup ---
+    // --- Configuración ---
     const sessionService = new InMemorySessionService();
     const appName = "state_app_manual";
     const userId = "user2";
@@ -416,41 +416,41 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     });
     console.log(`Initial state: ${JSON.stringify(session.state)}`);
 
-    // --- Define State Changes ---
+    // --- Definir Cambios de Estado ---
     const currentTime = Date.now();
     const stateChanges = {
-        "task_status": "active",              // Update session state
-        "user:login_count": (session.state["user:login_count"] as number || 0) + 1, // Update user state
-        "user:last_login_ts": currentTime,   // Add user state
-        "temp:validation_needed": true        // Add temporary state (will be discarded)
+        "task_status": "active",              // Actualizar estado de sesión
+        "user:login_count": (session.state["user:login_count"] as number || 0) + 1, // Actualizar estado de usuario
+        "user:last_login_ts": currentTime,   // Agregar estado de usuario
+        "temp:validation_needed": true        // Agregar estado temporal (será descartado)
     };
 
-    // --- Create Event with Actions ---
+    // --- Crear Event con Actions ---
     const actionsWithUpdate = createEventActions({
         stateDelta: stateChanges,
     });
-    // This event might represent an internal system action, not just an agent response
+    // Este evento podría representar una acción interna del sistema, no solo una respuesta del agente
     const systemEvent = createEvent({
         invocationId: "inv_login_update",
-        author: "system", // Or 'agent', 'tool' etc.
+        author: "system", // O 'agent', 'tool', etc.
         actions: actionsWithUpdate,
         timestamp: currentTime
-        // content might be null or represent the action taken
+        // content podría ser null o representar la acción tomada
     });
 
-    // --- Append the Event (This updates the state) ---
+    // --- Agregar el Event (Esto actualiza el estado) ---
     await sessionService.appendEvent({ session, event: systemEvent });
     console.log("`appendEvent` called with explicit state delta.");
 
-    // --- Check Updated State ---
+    // --- Verificar el Estado Actualizado ---
     const updatedSession = await sessionService.getSession({
         appName,
         userId,
         sessionId
     });
     console.log(`State after event: ${JSON.stringify(updatedSession?.state)}`);
-    // Expected: {"user:login_count":1,"task_status":"active","user:last_login_ts":<timestamp>}
-    // Note: 'temp:validation_needed' is NOT present.
+    // Esperado: {"user:login_count":1,"task_status":"active","user:last_login_ts":<timestamp>}
+    // Nota: 'temp:validation_needed' NO está presente.
     ```
 
 === "Go"
@@ -465,58 +465,58 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     --8<-- "examples/java/snippets/src/main/java/state/ManualStateUpdateExample.java:full_code"
     ```
 
-**3. Via `CallbackContext` or `ToolContext` (Recommended for Callbacks and Tools)**
+**3. Mediante `CallbackContext` o `ToolContext` (Recomendado para Callbacks y Tools)**
 
-Modifying state within agent callbacks (e.g., `on_before_agent_call`, `on_after_agent_call`) or tool functions is best done using the `state` attribute of the `CallbackContext` or `ToolContext` provided to your function.
+Modificar el estado dentro de callbacks de agente (ej., `on_before_agent_call`, `on_after_agent_call`) o funciones de herramientas se hace mejor usando el atributo `state` del `CallbackContext` o `ToolContext` proporcionado a tu función.
 
 *   `callback_context.state['my_key'] = my_value`
 *   `tool_context.state['my_key'] = my_value`
 
-These context objects are specifically designed to manage state changes within their respective execution scopes. When you modify `context.state`, the ADK framework ensures that these changes are automatically captured and correctly routed into the `EventActions.state_delta` for the event being generated by the callback or tool. This delta is then processed by the `SessionService` when the event is appended, ensuring proper persistence and tracking.
+Estos objetos de contexto están diseñados específicamente para gestionar cambios de estado dentro de sus respectivos alcances de ejecución. Cuando modificas `context.state`, el framework del ADK asegura que estos cambios se capturen automáticamente y se enruten correctamente al `EventActions.state_delta` para el evento que está siendo generado por el callback o herramienta. Este delta es luego procesado por el `SessionService` cuando se agrega el evento, asegurando la persistencia y seguimiento adecuados.
 
-This method abstracts away the manual creation of `EventActions` and `state_delta` for most common state update scenarios within callbacks and tools, making your code cleaner and less error-prone.
+Este método abstrae la creación manual de `EventActions` y `state_delta` para la mayoría de los escenarios comunes de actualización de estado dentro de callbacks y herramientas, haciendo tu código más limpio y menos propenso a errores.
 
-For more comprehensive details on context objects, refer to the [Context documentation](../context/index.md).
+Para más detalles completos sobre objetos de contexto, consulta la [documentación de Context](../context/index.md).
 
 === "Python"
 
     ```python
-    # In an agent callback or tool function
-    from google.adk.agents import CallbackContext # or ToolContext
+    # En un callback de agente o función de herramienta
+    from google.adk.agents import CallbackContext # o ToolContext
 
-    def my_callback_or_tool_function(context: CallbackContext, # Or ToolContext
-                                     # ... other parameters ...
+    def my_callback_or_tool_function(context: CallbackContext, # O ToolContext
+                                     # ... otros parámetros ...
                                     ):
-        # Update existing state
+        # Actualizar estado existente
         count = context.state.get("user_action_count", 0)
         context.state["user_action_count"] = count + 1
 
-        # Add new state
+        # Agregar nuevo estado
         context.state["temp:last_operation_status"] = "success"
 
-        # State changes are automatically part of the event's state_delta
-        # ... rest of callback/tool logic ...
+        # Los cambios de estado son automáticamente parte del state_delta del evento
+        # ... resto de lógica del callback/herramienta ...
     ```
 
 === "TypeScript"
 
     ```typescript
-    // In an agent callback or tool function
-    import { CallbackContext } from "@google/adk"; // or ToolContext
+    // En un callback de agente o función de herramienta
+    import { CallbackContext } from "@google/adk"; // o ToolContext
 
     function myCallbackOrToolFunction(
-        context: CallbackContext, // Or ToolContext
-        // ... other parameters ...
+        context: CallbackContext, // O ToolContext
+        // ... otros parámetros ...
     ) {
-        // Update existing state
+        // Actualizar estado existente
         const count = context.state.get("user_action_count", 0);
         context.state.set("user_action_count", count + 1);
 
-        // Add new state
+        // Agregar nuevo estado
         context.state.set("temp:last_operation_status", "success");
 
-        // State changes are automatically part of the event's stateDelta
-        // ... rest of callback/tool logic ...
+        // Los cambios de estado son automáticamente parte del stateDelta del evento
+        // ... resto de lógica del callback/herramienta ...
     }
     ```
 
@@ -529,52 +529,52 @@ For more comprehensive details on context objects, refer to the [Context documen
 === "Java"
 
     ```java
-    // In an agent callback or tool method
-    import com.google.adk.agents.CallbackContext; // or ToolContext
-    // ... other imports ...
+    // En un callback de agente o método de herramienta
+    import com.google.adk.agents.CallbackContext; // o ToolContext
+    // ... otras importaciones ...
 
     public class MyAgentCallbacks {
         public void onAfterAgent(CallbackContext callbackContext) {
-            // Update existing state
+            // Actualizar estado existente
             Integer count = (Integer) callbackContext.state().getOrDefault("user_action_count", 0);
             callbackContext.state().put("user_action_count", count + 1);
 
-            // Add new state
+            // Agregar nuevo estado
             callbackContext.state().put("temp:last_operation_status", "success");
 
-            // State changes are automatically part of the event's state_delta
-            // ... rest of callback logic ...
+            // Los cambios de estado son automáticamente parte del state_delta del evento
+            // ... resto de lógica del callback ...
         }
     }
     ```
 
-**What `append_event` Does:**
+**Lo que Hace `append_event`:**
 
-* Adds the `Event` to `session.events`.
-* Reads the `state_delta` from the event's `actions`.
-* Applies these changes to the state managed by the `SessionService`, correctly handling prefixes and persistence based on the service type.
-* Updates the session's `last_update_time`.
-* Ensures thread-safety for concurrent updates.
+* Agrega el `Event` a `session.events`.
+* Lee el `state_delta` de las `actions` del evento.
+* Aplica estos cambios al estado gestionado por el `SessionService`, manejando correctamente prefijos y persistencia basándose en el tipo de servicio.
+* Actualiza el `last_update_time` de la sesión.
+* Asegura seguridad de hilos para actualizaciones concurrentes.
 
-### ⚠️ A Warning About Direct State Modification
+### ⚠️ Una Advertencia Sobre la Modificación Directa del Estado
 
-Avoid directly modifying the `session.state` collection (dictionary/Map) on a `Session` object that was obtained directly from the `SessionService` (e.g., via `session_service.get_session()` or `session_service.create_session()`) *outside* of the managed lifecycle of an agent invocation (i.e., not through a `CallbackContext` or `ToolContext`). For example, code like `retrieved_session = await session_service.get_session(...); retrieved_session.state['key'] = value` is problematic.
+Evita modificar directamente la colección `session.state` (diccionario/Map) en un objeto `Session` que fue obtenido directamente del `SessionService` (ej., mediante `session_service.get_session()` o `session_service.create_session()`) *fuera* del ciclo de vida gestionado de una invocación de agente (es decir, no a través de un `CallbackContext` o `ToolContext`). Por ejemplo, código como `retrieved_session = await session_service.get_session(...); retrieved_session.state['key'] = value` es problemático.
 
-State modifications *within* callbacks or tools using `CallbackContext.state` or `ToolContext.state` are the correct way to ensure changes are tracked, as these context objects handle the necessary integration with the event system.
+Las modificaciones de estado *dentro* de callbacks o herramientas usando `CallbackContext.state` o `ToolContext.state` son la forma correcta de asegurar que los cambios sean rastreados, ya que estos objetos de contexto manejan la integración necesaria con el sistema de eventos.
 
-**Why direct modification (outside of contexts) is strongly discouraged:**
+**Por qué la modificación directa (fuera de contextos) está fuertemente desaconsejada:**
 
-1. **Bypasses Event History:** The change isn't recorded as an `Event`, losing auditability.
-2. **Breaks Persistence:** Changes made this way **will likely NOT be saved** by `DatabaseSessionService` or `VertexAiSessionService`. They rely on `append_event` to trigger saving.
-3. **Not Thread-Safe:** Can lead to race conditions and lost updates.
-4. **Ignores Timestamps/Logic:** Doesn't update `last_update_time` or trigger related event logic.
+1. **Evita el Historial de Eventos:** El cambio no se registra como un `Event`, perdiendo auditabilidad.
+2. **Rompe la Persistencia:** Los cambios hechos de esta manera **probablemente NO serán guardados** por `DatabaseSessionService` o `VertexAiSessionService`. Estos dependen de `append_event` para activar el guardado.
+3. **No es Seguro para Hilos:** Puede llevar a condiciones de carrera y actualizaciones perdidas.
+4. **Ignora Timestamps/Lógica:** No actualiza `last_update_time` ni dispara lógica relacionada con eventos.
 
-**Recommendation:** Stick to updating state via `output_key`, `EventActions.state_delta` (when manually creating events), or by modifying the `state` property of `CallbackContext` or `ToolContext` objects when within their respective scopes. These methods ensure reliable, trackable, and persistent state management. Use direct access to `session.state` (from a `SessionService`-retrieved session) only for *reading* state.
+**Recomendación:** Mantente actualizando el estado mediante `output_key`, `EventActions.state_delta` (cuando creas eventos manualmente), o modificando la propiedad `state` de objetos `CallbackContext` o `ToolContext` cuando estés dentro de sus respectivos alcances. Estos métodos aseguran una gestión de estado confiable, rastreable y persistente. Usa el acceso directo a `session.state` (desde una sesión recuperada del `SessionService`) solo para *leer* el estado.
 
-### Best Practices for State Design Recap
+### Resumen de Mejores Prácticas para el Diseño del Estado
 
-* **Minimalism:** Store only essential, dynamic data.
-* **Serialization:** Use basic, serializable types.
-* **Descriptive Keys & Prefixes:** Use clear names and appropriate prefixes (`user:`, `app:`, `temp:`, or none).
-* **Shallow Structures:** Avoid deep nesting where possible.
-* **Standard Update Flow:** Rely on `append_event`.
+* **Minimalismo:** Almacena solo datos dinámicos esenciales.
+* **Serialización:** Usa tipos básicos serializables.
+* **Claves Descriptivas y Prefijos:** Usa nombres claros y prefijos apropiados (`user:`, `app:`, `temp:`, o ninguno).
+* **Estructuras Planas:** Evita anidamiento profundo donde sea posible.
+* **Flujo de Actualización Estándar:** Confía en `append_event`.

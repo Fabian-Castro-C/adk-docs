@@ -1,52 +1,52 @@
-# Parallel agents
+# Agentes paralelos
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-The `ParallelAgent` is a [workflow agent](index.md) that executes its sub-agents *concurrently*. This dramatically speeds up workflows where tasks can be performed independently.
+El `ParallelAgent` es un [agente de flujo de trabajo](index.md) que ejecuta sus sub-agentes *concurrentemente*. Esto acelera dramáticamente los flujos de trabajo donde las tareas pueden realizarse de manera independiente.
 
-Use `ParallelAgent` when: For scenarios prioritizing speed and involving independent, resource-intensive tasks, a `ParallelAgent` facilitates efficient parallel execution. **When sub-agents operate without dependencies, their tasks can be performed concurrently**, significantly reducing overall processing time.
+Usa `ParallelAgent` cuando: Para escenarios que priorizan la velocidad e involucran tareas independientes e intensivas en recursos, un `ParallelAgent` facilita la ejecución paralela eficiente. **Cuando los sub-agentes operan sin dependencias, sus tareas pueden realizarse concurrentemente**, reduciendo significativamente el tiempo total de procesamiento.
 
-As with other [workflow agents](index.md), the `ParallelAgent` is not powered by an LLM, and is thus deterministic in how it executes. That being said, workflow agents are only concerned with their execution (i.e. executing sub-agents in parallel), and not their internal logic; the tools or sub-agents of a workflow agent may or may not utilize LLMs.
+Al igual que con otros [agentes de flujo de trabajo](index.md), el `ParallelAgent` no está impulsado por un LLM, y por lo tanto es determinista en cómo se ejecuta. Dicho esto, los agentes de flujo de trabajo solo se preocupan por su ejecución (es decir, ejecutar sub-agentes en paralelo), y no por su lógica interna; las herramientas o sub-agentes de un agente de flujo de trabajo pueden o no utilizar LLMs.
 
-### Example
+### Ejemplo
 
-This approach is particularly beneficial for operations like multi-source data retrieval or heavy computations, where parallelization yields substantial performance gains. Importantly, this strategy assumes no inherent need for shared state or direct information exchange between the concurrently executing agents.
+Este enfoque es particularmente beneficioso para operaciones como la recuperación de datos de múltiples fuentes o cálculos pesados, donde la paralelización produce ganancias sustanciales de rendimiento. Importante destacar que esta estrategia asume que no hay necesidad inherente de estado compartido o intercambio directo de información entre los agentes que se ejecutan concurrentemente.
 
-### How it works
+### Cómo funciona
 
-When the `ParallelAgent`'s `run_async()` method is called:
+Cuando se llama al método `run_async()` del `ParallelAgent`:
 
-1. **Concurrent Execution:** It initiates the `run_async()` method of *each* sub-agent present in the `sub_agents` list *concurrently*.  This means all the agents start running at (approximately) the same time.
-2. **Independent Branches:**  Each sub-agent operates in its own execution branch.  There is ***no* automatic sharing of conversation history or state between these branches** during execution.
-3. **Result Collection:** The `ParallelAgent` manages the parallel execution and, typically, provides a way to access the results from each sub-agent after they have completed (e.g., through a list of results or events). The order of results may not be deterministic.
+1. **Ejecución Concurrente:** Inicia el método `run_async()` de *cada* sub-agente presente en la lista `sub_agents` *concurrentemente*. Esto significa que todos los agentes comienzan a ejecutarse (aproximadamente) al mismo tiempo.
+2. **Ramas Independientes:** Cada sub-agente opera en su propia rama de ejecución. ***No* hay compartición automática del historial de conversación o estado entre estas ramas** durante la ejecución.
+3. **Recolección de Resultados:** El `ParallelAgent` gestiona la ejecución paralela y, típicamente, proporciona una forma de acceder a los resultados de cada sub-agente después de que hayan completado (por ejemplo, a través de una lista de resultados o eventos). El orden de los resultados puede no ser determinista.
 
-### Independent Execution and State Management
+### Ejecución Independiente y Gestión del Estado
 
-It's *crucial* to understand that sub-agents within a `ParallelAgent` run independently.  If you *need* communication or data sharing between these agents, you must implement it explicitly.  Possible approaches include:
+Es *crucial* entender que los sub-agentes dentro de un `ParallelAgent` se ejecutan independientemente. Si *necesitas* comunicación o compartición de datos entre estos agentes, debes implementarlo explícitamente. Los enfoques posibles incluyen:
 
-* **Shared `InvocationContext`:** You could pass a shared `InvocationContext` object to each sub-agent.  This object could act as a shared data store.  However, you'd need to manage concurrent access to this shared context carefully (e.g., using locks) to avoid race conditions.
-* **External State Management:**  Use an external database, message queue, or other mechanism to manage shared state and facilitate communication between agents.
-* **Post-Processing:** Collect results from each branch, and then implement logic to coordinate data afterwards.
+* **`InvocationContext` Compartido:** Podrías pasar un objeto `InvocationContext` compartido a cada sub-agente. Este objeto podría actuar como un almacén de datos compartido. Sin embargo, necesitarías gestionar el acceso concurrente a este contexto compartido cuidadosamente (por ejemplo, usando bloqueos) para evitar condiciones de carrera.
+* **Gestión de Estado Externa:** Usa una base de datos externa, cola de mensajes u otro mecanismo para gestionar el estado compartido y facilitar la comunicación entre agentes.
+* **Post-Procesamiento:** Recolecta resultados de cada rama, y luego implementa lógica para coordinar datos posteriormente.
 
 ![Parallel Agent](../../assets/parallel-agent.png){: width="600"}
 
-### Full Example: Parallel Web Research
+### Ejemplo Completo: Investigación Web Paralela
 
-Imagine researching multiple topics simultaneously:
+Imagina investigar múltiples temas simultáneamente:
 
-1. **Researcher Agent 1:**  An `LlmAgent` that researches "renewable energy sources."
-2. **Researcher Agent 2:**  An `LlmAgent` that researches "electric vehicle technology."
-3. **Researcher Agent 3:**  An `LlmAgent` that researches "carbon capture methods."
+1. **Agente Investigador 1:** Un `LlmAgent` que investiga "fuentes de energía renovable."
+2. **Agente Investigador 2:** Un `LlmAgent` que investiga "tecnología de vehículos eléctricos."
+3. **Agente Investigador 3:** Un `LlmAgent` que investiga "métodos de captura de carbono."
 
     ```py
     ParallelAgent(sub_agents=[ResearcherAgent1, ResearcherAgent2, ResearcherAgent3])
     ```
 
-These research tasks are independent.  Using a `ParallelAgent` allows them to run concurrently, potentially reducing the total research time significantly compared to running them sequentially. The results from each agent would be collected separately after they finish.
+Estas tareas de investigación son independientes. Usar un `ParallelAgent` les permite ejecutarse concurrentemente, potencialmente reduciendo el tiempo total de investigación significativamente en comparación con ejecutarlas secuencialmente. Los resultados de cada agente se recolectarían por separado después de que terminen.
 
-???+ "Full Code"
+???+ "Código Completo"
 
     === "Python"
         ```py

@@ -1,114 +1,113 @@
-# Deploy to Vertex AI Agent Engine
+# Desplegar en Vertex AI Agent Engine
 
 <div class="language-support-tag" title="Vertex AI Agent Engine currently supports only Python.">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-This deployment procedure describes how to perform a standard deployment of
-ADK agent code to Google Cloud
+Este procedimiento de despliegue describe cómo realizar un despliegue estándar de
+código de agente ADK en Google Cloud
 [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
-You should follow this deployment path if you have an existing Google Cloud
-project and if you want to carefully manage deploying an ADK agent to Agent
-Engine runtime environment. These instructions use Cloud Console, the gcloud
-command line interface, and the ADK command line interface (ADK CLI). This path
-is recommended for users who are already familiar with configuring Google Cloud
-projects, and users preparing for production deployments.
+Debes seguir esta ruta de despliegue si tienes un proyecto de Google Cloud
+existente y si deseas gestionar cuidadosamente el despliegue de un agente ADK en el
+entorno de ejecución de Agent Engine. Estas instrucciones utilizan Cloud Console, la interfaz de
+línea de comandos gcloud y la interfaz de línea de comandos ADK (ADK CLI). Esta ruta
+se recomienda para usuarios que ya están familiarizados con la configuración de proyectos de Google Cloud
+y usuarios que se preparan para despliegues de producción.
 
-These instructions describe how to deploy an ADK project to Google Cloud Agent
-Engine runtime environment, which includes the following stages:
+Estas instrucciones describen cómo desplegar un proyecto ADK en el entorno de ejecución de Google Cloud Agent
+Engine, que incluye las siguientes etapas:
 
-*   [Setup Google Cloud project](#setup-cloud-project)
-*   [Prepare agent project folder](#define-your-agent)
-*   [Deploy the agent](#deploy-agent)
+*   [Configurar proyecto de Google Cloud](#setup-cloud-project)
+*   [Preparar carpeta del proyecto del agente](#define-your-agent)
+*   [Desplegar el agente](#deploy-agent)
 
-## Setup Google Cloud project {#setup-cloud-project}
+## Configurar proyecto de Google Cloud {#setup-cloud-project}
 
-To deploy your agent to Agent Engine, you need a Google Cloud project:
+Para desplegar tu agente en Agent Engine, necesitas un proyecto de Google Cloud:
 
-1. **Sign into Google Cloud**:
-    * If you're an **existing user** of Google Cloud:
-        * Sign in via
+1. **Iniciar sesión en Google Cloud**:
+    * Si eres un **usuario existente** de Google Cloud:
+        * Inicia sesión a través de
           [https://console.cloud.google.com](https://console.cloud.google.com)
-        * If you previously used a Free Trial that has expired, you may need to
-          upgrade to a
-          [Paid billing account](https://docs.cloud.google.com/free/docs/free-cloud-features#how-to-upgrade).
-    * If you are a **new user** of Google Cloud:
-        * You can sign up for the
-          [Free Trial program](https://docs.cloud.google.com/free/docs/free-cloud-features).
-          The Free Trial gets you a $300 Welcome credit to spend over 91 days on various
-          [Google Cloud products](https://docs.cloud.google.com/free/docs/free-cloud-features#during-free-trial)
-          and you won't be billed. During the Free Trial, you also get access to the
-          [Google Cloud Free Tier](https://docs.cloud.google.com/free/docs/free-cloud-features#free-tier),
-          which gives you free usage of select products up to specified monthly
-          limits, and to product-specific free trials.
+        * Si anteriormente usaste una Prueba Gratuita que ha expirado, es posible que necesites
+          actualizar a una
+          [cuenta de facturación de Pago](https://docs.cloud.google.com/free/docs/free-cloud-features#how-to-upgrade).
+    * Si eres un **nuevo usuario** de Google Cloud:
+        * Puedes registrarte en el
+          [programa de Prueba Gratuita](https://docs.cloud.google.com/free/docs/free-cloud-features).
+          La Prueba Gratuita te otorga un crédito de bienvenida de $300 para gastar durante 91 días en varios
+          [productos de Google Cloud](https://docs.cloud.google.com/free/docs/free-cloud-features#during-free-trial)
+          y no se te facturará. Durante la Prueba Gratuita, también obtienes acceso al
+          [Nivel Gratuito de Google Cloud](https://docs.cloud.google.com/free/docs/free-cloud-features#free-tier),
+          que te brinda uso gratuito de productos seleccionados hasta límites mensuales
+          especificados, y a pruebas gratuitas específicas de productos.
 
-2. **Create a Google Cloud project**
-    * If you already have an existing Google Cloud project, you can use it, but
-      be aware this process is likely to add new services to the project.
-    * If you want to create a new Google Cloud project, you can create a new one
-      on the [Create Project](https://console.cloud.google.com/projectcreate)
-      page.
+2. **Crear un proyecto de Google Cloud**
+    * Si ya tienes un proyecto de Google Cloud existente, puedes usarlo, pero
+      ten en cuenta que este proceso probablemente agregará nuevos servicios al proyecto.
+    * Si deseas crear un nuevo proyecto de Google Cloud, puedes crear uno nuevo
+      en la página [Crear Proyecto](https://console.cloud.google.com/projectcreate).
 
-3. **Get your Google Cloud Project ID**
-    * You need your Google Cloud Project ID, which you can find on your GCP
-      homepage. Make sure to note the Project ID (alphanumeric with hyphens),
-      _not_ the project number (numeric).
+3. **Obtener tu ID de Proyecto de Google Cloud**
+    * Necesitas tu ID de Proyecto de Google Cloud, que puedes encontrar en tu página de inicio de GCP.
+      Asegúrate de anotar el ID del Proyecto (alfanumérico con guiones),
+      _no_ el número de proyecto (numérico).
 
     <img src="/adk-docs/assets/project-id.png" alt="Google Cloud Project ID">
 
-4. **Enable Vertex AI in your project**
-    * To use Agent Engine, you need to [enable the Vertex AI API](https://console.cloud.google.com/apis/library/aiplatform.googleapis.com). Click on the "Enable" button to enable the API. Once enabled, it
-    should say "API Enabled".
+4. **Habilitar Vertex AI en tu proyecto**
+    * Para usar Agent Engine, necesitas [habilitar la API de Vertex AI](https://console.cloud.google.com/apis/library/aiplatform.googleapis.com). Haz clic en el botón "Enable" para habilitar la API. Una vez habilitada,
+    debería decir "API Enabled".
 
-5. **Enable Cloud Resource Manager API in your project**
-    * To use Agent Engine, you need to [enable the Cloud Resource Manager API](https://console.developers.google.com/apis/api/cloudresourcemanager.googleapis.com/overview). Click on the "Enable" button to enable the API. Once enabled, it should say "API Enabled".
+5. **Habilitar la API de Cloud Resource Manager en tu proyecto**
+    * Para usar Agent Engine, necesitas [habilitar la API de Cloud Resource Manager](https://console.developers.google.com/apis/api/cloudresourcemanager.googleapis.com/overview). Haz clic en el botón "Enable" para habilitar la API. Una vez habilitada, debería decir "API Enabled".
 
-## Set up your coding environment {#prerequisites-coding-env}
+## Configurar tu entorno de codificación {#prerequisites-coding-env}
 
-Now that you prepared your Google Cloud project, you can return to your coding
-environment. These steps require access to a terminal within your coding
-environment to run command line instructions.
+Ahora que has preparado tu proyecto de Google Cloud, puedes regresar a tu entorno de
+codificación. Estos pasos requieren acceso a una terminal dentro de tu entorno de
+codificación para ejecutar instrucciones de línea de comandos.
 
-### Authenticate your coding environment with Google Cloud
+### Autenticar tu entorno de codificación con Google Cloud
 
-*   You need to authenticate your coding environment so that you and your
-    code can interact with Google Cloud. To do so, you need the gcloud CLI.
-    If you have never used the gcloud CLI, you need to first
-    [download and install it](https://docs.cloud.google.com/sdk/docs/install-sdk)
-    before continuing with the steps below:
+*   Necesitas autenticar tu entorno de codificación para que tú y tu
+    código puedan interactuar con Google Cloud. Para hacerlo, necesitas la CLI de gcloud.
+    Si nunca has usado la CLI de gcloud, primero necesitas
+    [descargarla e instalarla](https://docs.cloud.google.com/sdk/docs/install-sdk)
+    antes de continuar con los pasos a continuación:
 
-*   Run the following command in your terminal to access your Google Cloud
-    project as a user:
+*   Ejecuta el siguiente comando en tu terminal para acceder a tu proyecto de Google Cloud
+    como usuario:
 
     ```shell
     gcloud auth login
     ```
 
-    After authenticating, you should see the message
+    Después de autenticarte, deberías ver el mensaje
     `You are now authenticated with the gcloud CLI!`.
 
-*   Run the following command to authenticate your code so that it can work with
+*   Ejecuta el siguiente comando para autenticar tu código para que pueda trabajar con
     Google Cloud:
 
     ```shell
     gcloud auth application-default login
     ```
 
-    After authenticating, you should see the message
+    Después de autenticarte, deberías ver el mensaje
     `You are now authenticated with the gcloud CLI!`.
 
-*   (Optional) If you need to set or change your default project in gcloud, you
-    can use:
+*   (Opcional) Si necesitas establecer o cambiar tu proyecto predeterminado en gcloud, puedes
+    usar:
 
     ```shell
     gcloud config set project MY-PROJECT-ID
     ```
 
-### Define your agent {#define-your-agent}
+### Definir tu agente {#define-your-agent}
 
-With your Google Cloud and coding environment prepared, you're ready to deploy
-your agent. The instructions assume that you have an agent project folder,
-such as:
+Con tu proyecto de Google Cloud y entorno de codificación preparados, estás listo para desplegar
+tu agente. Las instrucciones asumen que tienes una carpeta de proyecto de agente,
+tal como:
 
 ```shell
 multi_tool_agent/
@@ -117,18 +116,18 @@ multi_tool_agent/
 └── agent.py
 ```
 
-For more details on the project files and format, see the
-[multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent)
-code sample.
+Para más detalles sobre los archivos y formato del proyecto, consulta el
+ejemplo de código
+[multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent).
 
-## Deploy the agent {#deploy-agent}
+## Desplegar el agente {#deploy-agent}
 
-You can deploy from your terminal using the `adk deploy` command line tool. This
-process packages your code, builds it into a container, and deploys it to the
-managed Agent Engine service. This process can take several minutes.
+Puedes desplegar desde tu terminal usando la herramienta de línea de comandos `adk deploy`. Este
+proceso empaqueta tu código, lo construye en un contenedor y lo despliega en el
+servicio administrado de Agent Engine. Este proceso puede tomar varios minutos.
 
-The following example deploy command uses the `multi_tool_agent` sample code as
-the project to be deployed:
+El siguiente comando de despliegue de ejemplo usa el código de muestra `multi_tool_agent` como
+el proyecto a desplegar:
 
 ```shell
 PROJECT_ID=my-project-id
@@ -141,14 +140,14 @@ adk deploy agent_engine \
         multi_tool_agent
 ```
 
-For `region`, you can find a list of the supported regions on the
-[Vertex AI Agent Builder locations page](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine).
-To learn about the CLI options for the `adk deploy agent_engine` command, see the
-[ADK CLI Reference](https://google.github.io/adk-docs/api-reference/cli/cli.html#adk-deploy-agent-engine).
+Para `region`, puedes encontrar una lista de las regiones compatibles en la
+[página de ubicaciones de Vertex AI Agent Builder](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine).
+Para obtener información sobre las opciones de CLI para el comando `adk deploy agent_engine`, consulta la
+[Referencia de CLI de ADK](https://google.github.io/adk-docs/api-reference/cli/cli.html#adk-deploy-agent-engine).
 
-### Deploy command output
+### Salida del comando de despliegue
 
-Once successfully deployed, you should see the following output:
+Una vez desplegado exitosamente, deberías ver la siguiente salida:
 
 ```shell
 Creating AgentEngine
@@ -160,52 +159,52 @@ agent_engine = vertexai.agent_engines.get('projects/123456789/locations/us-centr
 Cleaning up the temp folder: /var/folders/k5/pv70z5m92s30k0n7hfkxszfr00mz24/T/agent_engine_deploy_src/20251219_134245
 ```
 
-Note that you now have a `RESOURCE_ID` where your agent has been deployed (which
-in the example above is `751619551677906944`). You need this ID number along
-with the other values to use your agent on Agent Engine.
+Ten en cuenta que ahora tienes un `RESOURCE_ID` donde tu agente ha sido desplegado (que
+en el ejemplo anterior es `751619551677906944`). Necesitas este número de ID junto
+con los otros valores para usar tu agente en Agent Engine.
 
-## Using an agent on Agent Engine
+## Usar un agente en Agent Engine
 
-Once you have completed deployment of your ADK project, you can query the agent
-using the Vertex AI SDK, Python requests library, or a REST API client. This
-section provides some information on what you need to interact with your agent
-and how to construct URLs to interact with your agent's REST API.
+Una vez que hayas completado el despliegue de tu proyecto ADK, puedes consultar el agente
+usando el SDK de Vertex AI, la biblioteca de solicitudes de Python o un cliente de API REST. Esta
+sección proporciona información sobre lo que necesitas para interactuar con tu agente
+y cómo construir URLs para interactuar con la API REST de tu agente.
 
-To interact with your agent on Agent Engine, you need the following:
+Para interactuar con tu agente en Agent Engine, necesitas lo siguiente:
 
-*   **PROJECT_ID** (example: "my-project-id") which you can find on your
-    [project details page](https://console.cloud.google.com/iam-admin/settings)
-*   **LOCATION_ID** (example: "us-central1"), that you used to deploy your agent
-*   **RESOURCE_ID** (example: "751619551677906944"), which you can find on the
-    [Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
+*   **PROJECT_ID** (ejemplo: "my-project-id") que puedes encontrar en tu
+    [página de detalles del proyecto](https://console.cloud.google.com/iam-admin/settings)
+*   **LOCATION_ID** (ejemplo: "us-central1"), que usaste para desplegar tu agente
+*   **RESOURCE_ID** (ejemplo: "751619551677906944"), que puedes encontrar en la
+    [IU de Agent Engine](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
 
-The query URL structure is as follows:
+La estructura de URL de consulta es la siguiente:
 
 ```shell
 https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines/$(RESOURCE_ID):query
 ```
 
-You can make requests from your agent using this URL structure. For more information
-on how to make requests, see the instructions in the Agent Engine documentation
-[Use an Agent Development Kit agent](https://docs.cloud.google.com/agent-builder/agent-engine/use/adk#rest-api).
-You can also check the Agent Engine documentation to learn about how to manage your
-[deployed agent](https://docs.cloud.google.com/agent-builder/agent-engine/manage/overview).
-For more information on testing and interacting with a deployed agent, see
-[Test deployed agents in Agent Engine](/adk-docs/deploy/agent-engine/test/).
+Puedes hacer solicitudes desde tu agente usando esta estructura de URL. Para más información
+sobre cómo hacer solicitudes, consulta las instrucciones en la documentación de Agent Engine
+[Usar un agente del Kit de Desarrollo de Agentes](https://docs.cloud.google.com/agent-builder/agent-engine/use/adk#rest-api).
+También puedes consultar la documentación de Agent Engine para aprender sobre cómo gestionar tu
+[agente desplegado](https://docs.cloud.google.com/agent-builder/agent-engine/manage/overview).
+Para más información sobre pruebas e interacción con un agente desplegado, consulta
+[Probar agentes desplegados en Agent Engine](/adk-docs/deploy/agent-engine/test/).
 
-### Monitoring and verification
+### Monitoreo y verificación
 
-*   You can monitor the deployment status in the
-    [Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
-    in the Google Cloud Console.
-*   For additional details, you can visit the Agent Engine documentation
-    [deploying an agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/deploy)
-    and
-    [managing deployed agents](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview).
+*   Puedes monitorear el estado del despliegue en la
+    [IU de Agent Engine](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
+    en la Consola de Google Cloud.
+*   Para detalles adicionales, puedes visitar la documentación de Agent Engine sobre
+    [desplegar un agente](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/deploy)
+    y
+    [gestionar agentes desplegados](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview).
 
-## Test deployed agents
+## Probar agentes desplegados
 
-After completing deployment of your ADK agent you should test the workflow in
-its new hosted environment. For more information on testing an ADK agent
-deployed to Agent Engine, see
-[Test deployed agents in Agent Engine](/adk-docs/deploy/agent-engine/test/).
+Después de completar el despliegue de tu agente ADK, debes probar el flujo de trabajo en
+su nuevo entorno alojado. Para más información sobre cómo probar un agente ADK
+desplegado en Agent Engine, consulta
+[Probar agentes desplegados en Agent Engine](/adk-docs/deploy/agent-engine/test/).

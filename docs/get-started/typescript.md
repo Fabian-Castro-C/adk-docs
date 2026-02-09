@@ -1,20 +1,20 @@
-# TypeScript Quickstart for ADK
+# Inicio Rápido de TypeScript para ADK
 
-This guide shows you how to get up and running with Agent Development Kit
-for TypeScript. Before you start, make sure you have the following installed:
+Esta guía te muestra cómo comenzar a trabajar con Agent Development Kit
+para TypeScript. Antes de comenzar, asegúrate de tener lo siguiente instalado:
 
-*   Node.js 24.13.0 or later
-*   Node Package Manager (npm) 11.8.0 or later
+*   Node.js 24.13.0 o posterior
+*   Node Package Manager (npm) 11.8.0 o posterior
 
-## Create an agent project
+## Crear un proyecto de agente
 
-Create an empty `my-agent` directory for your project:
+Crea un directorio vacío `my-agent` para tu proyecto:
 
 ```none
 my-agent/
 ```
 
-??? tip "Create this project structure using the command line"
+??? tip "Crea esta estructura de proyecto usando la línea de comandos"
 
     === "MacOS / Linux"
 
@@ -28,13 +28,13 @@ my-agent/
         mkdir my-agent
         ```
 
-### Configure project and dependencies
+### Configurar proyecto y dependencias
 
-Use the `npm` tool to install and configure dependencies for your project,
-including the package file, ADK TypeScript main
-library, and developer tools. Run the following commands from your
-`my-agent/` directory to create the `package.json` file and install the
-project dependencies:
+Usa la herramienta `npm` para instalar y configurar dependencias para tu proyecto,
+incluyendo el archivo de paquete, la biblioteca principal de ADK TypeScript
+y las herramientas de desarrollo. Ejecuta los siguientes comandos desde tu
+directorio `my-agent/` para crear el archivo `package.json` e instalar las
+dependencias del proyecto:
 
 ```console
 cd my-agent/
@@ -48,17 +48,17 @@ npm install @google/adk
 npm install -D @google/adk-devtools
 ```
 
-### Define the agent code
+### Definir el código del agente
 
-Create the code for a basic agent, including a simple implementation of an ADK
-[Function Tool](/adk-docs/tools/function-tools/), called `getCurrentTime`.
-Create an `agent.ts` file in your project directory and add the following code:
+Crea el código para un agente básico, incluyendo una implementación simple de una
+[Function Tool](/adk-docs/tools/function-tools/) de ADK, llamada `getCurrentTime`.
+Crea un archivo `agent.ts` en el directorio de tu proyecto y agrega el siguiente código:
 
 ```typescript title="my-agent/agent.ts"
 import {FunctionTool, LlmAgent} from '@google/adk';
 import {z} from 'zod';
 
-/* Mock tool implementation */
+/* Implementación simulada de herramienta */
 const getCurrentTime = new FunctionTool({
   name: 'get_current_time',
   description: 'Returns the current time in a specified city.',
@@ -80,35 +80,35 @@ export const rootAgent = new LlmAgent({
 });
 ```
 
-### Set your API key
+### Configurar tu clave API
 
-This project uses the Gemini API, which requires an API key. If you
-don't already have Gemini API key, create a key in Google AI Studio on the
-[API Keys](https://aistudio.google.com/app/apikey) page.
+Este proyecto utiliza la API de Gemini, que requiere una clave API. Si
+aún no tienes una clave API de Gemini, crea una clave en Google AI Studio en la
+página de [API Keys](https://aistudio.google.com/app/apikey).
 
-In a terminal window, write your API key into your `.env` file of your project
-to set environment variables:
+En una ventana de terminal, escribe tu clave API en el archivo `.env` de tu proyecto
+para establecer las variables de entorno:
 
 ```bash title="Update: my-agent/.env"
 echo 'GEMINI_API_KEY="YOUR_API_KEY"' > .env
 ```
 
-??? tip "Using other AI models with ADK"
-    ADK supports the use of many generative AI models. For more
-    information on configuring other models in ADK agents, see
+??? tip "Usar otros modelos de IA con ADK"
+    ADK soporta el uso de muchos modelos de IA generativa. Para más
+    información sobre cómo configurar otros modelos en agentes ADK, consulta
     [Models & Authentication](/adk-docs/agents/models).
 
-## Run your agent
+## Ejecutar tu agente
 
-You can run your ADK agent with the `@google/adk-devtools` library as an
-interactive command-line interface using the `run` command or the ADK web user
-interface using the `web` command. Both these options allow you to test and
-interact with your agent.
+Puedes ejecutar tu agente ADK con la biblioteca `@google/adk-devtools` como una
+interfaz de línea de comandos interactiva usando el comando `run` o la interfaz de usuario
+web de ADK usando el comando `web`. Ambas opciones te permiten probar e
+interactuar con tu agente.
 
-### Run with command-line interface
+### Ejecutar con interfaz de línea de comandos
 
-Run your agent with the ADK TypeScript command-line interface tool
-using the following command:
+Ejecuta tu agente con la herramienta de interfaz de línea de comandos de ADK TypeScript
+usando el siguiente comando:
 
 ```console
 npx adk run agent.ts
@@ -116,28 +116,28 @@ npx adk run agent.ts
 
 ![adk-run.png](/adk-docs/assets/adk-run.png)
 
-### Run with web interface
+### Ejecutar con interfaz web
 
-Run your agent with the ADK web interface using the following command:
+Ejecuta tu agente con la interfaz web de ADK usando el siguiente comando:
 
 ```console
 npx adk web
 ```
 
-This command starts a web server with a chat interface for your agent. You can
-access the web interface at (http://localhost:8000). Select your agent at the
-upper right corner and type a request.
+Este comando inicia un servidor web con una interfaz de chat para tu agente. Puedes
+acceder a la interfaz web en (http://localhost:8000). Selecciona tu agente en la
+esquina superior derecha y escribe una solicitud.
 
 ![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
 
-!!! warning "Caution: ADK Web for development only"
+!!! warning "Precaución: ADK Web solo para desarrollo"
 
-    ADK Web is ***not meant for use in production deployments***. You should
-    use ADK Web for development and debugging purposes only.
+    ADK Web ***no está destinado para uso en implementaciones de producción***. Deberías
+    usar ADK Web solo para propósitos de desarrollo y depuración.
 
-## Next: Build your agent
+## Siguiente: Construye tu agente
 
-Now that you have ADK installed and your first agent running, try building
-your own agent with our build guides:
+Ahora que tienes ADK instalado y tu primer agente ejecutándose, intenta construir
+tu propio agente con nuestras guías de construcción:
 
 *  [Build your agent](/adk-docs/tutorials/)

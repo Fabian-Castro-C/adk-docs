@@ -1,69 +1,69 @@
-# Resume stopped agents
+# Reanudar agentes detenidos
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v1.14.0</span>
 </div>
 
-An ADK agent's execution can be interrupted by various factors including
-dropped network connections, power failure, or a required external system going
-offline. The Resume feature of ADK allows an agent workflow to pick up where it
-left off, avoiding the need to restart the entire workflow. In ADK Python 1.16
-and higher, you can configure an ADK workflow to be resumable, so that it tracks
-the execution of workflow and then allows you to resume it after an unexpected
-interruption.
+La ejecución de un agente ADK puede ser interrumpida por varios factores incluyendo
+conexiones de red caídas, falla de energía, o un sistema externo requerido quedando
+fuera de línea. La característica de Reanudación de ADK permite que un flujo de trabajo de agente retome desde donde se
+quedó, evitando la necesidad de reiniciar todo el flujo de trabajo. En ADK Python 1.16
+y superior, puedes configurar un flujo de trabajo ADK para que sea reanudable, de modo que rastree
+la ejecución del flujo de trabajo y luego te permita reanudarlo después de una
+interrupción inesperada.
 
-This guide explains how to configure your ADK agent workflow to be resumable.
-If you use Custom Agents, you can update them to be resumable. For more
-information, see 
-[Add resume to custom Agents](#custom-agents).
+Esta guía explica cómo configurar tu flujo de trabajo de agente ADK para que sea reanudable.
+Si usas Agentes Personalizados, puedes actualizarlos para que sean reanudables. Para más
+información, consulta 
+[Agregar reanudación a Agentes personalizados](#custom-agents).
 
-## Add resumable configuration
+## Agregar configuración reanudable
 
-Enable the Resume function for an agent workflow by applying a Resumability
-configuration to the App object of your ADK workflow, as shown in the following
-code example:
+Habilita la función de Reanudación para un flujo de trabajo de agente aplicando una configuración de
+Reanudabilidad al objeto App de tu flujo de trabajo ADK, como se muestra en el siguiente
+ejemplo de código:
 
 ```python
 app = App(
     name='my_resumable_agent',
     root_agent=root_agent,
-    # Set the resumability config to enable resumability.
+    # Establece la configuración de reanudabilidad para habilitar la reanudabilidad.
     resumability_config=ResumabilityConfig(
         is_resumable=True,
     ),
 )
 ```
 
-!!! warning "Caution: Long Running Functions, Confirmations, Authentication"
-    For agents that use
-    [Long Running Functions](/adk-docs/tools-custom/function-tools/#long-run-tool),
-    [Confirmations](/adk-docs/tools-custom/confirmation/), or
-    [Authentication](/adk-docs/tools-custom/authentication/)
-    requiring user input, adding a resumable confirmation changes how these features
-    operate. For more information, see the documentation for those features.
+!!! warning "Precaución: Funciones de Larga Ejecución, Confirmaciones, Autenticación"
+    Para agentes que usan
+    [Funciones de Larga Ejecución](/adk-docs/tools-custom/function-tools/#long-run-tool),
+    [Confirmaciones](/adk-docs/tools-custom/confirmation/), o
+    [Autenticación](/adk-docs/tools-custom/authentication/)
+    que requieren entrada del usuario, agregar una confirmación reanudable cambia cómo operan estas características.
+    Para más información, consulta la documentación para esas características.
 
-!!! info "Note: Custom Agents"
-    Resume is not supported by default for Custom Agents. You must
-    update the agent code for a Custom Agent to support the Resume feature. For
-    information on modifying Custom Agents to support incremental resume
-    functionality, see 
-    [Add resume to custom Agents](#custom-agents).
+!!! info "Nota: Agentes Personalizados"
+    La Reanudación no está soportada por defecto para Agentes Personalizados. Debes
+    actualizar el código del agente para un Agente Personalizado para soportar la característica de Reanudación. Para
+    información sobre modificar Agentes Personalizados para soportar funcionalidad de reanudación incremental,
+    consulta 
+    [Agregar reanudación a Agentes personalizados](#custom-agents).
 
-## Resume a stopped workflow
+## Reanudar un flujo de trabajo detenido
 
-When an ADK workflow stops execution you can resume the workflow using a
-command containing the Invocation ID for the workflow instance, which can be
-found in the
-[Event](/adk-docs/events/#understanding-and-using-events)
-history of the workflow. Make sure the ADK API server is running, in case it was
-interrupted or powered off, and then run the following command to resume the
-workflow, as shown in the following API request example.
+Cuando un flujo de trabajo ADK detiene su ejecución puedes reanudar el flujo de trabajo usando un
+comando que contenga el ID de Invocación para la instancia del flujo de trabajo, que puede ser
+encontrado en el historial de
+[Eventos](/adk-docs/events/#understanding-and-using-events)
+del flujo de trabajo. Asegúrate de que el servidor API de ADK esté ejecutándose, en caso de que fuera
+interrumpido o apagado, y luego ejecuta el siguiente comando para reanudar el
+flujo de trabajo, como se muestra en el siguiente ejemplo de solicitud API.
 
 ```console
-# restart the API server if needed:
+# reinicia el servidor API si es necesario:
 adk api_server my_resumable_agent/
 
-# resume the agent:
+# reanuda el agente:
 curl -X POST http://localhost:8000/run_sse \
  -H "Content-Type: application/json" \
  -d '{
@@ -74,85 +74,84 @@ curl -X POST http://localhost:8000/run_sse \
  }'
 ```
 
-You can also resume a workflow using the Runner object Run Async method, as
-shown below:
+También puedes reanudar un flujo de trabajo usando el método Run Async del objeto Runner, como se
+muestra a continuación:
 
 ```python
 runner.run_async(user_id='u_123', session_id='s_abc', 
     invocation_id='invocation-123')
 
-# When new_message is set to a function response,
-# we are trying to resume a long running function.
+# Cuando new_message se establece a una respuesta de función,
+# estamos intentando reanudar una función de larga ejecución.
 ```
 
-!!! info "Note"
-    Resuming a workflow from the ADK Web user interface or using the ADK
-    command line (CLI) tool is not currently supported.
+!!! info "Nota"
+    Reanudar un flujo de trabajo desde la interfaz de usuario web de ADK o usando la herramienta de
+    línea de comandos (CLI) de ADK actualmente no está soportado.
 
-## How it works
+## Cómo funciona
 
-The Resume feature works by logging completed Agent workflow tasks,
-including incremental steps using
-[Events](/adk-docs/events/) and
-[Event Actions](/adk-docs/events/#detecting-actions-and-side-effects).
-tracking completion of agent tasks within a resumable workflow. If a workflow is
-interrupted and then later restarted, the system resumes the workflow by setting
-the completion state of each agent. If an agent did not complete, the workflow
-system reinstates any completed Events for that agent, and restarts the workflow
-from the partially completed state. For multi-agent workflows, the specific
-resume behavior varies, based on the multi-agent classes in your workflow, as
-described below:
+La característica de Reanudación funciona registrando las tareas completadas del flujo de trabajo del Agente,
+incluyendo pasos incrementales usando
+[Eventos](/adk-docs/events/) y
+[Acciones de Eventos](/adk-docs/events/#detecting-actions-and-side-effects).
+rastreando la finalización de tareas del agente dentro de un flujo de trabajo reanudable. Si un flujo de trabajo es
+interrumpido y luego reiniciado más tarde, el sistema reanuda el flujo de trabajo estableciendo
+el estado de finalización de cada agente. Si un agente no se completó, el sistema del flujo de trabajo
+restablece cualquier Evento completado para ese agente, y reinicia el flujo de trabajo
+desde el estado parcialmente completado. Para flujos de trabajo multi-agente, el comportamiento específico de
+reanudación varía, basándose en las clases multi-agente en tu flujo de trabajo, como se
+describe a continuación:
 
--   **Sequential Agent**: Reads the current_sub_agent from its saved state
-    to find the next sub-agent to run in the sequence.
--   **Loop Agent**: Uses the current_sub_agent and times_looped values to
-    continue the loop from the last completed iteration and sub-agent.
--   **Parallel Agent**: Determines which sub-agents have already completed
-    and only runs those that have not finished.
+-   **Agente Secuencial**: Lee el current_sub_agent de su estado guardado
+    para encontrar el siguiente sub-agente a ejecutar en la secuencia.
+-   **Agente de Bucle**: Usa los valores current_sub_agent y times_looped para
+    continuar el bucle desde la última iteración y sub-agente completados.
+-   **Agente Paralelo**: Determina qué sub-agentes ya han completado
+    y solo ejecuta aquellos que no han terminado.
 
-Event logging includes results from Tools which successfully returned a result.
-So if an agent successfully executed Function Tools A and B, and then failed
-during execution of tool C, the system reinstates the results from the
-tools A and B, and resumes the workflow by re-running the tool C request.
+El registro de eventos incluye resultados de Herramientas que devolvieron exitosamente un resultado.
+Así que si un agente ejecutó exitosamente las Herramientas de Función A y B, y luego falló
+durante la ejecución de la herramienta C, el sistema restablece los resultados de las
+herramientas A y B, y reanuda el flujo de trabajo re-ejecutando la solicitud de la herramienta C.
 
-!!! warning "Caution: Tool execution behavior"
-    When resuming a workflow with Tools, the Resume feature ensures
-    that the Tools in an agent are run ***at least once***, and may run more than
-    once when resuming a workflow. If your agent uses Tools where duplicate runs
-    would have a negative impact, such as purchases, you should modify the Tool to
-    check for and prevent duplicate runs.
+!!! warning "Precaución: Comportamiento de ejecución de Herramientas"
+    Al reanudar un flujo de trabajo con Herramientas, la característica de Reanudación asegura
+    que las Herramientas en un agente se ejecuten ***al menos una vez***, y pueden ejecutarse más de
+    una vez al reanudar un flujo de trabajo. Si tu agente usa Herramientas donde ejecuciones duplicadas
+    tendrían un impacto negativo, como compras, debes modificar la Herramienta para
+    verificar y prevenir ejecuciones duplicadas.
 
-!!! note "Note: Workflow modification with Resume not supported"
-    Do not modify a stopped agent workflow before resuming it. 
-    For example adding or removing agents from workflow that has stopped
-    and then resuming that workflow is not supported.
+!!! note "Nota: Modificación de flujo de trabajo con Reanudación no soportada"
+    No modifiques un flujo de trabajo de agente detenido antes de reanudarlo. 
+    Por ejemplo, agregar o eliminar agentes de un flujo de trabajo que se ha detenido
+    y luego reanudar ese flujo de trabajo no está soportado.
 
-## Add resume to custom Agents {#custom-agents}
+## Agregar reanudación a Agentes personalizados {#custom-agents}
 
-Custom agents have specific implementation requirements in order to support
-resumability. You must decide on and define workflow steps within your custom
-agent which produce a result which can be preserved before handing off to the
-next step of processing. The following steps outline how to modify a Custom
-Agent to support a workflow Resume.
+Los agentes personalizados tienen requisitos de implementación específicos para soportar
+reanudabilidad. Debes decidir y definir pasos del flujo de trabajo dentro de tu agente
+personalizado que produzcan un resultado que pueda ser preservado antes de pasar al
+siguiente paso de procesamiento. Los siguientes pasos describen cómo modificar un Agente
+Personalizado para soportar una Reanudación de flujo de trabajo.
 
--   **Create CustomAgentState class**: Extend the BaseAgentState to create
-    an object that preserves the state of your agent.
-    -   **Optionally, create WorkFlowStep class**: If your custom agent
-        has sequential steps, consider creating a WorkFlowStep list object that
-        defines the discrete, savable steps of the agent.
--   **Add initial agent state:** Modify your agent's async run function to
-    set the initial state of your agent.
--   **Add agent state checkpoints**: Modify your agent's async run function
-    to generate and save the agent state for each completed step of the agent's
-    overall task.
--   **Add end of agent status to track agent state:** Modify your agent's
-    async run function to include an `end_of_agent=True` status upon successful
-    completion of the agent's full task.
+-   **Crear clase CustomAgentState**: Extiende el BaseAgentState para crear
+    un objeto que preserve el estado de tu agente.
+    -   **Opcionalmente, crear clase WorkFlowStep**: Si tu agente personalizado
+        tiene pasos secuenciales, considera crear un objeto de lista WorkFlowStep que
+        defina los pasos discretos y guardables del agente.
+-   **Agregar estado inicial del agente:** Modifica la función async run de tu agente para
+    establecer el estado inicial de tu agente.
+-   **Agregar puntos de control del estado del agente**: Modifica la función async run de tu agente
+    para generar y guardar el estado del agente para cada paso completado de la
+    tarea general del agente.
+-   **Agregar fin del estado del agente para rastrear el estado del agente:** Modifica la función async run de tu agente
+    para incluir un estado `end_of_agent=True` al completar exitosamente
+    la tarea completa del agente.
 
-The following example shows the required code modifications to the example
-StoryFlowAgent class shown in the
-[Custom Agents](/adk-docs/agents/custom-agents/#full-code-example)
-guide:
+El siguiente ejemplo muestra las modificaciones de código requeridas al ejemplo de la
+clase StoryFlowAgent mostrada en la guía de
+[Agentes Personalizados](/adk-docs/agents/custom-agents/#full-code-example):
 
 ```python
 class WorkflowStep(int, Enum):
@@ -161,7 +160,7 @@ class WorkflowStep(int, Enum):
  POST_PROCESSING = 3
  CONDITIONAL_REGENERATION = 4
 
-# Extend BaseAgentState
+# Extender BaseAgentState
 
 ### class StoryFlowAgentState(BaseAgentState):
 
@@ -172,35 +171,35 @@ async def _run_async_impl(
     self, ctx: InvocationContext
 ) -> AsyncGenerator[Event, None]:
     """
-    Implements the custom orchestration logic for the story workflow.
-    Uses the instance attributes assigned by Pydantic (e.g., self.story_generator).
+    Implementa la lógica de orquestación personalizada para el flujo de trabajo de la historia.
+    Usa los atributos de instancia asignados por Pydantic (ej., self.story_generator).
     """
     agent_state = self._load_agent_state(ctx, WorkflowStep)
 
     if agent_state is None:
-      # Record the start of the agent
+      # Registra el inicio del agente
       agent_state = StoryFlowAgentState(step=WorkflowStep.INITIAL_STORY_GENERATION)
       yield self._create_agent_state_event(ctx, agent_state)
 
     next_step = agent_state.step
     logger.info(f"[{self.name}] Starting story generation workflow.")
 
-    # Step 1. Initial Story Generation
+    # Paso 1. Generación Inicial de Historia
     if next_step <= WorkflowStep.INITIAL_STORY_GENERATION:
       logger.info(f"[{self.name}] Running StoryGenerator...")
       async for event in self.story_generator.run_async(ctx):
           yield event
 
-      # Check if story was generated before proceeding
+      # Verifica si la historia fue generada antes de proceder
       if "current_story" not in ctx.session.state or not ctx.session.state[
           "current_story"
       ]:
-          return  # Stop processing if initial story failed
+          return  # Detiene el procesamiento si la historia inicial falló
 
     agent_state = StoryFlowAgentState(step=WorkflowStep.CRITIC_REVISER_LOOP)
     yield self._create_agent_state_event(ctx, agent_state)
 
-    # Step 2. Critic-Reviser Loop
+    # Paso 2. Bucle Crítico-Revisor
     if next_step <= WorkflowStep.CRITIC_REVISER_LOOP:
       logger.info(f"[{self.name}] Running CriticReviserLoop...")
       async for event in self.loop_agent.run_async(ctx):
@@ -213,7 +212,7 @@ async def _run_async_impl(
     agent_state = StoryFlowAgentState(step=WorkflowStep.POST_PROCESSING)
     yield self._create_agent_state_event(ctx, agent_state)
 
-    # Step 3. Sequential Post-Processing (Grammar and Tone Check)
+    # Paso 3. Post-Procesamiento Secuencial (Gramática y Verificación de Tono)
     if next_step <= WorkflowStep.POST_PROCESSING:
       logger.info(f"[{self.name}] Running PostProcessing...")
       async for event in self.sequential_agent.run_async(ctx):
@@ -226,7 +225,7 @@ async def _run_async_impl(
     agent_state = StoryFlowAgentState(step=WorkflowStep.CONDITIONAL_REGENERATION)
     yield self._create_agent_state_event(ctx, agent_state)
 
-    # Step 4. Tone-Based Conditional Logic
+    # Paso 4. Lógica Condicional Basada en Tono
     if next_step <= WorkflowStep.CONDITIONAL_REGENERATION:
       tone_check_result = ctx.session.state.get("tone_check_result")
       if tone_check_result == "negative":

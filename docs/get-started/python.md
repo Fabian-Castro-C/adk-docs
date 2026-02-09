@@ -1,28 +1,28 @@
-# Python Quickstart for ADK
+# Inicio Rápido de Python para ADK
 
-This guide shows you how to get up and running with Agent Development Kit
-(ADK) for Python. Before you start, make sure you have the following installed:
+Esta guía te muestra cómo empezar a trabajar con Agent Development Kit
+(ADK) para Python. Antes de comenzar, asegúrate de tener lo siguiente instalado:
 
-*   Python 3.10 or later
-*   `pip` for installing packages
+*   Python 3.10 o posterior
+*   `pip` para instalar paquetes
 
-## Installation
+## Instalación
 
-Install ADK by running the following command:
+Instala ADK ejecutando el siguiente comando:
 
 ```shell
 pip install google-adk
 ```
 
-??? tip "Recommended: create and activate a Python virtual environment"
+??? tip "Recomendado: crear y activar un entorno virtual de Python"
 
-    Create a Python virtual environment:
+    Crea un entorno virtual de Python:
 
     ```shell
     python -m venv .venv
     ```
 
-    Activate the Python virtual environment:
+    Activa el entorno virtual de Python:
 
     === "Windows CMD"
 
@@ -42,77 +42,77 @@ pip install google-adk
         source .venv/bin/activate
         ```
 
-## Create an agent project
+## Crear un proyecto de agente
 
-Run the `adk create` command to start a new agent project.
+Ejecuta el comando `adk create` para iniciar un nuevo proyecto de agente.
 
 ```shell
 adk create my_agent
 ```
 
-### Explore the agent project
+### Explorar el proyecto de agente
 
-The created agent project has the following structure, with the `agent.py`
-file containing the main control code for the agent.
+El proyecto de agente creado tiene la siguiente estructura, con el archivo `agent.py`
+que contiene el código de control principal para el agente.
 
 ```none
 my_agent/
-    agent.py      # main agent code
-    .env          # API keys or project IDs
+    agent.py      # código principal del agente
+    .env          # claves API o IDs de proyecto
     __init__.py
 ```
 
-## Update your agent project
+## Actualizar tu proyecto de agente
 
-The `agent.py` file contains a `root_agent` definition which is the only
-required element of an ADK agent. You can also define tools for the agent to
-use. Update the generated `agent.py` code to include a `get_current_time` tool
-for use by the agent, as shown in the following code:
+El archivo `agent.py` contiene una definición de `root_agent` que es el único
+elemento requerido de un agente ADK. También puedes definir herramientas para que el agente
+las use. Actualiza el código generado de `agent.py` para incluir una herramienta `get_current_time`
+para uso del agente, como se muestra en el siguiente código:
 
 ```python
 from google.adk.agents.llm_agent import Agent
 
-# Mock tool implementation
+# Implementación simulada de herramienta
 def get_current_time(city: str) -> dict:
-    """Returns the current time in a specified city."""
+    """Devuelve la hora actual en una ciudad especificada."""
     return {"status": "success", "city": city, "time": "10:30 AM"}
 
 root_agent = Agent(
     model='gemini-3-flash-preview',
     name='root_agent',
-    description="Tells the current time in a specified city.",
-    instruction="You are a helpful assistant that tells the current time in cities. Use the 'get_current_time' tool for this purpose.",
+    description="Dice la hora actual en una ciudad especificada.",
+    instruction="Eres un asistente útil que dice la hora actual en las ciudades. Usa la herramienta 'get_current_time' para este propósito.",
     tools=[get_current_time],
 )
 ```
 
-### Set your API key
+### Configurar tu clave API
 
-This project uses the Gemini API, which requires an API key. If you
-don't already have Gemini API key, create a key in Google AI Studio on the
-[API Keys](https://aistudio.google.com/app/apikey) page.
+Este proyecto usa la API de Gemini, que requiere una clave API. Si no
+tienes ya una clave API de Gemini, crea una clave en Google AI Studio en la
+página de [Claves API](https://aistudio.google.com/app/apikey).
 
-In a terminal window, write your API key into an `.env` file as an environment variable:
+En una ventana de terminal, escribe tu clave API en un archivo `.env` como una variable de entorno:
 
-```console title="Update: my_agent/.env"
+```console title="Actualizar: my_agent/.env"
 echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
 ```
 
-??? tip "Using other AI models with ADK"
-    ADK supports the use of many generative AI models. For more
-    information on configuring other models in ADK agents, see
-    [Models & Authentication](/adk-docs/agents/models).
+??? tip "Usar otros modelos de IA con ADK"
+    ADK soporta el uso de muchos modelos de IA generativa. Para más
+    información sobre cómo configurar otros modelos en agentes ADK, consulta
+    [Modelos y Autenticación](/adk-docs/agents/models).
 
-## Run your agent
+## Ejecutar tu agente
 
-You can run your ADK agent with an interactive command-line interface using the
-`adk run` command or the ADK web user interface provided by the ADK using the
-`adk web` command. Both these options allow you to test and interact with your
-agent.
+Puedes ejecutar tu agente ADK con una interfaz de línea de comandos interactiva usando el
+comando `adk run` o la interfaz de usuario web de ADK proporcionada por ADK usando el
+comando `adk web`. Ambas opciones te permiten probar e interactuar con tu
+agente.
 
-### Run with command-line interface
+### Ejecutar con interfaz de línea de comandos
 
-Run your agent using the `adk run` command-line tool.
+Ejecuta tu agente usando la herramienta de línea de comandos `adk run`.
 
 ```console
 adk run my_agent
@@ -120,10 +120,10 @@ adk run my_agent
 
 ![adk-run.png](/adk-docs/assets/adk-run.png)
 
-### Run with web interface
+### Ejecutar con interfaz web
 
-The ADK framework provides web interface you can use to test and interact with
-your agent. You can start the web interface using the following command:
+El framework ADK proporciona una interfaz web que puedes usar para probar e interactuar con
+tu agente. Puedes iniciar la interfaz web usando el siguiente comando:
 
 ```console
 adk web --port 8000
@@ -131,24 +131,24 @@ adk web --port 8000
 
 !!! note
 
-    Run this command from the **parent directory** that contains your
-    `my_agent/` folder. For example, if your agent is inside `agents/my_agent/`,
-    run `adk web` from the `agents/` directory.
+    Ejecuta este comando desde el **directorio padre** que contiene tu
+    carpeta `my_agent/`. Por ejemplo, si tu agente está dentro de `agents/my_agent/`,
+    ejecuta `adk web` desde el directorio `agents/`.
 
-This command starts a web server with a chat interface for your agent. You can
-access the web interface at (http://localhost:8000). Select the agent at the
-upper left corner and type a request.
+Este comando inicia un servidor web con una interfaz de chat para tu agente. Puedes
+acceder a la interfaz web en (http://localhost:8000). Selecciona el agente en la
+esquina superior izquierda y escribe una solicitud.
 
 ![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
 
-!!! warning "Caution: ADK Web for development only"
+!!! warning "Precaución: ADK Web solo para desarrollo"
 
-    ADK Web is ***not meant for use in production deployments***. You should
-    use ADK Web for development and debugging purposes only.
+    ADK Web ***no está diseñado para uso en despliegues de producción***. Deberías
+    usar ADK Web solo para propósitos de desarrollo y depuración.
 
-## Next: Build your agent
+## Siguiente: Construye tu agente
 
-Now that you have ADK installed and your first agent running, try building
-your own agent with our build guides:
+Ahora que tienes ADK instalado y tu primer agente ejecutándose, intenta construir
+tu propio agente con nuestras guías de construcción:
 
-*  [Build your agent](/adk-docs/tutorials/)
+*  [Construye tu agente](/adk-docs/tutorials/)

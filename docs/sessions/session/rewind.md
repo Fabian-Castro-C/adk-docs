@@ -1,48 +1,39 @@
-# Rewind sessions for agents
+# Sesiones Rewind para agentes
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v1.17.0</span>
 </div>
 
-The ADK session Rewind feature allows you to revert a session to a previous
-request state, enabling you to undo mistakes, explore alternative paths, or
-restart a process from a known good point. This document provides an overview of
-the feature, how to use it, and its limitations.
+La función Rewind de sesiones de ADK te permite revertir una sesión a un estado de solicitud anterior, permitiéndote deshacer errores, explorar rutas alternativas o reiniciar un proceso desde un punto conocido bueno. Este documento proporciona una descripción general de la función, cómo usarla y sus limitaciones.
 
-## Rewind a session
+## Revertir una sesión
 
-When you rewind a session, you specify a user request, or ***invocation***, that
-you want to undo, and the system undoes that request and the requests after it.
-So if you have three requests (A, B, C) and you want to return to the state at
-request A, you specify B, which undoes the changes from requests B and C. You
-rewind a session by using the rewind method on a ***Runner*** instance,
-specifying the user, session, and invocation id, as shown in the following code
-snippet:
+Cuando reviertes una sesión, especificas una solicitud de usuario, o ***invocación***, que deseas deshacer, y el sistema deshace esa solicitud y las solicitudes posteriores. Entonces, si tienes tres solicitudes (A, B, C) y quieres volver al estado en la solicitud A, especificas B, lo que deshace los cambios de las solicitudes B y C. Reviertes una sesión usando el método rewind en una instancia de ***Runner***, especificando el usuario, la sesión y el id de invocación, como se muestra en el siguiente fragmento de código:
 
 ```python
-# Create runner
+# Crear runner
 runner = InMemoryRunner(
     agent=agent.root_agent,
     app_name=APP_NAME,
 )
 
-# Create a session
+# Crear una sesión
 session = await runner.session_service.create_session(
     app_name=APP_NAME, user_id=USER_ID
 )
-# call agent with wrapper function "call_agent_async()"
+# llamar al agente con la función wrapper "call_agent_async()"
 await call_agent_async(
     runner, USER_ID, session.id, "set state color to red"
 )
-# ... more agent calls ...
+# ... más llamadas al agente ...
 events_list = await call_agent_async(
     runner, USER_ID, session.id, "update state color to blue"
 )
 
-# get invocation id
+# obtener id de invocación
 rewind_invocation_id=events_list[1].invocation_id
 
-# rewind invocations (state color: red)
+# revertir invocaciones (state color: red)
 await runner.rewind_async(
     user_id=USER_ID,
     session_id=session.id,
@@ -50,39 +41,16 @@ await runner.rewind_async(
 )
 ```
 
-When you call the ***rewind*** method, all ADK managed session-level resources
-are restored to the state they were in *before* the request you specified with
-the ***invocation id***. However, global resources, such as app-level or
-user-level state and artifacts, are not restored. For a complete example of an
-agent session rewind, see the
-[rewind_session](https://github.com/google/adk-python/tree/main/contributing/samples/rewind_session)
-sample code. For more information on the limitations of the Rewind feature,
-see [Limitations](#limitations).
+Cuando llamas al método ***rewind***, todos los recursos de nivel de sesión administrados por ADK se restauran al estado en el que estaban *antes* de la solicitud que especificaste con el ***id de invocación***. Sin embargo, los recursos globales, como el estado y los artefactos a nivel de aplicación o de usuario, no se restauran. Para un ejemplo completo de una reversión de sesión de agente, consulta el código de muestra [rewind_session](https://github.com/google/adk-python/tree/main/contributing/samples/rewind_session). Para más información sobre las limitaciones de la función Rewind, consulta [Limitaciones](#limitations).
 
-## How it works
+## Cómo funciona
 
-The Rewind feature creates a special ***rewind*** request that restores the
-session's state and artifacts to their condition *before* the rewind point
-specified by an invocation id. This approach means that all requests, including
-rewound requests, are preserved in the log for later debugging, analysis, or
-auditing. After the rewind, the system ignores the rewound requests when
-it prepares the next requests for the AI model. This behavior means the AI model
-used by the agent effectively forgets any interactions from the rewind point up
-to the next request.
+La función Rewind crea una solicitud especial de ***rewind*** que restaura el estado y los artefactos de la sesión a su condición *antes* del punto de reversión especificado por un id de invocación. Este enfoque significa que todas las solicitudes, incluidas las solicitudes revertidas, se conservan en el registro para depuración, análisis o auditoría posteriores. Después de la reversión, el sistema ignora las solicitudes revertidas cuando prepara las siguientes solicitudes para el modelo de IA. Este comportamiento significa que el modelo de IA utilizado por el agente efectivamente olvida cualquier interacción desde el punto de reversión hasta la siguiente solicitud.
 
-## Limitations {#limitations}
+## Limitaciones {#limitations}
 
-The Rewind feature has some limitations that you should be aware of when using
-it with your agent workflow:
+La función Rewind tiene algunas limitaciones que debes tener en cuenta al usarla con tu flujo de trabajo del agente:
 
-*   **Global agent resources:** App-level and user-level state and artifacts are
-    *not* restored by the rewind feature. Only session-level state and artifacts
-    are restored.
-*   **External dependencies:** The rewind feature does not manage external
-    dependencies. If a tool in your agent interacts with external systems,
-    it is your responsibility to handle the restoration of those systems to
-    their prior state.
-*   **Atomicity:** State updates, artifact updates, and event persistence are
-    not performed in a single atomic transaction. Therefore, you should avoid
-    rewinding active sessions or concurrently manipulating session artifacts
-    during a rewind to prevent inconsistencies.
+*   **Recursos globales del agente:** El estado y los artefactos a nivel de aplicación y de usuario *no* se restauran con la función rewind. Solo se restauran el estado y los artefactos a nivel de sesión.
+*   **Dependencias externas:** La función rewind no administra dependencias externas. Si una herramienta en tu agente interactúa con sistemas externos, es tu responsabilidad manejar la restauración de esos sistemas a su estado anterior.
+*   **Atomicidad:** Las actualizaciones de estado, las actualizaciones de artefactos y la persistencia de eventos no se realizan en una única transacción atómica. Por lo tanto, debes evitar revertir sesiones activas o manipular simultáneamente artefactos de sesión durante una reversión para prevenir inconsistencias.

@@ -1,70 +1,70 @@
-# Model Context Protocol (MCP)
+# Protocolo de Contexto de Modelo (MCP)
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
 </div>
 
-The
-[Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) is
-an open standard designed to standardize how Large Language Models (LLMs) like
-Gemini and Claude communicate with external applications, data sources, and
-tools. Think of it as a universal connection mechanism that simplifies how LLMs
-obtain context, execute actions, and interact with various systems.
+El
+[Protocolo de Contexto de Modelo (MCP)](https://modelcontextprotocol.io/introduction) es
+un estándar abierto diseñado para estandarizar cómo los Modelos de Lenguaje de Gran Escala (LLMs) como
+Gemini y Claude se comunican con aplicaciones externas, fuentes de datos y
+herramientas. Piénsalo como un mecanismo de conexión universal que simplifica cómo los LLMs
+obtienen contexto, ejecutan acciones e interactúan con varios sistemas.
 
-## How does MCP work?
+## ¿Cómo funciona MCP?
 
-MCP follows a client-server architecture, defining how data (resources),
-interactive templates (prompts), and actionable functions (tools) are
-exposed by an MCP server and consumed by an MCP client (which could be
-an LLM host application or an AI agent).
+MCP sigue una arquitectura cliente-servidor, definiendo cómo los datos (recursos),
+plantillas interactivas (prompts) y funciones accionables (herramientas) son
+expuestos por un servidor MCP y consumidos por un cliente MCP (que podría ser
+una aplicación anfitriona de LLM o un agente de IA).
 
-## MCP Tools in ADK
+## Herramientas MCP en ADK
 
-ADK helps you both use and consume MCP tools in your agents, whether you're
-trying to build a tool to call an MCP service, or exposing an MCP server for
-other developers or agents to interact with your tools.
+ADK te ayuda tanto a usar como a consumir herramientas MCP en tus agentes, ya sea que estés
+intentando construir una herramienta para llamar a un servicio MCP, o exponiendo un servidor MCP para
+que otros desarrolladores o agentes interactúen con tus herramientas.
 
-Refer to the [MCP Tools documentation](/adk-docs/tools-custom/mcp-tools/) for code samples
-and design patterns that help you use ADK together with MCP servers, including:
+Consulta la [documentación de Herramientas MCP](/adk-docs/tools-custom/mcp-tools/) para ejemplos de código
+y patrones de diseño que te ayudan a usar ADK junto con servidores MCP, incluyendo:
 
-- **Using Existing MCP Servers within ADK**: An ADK agent can act as an MCP
-  client and use tools provided by external MCP servers.
-- **Exposing ADK Tools via an MCP Server**: How to build an MCP server that
-  wraps ADK tools, making them accessible to any MCP client.
+- **Usar Servidores MCP Existentes dentro de ADK**: Un agente ADK puede actuar como un cliente MCP
+  y usar herramientas proporcionadas por servidores MCP externos.
+- **Exponer Herramientas ADK a través de un Servidor MCP**: Cómo construir un servidor MCP que
+  envuelve herramientas ADK, haciéndolas accesibles a cualquier cliente MCP.
 
-## MCP Toolbox for Databases
+## MCP Toolbox para Bases de Datos
 
-[MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) is an
-open-source MCP server that securely exposes your backend data sources as a
-set of pre-built, production-ready tools for Gen AI agents. It functions as a
-universal abstraction layer, allowing your ADK agent to securely query, analyze,
-and retrieve information from a wide array of databases with built-in support.
+[MCP Toolbox para Bases de Datos](https://github.com/googleapis/genai-toolbox) es un
+servidor MCP de código abierto que expone de manera segura tus fuentes de datos backend como un
+conjunto de herramientas preconstruidas y listas para producción para agentes de IA Gen. Funciona como una
+capa de abstracción universal, permitiendo que tu agente ADK consulte, analice
+y recupere información de manera segura desde una amplia variedad de bases de datos con soporte integrado.
 
-The MCP Toolbox server includes a comprehensive library of connectors, ensuring that
-agents can safely interact with your complex data estate.
+El servidor MCP Toolbox incluye una biblioteca completa de conectores, asegurando que
+los agentes puedan interactuar de manera segura con tu complejo patrimonio de datos.
 
-### Supported Data Sources
+### Fuentes de Datos Soportadas
 
-MCP Toolbox provides out-of-the-box toolsets for the following databases and data platforms:
+MCP Toolbox proporciona conjuntos de herramientas listos para usar para las siguientes bases de datos y plataformas de datos:
 
 #### Google Cloud
 
-*   [BigQuery](https://googleapis.github.io/genai-toolbox/resources/sources/bigquery/) (including tools for SQL execution, schema discovery, and AI-powered time series forecasting)
-*   [AlloyDB](https://googleapis.github.io/genai-toolbox/resources/sources/alloydb-pg/) (PostgreSQL-compatible, with tools for both standard queries and natural language queries)
+*   [BigQuery](https://googleapis.github.io/genai-toolbox/resources/sources/bigquery/) (incluyendo herramientas para ejecución SQL, descubrimiento de esquemas y pronóstico de series temporales impulsado por IA)
+*   [AlloyDB](https://googleapis.github.io/genai-toolbox/resources/sources/alloydb-pg/) (compatible con PostgreSQL, con herramientas tanto para consultas estándar como consultas en lenguaje natural)
 *   [AlloyDB Admin](https://googleapis.github.io/genai-toolbox/resources/sources/alloydb-admin/)
-*   [Spanner](https://googleapis.github.io/genai-toolbox/resources/sources/spanner/) (supporting both GoogleSQL and PostgreSQL dialects)
-*   Cloud SQL (with dedicated support for [Cloud SQL for PostgreSQL](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-pg/), [Cloud SQL for MySQL](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-mysql/), and [Cloud SQL for SQL Server](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-mssql/))
+*   [Spanner](https://googleapis.github.io/genai-toolbox/resources/sources/spanner/) (soportando tanto dialectos GoogleSQL como PostgreSQL)
+*   Cloud SQL (con soporte dedicado para [Cloud SQL para PostgreSQL](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-pg/), [Cloud SQL para MySQL](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-mysql/) y [Cloud SQL para SQL Server](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-mssql/))
 *   [Cloud SQL Admin](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-admin/)
 *   [Firestore](https://googleapis.github.io/genai-toolbox/resources/sources/firestore/)
 *   [Bigtable](https://googleapis.github.io/genai-toolbox/resources/sources/bigtable/)
-*   [Dataplex](https://googleapis.github.io/genai-toolbox/resources/sources/dataplex/) (for data discovery and metadata search)
+*   [Dataplex](https://googleapis.github.io/genai-toolbox/resources/sources/dataplex/) (para descubrimiento de datos y búsqueda de metadatos)
 *   [Cloud Monitoring](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-monitoring/)
 
-#### Relational & SQL Databases
+#### Bases de Datos Relacionales y SQL
 
-*   [PostgreSQL](https://googleapis.github.io/genai-toolbox/resources/sources/postgres/) (generic)
-*   [MySQL](https://googleapis.github.io/genai-toolbox/resources/sources/mysql/) (generic)
-*   [Microsoft SQL Server](https://googleapis.github.io/genai-toolbox/resources/sources/mssql/) (generic)
+*   [PostgreSQL](https://googleapis.github.io/genai-toolbox/resources/sources/postgres/) (genérico)
+*   [MySQL](https://googleapis.github.io/genai-toolbox/resources/sources/mysql/) (genérico)
+*   [Microsoft SQL Server](https://googleapis.github.io/genai-toolbox/resources/sources/mssql/) (genérico)
 *   [ClickHouse](https://googleapis.github.io/genai-toolbox/resources/sources/clickhouse/)
 *   [TiDB](https://googleapis.github.io/genai-toolbox/resources/sources/tidb/)
 *   [OceanBase](https://googleapis.github.io/genai-toolbox/resources/sources/oceanbase/)
@@ -72,7 +72,7 @@ MCP Toolbox provides out-of-the-box toolsets for the following databases and dat
 *   [SQLite](https://googleapis.github.io/genai-toolbox/resources/sources/sqlite/)
 *   [YugabyteDB](https://googleapis.github.io/genai-toolbox/resources/sources/yugabytedb/)
 
-#### NoSQL & Key-Value Stores
+#### Bases de Datos NoSQL y Almacenes Clave-Valor
 
 *   [MongoDB](https://googleapis.github.io/genai-toolbox/resources/sources/mongodb/)
 *   [Couchbase](https://googleapis.github.io/genai-toolbox/resources/sources/couchbase/)
@@ -80,46 +80,44 @@ MCP Toolbox provides out-of-the-box toolsets for the following databases and dat
 *   [Valkey](https://googleapis.github.io/genai-toolbox/resources/sources/valkey/)
 *   [Cassandra](https://googleapis.github.io/genai-toolbox/resources/sources/cassandra/)
 
-#### Graph Databases
+#### Bases de Datos de Grafos
 
-*   [Neo4j](https://googleapis.github.io/genai-toolbox/resources/sources/neo4j/) (with tools for Cypher queries and schema inspection)
+*   [Neo4j](https://googleapis.github.io/genai-toolbox/resources/sources/neo4j/) (con herramientas para consultas Cypher e inspección de esquemas)
 *   [Dgraph](https://googleapis.github.io/genai-toolbox/resources/sources/dgraph/)
 
-#### Data Platforms & Federation
+#### Plataformas de Datos y Federación
 
-*   [Looker](https://googleapis.github.io/genai-toolbox/resources/sources/looker/) (for running Looks, queries, and building dashboards via the Looker API)
-*   [Trino](https://googleapis.github.io/genai-toolbox/resources/sources/trino/) (for running federated queries across multiple sources)
+*   [Looker](https://googleapis.github.io/genai-toolbox/resources/sources/looker/) (para ejecutar Looks, consultas y construir dashboards a través de la API de Looker)
+*   [Trino](https://googleapis.github.io/genai-toolbox/resources/sources/trino/) (para ejecutar consultas federadas a través de múltiples fuentes)
 
-#### Other
+#### Otros
 
 *   [HTTP](https://googleapis.github.io/genai-toolbox/resources/sources/http/)
 
-### Documentation
+### Documentación
 
-Refer to the
-[MCP Toolbox for Databases](/adk-docs/tools/google-cloud/mcp-toolbox-for-databases/)
-documentation on how you can use ADK together with the MCP Toolbox for
-Databases. For getting started with the MCP Toolbox for Databases, a blog post [Tutorial : MCP Toolbox for Databases - Exposing Big Query Datasets](https://medium.com/google-cloud/tutorial-mcp-toolbox-for-databases-exposing-big-query-datasets-9321f0064f4e) and Codelab [MCP Toolbox for Databases:Making BigQuery datasets available to MCP clients](https://codelabs.developers.google.com/mcp-toolbox-bigquery-dataset?hl=en#0) are also available.
+Consulta la
+[documentación de MCP Toolbox para Bases de Datos](/adk-docs/tools/google-cloud/mcp-toolbox-for-databases/)
+sobre cómo puedes usar ADK junto con MCP Toolbox para
+Bases de Datos. Para comenzar con MCP Toolbox para Bases de Datos, también están disponibles una publicación de blog [Tutorial: MCP Toolbox para Bases de Datos - Exponiendo Conjuntos de Datos de BigQuery](https://medium.com/google-cloud/tutorial-mcp-toolbox-for-databases-exposing-big-query-datasets-9321f0064f4e) y un Codelab [MCP Toolbox para Bases de Datos: Haciendo disponibles conjuntos de datos de BigQuery para clientes MCP](https://codelabs.developers.google.com/mcp-toolbox-bigquery-dataset?hl=en#0).
 
 ![GenAI Toolbox](../assets/mcp_db_toolbox.png)
 
-## ADK Agent and FastMCP server
-[FastMCP](https://github.com/jlowin/fastmcp) handles all the complex MCP protocol details and server management, so you can focus on building great tools. It's designed to be high-level and Pythonic; in most cases, decorating a function is all you need.
+## Agente ADK y servidor FastMCP
+[FastMCP](https://github.com/jlowin/fastmcp) maneja todos los detalles complejos del protocolo MCP y la gestión del servidor, para que puedas enfocarte en construir excelentes herramientas. Está diseñado para ser de alto nivel y Pythonic; en la mayoría de los casos, decorar una función es todo lo que necesitas.
 
-Refer to the [MCP Tools documentation](/adk-docs/tools-custom/mcp-tools/) documentation on
-how you can use ADK together with the FastMCP server running on Cloud Run.
+Consulta la [documentación de Herramientas MCP](/adk-docs/tools-custom/mcp-tools/) sobre
+cómo puedes usar ADK junto con el servidor FastMCP ejecutándose en Cloud Run.
 
-## MCP Servers for Google Cloud Genmedia
+## Servidores MCP para Google Cloud Genmedia
 
-[MCP Tools for Genmedia Services](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)
-is a set of open-source MCP servers that enable you to integrate Google Cloud
-generative media services—such as Imagen, Veo, Chirp 3 HD voices, and Lyria—into
-your AI applications.
+[Herramientas MCP para Servicios Genmedia](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)
+es un conjunto de servidores MCP de código abierto que te permiten integrar servicios de medios generativos de Google Cloud
+—como Imagen, Veo, voces Chirp 3 HD y Lyria—en
+tus aplicaciones de IA.
 
-Agent Development Kit (ADK) and [Genkit](https://genkit.dev/) provide built-in
-support for these MCP tools, allowing your AI agents to effectively orchestrate
-generative media workflows. For implementation guidance, refer to the [ADK
-example
-agent](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia/sample-agents/adk)
-and the
-[Genkit example](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia/sample-agents/genkit).
+Agent Development Kit (ADK) y [Genkit](https://genkit.dev/) proporcionan soporte integrado
+para estas herramientas MCP, permitiendo que tus agentes de IA orquesten efectivamente
+flujos de trabajo de medios generativos. Para orientación de implementación, consulta el [agente de ejemplo de ADK](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia/sample-agents/adk)
+y el
+[ejemplo de Genkit](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia/sample-agents/genkit).

@@ -1,89 +1,89 @@
 # Plugins
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.7.0</span>
+    <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v1.7.0</span>
 </div>
 
-A Plugin in Agent Development Kit (ADK) is a custom code module that can be
-executed at various stages of an agent workflow lifecycle using callback hooks.
-You use Plugins for functionality that is applicable across your agent workflow.
-Some typical applications of Plugins are as follows:
+Un Plugin en Agent Development Kit (ADK) es un módulo de código personalizado que puede ser
+ejecutado en varias etapas del ciclo de vida del flujo de trabajo de un agente utilizando callback hooks.
+Utilizas Plugins para funcionalidad que es aplicable a través de tu flujo de trabajo de agente.
+Algunas aplicaciones típicas de Plugins son las siguientes:
 
--   **Logging and tracing**: Create detailed logs of agent, tool, and
-    generative AI model activity for debugging and performance analysis.
--   **Policy enforcement**: Implement security guardrails, such as a
-    function that checks if users are authorized to use a specific tool and
-    prevent its execution if they do not have permission.
--   **Monitoring and metrics**: Collect and export metrics on token usage,
-    execution times, and invocation counts to monitoring systems such as
-    Prometheus or
+-   **Registro y rastreo**: Crea registros detallados de la actividad del agente, herramientas y
+    modelo de IA generativa para depuración y análisis de rendimiento.
+-   **Aplicación de políticas**: Implementa barreras de seguridad, como una
+    función que verifica si los usuarios están autorizados para usar una herramienta específica y
+    previene su ejecución si no tienen permiso.
+-   **Monitoreo y métricas**: Recopila y exporta métricas sobre uso de tokens,
+    tiempos de ejecución y conteos de invocaciones a sistemas de monitoreo como
+    Prometheus o
     [Google Cloud Observability](https://cloud.google.com/stackdriver/docs)
-    (formerly Stackdriver).
--   **Response caching**: Check if a request has been made before, so you
-    can return a cached response, skipping expensive or time consuming AI model
-    or tool calls.
--   **Request or response modification**: Dynamically add information to AI
-    model prompts or standardize tool output responses.
+    (anteriormente Stackdriver).
+-   **Caché de respuestas**: Verifica si una solicitud se ha hecho antes, para que puedas
+    devolver una respuesta en caché, omitiendo llamadas costosas o que consumen mucho tiempo al modelo de IA
+    o herramientas.
+-   **Modificación de solicitudes o respuestas**: Agrega dinámicamente información a los
+    prompts del modelo de IA o estandariza las respuestas de salida de herramientas.
 
 !!! tip
-    When implementing security guardrails and policies, use ADK Plugins for
-    better modularity and flexibility than Callbacks. For more details, see
-    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+    Al implementar barreras de seguridad y políticas, usa Plugins de ADK para
+    mejor modularidad y flexibilidad que con Callbacks. Para más detalles, consulta
+    [Callbacks y Plugins para Barreras de Seguridad](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
 
-!!! warning "Caution"
-    Plugins are not supported by the
-    [ADK web interface](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui).
-    If your ADK workflow uses Plugins, you must run your workflow without the
-    web interface.
+!!! warning "Precaución"
+    Los Plugins no son soportados por la
+    [interfaz web de ADK](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui).
+    Si tu flujo de trabajo de ADK usa Plugins, debes ejecutar tu flujo de trabajo sin la
+    interfaz web.
 
-## How do Plugins work?
+## ¿Cómo funcionan los Plugins?
 
-An ADK Plugin extends the `BasePlugin` class and contains one or more
-`callback` methods, indicating where in the agent lifecycle the Plugin should be
-executed. You integrate Plugins into an agent by registering them in your
-agent's `Runner` class. For more information on how and where you can trigger
-Plugins in your agent application, see
+Un Plugin de ADK extiende la clase `BasePlugin` y contiene uno o más
+métodos `callback`, indicando dónde en el ciclo de vida del agente el Plugin debe ser
+ejecutado. Integras Plugins en un agente registrándolos en la
+clase `Runner` de tu agente. Para más información sobre cómo y dónde puedes activar
+Plugins en tu aplicación de agente, consulta
 [Plugin callback hooks](#plugin-callback-hooks).
 
-Plugin functionality builds on
-[Callbacks](../callbacks/index.md), which is a key design
-element of the ADK's extensible architecture. While a typical Agent Callback is
-configured on a *single agent, a single tool* for a *specific task*, a Plugin is
-registered *once* on the `Runner` and its callbacks apply *globally* to every
-agent, tool, and LLM call managed by that runner. Plugins let you package
-related callback functions together to be used across a workflow. This makes
-Plugins an ideal solution for implementing features that cut across your entire
-agent application.
+La funcionalidad de Plugin se construye sobre
+[Callbacks](../callbacks/index.md), que es un elemento de diseño clave
+de la arquitectura extensible del ADK. Mientras que un Callback de Agente típico está
+configurado en un *único agente, una única herramienta* para una *tarea específica*, un Plugin está
+registrado *una vez* en el `Runner` y sus callbacks se aplican *globalmente* a cada
+agente, herramienta y llamada LLM gestionada por ese runner. Los Plugins te permiten empaquetar
+funciones de callback relacionadas para ser usadas a través de un flujo de trabajo. Esto hace
+a los Plugins una solución ideal para implementar características que cruzan toda tu
+aplicación de agente.
 
-## Prebuilt Plugins
+## Plugins Preconstruidos
 
-ADK includes several plugins that you can add to your agent workflows
-immediately:
+ADK incluye varios plugins que puedes agregar a tus flujos de trabajo de agente
+inmediatamente:
 
 *   [**Reflect and Retry Tools**](/adk-docs/plugins/reflect-and-retry/):
-    Tracks tool failures and intelligently retries tool requests.
+    Rastrea fallos de herramientas e intenta nuevamente las solicitudes de herramientas de manera inteligente.
 *   [**BigQuery Analytics**](/adk-docs/observability/bigquery-agent-analytics/):
-    Enables agent logging and analysis with BigQuery.
+    Habilita el registro y análisis de agentes con BigQuery.
 *   [**Context Filter**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/context_filter_plugin.py):
-    Filters the generative AI context to reduce its size.
+    Filtra el contexto de IA generativa para reducir su tamaño.
 *   [**Global Instruction**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/global_instruction_plugin.py):
-    Plugin that provides global instructions functionality at the App level.
+    Plugin que proporciona funcionalidad de instrucciones globales a nivel de App.
 *   [**Save Files as Artifacts**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/save_files_as_artifacts_plugin.py):
-    Saves files included in user messages as Artifacts.
+    Guarda archivos incluidos en mensajes de usuario como Artefactos.
 *   [**Logging**](https://github.com/google/adk-python/blame/main/src/google/adk/plugins/logging_plugin.py):
-    Log important information at each agent workflow callback point.
+    Registra información importante en cada punto de callback del flujo de trabajo del agente.
 
-## Define and register Plugins
+## Definir y registrar Plugins
 
-This section explains how to define Plugin classes and register them as part of
-your agent workflow. For a complete code example, see
+Esta sección explica cómo definir clases de Plugin y registrarlas como parte de
+tu flujo de trabajo de agente. Para un ejemplo de código completo, consulta
 [Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_basic)
-in the repository.
+en el repositorio.
 
-### Create Plugin class
+### Crear clase Plugin
 
-Start by extending the `BasePlugin` class and add one or more `callback`
-methods, as shown in the following code example:
+Comienza extendiendo la clase `BasePlugin` y agrega uno o más métodos `callback`,
+como se muestra en el siguiente ejemplo de código:
 
 === "Python"
 
@@ -94,10 +94,10 @@ methods, as shown in the following code example:
     from google.adk.plugins.base_plugin import BasePlugin
 
     class CountInvocationPlugin(BasePlugin):
-    """A custom plugin that counts agent and tool invocations."""
+    """Un plugin personalizado que cuenta invocaciones de agente y herramienta."""
 
     def __init__(self) -> None:
-        """Initialize the plugin with counters."""
+        """Inicializa el plugin con contadores."""
         super().__init__(name="count_invocation")
         self.agent_count: int = 0
         self.tool_count: int = 0
@@ -106,14 +106,14 @@ methods, as shown in the following code example:
     async def before_agent_callback(
         self, *, agent: BaseAgent, callback_context: CallbackContext
     ) -> None:
-        """Count agent runs."""
+        """Cuenta ejecuciones de agente."""
         self.agent_count += 1
         print(f"[Plugin] Agent run count: {self.agent_count}")
 
     async def before_model_callback(
         self, *, callback_context: CallbackContext, llm_request: LlmRequest
     ) -> None:
-        """Count LLM requests."""
+        """Cuenta solicitudes LLM."""
         self.llm_request_count += 1
         print(f"[Plugin] LLM request count: {self.llm_request_count}")
     ```
@@ -127,7 +127,7 @@ methods, as shown in the following code example:
 
 
     /**
-     * A custom plugin that counts agent and tool invocations.
+     * Un plugin personalizado que cuenta invocaciones de agente y herramienta.
      */
     export class CountInvocationPlugin extends BasePlugin {
         public agentCount = 0;
@@ -139,7 +139,7 @@ methods, as shown in the following code example:
         }
 
         /**
-         * Count agent runs.
+         * Cuenta ejecuciones de agente.
          */
         async beforeAgentCallback(
             agent: BaseAgent,
@@ -151,7 +151,7 @@ methods, as shown in the following code example:
         }
 
         /**
-         * Count LLM requests.
+         * Cuenta solicitudes LLM.
          */
         async beforeModelCallback(
             callbackContext: CallbackContext,
@@ -164,17 +164,17 @@ methods, as shown in the following code example:
     }    
     ```
 
-This example code implements callbacks for `before_agent_callback` and
-`before_model_callback` to count execution of these tasks during the lifecycle
-of the agent.
+Este código de ejemplo implementa callbacks para `before_agent_callback` y
+`before_model_callback` para contar la ejecución de estas tareas durante el ciclo de vida
+del agente.
 
-### Register Plugin class
+### Registrar clase Plugin
 
-Integrate your Plugin class by registering it during your agent initialization
-as part of your `Runner` class, using the `plugins` parameter. You can specify
-multiple Plugins with this parameter. The following code example shows how to
-register the `CountInvocationPlugin` plugin defined in the previous section with
-a simple ADK agent.
+Integra tu clase Plugin registrándola durante la inicialización de tu agente
+como parte de tu clase `Runner`, usando el parámetro `plugins`. Puedes especificar
+múltiples Plugins con este parámetro. El siguiente ejemplo de código muestra cómo
+registrar el plugin `CountInvocationPlugin` definido en la sección anterior con
+un agente ADK simple.
 
 === "Python"
 
@@ -185,7 +185,7 @@ a simple ADK agent.
     from google.genai import types
     import asyncio
 
-    # Import the plugin.
+    # Importa el plugin.
     from .count_plugin import CountInvocationPlugin
 
     async def hello_world(tool_context: ToolContext, query: str):
@@ -201,17 +201,17 @@ a simple ADK agent.
     )
 
     async def main():
-    """Main entry point for the agent."""
+    """Punto de entrada principal para el agente."""
     prompt = 'hello world'
     runner = InMemoryRunner(
         agent=root_agent,
         app_name='test_app_with_plugin',
 
-        # Add your plugin here. You can add multiple plugins.
+        # Agrega tu plugin aquí. Puedes agregar múltiples plugins.
         plugins=[CountInvocationPlugin()],
     )
 
-    # The rest is the same as starting a regular ADK runner.
+    # El resto es igual que iniciar un runner ADK regular.
     session = await runner.session_service.create_session(
         user_id='user',
         app_name='test_app_with_plugin',
@@ -237,7 +237,7 @@ a simple ADK agent.
     import type { Content } from "@google/genai";
     import { z } from "zod";
 
-    // Import the plugin.
+    // Importa el plugin.
     import { CountInvocationPlugin } from "./count_plugin.ts";
 
     const HelloWorldInput = z.object({
@@ -267,7 +267,7 @@ a simple ADK agent.
     });
 
     /**
-    * Main entry point for the agent.
+    * Punto de entrada principal para el agente.
     */
     async function main(): Promise<void> {
         const prompt = "hello world";
@@ -275,11 +275,11 @@ a simple ADK agent.
             agent: rootAgent,
             appName: "test_app_with_plugin",
 
-            // Add your plugin here. You can add multiple plugins.
+            // Agrega tu plugin aquí. Puedes agregar múltiples plugins.
             plugins: [new CountInvocationPlugin()],
         });
 
-        // The rest is the same as starting a regular ADK runner.
+        // El resto es igual que iniciar un runner ADK regular.
         const session = await runner.sessionService.createSession({
             userId: "user",
             appName: "test_app_with_plugin",
@@ -304,10 +304,10 @@ a simple ADK agent.
     main();
     ```
 
-### Run the agent with the Plugin
+### Ejecutar el agente con el Plugin
 
-Run the plugin as you typically would. The following shows how to run the
-command line:
+Ejecuta el plugin como lo harías típicamente. Lo siguiente muestra cómo ejecutar el
+comando en línea:
 
 === "Python"
 
@@ -321,13 +321,13 @@ command line:
     npx ts-node path.to.main.ts
     ```
 
-Plugins are not supported by the
-[ADK web interface](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui).
-If your ADK workflow uses Plugins, you must run your workflow without the web
-interface.
+Los Plugins no son soportados por la
+[interfaz web de ADK](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui).
+Si tu flujo de trabajo de ADK usa Plugins, debes ejecutar tu flujo de trabajo sin la
+interfaz web.
 
-The output of this previously described agent should look similar to the
-following:
+La salida de este agente descrito previamente debería verse similar a lo
+siguiente:
 
 ```log
 [Plugin] Agent run count: 1
@@ -340,139 +340,137 @@ Hello world: query is [hello world]
 ```
 
 
-For more information on running ADK agents, see the
-[Quickstart](/adk-docs/get-started/quickstart/#run-your-agent)
-guide.
+Para más información sobre ejecutar agentes ADK, consulta la guía
+[Inicio Rápido](/adk-docs/get-started/quickstart/#run-your-agent).
 
-## Build workflows with Plugins
+## Construir flujos de trabajo con Plugins
 
-Plugin callback hooks are a mechanism for implementing logic that intercepts,
-modifies, and even controls the agent's execution lifecycle. Each hook is a
-specific method in your Plugin class that you can implement to run code at a key
-moment. You have a choice between two modes of operation based on your hook's
-return value:
+Los callback hooks de Plugin son un mecanismo para implementar lógica que intercepta,
+modifica e incluso controla el ciclo de vida de ejecución del agente. Cada hook es un
+método específico en tu clase Plugin que puedes implementar para ejecutar código en un momento
+clave. Tienes una elección entre dos modos de operación basados en el valor de retorno de tu hook:
 
--   **To Observe:** Implement a hook with no return value (`None`). This
-    approach is for tasks such as logging or collecting metrics, as it allows
-    the agent's workflow to proceed to the next step without interruption. For
-    example, you could use `after_tool_callback` in a Plugin to log every
-    tool's result for debugging.
--   **To Intervene:** Implement a hook and return a value. This approach
-    short-circuits the workflow. The `Runner` halts processing, skips any
-    subsequent plugins and the original intended action, like a Model call, and
-    use a Plugin callback's return value as the result. A common use case is
-    implementing `before_model_callback` to return a cached `LlmResponse`,
-    preventing a redundant and costly API call.
--   **To Amend:** Implement a hook and modify the Context object. This
-    approach allows you to modify the context data for the module to be
-    executed without otherwise interrupting the execution of that module. For
-    example, adding additional, standardized prompt text for Model object execution.
+-   **Para Observar:** Implementa un hook sin valor de retorno (`None`). Este
+    enfoque es para tareas como registro o recopilación de métricas, ya que permite
+    que el flujo de trabajo del agente proceda al siguiente paso sin interrupción. Por
+    ejemplo, podrías usar `after_tool_callback` en un Plugin para registrar el resultado de cada
+    herramienta para depuración.
+-   **Para Intervenir:** Implementa un hook y devuelve un valor. Este enfoque
+    hace un cortocircuito del flujo de trabajo. El `Runner` detiene el procesamiento, omite cualquier
+    plugin subsiguiente y la acción original prevista, como una llamada al Model, y
+    usa el valor de retorno del callback del Plugin como resultado. Un caso de uso común es
+    implementar `before_model_callback` para devolver un `LlmResponse` en caché,
+    previniendo una llamada API redundante y costosa.
+-   **Para Modificar:** Implementa un hook y modifica el objeto Context. Este
+    enfoque te permite modificar los datos de contexto para que el módulo sea
+    ejecutado sin interrumpir de otra manera la ejecución de ese módulo. Por
+    ejemplo, agregar texto de prompt adicional y estandarizado para la ejecución del objeto Model.
 
-**Caution:** Plugin callback functions have precedence over callbacks
-implemented at the object level. This behavior means that Any Plugin callbacks
-code is executed *before* any Agent, Model, or Tool objects callbacks are
-executed. Furthermore, if a Plugin-level agent callback returns any value, and
-not an empty (`None`) response, the Agent, Model, or Tool-level callback is *not
-executed* (skipped).
+**Precaución:** Las funciones de callback de Plugin tienen precedencia sobre los callbacks
+implementados a nivel de objeto. Este comportamiento significa que cualquier código de callbacks de Plugin
+se ejecuta *antes* de que se ejecute cualquier callback de objetos Agent, Model o Tool.
+Además, si un callback de agente a nivel de Plugin devuelve cualquier valor, y
+no una respuesta vacía (`None`), el callback a nivel de Agent, Model o Tool *no se
+ejecuta* (se omite).
 
-The Plugin design establishes a hierarchy of code execution and separates
-global concerns from local agent logic. A Plugin is the stateful *module* you
-build, such as `PerformanceMonitoringPlugin`, while the callback hooks are the
-specific *functions* within that module that get executed. This architecture
-differs fundamentally from standard Agent Callbacks in these critical ways:
+El diseño de Plugin establece una jerarquía de ejecución de código y separa
+preocupaciones globales de la lógica local del agente. Un Plugin es el *módulo* con estado que
+construyes, como `PerformanceMonitoringPlugin`, mientras que los callback hooks son las
+*funciones* específicas dentro de ese módulo que se ejecutan. Esta arquitectura
+difiere fundamentalmente de los Callbacks de Agente estándar en estas formas críticas:
 
--   **Scope:** Plugin hooks are *global*. You register a Plugin once on the
-    `Runner`, and its hooks apply universally to every Agent, Model, and Tool
-    it manages. In contrast, Agent Callbacks are *local*, configured
-    individually on a specific agent instance.
--   **Execution Order:** Plugins have *precedence*. For any given event, the
-    Plugin hooks always run before any corresponding Agent Callback. This
-    system behavior makes Plugins the correct architectural choice for
-    implementing cross-cutting features like security policies, universal
-    caching, and consistent logging across your entire application.
+-   **Alcance:** Los hooks de Plugin son *globales*. Registras un Plugin una vez en el
+    `Runner`, y sus hooks se aplican universalmente a cada Agent, Model y Tool
+    que gestiona. En contraste, los Callbacks de Agente son *locales*, configurados
+    individualmente en una instancia específica de agente.
+-   **Orden de Ejecución:** Los Plugins tienen *precedencia*. Para cualquier evento dado, los
+    hooks de Plugin siempre se ejecutan antes que cualquier Callback de Agente correspondiente. Este
+    comportamiento del sistema hace que los Plugins sean la opción arquitectónica correcta para
+    implementar características transversales como políticas de seguridad, caché universal
+    y registro consistente a través de toda tu aplicación.
 
-### Agent Callbacks and Plugins
+### Callbacks de Agente y Plugins
 
-As mentioned in the previous section, there are some functional similarities
-between Plugins and Agent Callbacks. The following table compares the
-differences between Plugins and Agent Callbacks in more detail.
+Como se mencionó en la sección anterior, hay algunas similitudes funcionales
+entre Plugins y Callbacks de Agente. La siguiente tabla compara las
+diferencias entre Plugins y Callbacks de Agente con más detalle.
 
 <table>
   <thead>
     <tr>
       <th></th>
       <th><strong>Plugins</strong></th>
-      <th><strong>Agent Callbacks</strong></th>
+      <th><strong>Callbacks de Agente</strong></th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><strong>Scope</strong></td>
-      <td><strong>Global</strong>: Apply to all agents/tools/LLMs in the
+      <td><strong>Alcance</strong></td>
+      <td><strong>Global</strong>: Se aplica a todos los agentes/herramientas/LLMs en el
 <code>Runner</code>.</td>
-      <td><strong>Local</strong>: Apply only to the specific agent instance
-they are configured on.</td>
+      <td><strong>Local</strong>: Se aplica solo a la instancia específica de agente
+en la que están configurados.</td>
     </tr>
     <tr>
-      <td><strong>Primary Use Case</strong></td>
-      <td><strong>Horizontal Features</strong>: Logging, policy, monitoring,
-global caching.</td>
-      <td><strong>Specific Agent Logic</strong>: Modifying the behavior or
-state of a single agent.</td>
+      <td><strong>Caso de Uso Principal</strong></td>
+      <td><strong>Características Horizontales</strong>: Registro, política, monitoreo,
+caché global.</td>
+      <td><strong>Lógica Específica de Agente</strong>: Modificar el comportamiento o
+estado de un único agente.</td>
     </tr>
     <tr>
-      <td><strong>Configuration</strong></td>
-      <td>Configure once on the <code>Runner</code>.</td>
-      <td>Configure individually on each <code>BaseAgent</code> instance.</td>
+      <td><strong>Configuración</strong></td>
+      <td>Configura una vez en el <code>Runner</code>.</td>
+      <td>Configura individualmente en cada instancia <code>BaseAgent</code>.</td>
     </tr>
     <tr>
-      <td><strong>Execution Order</strong></td>
-      <td>Plugin callbacks run <strong>before</strong> Agent Callbacks.</td>
-      <td>Agent callbacks run <strong>after</strong> Plugin callbacks.</td>
+      <td><strong>Orden de Ejecución</strong></td>
+      <td>Los callbacks de Plugin se ejecutan <strong>antes</strong> que los Callbacks de Agente.</td>
+      <td>Los callbacks de agente se ejecutan <strong>después</strong> de los callbacks de Plugin.</td>
     </tr>
   </tbody>
 </table>
 
 ## Plugin callback hooks
 
-You define when a Plugin is called with the callback functions to define in
-your Plugin class. Callbacks are available when a user message is received,
-before and after an `Runner`, `Agent`, `Model`, or `Tool` is called, for
-`Events`, and when a `Model`, or `Tool` error occurs. These callbacks include,
-and take precedence over, the any callbacks defined within your Agent, Model,
-and Tool classes.
+Defines cuándo se llama un Plugin con las funciones de callback para definir en
+tu clase Plugin. Los Callbacks están disponibles cuando se recibe un mensaje de usuario,
+antes y después de que se llame un `Runner`, `Agent`, `Model` o `Tool`, para
+`Events`, y cuando ocurre un error de `Model` o `Tool`. Estos callbacks incluyen,
+y tienen precedencia sobre, cualquier callback definido dentro de tus clases Agent, Model
+y Tool.
 
-The following diagram illustrates callback points where you can attach and run
-Plugin functionality during your agents workflow:
+El siguiente diagrama ilustra puntos de callback donde puedes adjuntar y ejecutar
+funcionalidad de Plugin durante el flujo de trabajo de tus agentes:
 
 ![ADK Plugin callback hooks](../assets/workflow-plugin-hooks.svg)
-**Figure 1.** Diagram of ADK agent workflow with Plugin callback hook
-locations.
+**Figura 1.** Diagrama del flujo de trabajo del agente ADK con ubicaciones de callback hook de
+Plugin.
 
-The following sections describe the available callback hooks for Plugins in
-more detail.
+Las siguientes secciones describen los callback hooks disponibles para Plugins con
+más detalle.
 
--   [User Message callbacks](#user-message-callbacks)
--   [Runner start callbacks](#runner-start-callbacks)
--   [Agent execution callbacks](#agent-execution-callbacks)
--   [Model callbacks](#model-callbacks)
--   [Tool callbacks](#tool-callbacks)
--   [Runner end callbacks](#runner-end-callbacks)
+-   [Callbacks de Mensaje de Usuario](#user-message-callbacks)
+-   [Callbacks de inicio de Runner](#runner-start-callbacks)
+-   [Callbacks de ejecución de Agent](#agent-execution-callbacks)
+-   [Callbacks de Model](#model-callbacks)
+-   [Callbacks de Tool](#tool-callbacks)
+-   [Callbacks de fin de Runner](#runner-end-callbacks)
 
-### User Message callbacks
+### Callbacks de Mensaje de Usuario
 
-*A User Message c*allback (`on_user_message_callback`) happens when a user
-sends a message. The `on_user_message_callback` is the very first hook to run,
-giving you a chance to inspect or modify the initial input.\
+Un callback de *Mensaje de Usuario* (`on_user_message_callback`) ocurre cuando un usuario
+envía un mensaje. El `on_user_message_callback` es el primer hook en ejecutarse,
+dándote la oportunidad de inspeccionar o modificar la entrada inicial.\
 
--   **When It Runs:** This callback happens immediately after
-    `runner.run()`, before any other processing.
--   **Purpose:** The first opportunity to inspect or modify the user's raw
-    input.
--   **Flow Control:** Returns a `types.Content` object to **replace** the
-    user's original message.
+-   **Cuándo Se Ejecuta:** Este callback ocurre inmediatamente después de
+    `runner.run()`, antes de cualquier otro procesamiento.
+-   **Propósito:** La primera oportunidad para inspeccionar o modificar la entrada bruta
+    del usuario.
+-   **Control de Flujo:** Devuelve un objeto `types.Content` para **reemplazar** el
+    mensaje original del usuario.
 
-The following code example shows the basic syntax of this callback:
+El siguiente ejemplo de código muestra la sintaxis básica de este callback:
 
 === "Python"
 
@@ -492,25 +490,25 @@ The following code example shows the basic syntax of this callback:
         invocationContext: InvocationContext,
         user_message: Content
     ): Promise<Content | undefined> {
-      // Your implementation here
+      // Tu implementación aquí
     }
     ```
 
-### Runner start callbacks
+### Callbacks de inicio de Runner
 
-A *Runner start* callback (`before_run_callback`) happens when the `Runner`
-object takes the potentially modified user message and prepares for execution.
-The `before_run_callback` fires here, allowing for global setup before any agent
-logic begins.
+Un callback de *inicio de Runner* (`before_run_callback`) ocurre cuando el objeto `Runner`
+toma el mensaje de usuario potencialmente modificado y se prepara para la ejecución.
+El `before_run_callback` se dispara aquí, permitiendo configuración global antes de que comience cualquier lógica
+de agente.
 
--   **When It Runs:** Immediately after `runner.run()` is called, before
-    any other processing.
--   **Purpose:** The first opportunity to inspect or modify the user's raw
-    input.
--   **Flow Control:** Return a `types.Content` object to **replace** the
-    user's original message.
+-   **Cuándo Se Ejecuta:** Inmediatamente después de que se llama `runner.run()`, antes de
+    cualquier otro procesamiento.
+-   **Propósito:** La primera oportunidad para inspeccionar o modificar la entrada bruta
+    del usuario.
+-   **Control de Flujo:** Devuelve un objeto `types.Content` para **reemplazar** el
+    mensaje original del usuario.
 
-The following code example shows the basic syntax of this callback:
+El siguiente ejemplo de código muestra la sintaxis básica de este callback:
 
 === "Python"
 
@@ -524,63 +522,63 @@ The following code example shows the basic syntax of this callback:
 
     ```typescript
     async beforeRunCallback(invocationContext: InvocationContext): Promise<Content | undefined> {
-      // Your implementation here
+      // Tu implementación aquí
     }
     ```
 
-### Agent execution callbacks
+### Callbacks de ejecución de Agent
 
-*Agent execution* callbacks (`before_agent`, `after_agent`) happen when a
-`Runner` object invokes an agent. The `before_agent_callback` runs immediately
-before the agent's main work begins. The main work encompasses the agent's
-entire process for handling the request, which could involve calling models or
-tools. After the agent has finished all its steps and prepared a result, the
-`after_agent_callback` runs.
+Los callbacks de *ejecución de Agent* (`before_agent`, `after_agent`) ocurren cuando un
+objeto `Runner` invoca un agente. El `before_agent_callback` se ejecuta inmediatamente
+antes de que comience el trabajo principal del agente. El trabajo principal abarca todo el proceso del agente
+para manejar la solicitud, que podría involucrar llamar a modelos o
+herramientas. Después de que el agente ha terminado todos sus pasos y preparado un resultado, el
+`after_agent_callback` se ejecuta.
 
-**Caution:** Plugins that implement these callbacks are executed *before* the
-Agent-level callbacks are executed. Furthermore, if a Plugin-level agent
-callback returns anything other than a `None` or null response, the Agent-level
-callback is *not executed* (skipped).
+**Precaución:** Los Plugins que implementan estos callbacks se ejecutan *antes* de que se ejecuten
+los callbacks a nivel de Agent. Además, si un callback de agente a nivel de Plugin
+devuelve algo distinto de una respuesta `None` o null, el callback a nivel de Agent *no se
+ejecuta* (se omite).
 
-For more information about Agent callbacks defined as part of an Agent object,
-see
-[Types of Callbacks](../callbacks/types-of-callbacks.md#agent-lifecycle-callbacks).
+Para más información sobre Callbacks de Agent definidos como parte de un objeto Agent,
+consulta
+[Tipos de Callbacks](../callbacks/types-of-callbacks.md#agent-lifecycle-callbacks).
 
-### Model callbacks
+### Callbacks de Model
 
-Model callbacks **(`before_model`, `after_model`, `on_model_error`)** happen
-before and after a Model object executes. The Plugins feature also supports a
-callback in the event of an error, as detailed below:
+Los callbacks de Model **(`before_model`, `after_model`, `on_model_error`)** ocurren
+antes y después de que se ejecuta un objeto Model. La característica de Plugins también soporta un
+callback en caso de error, como se detalla a continuación:
 
--   If an agent needs to call an AI model, `before_model_callback` runs first.
--   If the model call is successful, `after_model_callback` runs next.
--   If the model call fails with an exception, the `on_model_error_callback`
-    is triggered instead, allowing for graceful recovery.
+-   Si un agente necesita llamar a un modelo de IA, `before_model_callback` se ejecuta primero.
+-   Si la llamada al modelo es exitosa, `after_model_callback` se ejecuta a continuación.
+-   Si la llamada al modelo falla con una excepción, el `on_model_error_callback`
+    se activa en su lugar, permitiendo una recuperación elegante.
 
-**Caution:** Plugins that implement the **`before_model`** and  `**after_model`
-**callback methods are executed *before* the Model-level callbacks are executed.
-Furthermore, if a Plugin-level model callback returns anything other than a
-`None` or null response, the Model-level callback is *not executed* (skipped).
+**Precaución:** Los Plugins que implementan los métodos de callback **`before_model`** y `**after_model`
+**se ejecutan *antes* de que se ejecuten los callbacks a nivel de Model.
+Además, si un callback de modelo a nivel de Plugin devuelve algo distinto de una
+respuesta `None` o null, el callback a nivel de Model *no se ejecuta* (se omite).
 
-#### Model on error callback details
+#### Detalles del callback on error de Model
 
-The on error callback for Model objects is only supported by the Plugins
-feature works as follows:
+El callback on error para objetos Model solo es soportado por la característica de Plugins
+y funciona de la siguiente manera:
 
--   **When It Runs:** When an exception is raised during the model call.
--   **Common Use Cases:** Graceful error handling, logging the specific
-    error, or returning a fallback response, such as "The AI service is
-    currently unavailable."
--   **Flow Control:**
-    -   Returns an `LlmResponse` object to **suppress the exception**
-        and provide a fallback result.
-    -   Returns `None` to allow the original exception to be raised.
+-   **Cuándo Se Ejecuta:** Cuando se genera una excepción durante la llamada al modelo.
+-   **Casos de Uso Comunes:** Manejo de errores elegante, registro del error específico
+    o devolución de una respuesta alternativa, como "El servicio de IA está
+    actualmente no disponible."
+-   **Control de Flujo:**
+    -   Devuelve un objeto `LlmResponse` para **suprimir la excepción**
+        y proporcionar un resultado alternativo.
+    -   Devuelve `None` para permitir que se genere la excepción original.
 
-**Note**: If the execution of the Model object returns a `LlmResponse`, the
-system resumes the execution flow, and `after_model_callback` will be triggered
-normally.****
+**Nota**: Si la ejecución del objeto Model devuelve un `LlmResponse`, el
+sistema reanuda el flujo de ejecución, y `after_model_callback` se activará
+normalmente.****
 
-The following code example shows the basic syntax of this callback:
+El siguiente ejemplo de código muestra la sintaxis básica de este callback:
 
 === "Python"
 
@@ -602,46 +600,46 @@ The following code example shows the basic syntax of this callback:
         llmRequest: LlmRequest,
         error: Error
     ): Promise<LlmResponse | undefined> {
-        // Your implementation here
+        // Tu implementación aquí
     }  
     ```
 
-### Tool callbacks
+### Callbacks de Tool
 
-Tool callbacks **(`before_tool`, `after_tool`, `on_tool_error`)** for Plugins
-happen before or after the execution of a tool, or when an error occurs. The
-Plugins feature also supports a callback in the event of an error, as detailed
-below:\
+Los callbacks de Tool **(`before_tool`, `after_tool`, `on_tool_error`)** para Plugins
+ocurren antes o después de la ejecución de una herramienta, o cuando ocurre un error. La
+característica de Plugins también soporta un callback en caso de error, como se detalla
+a continuación:\
 
--   When an agent executes a Tool, `before_tool_callback` runs first.
--   If the tool executes successfully, `after_tool_callback` runs next.
--   If the tool raises an exception, the `on_tool_error_callback` is
-    triggered instead, giving you a chance to handle the failure. If
-    `on_tool_error_callback` returns a dict, `after_tool_callback` will be
-    triggered normally.
+-   Cuando un agente ejecuta una Tool, `before_tool_callback` se ejecuta primero.
+-   Si la herramienta se ejecuta exitosamente, `after_tool_callback` se ejecuta a continuación.
+-   Si la herramienta genera una excepción, el `on_tool_error_callback` se
+    activa en su lugar, dándote la oportunidad de manejar la falla. Si
+    `on_tool_error_callback` devuelve un dict, `after_tool_callback` se
+    activará normalmente.
 
-**Caution:** Plugins that implement these callbacks are executed *before* the
-Tool-level callbacks are executed. Furthermore, if a Plugin-level tool callback
-returns anything other than a `None` or null response, the Tool-level callback
-is *not executed* (skipped).
+**Precaución:** Los Plugins que implementan estos callbacks se ejecutan *antes* de que se ejecuten
+los callbacks a nivel de Tool. Además, si un callback de herramienta a nivel de Plugin
+devuelve algo distinto de una respuesta `None` o null, el callback a nivel de Tool
+*no se ejecuta* (se omite).
 
-#### Tool on error callback details
+#### Detalles del callback on error de Tool
 
-The on error callback for Tool objects is only supported by the Plugins feature
-works as follows:
+El callback on error para objetos Tool solo es soportado por la característica de Plugins y
+funciona de la siguiente manera:
 
--   **When It Runs:** When an exception is raised during the execution of a
-    tool's `run` method.
--   **Purpose:** Catching specific tool exceptions (like `APIError`),
-    logging the failure, and providing a user-friendly error message back to
-    the LLM.
--   **Flow Control:** Return a `dict` to **suppress the exception**, provide
-    a fallback result. Return `None` to allow the original exception to be raised.
+-   **Cuándo Se Ejecuta:** Cuando se genera una excepción durante la ejecución del
+    método `run` de una herramienta.
+-   **Propósito:** Capturar excepciones específicas de herramientas (como `APIError`),
+    registrar la falla y proporcionar un mensaje de error amigable de vuelta al
+    LLM.
+-   **Control de Flujo:** Devuelve un `dict` para **suprimir la excepción**, proporcionar
+    un resultado alternativo. Devuelve `None` para permitir que se genere la excepción original.
 
-**Note**: By returning a `dict`, this resumes the execution flow, and
-`after_tool_callback` will be triggered normally.
+**Nota**: Al devolver un `dict`, esto reanuda el flujo de ejecución, y
+`after_tool_callback` se activará normalmente.
 
-The following code example shows the basic syntax of this callback:
+El siguiente ejemplo de código muestra la sintaxis básica de este callback:
 
 === "Python"
     ```py
@@ -664,25 +662,25 @@ The following code example shows the basic syntax of this callback:
         toolContext: ToolContext,
         error: Error
     ): Promise<{ [key:string]: any } | undefined> {
-        // Your implementation here
+        // Tu implementación aquí
     }    
     ```
 
-### Event callbacks
+### Callbacks de Event
 
-An *Event callback* (`on_event_callback`) happens when an agent produces
-outputs such as a text response or a tool call result, it yields them as `Event`
-objects. The `on_event_callback` fires for each event, allowing you to modify it
-before it's streamed to the client.
+Un callback de *Event* (`on_event_callback`) ocurre cuando un agente produce
+salidas como una respuesta de texto o un resultado de llamada a herramienta, las produce como objetos `Event`.
+El `on_event_callback` se dispara para cada evento, permitiéndote modificarlo
+antes de que se transmita al cliente.
 
--   **When It Runs:** After an agent yields an `Event` but before it's sent
-    to the user. An agent's run may produce multiple events.
--   **Purpose:** Useful for modifying or enriching events (e.g., adding
-    metadata) or for triggering side effects based on specific events.
--   **Flow Control:** Return an `Event` object to **replace** the original
-    event.
+-   **Cuándo Se Ejecuta:** Después de que un agente produce un `Event` pero antes de que se envíe
+    al usuario. La ejecución de un agente puede producir múltiples eventos.
+-   **Propósito:** Útil para modificar o enriquecer eventos (por ejemplo, agregar
+    metadatos) o para activar efectos secundarios basados en eventos específicos.
+-   **Control de Flujo:** Devuelve un objeto `Event` para **reemplazar** el
+    evento original.
 
-The following code example shows the basic syntax of this callback:
+El siguiente ejemplo de código muestra la sintaxis básica de este callback:
 
 === "Python"
 
@@ -699,25 +697,25 @@ The following code example shows the basic syntax of this callback:
         invocationContext: InvocationContext,
         event: Event
     ): Promise<Event | undefined> {
-        // Your implementation here
+        // Tu implementación aquí
     }    
     ```
 
-### Runner end callbacks
+### Callbacks de fin de Runner
 
-The *Runner end* callback **(`after_run_callback`)** happens when the agent has
-finished its entire process and all events have been handled, the `Runner`
-completes its run. The `after_run_callback` is the final hook, perfect for
-cleanup and final reporting.
+El callback de *fin de Runner* **(`after_run_callback`)** ocurre cuando el agente ha
+terminado todo su proceso y todos los eventos han sido manejados, el `Runner`
+completa su ejecución. El `after_run_callback` es el hook final, perfecto para
+limpieza e informes finales.
 
--   **When It Runs:** After the `Runner` fully completes the execution of a
-    request.
--   **Purpose:** Ideal for global cleanup tasks, such as closing connections
-    or finalizing logs and metrics data.
--   **Flow Control:** This callback is for teardown only and cannot alter
-    the final result.
+-   **Cuándo Se Ejecuta:** Después de que el `Runner` completa totalmente la ejecución de una
+    solicitud.
+-   **Propósito:** Ideal para tareas de limpieza global, como cerrar conexiones
+    o finalizar registros y datos de métricas.
+-   **Control de Flujo:** Este callback es solo para limpieza y no puede alterar
+    el resultado final.
 
-The following code example shows the basic syntax of this callback:
+El siguiente ejemplo de código muestra la sintaxis básica de este callback:
 
 === "Python"
 
@@ -731,16 +729,15 @@ The following code example shows the basic syntax of this callback:
 
     ```typescript
     async afterRunCallback(invocationContext: InvocationContext): Promise<void> {
-        // Your implementation here
+        // Tu implementación aquí
     }    
     ```
 
-## Next steps
+## Próximos pasos
 
-Check out these resources for developing and applying Plugins to your ADK
-projects:
+Consulta estos recursos para desarrollar y aplicar Plugins a tus proyectos ADK:
 
--   For more ADK Plugin code examples, see the
-    [ADK Python repository](https://github.com/google/adk-python/tree/main/src/google/adk/plugins).
--   For information on applying Plugins for security purposes, see 
-    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+-   Para más ejemplos de código de Plugin de ADK, consulta el
+    [repositorio de ADK Python](https://github.com/google/adk-python/tree/main/src/google/adk/plugins).
+-   Para información sobre aplicar Plugins con fines de seguridad, consulta
+    [Callbacks y Plugins para Barreras de Seguridad](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).

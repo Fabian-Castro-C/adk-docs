@@ -1,23 +1,23 @@
-# Types of Callbacks
+# Tipos de Callbacks
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-The framework provides different types of callbacks that trigger at various stages of an agent's execution. Understanding when each callback fires and what context it receives is key to using them effectively.
+El framework proporciona diferentes tipos de callbacks que se activan en varias etapas de la ejecución de un agente. Comprender cuándo se dispara cada callback y qué contexto recibe es clave para usarlos de manera efectiva.
 
-## Agent Lifecycle Callbacks
+## Callbacks del Ciclo de Vida del Agente
 
-These callbacks are available on *any* agent that inherits from `BaseAgent` (including `LlmAgent`, `SequentialAgent`, `ParallelAgent`, `LoopAgent`, etc).
+Estos callbacks están disponibles en *cualquier* agente que herede de `BaseAgent` (incluyendo `LlmAgent`, `SequentialAgent`, `ParallelAgent`, `LoopAgent`, etc).
 
 !!! Note
-    The specific method names or return types may vary slightly by SDK language (e.g., return `None` in Python, return `Optional.empty()` or `Maybe.empty()` in Java). Refer to the language-specific API documentation for details.
+    Los nombres específicos de los métodos o tipos de retorno pueden variar ligeramente según el lenguaje del SDK (por ejemplo, retornar `None` en Python, retornar `Optional.empty()` o `Maybe.empty()` en Java). Consulte la documentación de la API específica del lenguaje para más detalles.
 
 ### Before Agent Callback
 
-**When:** Called *immediately before* the agent's `_run_async_impl` (or `_run_live_impl`) method is executed. It runs after the agent's `InvocationContext` is created but *before* its core logic begins.
+**Cuándo:** Se llama *inmediatamente antes* de que se ejecute el método `_run_async_impl` (o `_run_live_impl`) del agente. Se ejecuta después de que se crea el `InvocationContext` del agente pero *antes* de que comience su lógica principal.
 
-**Purpose:** Ideal for setting up resources or state needed only for this specific agent's run, performing validation checks on the session state (callback\_context.state) before execution starts, logging the entry point of the agent's activity, or potentially modifying the invocation context before the core logic uses it.
+**Propósito:** Ideal para configurar recursos o estado necesarios solo para la ejecución específica de este agente, realizar verificaciones de validación en el estado de la sesión (callback\_context.state) antes de que comience la ejecución, registrar el punto de entrada de la actividad del agente, o potencialmente modificar el contexto de invocación antes de que la lógica principal lo use.
 
 
 ??? "Code"
@@ -48,23 +48,23 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         ```
 
 
-**Note on the `before_agent_callback` Example:**
+**Nota sobre el Ejemplo de `before_agent_callback`:**
 
-* **What it Shows:** This example demonstrates the `before_agent_callback`. This callback runs *right before* the agent's main processing logic starts for a given request.
-* **How it Works:** The callback function (`check_if_agent_should_run`) looks at a flag (`skip_llm_agent`) in the session's state.
-    * If the flag is `True`, the callback returns a `types.Content` object. This tells the ADK framework to **skip** the agent's main execution entirely and use the callback's returned content as the final response.
-    * If the flag is `False` (or not set), the callback returns `None` or an empty object. This tells the ADK framework to **proceed** with the agent's normal execution (calling the LLM in this case).
-* **Expected Outcome:** You'll see two scenarios:
-    1. In the session *with* the `skip_llm_agent: True` state, the agent's LLM call is bypassed, and the output comes directly from the callback ("Agent... skipped...").
-    2. In the session *without* that state flag, the callback allows the agent to run, and you see the actual response from the LLM (e.g., "Hello!").
-* **Understanding Callbacks:** This highlights how `before_` callbacks act as **gatekeepers**, allowing you to intercept execution *before* a major step and potentially prevent it based on checks (like state, input validation, permissions).
+* **Qué Muestra:** Este ejemplo demuestra el `before_agent_callback`. Este callback se ejecuta *justo antes* de que comience la lógica de procesamiento principal del agente para una solicitud dada.
+* **Cómo Funciona:** La función callback (`check_if_agent_should_run`) examina un indicador (`skip_llm_agent`) en el estado de la sesión.
+    * Si el indicador es `True`, el callback retorna un objeto `types.Content`. Esto le dice al framework ADK que **omita** la ejecución principal del agente por completo y use el contenido retornado por el callback como la respuesta final.
+    * Si el indicador es `False` (o no está configurado), el callback retorna `None` o un objeto vacío. Esto le dice al framework ADK que **continúe** con la ejecución normal del agente (llamando al LLM en este caso).
+* **Resultado Esperado:** Verá dos escenarios:
+    1. En la sesión *con* el estado `skip_llm_agent: True`, la llamada al LLM del agente se omite, y la salida proviene directamente del callback ("Agent... skipped...").
+    2. En la sesión *sin* ese indicador de estado, el callback permite que el agente se ejecute, y ve la respuesta real del LLM (por ejemplo, "Hello!").
+* **Comprendiendo los Callbacks:** Esto resalta cómo los callbacks `before_` actúan como **guardianes**, permitiéndole interceptar la ejecución *antes* de un paso importante y potencialmente prevenirlo basándose en verificaciones (como estado, validación de entrada, permisos).
 
 
 ### After Agent Callback
 
-**When:** Called *immediately after* the agent's `_run_async_impl` (or `_run_live_impl`) method successfully completes. It does *not* run if the agent was skipped due to `before_agent_callback` returning content or if `end_invocation` was set during the agent's run.
+**Cuándo:** Se llama *inmediatamente después* de que el método `_run_async_impl` (o `_run_live_impl`) del agente se complete exitosamente. *No* se ejecuta si el agente fue omitido debido a que `before_agent_callback` retornó contenido o si `end_invocation` fue establecido durante la ejecución del agente.
 
-**Purpose:** Useful for cleanup tasks, post-execution validation, logging the completion of an agent's activity, modifying final state, or augmenting/replacing the agent's final output.
+**Propósito:** Útil para tareas de limpieza, validación post-ejecución, registrar la finalización de la actividad de un agente, modificar el estado final, o aumentar/reemplazar la salida final del agente.
 
 ??? "Code"
     === "Python"
@@ -94,29 +94,29 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         ```
 
 
-**Note on the `after_agent_callback` Example:**
+**Nota sobre el Ejemplo de `after_agent_callback`:**
 
-* **What it Shows:** This example demonstrates the `after_agent_callback`. This callback runs *right after* the agent's main processing logic has finished and produced its result, but *before* that result is finalized and returned.
-* **How it Works:** The callback function (`modify_output_after_agent`) checks a flag (`add_concluding_note`) in the session's state.
-    * If the flag is `True`, the callback returns a *new* `types.Content` object. This tells the ADK framework to **replace** the agent's original output with the content returned by the callback.
-    * If the flag is `False` (or not set), the callback returns `None` or an empty object. This tells the ADK framework to **use** the original output generated by the agent.
-*   **Expected Outcome:** You'll see two scenarios:
-    1. In the session *without* the `add_concluding_note: True` state, the callback allows the agent's original output ("Processing complete!") to be used.
-    2. In the session *with* that state flag, the callback intercepts the agent's original output and replaces it with its own message ("Concluding note added...").
-* **Understanding Callbacks:** This highlights how `after_` callbacks allow **post-processing** or **modification**. You can inspect the result of a step (the agent's run) and decide whether to let it pass through, change it, or completely replace it based on your logic.
+* **Qué Muestra:** Este ejemplo demuestra el `after_agent_callback`. Este callback se ejecuta *justo después* de que la lógica de procesamiento principal del agente ha finalizado y producido su resultado, pero *antes* de que ese resultado se finalice y retorne.
+* **Cómo Funciona:** La función callback (`modify_output_after_agent`) verifica un indicador (`add_concluding_note`) en el estado de la sesión.
+    * Si el indicador es `True`, el callback retorna un *nuevo* objeto `types.Content`. Esto le dice al framework ADK que **reemplace** la salida original del agente con el contenido retornado por el callback.
+    * Si el indicador es `False` (o no está configurado), el callback retorna `None` o un objeto vacío. Esto le dice al framework ADK que **use** la salida original generada por el agente.
+*   **Resultado Esperado:** Verá dos escenarios:
+    1. En la sesión *sin* el estado `add_concluding_note: True`, el callback permite que se use la salida original del agente ("Processing complete!").
+    2. En la sesión *con* ese indicador de estado, el callback intercepta la salida original del agente y la reemplaza con su propio mensaje ("Concluding note added...").
+* **Comprendiendo los Callbacks:** Esto resalta cómo los callbacks `after_` permiten **post-procesamiento** o **modificación**. Puede inspeccionar el resultado de un paso (la ejecución del agente) y decidir si dejarlo pasar, cambiarlo o reemplazarlo completamente basándose en su lógica.
 
-## LLM Interaction Callbacks
+## Callbacks de Interacción con LLM
 
-These callbacks are specific to `LlmAgent` and provide hooks around the interaction with the Large Language Model.
+Estos callbacks son específicos de `LlmAgent` y proporcionan ganchos alrededor de la interacción con el Modelo de Lenguaje Grande.
 
 ### Before Model Callback
 
-**When:** Called just before the `generate_content_async` (or equivalent) request is sent to the LLM within an `LlmAgent`'s flow.
+**Cuándo:** Se llama justo antes de que la solicitud `generate_content_async` (o equivalente) se envíe al LLM dentro del flujo de un `LlmAgent`.
 
-**Purpose:** Allows inspection and modification of the request going to the LLM. Use cases include adding dynamic instructions, injecting few-shot examples based on state, modifying model config, implementing guardrails (like profanity filters), or implementing request-level caching.
+**Propósito:** Permite la inspección y modificación de la solicitud que va al LLM. Los casos de uso incluyen agregar instrucciones dinámicas, inyectar ejemplos few-shot basados en el estado, modificar la configuración del modelo, implementar barreras de protección (como filtros de profanidad), o implementar caché a nivel de solicitud.
 
-**Return Value Effect:**
-If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM continues its normal workflow. If the callback returns an `LlmResponse` object, then the call to the LLM is **skipped**. The returned `LlmResponse` is used directly as if it came from the model. This is powerful for implementing guardrails or caching.
+**Efecto del Valor de Retorno:**
+Si el callback retorna `None` (o un objeto `Maybe.empty()` en Java), el LLM continúa su flujo normal. Si el callback retorna un objeto `LlmResponse`, entonces la llamada al LLM es **omitida**. El `LlmResponse` retornado se usa directamente como si viniera del modelo. Esto es poderoso para implementar barreras de protección o caché.
 
 ??? "Code"
     === "Python"
@@ -147,15 +147,15 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
 
 ### After Model Callback
 
-**When:** Called just after a response (`LlmResponse`) is received from the LLM, before it's processed further by the invoking agent.
+**Cuándo:** Se llama justo después de que se recibe una respuesta (`LlmResponse`) del LLM, antes de que sea procesada más a fondo por el agente invocador.
 
-**Purpose:** Allows inspection or modification of the raw LLM response. Use cases include
+**Propósito:** Permite la inspección o modificación de la respuesta cruda del LLM. Los casos de uso incluyen
 
-* logging model outputs,
-* reformatting responses,
-* censoring sensitive information generated by the model,
-* parsing structured data from the LLM response and storing it in `callback_context.state`
-* or handling specific error codes.
+* registrar salidas del modelo,
+* reformatear respuestas,
+* censurar información sensible generada por el modelo,
+* analizar datos estructurados de la respuesta del LLM y almacenarlos en `callback_context.state`
+* o manejar códigos de error específicos.
 
 ??? "Code"
     === "Python"
@@ -184,20 +184,20 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         --8<-- "examples/java/snippets/src/main/java/callbacks/AfterModelCallbackExample.java:init"
         ```
 
-## Tool Execution Callbacks
+## Callbacks de Ejecución de Herramientas
 
-These callbacks are also specific to `LlmAgent` and trigger around the execution of tools (including `FunctionTool`, `AgentTool`, etc.) that the LLM might request.
+Estos callbacks también son específicos de `LlmAgent` y se activan alrededor de la ejecución de herramientas (incluyendo `FunctionTool`, `AgentTool`, etc.) que el LLM podría solicitar.
 
 ### Before Tool Callback
 
-**When:** Called just before a specific tool's `run_async` method is invoked, after the LLM has generated a function call for it.
+**Cuándo:** Se llama justo antes de que se invoque el método `run_async` de una herramienta específica, después de que el LLM ha generado una llamada de función para ella.
 
-**Purpose:** Allows inspection and modification of tool arguments, performing authorization checks before execution, logging tool usage attempts, or implementing tool-level caching.
+**Propósito:** Permite la inspección y modificación de los argumentos de la herramienta, realizar verificaciones de autorización antes de la ejecución, registrar intentos de uso de herramientas, o implementar caché a nivel de herramienta.
 
-**Return Value Effect:**
+**Efecto del Valor de Retorno:**
 
-1. If the callback returns `None` (or a `Maybe.empty()` object in Java), the tool's `run_async` method is executed with the (potentially modified) `args`.
-2. If a dictionary (or `Map` in Java) is returned, the tool's `run_async` method is **skipped**. The returned dictionary is used directly as the result of the tool call. This is useful for caching or overriding tool behavior.
+1. Si el callback retorna `None` (o un objeto `Maybe.empty()` en Java), el método `run_async` de la herramienta se ejecuta con los `args` (potencialmente modificados).
+2. Si se retorna un diccionario (o `Map` en Java), el método `run_async` de la herramienta es **omitido**. El diccionario retornado se usa directamente como el resultado de la llamada a la herramienta. Esto es útil para caché o sobrescribir el comportamiento de la herramienta.
 
 
 ??? "Code"
@@ -229,14 +229,14 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
 
 ### After Tool Callback
 
-**When:** Called just after the tool's `run_async` method completes successfully.
+**Cuándo:** Se llama justo después de que el método `run_async` de la herramienta se completa exitosamente.
 
-**Purpose:** Allows inspection and modification of the tool's result before it's sent back to the LLM (potentially after summarization). Useful for logging tool results, post-processing or formatting results, or saving specific parts of the result to the session state.
+**Propósito:** Permite la inspección y modificación del resultado de la herramienta antes de que se envíe de vuelta al LLM (potencialmente después de la sumarización). Útil para registrar resultados de herramientas, post-procesar o formatear resultados, o guardar partes específicas del resultado en el estado de la sesión.
 
-**Return Value Effect:**
+**Efecto del Valor de Retorno:**
 
-1. If the callback returns `None` (or a `Maybe.empty()` object in Java), the original `tool_response` is used.
-2. If a new dictionary is returned, it **replaces** the original `tool_response`. This allows modifying or filtering the result seen by the LLM.
+1. Si el callback retorna `None` (o un objeto `Maybe.empty()` en Java), se usa el `tool_response` original.
+2. Si se retorna un nuevo diccionario, **reemplaza** el `tool_response` original. Esto permite modificar o filtrar el resultado visto por el LLM.
 
 ??? "Code"
     === "Python"

@@ -4,26 +4,26 @@ catalog_description: Connect with BigQuery to retrieve data and perform analysis
 catalog_icon: /adk-docs/assets/tools-bigquery.png
 ---
 
-# BigQuery tools for ADK
+# Herramientas de BigQuery para ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.1.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v1.1.0</span>
 </div>
 
-These are a set of tools aimed to provide integration with BigQuery, namely:
+Estas son un conjunto de herramientas destinadas a proporcionar integración con BigQuery, a saber:
 
-* **`list_dataset_ids`**: Fetches BigQuery dataset ids present in a GCP project.
-* **`get_dataset_info`**: Fetches metadata about a BigQuery dataset.
-* **`list_table_ids`**: Fetches table ids present in a BigQuery dataset.
-* **`get_table_info`**: Fetches metadata about a BigQuery table.
-* **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result.
-* **`forecast`**: Runs a BigQuery AI time series forecast using the `AI.FORECAST` function.
-* **`ask_data_insights`**: Answers questions about data in BigQuery tables using natural language.
+* **`list_dataset_ids`**: Obtiene los ids de conjuntos de datos de BigQuery presentes en un proyecto de GCP.
+* **`get_dataset_info`**: Obtiene metadatos sobre un conjunto de datos de BigQuery.
+* **`list_table_ids`**: Obtiene los ids de tablas presentes en un conjunto de datos de BigQuery.
+* **`get_table_info`**: Obtiene metadatos sobre una tabla de BigQuery.
+* **`execute_sql`**: Ejecuta una consulta SQL en BigQuery y obtiene el resultado.
+* **`forecast`**: Ejecuta un pronóstico de series temporales con BigQuery AI usando la función `AI.FORECAST`.
+* **`ask_data_insights`**: Responde preguntas sobre datos en tablas de BigQuery usando lenguaje natural.
 
-They are packaged in the toolset `BigQueryToolset`.
+Están empaquetadas en el conjunto de herramientas `BigQueryToolset`.
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
 ```
 
-Note: If you want to access a BigQuery data agent as a tool, see [Data Agents tools for ADK](data-agent.md).
+Nota: Si deseas acceder a un agente de datos de BigQuery como una herramienta, consulta [Herramientas de agentes de datos para ADK](data-agent.md).

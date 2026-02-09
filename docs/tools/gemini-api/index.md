@@ -3,8 +3,8 @@ hide:
   - toc
 ---
 
-# Gemini API tools
+# Herramientas de la API de Gemini
 
-Check out the following Gemini tools that you can use with ADK agents:
+Consulta las siguientes herramientas de Gemini que puedes usar con agentes ADK:
 
 {{$ render_catalog('tools/gemini-api/*.md') $}}

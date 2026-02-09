@@ -1,81 +1,80 @@
-# Deploy to Agent Engine with Agent Starter Pack
+# Desplegar en Agent Engine con Agent Starter Pack
 
 <div class="language-support-tag" title="Vertex AI Agent Engine currently supports only Python.">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-This deployment procedure describes how to perform a deployment using the
+Este procedimiento de despliegue describe cómo realizar un despliegue utilizando el
 [Agent Starter Pack](https://github.com/GoogleCloudPlatform/agent-starter-pack)
-(ASP) and the ADK command line interface (CLI) tool. Using ASP for deployment to
-the Agent Engine runtime is an accelerated path, and you should use it for
-_*development and testing*_ only. The ASP tool configures Google Cloud resources
-that are not strictly necessary for running an ADK agent workflow, and you
-should thoroughly review that configuration before using it in a production
-deployment.
+(ASP) y la herramienta de interfaz de línea de comandos (CLI) de ADK. Usar ASP para el despliegue en
+el entorno de ejecución de Agent Engine es una ruta acelerada, y debes usarlo para
+_*desarrollo y pruebas*_ únicamente. La herramienta ASP configura recursos de Google Cloud que
+no son estrictamente necesarios para ejecutar un flujo de trabajo de agente ADK, y debes
+revisar minuciosamente esa configuración antes de usarla en un despliegue de
+producción.
 
-This deployment guide uses the ASP tool to apply a project template to your
-existing project, add deployment artifacts, and prepare your agent project for
-deployment. These instructions show you how to use ASP to provision a Google
-Cloud project with services needed for deploying your ADK project, as follows:
+Esta guía de despliegue utiliza la herramienta ASP para aplicar una plantilla de proyecto a tu
+proyecto existente, agregar artefactos de despliegue y preparar tu proyecto de agente para
+el despliegue. Estas instrucciones te muestran cómo usar ASP para aprovisionar un proyecto de Google
+Cloud con los servicios necesarios para desplegar tu proyecto ADK, de la siguiente manera:
 
--   [Prerequisites](#prerequisites-ad): Setup Google Cloud
-    account, a project, and install required software.
--   [Prepare your ADK project](#prepare-ad): Modify your
-    existing ADK project files to get ready for deployment.
--   [Connect to your Google Cloud project](#connect-ad):
-    Connect your development environment to Google Cloud and your Google Cloud
-    project.
--   [Deploy your ADK project](#deploy-ad):  Provision
-    required services in your Google Cloud project and upload your ADK project code.
+-   [Prerrequisitos](#prerequisites-ad): Configurar cuenta de Google Cloud,
+    un proyecto e instalar el software requerido.
+-   [Preparar tu proyecto ADK](#prepare-ad): Modificar tus
+    archivos de proyecto ADK existentes para prepararte para el despliegue.
+-   [Conectar a tu proyecto de Google Cloud](#connect-ad):
+    Conectar tu entorno de desarrollo a Google Cloud y a tu proyecto de Google Cloud.
+-   [Desplegar tu proyecto ADK](#deploy-ad): Aprovisionar
+    servicios requeridos en tu proyecto de Google Cloud y cargar el código de tu proyecto ADK.
 
-For information on testing a deployed agent, see [Test deployed agent](test.md).
-For more information on using Agent Starter Pack and its command line tools,
-see the
-[CLI reference](https://googlecloudplatform.github.io/agent-starter-pack/cli/enhance.html)
-and
-[Development guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide.html).
+Para obtener información sobre cómo probar un agente desplegado, consulta [Probar agente desplegado](test.md).
+Para obtener más información sobre el uso de Agent Starter Pack y sus herramientas de línea de comandos,
+consulta la
+[referencia de CLI](https://googlecloudplatform.github.io/agent-starter-pack/cli/enhance.html)
+y la
+[guía de desarrollo](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide.html).
 
-### Prerequisites {#prerequisites-ad}
+### Prerrequisitos {#prerequisites-ad}
 
-You need the following resources configured to use this deployment path:
+Necesitas los siguientes recursos configurados para usar esta ruta de despliegue:
 
--   **Google Cloud account**: with administrator access to the following:
-    -   **Google Cloud Project**: An empty Google Cloud project with
-        [billing enabled](https://cloud.google.com/billing/docs/how-to/modify-project).
-        For information on creating projects, see
-        [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
--   **Python Environment**: A Python version supported by the
-    [ASP project](https://googlecloudplatform.github.io/agent-starter-pack/guide/getting-started.html).
--   **uv Tool:** Manage Python development environment and running ASP
-    tools. For installation details, see
-    [Install uv](https://docs.astral.sh/uv/getting-started/installation/).
--   **Google Cloud CLI tool**: The gcloud command line interface. For
-    installation details, see
-    [Google Cloud Command Line Interface](https://cloud.google.com/sdk/docs/install).
--   **Make tool**: Build automation tool. This tool is part of most
-    Unix-based systems, for installation details, see the
-    [Make tool](https://www.gnu.org/software/make/) documentation.
+-   **Cuenta de Google Cloud**: con acceso de administrador a lo siguiente:
+    -   **Proyecto de Google Cloud**: Un proyecto de Google Cloud vacío con
+        [facturación habilitada](https://cloud.google.com/billing/docs/how-to/modify-project).
+        Para obtener información sobre cómo crear proyectos, consulta
+        [Crear y gestionar proyectos](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
+-   **Entorno de Python**: Una versión de Python compatible con el
+    [proyecto ASP](https://googlecloudplatform.github.io/agent-starter-pack/guide/getting-started.html).
+-   **Herramienta uv:** Gestionar el entorno de desarrollo de Python y ejecutar herramientas
+    ASP. Para detalles de instalación, consulta
+    [Instalar uv](https://docs.astral.sh/uv/getting-started/installation/).
+-   **Herramienta CLI de Google Cloud**: La interfaz de línea de comandos gcloud. Para
+    detalles de instalación, consulta
+    [Interfaz de línea de comandos de Google Cloud](https://cloud.google.com/sdk/docs/install).
+-   **Herramienta Make**: Herramienta de automatización de compilación. Esta herramienta es parte de la mayoría de
+    sistemas basados en Unix, para detalles de instalación, consulta la
+    documentación de [herramienta Make](https://www.gnu.org/software/make/).
 
-### Prepare your ADK project {#prepare-ad}
+### Preparar tu proyecto ADK {#prepare-ad}
 
-When you deploy an ADK project to Agent Engine, you need some additional files
-to support the deployment operation. The following ASP command backs up your
-project and then adds files to your project for deployment purposes.
+Cuando despliegas un proyecto ADK en Agent Engine, necesitas algunos archivos adicionales
+para admitir la operación de despliegue. El siguiente comando ASP hace una copia de seguridad de tu
+proyecto y luego agrega archivos a tu proyecto con fines de despliegue.
 
-These instructions assume you have an existing ADK project that you are modifying
-for deployment. If you do not have an ADK project, or want to use a test
-project, complete the Python
-[Quickstart](/adk-docs/get-started/quickstart/) guide,
-which creates a
-[multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent)
-project. The following instructions use the `multi_tool_agent` project as an
-example.
+Estas instrucciones asumen que tienes un proyecto ADK existente que estás modificando
+para el despliegue. Si no tienes un proyecto ADK, o deseas usar un proyecto
+de prueba, completa la guía de Python
+[Inicio rápido](/adk-docs/get-started/quickstart/),
+que crea un proyecto
+[multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent).
+Las siguientes instrucciones usan el proyecto `multi_tool_agent` como
+ejemplo.
 
-To prepare your ADK project for deployment to Agent Engine:
+Para preparar tu proyecto ADK para el despliegue en Agent Engine:
 
-1.  In a terminal window of your development environment, navigate to the
-    **parent directory** that contains your agent folder. For example, if your
-    project structure is:
+1.  En una ventana de terminal de tu entorno de desarrollo, navega al
+    **directorio padre** que contiene tu carpeta de agente. Por ejemplo, si tu
+    estructura de proyecto es:
 
     ```
     your-project-directory/
@@ -85,104 +84,104 @@ To prepare your ADK project for deployment to Agent Engine:
     │   └── .env
     ```
 
-    Navigate to `your-project-directory/`
+    Navega a `your-project-directory/`
 
-1.  Run the ASP `enhance` command to add the files required for deployment into
-    your project.
+1.  Ejecuta el comando `enhance` de ASP para agregar los archivos requeridos para el despliegue a
+    tu proyecto.
 
     ```shell
     uvx agent-starter-pack enhance --adk -d agent_engine
     ```
 
-1.  Follow the instructions from the ASP tool. In general, you can accept
-    the default answers to all questions. However for the **GCP region**,
-    option, make sure you select one of the
-    [supported regions](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine)
-    for Agent Engine.
+1.  Sigue las instrucciones de la herramienta ASP. En general, puedes aceptar
+    las respuestas predeterminadas a todas las preguntas. Sin embargo, para la opción de **región GCP**,
+    asegúrate de seleccionar una de las
+    [regiones compatibles](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine)
+    para Agent Engine.
 
-When you successfully complete this process, the tool shows the following message:
+Cuando completes este proceso con éxito, la herramienta muestra el siguiente mensaje:
 
 ```
 > Success! Your agent project is ready.
 ```
 
-!!! tip "Note"
-    The ASP tool may show a reminder to connect to Google Cloud while
-    running, but that connection is *not required* at this stage.
+!!! tip "Nota"
+    La herramienta ASP puede mostrar un recordatorio para conectarse a Google Cloud mientras
+    se ejecuta, pero esa conexión *no es requerida* en esta etapa.
 
-For more information about the changes ASP makes to your ADK project, see
-[Changes to your ADK project](#adk-asp-changes).
+Para obtener más información sobre los cambios que ASP realiza en tu proyecto ADK, consulta
+[Cambios en tu proyecto ADK](#adk-asp-changes).
 
-### Connect to your Google Cloud project {#connect-ad}
+### Conectar a tu proyecto de Google Cloud {#connect-ad}
 
-Before you deploy your ADK project, you must connect to Google Cloud and your
-project. After logging into your Google Cloud account, you should verify that
-your deployment target project is visible from your account and that it is
-configured as your current project.
+Antes de desplegar tu proyecto ADK, debes conectarte a Google Cloud y a tu
+proyecto. Después de iniciar sesión en tu cuenta de Google Cloud, debes verificar que
+tu proyecto de destino de despliegue sea visible desde tu cuenta y que esté
+configurado como tu proyecto actual.
 
-To connect to Google Cloud and list your project:
+Para conectarte a Google Cloud y listar tu proyecto:
 
-1.  In a terminal window of your development environment, login to your
-    Google Cloud account:
+1.  En una ventana de terminal de tu entorno de desarrollo, inicia sesión en tu
+    cuenta de Google Cloud:
 
     ```shell
     gcloud auth application-default login
     ```
 
-1.  Set your target project using the Google Cloud Project ID:
+1.  Establece tu proyecto de destino usando el ID del proyecto de Google Cloud:
 
     ```shell
     gcloud config set project your-project-id-xxxxx
     ```
 
-1.  Verify your Google Cloud target project is set:
+1.  Verifica que tu proyecto de destino de Google Cloud esté establecido:
 
     ```shell
     gcloud config get-value project
     ```
 
-Once you have successfully connected to Google Cloud and set your Cloud Project
-ID, you are ready to deploy your ADK project files to Agent Engine.
+Una vez que te hayas conectado exitosamente a Google Cloud y hayas establecido tu ID de proyecto de Cloud,
+estás listo para desplegar los archivos de tu proyecto ADK en Agent Engine.
 
-### Deploy your ADK project {#deploy-ad}
+### Desplegar tu proyecto ADK {#deploy-ad}
 
-When using the ASP tool, you deploy in stages. In the first stage, you run a
-`make` command that provisions the services needed to run your ADK workflow on
-Agent Engine. In the second stage, the tool uploads your project code to the
-Agent Engine service and runs it in the hosted environment
+Cuando usas la herramienta ASP, despliegas en etapas. En la primera etapa, ejecutas un
+comando `make` que aprovisiona los servicios necesarios para ejecutar tu flujo de trabajo ADK en
+Agent Engine. En la segunda etapa, la herramienta carga el código de tu proyecto al
+servicio Agent Engine y lo ejecuta en el entorno alojado
 
-!!! warning "Important"
-    *Make sure your Google Cloud target deployment project is set as your ***current
-    project*** before performing these steps*. The `make backend` command uses
-    your currently set Google Cloud project when it performs a deployment. For
-    information on setting and checking your current project, see
-    [Connect to your Google Cloud project](#connect-ad).
+!!! warning "Importante"
+    *Asegúrate de que tu proyecto de destino de despliegue de Google Cloud esté establecido como tu ***proyecto
+    actual*** antes de realizar estos pasos*. El comando `make backend` usa
+    tu proyecto de Google Cloud actualmente establecido cuando realiza un despliegue. Para
+    obtener información sobre cómo establecer y verificar tu proyecto actual, consulta
+    [Conectar a tu proyecto de Google Cloud](#connect-ad).
 
-To deploy your ADK project to Agent Engine in your Google Cloud project:
+Para desplegar tu proyecto ADK en Agent Engine en tu proyecto de Google Cloud:
 
-1.  In a terminal window, ensure you are in the parent directory (e.g.,
-    `your-project-directory/`) that contains your agent folder.
+1.  En una ventana de terminal, asegúrate de estar en el directorio padre (por ejemplo,
+    `your-project-directory/`) que contiene tu carpeta de agente.
 
-1.  Deploy the code from the updated local project into the Google Cloud
-development environment, by running the following ASP make command:
+1.  Despliega el código del proyecto local actualizado en el entorno de desarrollo de Google Cloud,
+    ejecutando el siguiente comando make de ASP:
 
     ```shell
     make backend
     ```
 
-Once this process completes successfully, you should be able to interact with
-the agent running on Google Cloud Agent Engine. For details on testing the
-deployed agent, see
-[Test deployed agent](/adk-docs/deploy/agent-engine/test/).
+Una vez que este proceso se complete con éxito, deberías poder interactuar con
+el agente que se ejecuta en Google Cloud Agent Engine. Para obtener detalles sobre cómo probar el
+agente desplegado, consulta
+[Probar agente desplegado](/adk-docs/deploy/agent-engine/test/).
 
-### Changes to your ADK project {#adk-asp-changes}
+### Cambios en tu proyecto ADK {#adk-asp-changes}
 
-The ASP tools add more files to your project for deployment. The procedure
-below backs up your existing project files before modifying them. This guide
-uses the
+Las herramientas ASP agregan más archivos a tu proyecto para el despliegue. El procedimiento
+a continuación hace una copia de seguridad de tus archivos de proyecto existentes antes de modificarlos. Esta guía
+usa el proyecto
 [multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent)
-project as a reference example. The original project has the following file
-structure to start with:
+como ejemplo de referencia. El proyecto original tiene la siguiente estructura de archivos
+para comenzar:
 
 ```
 multi_tool_agent/
@@ -191,8 +190,8 @@ multi_tool_agent/
 └─ .env
 ```
 
-After running the ASP enhance command to add Agent Engine deployment
-information, the new structure is as follows:
+Después de ejecutar el comando enhance de ASP para agregar información de despliegue de Agent Engine,
+la nueva estructura es la siguiente:
 
 ```
 multi-tool-agent/
@@ -209,13 +208,13 @@ multi-tool-agent/
 └─ pyproject.toml       # Project dependencies and configuration
 ```
 
-See the *README.md* file in your updated ADK project folder for more information.
-For more information on using Agent Starter Pack, see the
-[Development guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide.html).
+Consulta el archivo *README.md* en tu carpeta de proyecto ADK actualizada para obtener más información.
+Para obtener más información sobre el uso de Agent Starter Pack, consulta la
+[guía de desarrollo](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide.html).
 
-## Test deployed agents
+## Probar agentes desplegados
 
-After completing deployment of your ADK agent you should test the workflow in
-its new hosted environment. For more information on testing an ADK agent
-deployed to Agent Engine, see
-[Test deployed agents in Agent Engine](/adk-docs/deploy/agent-engine/test/).
+Después de completar el despliegue de tu agente ADK, debes probar el flujo de trabajo en
+su nuevo entorno alojado. Para obtener más información sobre cómo probar un agente ADK
+desplegado en Agent Engine, consulta
+[Probar agentes desplegados en Agent Engine](/adk-docs/deploy/agent-engine/test/).

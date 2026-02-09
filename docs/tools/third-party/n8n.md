@@ -7,55 +7,55 @@ catalog_icon: /adk-docs/assets/tools-n8n.png
 # n8n
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [n8n MCP Server](https://docs.n8n.io/advanced-ai/accessing-n8n-mcp-server/)
-connects your ADK agent to [n8n](https://n8n.io/), an extendable workflow
-automation tool. This integration allows your agent to securely connect to an
-n8n instance to search, inspect, and trigger workflows directly from a natural
-language interface.
+El [Servidor MCP de n8n](https://docs.n8n.io/advanced-ai/accessing-n8n-mcp-server/)
+conecta tu agente ADK a [n8n](https://n8n.io/), una herramienta de automatización
+de flujos de trabajo extensible. Esta integración permite que tu agente se conecte
+de forma segura a una instancia de n8n para buscar, inspeccionar y activar flujos
+de trabajo directamente desde una interfaz de lenguaje natural.
 
-!!! note "Alternative: Workflow-level MCP Server"
+!!! note "Alternativa: Servidor MCP a nivel de flujo de trabajo"
 
-    The configuration guide on this page covers **Instance-level MCP access**,
-    which connects your agent to a central hub of enabled workflows.
-    Alternatively, you can use the
-    [MCP Server Trigger node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/)
-    to make a **single workflow** act as its own standalone MCP server. This
-    method is useful if you want to craft specific server behaviors or expose
-    tools isolated to one workflow.
+    La guía de configuración en esta página cubre el **acceso MCP a nivel de instancia**,
+    que conecta tu agente a un centro central de flujos de trabajo habilitados.
+    Alternativamente, puedes usar el
+    [nodo de activación del Servidor MCP](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/)
+    para hacer que un **único flujo de trabajo** actúe como su propio servidor MCP independiente. Este
+    método es útil si deseas crear comportamientos específicos del servidor o exponer
+    herramientas aisladas a un flujo de trabajo.
 
-## Use cases
+## Casos de uso
 
-- **Execute Complex Workflows**: Trigger multi-step business processes defined
-  in n8n directly from your agent, leveraging reliable branching logic, loops,
-  and error handling to ensure consistency.
+- **Ejecutar flujos de trabajo complejos**: Activa procesos de negocio de múltiples pasos definidos
+  en n8n directamente desde tu agente, aprovechando lógica de ramificación confiable, bucles
+  y manejo de errores para garantizar la consistencia.
 
-- **Connect to External Apps**: Access pre-built integrations through n8n
-  without writing custom tools for each service, eliminating the need to manage
-  API authentication, headers, or boilerplate code.
+- **Conectar a aplicaciones externas**: Accede a integraciones preconfiguradas a través de n8n
+  sin escribir herramientas personalizadas para cada servicio, eliminando la necesidad de gestionar
+  autenticación de API, encabezados o código repetitivo.
 
-- **Data Processing**: Offload complex data transformation tasks to n8n
-  workflows, such as converting natural language into API calls or scraping and
-  summarizing webpages, utilizing custom Python or JavaScript nodes for precise
-  data shaping.
+- **Procesamiento de datos**: Delega tareas complejas de transformación de datos a flujos de trabajo
+  de n8n, como convertir lenguaje natural en llamadas API o extraer y
+  resumir páginas web, utilizando nodos personalizados de Python o JavaScript para dar forma precisa
+  a los datos.
 
-## Prerequisites
+## Requisitos previos
 
-- An active n8n instance
-- MCP access enabled in settings
-- A valid MCP access token
+- Una instancia activa de n8n
+- Acceso MCP habilitado en la configuración
+- Un token de acceso MCP válido
 
-Refer to the
-[n8n MCP documentation](https://docs.n8n.io/advanced-ai/accessing-n8n-mcp-server/)
-for detailed setup instructions.
+Consulta la
+[documentación MCP de n8n](https://docs.n8n.io/advanced-ai/accessing-n8n-mcp-server/)
+para obtener instrucciones detalladas de configuración.
 
-## Use with agent
+## Uso con agente
 
 === "Python"
 
-    === "Local MCP Server"
+    === "Servidor MCP local"
 
         ```python
         from google.adk.agents import Agent
@@ -91,7 +91,7 @@ for detailed setup instructions.
         )
         ```
 
-    === "Remote MCP Server"
+    === "Servidor MCP remoto"
 
         ```python
         from google.adk.agents import Agent
@@ -120,7 +120,7 @@ for detailed setup instructions.
 
 === "TypeScript"
 
-    === "Local MCP Server"
+    === "Servidor MCP local"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -153,7 +153,7 @@ for detailed setup instructions.
         export { rootAgent };
         ```
 
-    === "Remote MCP Server"
+    === "Servidor MCP remoto"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -179,27 +179,26 @@ for detailed setup instructions.
         export { rootAgent };
         ```
 
-## Available tools
+## Herramientas disponibles
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`search_workflows` | Search for available workflows
-`execute_workflow` | Execute a specific workflow
-`get_workflow_details` | Retrieve metadata and schema information for a workflow
+`search_workflows` | Buscar flujos de trabajo disponibles
+`execute_workflow` | Ejecutar un flujo de trabajo específico
+`get_workflow_details` | Recuperar metadatos e información de esquema para un flujo de trabajo
 
-## Configuration
+## Configuración
 
-To make workflows accessible to your agent, they must meet the following
-criteria:
+Para que los flujos de trabajo sean accesibles para tu agente, deben cumplir con los siguientes
+criterios:
 
-- **Be Active**: The workflow must be activated in n8n.
+- **Estar activos**: El flujo de trabajo debe estar activado en n8n.
 
-- **Supported Trigger**: Contain a Webhook, Schedule, Chat, or Form trigger
-  node.
+- **Activador soportado**: Contener un nodo de activación Webhook, Schedule, Chat o Form.
 
-- **Enabled for MCP**: You must toggle "Available in MCP" in the workflow
-  settings or select "Enable MCP access" from the workflow card menu.
+- **Habilitado para MCP**: Debes activar "Available in MCP" en la configuración
+  del flujo de trabajo o seleccionar "Enable MCP access" desde el menú de la tarjeta del flujo de trabajo.
 
-## Additional resources
+## Recursos adicionales
 
-- [n8n MCP Server Documentation](https://docs.n8n.io/advanced-ai/accessing-n8n-mcp-server/)
+- [Documentación del Servidor MCP de n8n](https://docs.n8n.io/advanced-ai/accessing-n8n-mcp-server/)

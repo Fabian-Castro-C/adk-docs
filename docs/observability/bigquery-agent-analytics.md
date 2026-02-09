@@ -1,64 +1,64 @@
-# BigQuery Agent Analytics Plugin
+# Plugin de Analíticas de Agentes BigQuery
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-preview">Preview</span>
 </div>
 
-!!! important "Version Requirement"
+!!! important "Requisito de Versión"
 
-   Use the ***latest version*** of the ADK (version 1.21.0 or higher) to make full use of the features described in this document.
+   Utiliza la ***última versión*** del ADK (versión 1.21.0 o superior) para aprovechar al máximo las funcionalidades descritas en este documento.
 
-The BigQuery Agent Analytics Plugin significantly enhances the Agent Development Kit (ADK) by providing a robust solution for in-depth agent behavior analysis. Using the ADK Plugin architecture and the **BigQuery Storage Write API**, it captures and logs critical operational events directly into a Google BigQuery table, empowering you with advanced capabilities for debugging, real-time monitoring, and comprehensive offline performance evaluation.
+El Plugin de Analíticas de Agentes BigQuery mejora significativamente el Kit de Desarrollo de Agentes (ADK) al proporcionar una solución robusta para el análisis en profundidad del comportamiento de agentes. Utilizando la arquitectura de Plugins del ADK y la **API de Escritura de Almacenamiento de BigQuery**, captura y registra eventos operacionales críticos directamente en una tabla de Google BigQuery, dotándote de capacidades avanzadas para depuración, monitoreo en tiempo real y evaluación integral del rendimiento offline.
 
-Version 1.21.0 introduces **Hybrid Multimodal Logging**, allowing you to log large payloads (images, audio, blobs) by offloading them to Google Cloud Storage (GCS) while keeping a structured reference (`ObjectRef`) in BigQuery.
+La versión 1.21.0 introduce **Registro Multimodal Híbrido**, permitiéndote registrar cargas grandes (imágenes, audio, blobs) descargándolas a Google Cloud Storage (GCS) mientras mantienes una referencia estructurada (`ObjectRef`) en BigQuery.
 
-!!! example "Preview release"
+!!! example "Versión Preview"
 
-    The BigQuery Agent Analytics Plugin is in Preview release. For more
-    information, see the
-    [launch stage descriptions](https://cloud.google.com/products#product-launch-stages).
+    El Plugin de Analíticas de Agentes BigQuery está en versión Preview. Para más
+    información, consulta las
+    [descripciones de etapas de lanzamiento](https://cloud.google.com/products#product-launch-stages).
 
-!!! warning "BigQuery Storage Write API"
+!!! warning "API de Escritura de Almacenamiento de BigQuery"
 
-    This feature uses **BigQuery Storage Write API**, which is a paid service.
-    For information on costs, see the
-    [BigQuery documentation](https://cloud.google.com/bigquery/pricing?e=48754805&hl=en#data-ingestion-pricing).
+    Esta funcionalidad utiliza la **API de Escritura de Almacenamiento de BigQuery**, que es un servicio de pago.
+    Para información sobre costos, consulta la
+    [documentación de BigQuery](https://cloud.google.com/bigquery/pricing?e=48754805&hl=en#data-ingestion-pricing).
 
-## Use cases
+## Casos de uso
 
--   **Agent workflow debugging and analysis:** Capture a wide range of
-    *plugin lifecycle events* (LLM calls, tool usage) and *agent-yielded
-    events* (user input, model responses), into a well-defined schema.
--   **High-volume analysis and debugging:** Logging operations are performed
-    asynchronously using the Storage Write API to allow high throughput and low latency.
--   **Multimodal Analysis**: Log and analyze text, images, and other modalities. Large files are offloaded to GCS, making them accessible to BigQuery ML via Object Tables.
--   **Distributed Tracing**: Built-in support for OpenTelemetry-style tracing (`trace_id`, `span_id`) to visualize agent execution flows.
+-   **Depuración y análisis de flujos de trabajo de agentes:** Captura una amplia gama de
+    *eventos del ciclo de vida de plugins* (llamadas a LLM, uso de herramientas) y *eventos
+    generados por agentes* (entrada de usuario, respuestas del modelo), en un esquema bien definido.
+-   **Análisis y depuración de alto volumen:** Las operaciones de registro se realizan
+    de forma asíncrona utilizando la API de Escritura de Almacenamiento para permitir alto rendimiento y baja latencia.
+-   **Análisis Multimodal**: Registra y analiza texto, imágenes y otras modalidades. Los archivos grandes se descargan a GCS, haciéndolos accesibles a BigQuery ML a través de Tablas de Objetos.
+-   **Rastreo Distribuido**: Soporte integrado para rastreo estilo OpenTelemetry (`trace_id`, `span_id`) para visualizar flujos de ejecución de agentes.
 
-The agent event data recorded varies based on the ADK event type. For more
-information, see [Event types and payloads](#event-types).
+Los datos de eventos del agente registrados varían según el tipo de evento del ADK. Para más
+información, consulta [Tipos de eventos y cargas](#event-types).
 
-## Prerequisites
+## Requisitos previos
 
--   **Google Cloud Project** with the **BigQuery API** enabled.
--   **BigQuery Dataset:** Create a dataset to store logging tables before
-    using the plugin. The plugin automatically creates the necessary events table within the dataset if the table does not exist.
--   **Google Cloud Storage Bucket (Optional):** If you plan to log multimodal content (images, audio, etc.), creating a GCS bucket is recommended for offloading large files.
--   **Authentication:**
-    -   **Local:** Run `gcloud auth application-default login`.
-    -   **Cloud:** Ensure your service account has the required permissions.
+-   **Proyecto de Google Cloud** con la **API de BigQuery** habilitada.
+-   **Dataset de BigQuery:** Crea un dataset para almacenar tablas de registro antes
+    de usar el plugin. El plugin crea automáticamente la tabla de eventos necesaria dentro del dataset si la tabla no existe.
+-   **Bucket de Google Cloud Storage (Opcional):** Si planeas registrar contenido multimodal (imágenes, audio, etc.), se recomienda crear un bucket de GCS para descargar archivos grandes.
+-   **Autenticación:**
+    -   **Local:** Ejecuta `gcloud auth application-default login`.
+    -   **Nube:** Asegúrate de que tu cuenta de servicio tenga los permisos requeridos.
 
-### IAM permissions
+### Permisos IAM
 
-For the agent to work properly, the principal (e.g., service account, user account) under which the agent is running needs these Google Cloud roles:
-* `roles/bigquery.jobUser` at Project Level to run BigQuery queries.
-* `roles/bigquery.dataEditor` at Table Level to write log/event data.
-* **If using GCS offloading:** `roles/storage.objectCreator` and `roles/storage.objectViewer` on the target bucket.
+Para que el agente funcione correctamente, el principal (por ejemplo, cuenta de servicio, cuenta de usuario) bajo el cual se ejecuta el agente necesita estos roles de Google Cloud:
+* `roles/bigquery.jobUser` a Nivel de Proyecto para ejecutar consultas BigQuery.
+* `roles/bigquery.dataEditor` a Nivel de Tabla para escribir datos de registro/evento.
+* **Si usas descarga a GCS:** `roles/storage.objectCreator` y `roles/storage.objectViewer` en el bucket de destino.
 
-## Use with agent
+## Uso con agente
 
-You use the BigQuery Agent Analytics Plugin by configuring and registering it with
-your ADK agent's App object. The following example shows an implementation of an
-agent with this plugin, including GCS offloading:
+Utilizas el Plugin de Analíticas de Agentes BigQuery configurándolo y registrándolo con
+el objeto App del agente de tu ADK. El siguiente ejemplo muestra una implementación de un
+agente con este plugin, incluyendo descarga a GCS:
 
 ```python title="my_bq_agent/agent.py"
 # my_bq_agent/agent.py
@@ -71,49 +71,49 @@ from google.adk.models.google_llm import Gemini
 from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 
 
-# --- OpenTelemetry Initialization (Optional) ---
-# Recommended for enabling distributed tracing (populates trace_id, span_id).
-# If not configured, the plugin uses internal UUIDs for span correlation.
+# --- Inicialización de OpenTelemetry (Opcional) ---
+# Recomendado para habilitar rastreo distribuido (puebla trace_id, span_id).
+# Si no está configurado, el plugin usa UUIDs internos para correlación de spans.
 try:
     from opentelemetry import trace
     from opentelemetry.sdk.trace import TracerProvider
     trace.set_tracer_provider(TracerProvider())
 except ImportError:
-    pass # OpenTelemetry is optional
+    pass # OpenTelemetry es opcional
 
-# --- Configuration ---
+# --- Configuración ---
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
 DATASET_ID = os.environ.get("BIG_QUERY_DATASET_ID", "your-big-query-dataset-id")
-LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "US") # default location is US in the plugin
-GCS_BUCKET = os.environ.get("GCS_BUCKET_NAME", "your-gcs-bucket-name") # Optional
+LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "US") # la ubicación predeterminada es US en el plugin
+GCS_BUCKET = os.environ.get("GCS_BUCKET_NAME", "your-gcs-bucket-name") # Opcional
 
 if PROJECT_ID == "your-gcp-project-id":
     raise ValueError("Please set GOOGLE_CLOUD_PROJECT or update the code.")
 
-# --- CRITICAL: Set environment variables BEFORE Gemini instantiation ---
+# --- CRÍTICO: Establece variables de entorno ANTES de la instanciación de Gemini ---
 os.environ['GOOGLE_CLOUD_PROJECT'] = PROJECT_ID
 os.environ['GOOGLE_CLOUD_LOCATION'] = LOCATION
 os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'True'
 
-# --- Initialize the Plugin with Config ---
+# --- Inicializa el Plugin con Configuración ---
 bq_config = BigQueryLoggerConfig(
     enabled=True,
-    gcs_bucket_name=GCS_BUCKET, # Enable GCS offloading for multimodal content
+    gcs_bucket_name=GCS_BUCKET, # Habilita descarga a GCS para contenido multimodal
     log_multi_modal_content=True,
-    max_content_length=500 * 1024, # 500 KB limit for inline text
-    batch_size=1, # Default is 1 for low latency, increase for high throughput
+    max_content_length=500 * 1024, # Límite de 500 KB para texto inline
+    batch_size=1, # El predeterminado es 1 para baja latencia, aumenta para alto rendimiento
     shutdown_timeout=10.0
 )
 
 bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
     project_id=PROJECT_ID,
     dataset_id=DATASET_ID,
-    table_id="agent_events_v2", # default table name is agent_events_v2
+    table_id="agent_events_v2", # el nombre de tabla predeterminado es agent_events_v2
     config=bq_config,
     location=LOCATION
 )
 
-# --- Initialize Tools and Model ---
+# --- Inicializa Herramientas y Modelo ---
 credentials, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
 bigquery_toolset = BigQueryToolset(
     credentials_config=BigQueryCredentialsConfig(credentials=credentials)
@@ -128,7 +128,7 @@ root_agent = Agent(
     tools=[bigquery_toolset]
 )
 
-# --- Create the App ---
+# --- Crea la App ---
 app = App(
     name="my_bq_agent",
     root_agent=root_agent,
@@ -136,12 +136,12 @@ app = App(
 )
 ```
 
-### Run and test agent
+### Ejecutar y probar agente
 
-Test the plugin by running the agent and making a few requests through the chat
-interface, such as ”tell me what you can do” or  "List datasets in my cloud project <your-gcp-project-id> “. These actions create events which are
-recorded in your Google Cloud project BigQuery instance. Once these events have
-been processed, you can view the data for them in the [BigQuery Console](https://console.cloud.google.com/bigquery), using this query
+Prueba el plugin ejecutando el agente y realizando algunas solicitudes a través de la
+interfaz de chat, como "tell me what you can do" o "List datasets in my cloud project <your-gcp-project-id>". Estas acciones crean eventos que se
+registran en tu instancia de BigQuery del proyecto de Google Cloud. Una vez que estos eventos han
+sido procesados, puedes ver los datos en la [Consola de BigQuery](https://console.cloud.google.com/bigquery), usando esta consulta
 
 ```sql
 SELECT timestamp, event_type, content 
@@ -152,41 +152,41 @@ LIMIT 20;
 
 ```
 
-## Tracing and Observability
+## Rastreo y Observabilidad
 
-The plugin supports **OpenTelemetry** for distributed tracing.
+El plugin soporta **OpenTelemetry** para rastreo distribuido.
 
-- **Automatic Span Management**: The plugin automatically generates spans for Agent execution, LLM calls, and Tool executions.
-- **OpenTelemetry Integration**: If an OpenTelemetry `TracerProvider` is configured (as shown in the example above), the plugin will use valid OTel spans, populating `trace_id`, `span_id`, and `parent_span_id` with standard OTel identifiers. This allows you to correlate agent logs with other services in your distributed system.
-- **Fallback Mechanism**: If OpenTelemetry is not installed or configured, the plugin automatically falls back to generating internal UUIDs for spans and uses the `invocation_id` as the trace ID. This ensures that the parent-child hierarchy (Agent -> Span -> Tool/LLM) is *always* preserved in the BigQuery logs, even without a full OTel setup.
+- **Gestión Automática de Spans**: El plugin genera automáticamente spans para la ejecución del Agente, llamadas a LLM y ejecuciones de Herramientas.
+- **Integración con OpenTelemetry**: Si un `TracerProvider` de OpenTelemetry está configurado (como se muestra en el ejemplo anterior), el plugin usará spans válidos de OTel, poblando `trace_id`, `span_id` y `parent_span_id` con identificadores estándar de OTel. Esto te permite correlacionar registros de agentes con otros servicios en tu sistema distribuido.
+- **Mecanismo de Respaldo**: Si OpenTelemetry no está instalado o configurado, el plugin automáticamente recurre a generar UUIDs internos para spans y usa el `invocation_id` como ID de rastreo. Esto asegura que la jerarquía padre-hijo (Agente -> Span -> Herramienta/LLM) esté *siempre* preservada en los registros de BigQuery, incluso sin una configuración completa de OTel.
 
-## Configuration options
+## Opciones de configuración
 
-You can customize the plugin using `BigQueryLoggerConfig`.
+Puedes personalizar el plugin usando `BigQueryLoggerConfig`.
 
--   **`enabled`** (`bool`, default: `True`): To disable the plugin from logging agent data to the BigQuery table, set this parameter to False.
--   **`clustering_fields`** (`List[str]`, default: `["event_type", "agent", "user_id"]`): The fields used to cluster the BigQuery table when it is automatically created.
--   **`gcs_bucket_name`** (`Optional[str]`, default: `None`): The name of the GCS bucket to offload large content (images, blobs, large text) to. If not provided, large content may be truncated or replaced with placeholders.
--   **`connection_id`** (`Optional[str]`, default: `None`): The BigQuery connection ID (e.g., `us.my-connection`) to use as the authorizer for `ObjectRef` columns. Required for using `ObjectRef` with BigQuery ML.
--   **`max_content_length`** (`int`, default: `500 * 1024`): The maximum length (in characters) of text content to store **inline** in BigQuery before offloading to GCS (if configured) or truncating. Default is 500 KB.
--   **`batch_size`** (`int`, default: `1`): The number of events to batch before writing to BigQuery.
--   **`batch_flush_interval`** (`float`, default: `1.0`): The maximum time (in seconds) to wait before flushing a partial batch.
--   **`shutdown_timeout`** (`float`, default: `10.0`): Seconds to wait for logs to flush during shutdown.
--   **`event_allowlist`** (`Optional[List[str]]`, default: `None`): A list
-    of event types to log. If `None`, all events are logged except those in
-    `event_denylist`. For a comprehensive list of supported event types, refer
-    to the [Event types and payloads](#event-types) section.
--   **`event_denylist`** (`Optional[List[str]]`, default: `None`): A list of
-    event types to skip logging. For a comprehensive list of supported event
-    types, refer to the [Event types and payloads](#event-types) section.
--   **`content_formatter`** (`Optional[Callable[[Any, str], Any]]`, default: `None`): An optional function to format event content before logging.
--   **`log_multi_modal_content`** (`bool`, default: `True`): Whether to log detailed content parts (including GCS references).
--   **`queue_max_size`** (`int`, default: `10000`): The maximum number of events to hold in the in-memory queue before dropping new events.
--   **`retry_config`** (`RetryConfig`, default: `RetryConfig()`): Configuration for retrying failed BigQuery writes (attributes: `max_retries`, `initial_delay`, `multiplier`, `max_delay`).
+-   **`enabled`** (`bool`, predeterminado: `True`): Para deshabilitar el registro de datos del agente del plugin a la tabla de BigQuery, establece este parámetro en False.
+-   **`clustering_fields`** (`List[str]`, predeterminado: `["event_type", "agent", "user_id"]`): Los campos utilizados para agrupar la tabla de BigQuery cuando se crea automáticamente.
+-   **`gcs_bucket_name`** (`Optional[str]`, predeterminado: `None`): El nombre del bucket de GCS para descargar contenido grande (imágenes, blobs, texto grande). Si no se proporciona, el contenido grande puede ser truncado o reemplazado con marcadores de posición.
+-   **`connection_id`** (`Optional[str]`, predeterminado: `None`): El ID de conexión de BigQuery (por ejemplo, `us.my-connection`) a usar como autorizador para columnas `ObjectRef`. Requerido para usar `ObjectRef` con BigQuery ML.
+-   **`max_content_length`** (`int`, predeterminado: `500 * 1024`): La longitud máxima (en caracteres) de contenido de texto para almacenar **inline** en BigQuery antes de descargar a GCS (si está configurado) o truncar. El predeterminado es 500 KB.
+-   **`batch_size`** (`int`, predeterminado: `1`): El número de eventos a agrupar antes de escribir a BigQuery.
+-   **`batch_flush_interval`** (`float`, predeterminado: `1.0`): El tiempo máximo (en segundos) a esperar antes de vaciar un lote parcial.
+-   **`shutdown_timeout`** (`float`, predeterminado: `10.0`): Segundos a esperar para que los registros se vacíen durante el apagado.
+-   **`event_allowlist`** (`Optional[List[str]]`, predeterminado: `None`): Una lista
+    de tipos de eventos a registrar. Si es `None`, todos los eventos se registran excepto aquellos en
+    `event_denylist`. Para una lista completa de tipos de eventos soportados, consulta
+    la sección [Tipos de eventos y cargas](#event-types).
+-   **`event_denylist`** (`Optional[List[str]]`, predeterminado: `None`): Una lista de
+    tipos de eventos a omitir en el registro. Para una lista completa de tipos de eventos soportados,
+    consulta la sección [Tipos de eventos y cargas](#event-types).
+-   **`content_formatter`** (`Optional[Callable[[Any, str], Any]]`, predeterminado: `None`): Una función opcional para formatear el contenido del evento antes del registro.
+-   **`log_multi_modal_content`** (`bool`, predeterminado: `True`): Si registrar partes de contenido detalladas (incluyendo referencias a GCS).
+-   **`queue_max_size`** (`int`, predeterminado: `10000`): El número máximo de eventos a mantener en la cola en memoria antes de descartar nuevos eventos.
+-   **`retry_config`** (`RetryConfig`, predeterminado: `RetryConfig()`): Configuración para reintentar escrituras fallidas a BigQuery (atributos: `max_retries`, `initial_delay`, `multiplier`, `max_delay`).
 
 
-The following code sample shows how to define a configuration for the
-BigQuery Agent Analytics plugin:
+El siguiente ejemplo de código muestra cómo definir una configuración para el
+plugin de Analíticas de Agentes BigQuery:
 
 ```python
 import json
@@ -196,8 +196,8 @@ from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryLoggerCon
 
 def redact_dollar_amounts(event_content: Any) -> str:
     """
-    Custom formatter to redact dollar amounts (e.g., $600, $12.50)
-    and ensure JSON output if the input is a dict.
+    Formateador personalizado para redactar cantidades en dólares (por ejemplo, $600, $12.50)
+    y asegurar salida JSON si la entrada es un dict.
     """
     text_content = ""
     if isinstance(event_content, dict):
@@ -205,34 +205,34 @@ def redact_dollar_amounts(event_content: Any) -> str:
     else:
         text_content = str(event_content)
 
-    # Regex to find dollar amounts: $ followed by digits, optionally with commas or decimals.
-    # Examples: $600, $1,200.50, $0.99
+    # Regex para encontrar cantidades en dólares: $ seguido de dígitos, opcionalmente con comas o decimales.
+    # Ejemplos: $600, $1,200.50, $0.99
     redacted_content = re.sub(r'\$\d+(?:,\d{3})*(?:\.\d+)?', 'xxx', text_content)
 
     return redacted_content
 
 config = BigQueryLoggerConfig(
     enabled=True,
-    event_allowlist=["LLM_REQUEST", "LLM_RESPONSE"], # Only log these events
-    # event_denylist=["TOOL_STARTING"], # Skip these events
-    shutdown_timeout=10.0, # Wait up to 10s for logs to flush on exit
-    client_close_timeout=2.0, # Wait up to 2s for BQ client to close
-    max_content_length=500, # Truncate content to 500 chars
-    content_formatter=redact_dollar_amounts, # Redact the dollar amounts in the logging content
-    queue_max_size=10000, # Max events to hold in memory
-    # retry_config=RetryConfig(max_retries=3), # Optional: Configure retries
+    event_allowlist=["LLM_REQUEST", "LLM_RESPONSE"], # Solo registra estos eventos
+    # event_denylist=["TOOL_STARTING"], # Omite estos eventos
+    shutdown_timeout=10.0, # Espera hasta 10s para que los registros se vacíen al salir
+    client_close_timeout=2.0, # Espera hasta 2s para que el cliente BQ se cierre
+    max_content_length=500, # Trunca contenido a 500 caracteres
+    content_formatter=redact_dollar_amounts, # Redacta las cantidades en dólares en el contenido de registro
+    queue_max_size=10000, # Máximo de eventos a mantener en memoria
+    # retry_config=RetryConfig(max_retries=3), # Opcional: Configura reintentos
 )
 
 plugin = BigQueryAgentAnalyticsPlugin(..., config=config)
 ```
 
 
-## Schema and production setup
+## Esquema y configuración de producción
 
-The plugin automatically creates the table if it does not exist. However, for
-production, we recommend creating the table manually using the following DDL, which utilizes the **JSON** type for flexibility and **REPEATED RECORD**s for multimodal content.
+El plugin crea automáticamente la tabla si no existe. Sin embargo, para
+producción, recomendamos crear la tabla manualmente usando el siguiente DDL, que utiliza el tipo **JSON** para flexibilidad y **REPEATED RECORD**s para contenido multimodal.
 
-**Recommended DDL:**
+**DDL Recomendado:**
 
 ```sql
 CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events_v2`
@@ -271,28 +271,28 @@ PARTITION BY DATE(timestamp)
 CLUSTER BY event_type, agent, user_id;
 ```
 
-### Event types and payloads {#event-types}
+### Tipos de eventos y cargas {#event-types}
 
-The `content` column now contains a **JSON** object specific to the `event_type`.
-The `content_parts` column provides a structured view of the content, especially useful for images or offloaded data.
+La columna `content` ahora contiene un objeto **JSON** específico para el `event_type`.
+La columna `content_parts` proporciona una vista estructurada del contenido, especialmente útil para imágenes o datos descargados.
 
-!!! note "Content Truncation"
+!!! note "Truncamiento de Contenido"
 
-    - Variable content fields are truncated to `max_content_length` (configured in `BigQueryLoggerConfig`, default 500KB).
-    - If `gcs_bucket_name` is configured, large content is offloaded to GCS instead of being truncated, and a reference is stored in `content_parts.object_ref`.
+    - Los campos de contenido variable se truncan a `max_content_length` (configurado en `BigQueryLoggerConfig`, predeterminado 500KB).
+    - Si `gcs_bucket_name` está configurado, el contenido grande se descarga a GCS en lugar de truncarse, y se almacena una referencia en `content_parts.object_ref`.
 
-#### LLM interactions (plugin lifecycle)
+#### Interacciones con LLM (ciclo de vida del plugin)
 
-These events track the raw requests sent to and responses received from the
+Estos eventos rastrean las solicitudes sin procesar enviadas a y las respuestas recibidas del
 LLM.
 
 <table>
   <thead>
     <tr>
-      <th><strong>Event Type</strong></th>
-      <th><strong>Content (JSON) Structure</strong></th>
+      <th><strong>Tipo de Evento</strong></th>
+      <th><strong>Estructura de Content (JSON)</strong></th>
       <th><strong>Attributes (JSON)</strong></th>
-      <th><strong>Example Content (Simplified)</strong></th>
+      <th><strong>Ejemplo de Content (Simplificado)</strong></th>
     </tr>
   </thead>
   <tbody>
@@ -355,22 +355,22 @@ LLM.
       <td><p><pre>LLM_ERROR</pre></p></td>
       <td><p><pre>null</pre></p></td>
       <td><p><pre>{}</pre></p></td>
-      <td><p><pre>null (See error_message column)</pre></p></td>
+      <td><p><pre>null (Ver columna error_message)</pre></p></td>
     </tr>
   </tbody>
 </table>
 
-#### Tool usage (plugin lifecycle)
+#### Uso de herramientas (ciclo de vida del plugin)
 
-These events track the execution of tools by the agent.
+Estos eventos rastrean la ejecución de herramientas por el agente.
 
 <table>
   <thead>
     <tr>
-      <th><strong>Event Type</strong></th>
-      <th><strong>Content (JSON) Structure</strong></th>
+      <th><strong>Tipo de Evento</strong></th>
+      <th><strong>Estructura de Content (JSON)</strong></th>
       <th><strong>Attributes (JSON)</strong></th>
-      <th><strong>Example Content</strong></th>
+      <th><strong>Ejemplo de Content</strong></th>
     </tr>
   </thead>
   <tbody>
@@ -416,13 +416,13 @@ These events track the execution of tools by the agent.
   </tbody>
 </table>
 
-#### Agent lifecycle & Generic Events
+#### Ciclo de vida del Agente y Eventos Genéricos
 
 <table>
   <thead>
     <tr>
-      <th><strong>Event Type</strong></th>
-      <th><strong>Content (JSON) Structure</strong></th>
+      <th><strong>Tipo de Evento</strong></th>
+      <th><strong>Estructura de Content (JSON)</strong></th>
     </tr>
   </thead>
   <tbody>
@@ -450,11 +450,11 @@ These events track the execution of tools by the agent.
   </tbody>
 </table>
 
-#### GCS Offloading Examples (Multimodal & Large Text)
+#### Ejemplos de Descarga a GCS (Multimodal y Texto Grande)
 
-When `gcs_bucket_name` is configured, large text and multimodal content (images, audio, etc.) are automatically offloaded to GCS. The `content` column will contain a summary or placeholder, while `content_parts` contains the `object_ref` pointing to the GCS URI.
+Cuando `gcs_bucket_name` está configurado, el texto grande y el contenido multimodal (imágenes, audio, etc.) se descargan automáticamente a GCS. La columna `content` contendrá un resumen o marcador de posición, mientras que `content_parts` contiene el `object_ref` que apunta al URI de GCS.
 
-**Offloaded Text Example**
+**Ejemplo de Texto Descargado**
 
 ```json
 {
@@ -475,7 +475,7 @@ When `gcs_bucket_name` is configured, large text and multimodal content (images,
 }
 ```
 
-**Offloaded Image Example**
+**Ejemplo de Imagen Descargada**
 
 ```json
 {
@@ -496,7 +496,7 @@ When `gcs_bucket_name` is configured, large text and multimodal content (images,
 }
 ```
 
-**Querying Offloaded Content (Get Signed URLs)**
+**Consultando Contenido Descargado (Obtener URLs Firmadas)**
 
 ```sql
 SELECT
@@ -505,7 +505,7 @@ SELECT
   part.mime_type,
   part.storage_mode,
   part.object_ref.uri AS gcs_uri,
-  -- Generate a signed URL to read the content directly (requires connection_id configuration)
+  -- Genera una URL firmada para leer el contenido directamente (requiere configuración de connection_id)
   STRING(OBJ.GET_ACCESS_URL(part.object_ref, 'r').access_urls.read_url) AS signed_url
 FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`,
 UNNEST(content_parts) AS part
@@ -514,9 +514,9 @@ ORDER BY timestamp DESC
 LIMIT 10;
 ```
 
-## Advanced analysis queries
+## Consultas de análisis avanzadas
 
-**Trace a specific conversation turn using trace_id**
+**Rastrear un turno específico de conversación usando trace_id**
 
 ```sql
 SELECT timestamp, event_type, agent, JSON_VALUE(content, '$.response') as summary
@@ -525,7 +525,7 @@ WHERE trace_id = 'your-trace-id'
 ORDER BY timestamp ASC;
 ```
 
-**Token usage analysis (accessing JSON fields)**
+**Análisis de uso de tokens (accediendo a campos JSON)**
 
 ```sql
 SELECT
@@ -534,7 +534,7 @@ FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`
 WHERE event_type = 'LLM_RESPONSE';
 ```
 
-**Querying Multimodal Content (using content_parts and ObjectRef)**
+**Consultando Contenido Multimodal (usando content_parts y ObjectRef)**
 
 ```sql
 SELECT
@@ -547,14 +547,14 @@ WHERE part.mime_type LIKE 'image/%'
 ORDER BY timestamp DESC;
 ```
 
-**Analyze Multimodal Content with BigQuery Remote Model (Gemini)**
+**Analizar Contenido Multimodal con Modelo Remoto de BigQuery (Gemini)**
 
 ```sql
 SELECT
   logs.session_id,
-  -- Get a signed URL for the image
+  -- Obtiene una URL firmada para la imagen
   STRING(OBJ.GET_ACCESS_URL(parts.object_ref, "r").access_urls.read_url) as signed_url,
-  -- Analyze the image using a remote model (e.g., gemini-pro-vision)
+  -- Analiza la imagen usando un modelo remoto (por ejemplo, gemini-pro-vision)
   AI.GENERATE(
     ('Describe this image briefly. What company logo?', parts.object_ref)
   ) AS generated_result
@@ -567,7 +567,7 @@ ORDER BY logs.timestamp DESC
 LIMIT 1;
 ```
 
-**Latency Analysis (LLM & Tools)**
+**Análisis de Latencia (LLM y Herramientas)**
 
 ```sql
 SELECT
@@ -578,7 +578,7 @@ WHERE event_type IN ('LLM_RESPONSE', 'TOOL_COMPLETED')
 GROUP BY event_type;
 ```
 
-**Span Hierarchy & Duration Analysis**
+**Análisis de Jerarquía y Duración de Spans**
 
 ```sql
 SELECT
@@ -586,9 +586,9 @@ SELECT
   parent_span_id,
   event_type,
   timestamp,
-  -- Extract duration from latency_ms for completed operations
+  -- Extrae duración de latency_ms para operaciones completadas
   CAST(JSON_VALUE(latency_ms, '$.total_ms') AS INT64) as duration_ms,
-  -- Identify the specific tool or operation
+  -- Identifica la herramienta u operación específica
   COALESCE(
     JSON_VALUE(content, '$.tool'), 
     'LLM_CALL'
@@ -600,13 +600,13 @@ ORDER BY timestamp ASC;
 ```
 
 
-### 7. AI-Powered Root Cause Analysis (Agent Ops)
+### 7. Análisis de Causa Raíz Potenciado por IA (Agent Ops)
 
-Automatically analyze failed sessions to determine the root cause of errors using BigQuery ML and Gemini.
+Analiza automáticamente sesiones fallidas para determinar la causa raíz de errores usando BigQuery ML y Gemini.
 
 ```sql
 DECLARE failed_session_id STRING;
--- Find a recent failed session
+-- Encuentra una sesión fallida reciente
 SET failed_session_id = (
     SELECT session_id
     FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`
@@ -615,7 +615,7 @@ SET failed_session_id = (
     LIMIT 1
 );
 
--- Reconstruct the full conversation context
+-- Reconstruye el contexto completo de la conversación
 WITH SessionContext AS (
     SELECT
         session_id,
@@ -624,7 +624,7 @@ WITH SessionContext AS (
     WHERE session_id = failed_session_id
     GROUP BY session_id
 )
--- Ask Gemini to diagnose the issue
+-- Pide a Gemini que diagnostique el problema
 SELECT
     session_id,
     AI.GENERATE(
@@ -636,28 +636,28 @@ FROM SessionContext;
 ```
 
 
-## Conversational Analytics in BigQuery
+## Analíticas Conversacionales en BigQuery
 
-You can also use 
-[BigQuery Conversational Analytics](https://cloud.google.com/bigquery/docs/conversational-analytics)
-to analyze your agent logs using natural language. Use this tool to answer questions like:
+También puedes usar 
+[Analíticas Conversacionales de BigQuery](https://cloud.google.com/bigquery/docs/conversational-analytics)
+para analizar tus registros de agente usando lenguaje natural. Usa esta herramienta para responder preguntas como:
 
-*   "Show me the error rate over time"
-*   "What are the most common tool calls?"
-*   "Identify sessions with high token usage"
+*   "Muéstrame la tasa de error a lo largo del tiempo"
+*   "¿Cuáles son las llamadas a herramientas más comunes?"
+*   "Identifica sesiones con alto uso de tokens"
 
-## Looker Studio Dashboard
+## Panel de Looker Studio
 
-You can visualize your agent's performance using our pre-built [Looker Studio Dashboard template](https://lookerstudio.google.com/c/reporting/f1c5b513-3095-44f8-90a2-54953d41b125/page/8YdhF).
+Puedes visualizar el rendimiento de tu agente usando nuestra [plantilla de Panel de Looker Studio](https://lookerstudio.google.com/c/reporting/f1c5b513-3095-44f8-90a2-54953d41b125/page/8YdhF) predefinida.
 
-To connect this dashboard to your own BigQuery table, use the following link format, replacing the placeholders with your specific project, dataset, and table IDs:
+Para conectar este panel a tu propia tabla de BigQuery, usa el siguiente formato de enlace, reemplazando los marcadores de posición con tu proyecto, dataset e IDs de tabla específicos:
 
 ```text
 https://lookerstudio.google.com/reporting/create?c.reportId=f1c5b513-3095-44f8-90a2-54953d41b125&ds.ds3.connector=bigQuery&ds.ds3.type=TABLE&ds.ds3.projectId=<your-project-id>&ds.ds3.datasetId=<your-dataset-id>&ds.ds3.tableId=<your-table-id>
 ```
 
-## Additional resources
+## Recursos adicionales
 
--   [BigQuery Storage Write API](https://cloud.google.com/bigquery/docs/write-api)
--   [Introduction to Object Tables](https://cloud.google.com/bigquery/docs/object-tables-intro)
--   [Interactive Demo Notebook](https://github.com/haiyuan-eng-google/demo_BQ_agent_analytics_plugin_notebook)
+-   [API de Escritura de Almacenamiento de BigQuery](https://cloud.google.com/bigquery/docs/write-api)
+-   [Introducción a Tablas de Objetos](https://cloud.google.com/bigquery/docs/object-tables-intro)
+-   [Notebook de Demostración Interactivo](https://github.com/haiyuan-eng-google/demo_BQ_agent_analytics_plugin_notebook)

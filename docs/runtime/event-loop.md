@@ -1,96 +1,96 @@
-# Runtime Event Loop
+# Bucle de Eventos del Runtime
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-The ADK Runtime is the underlying engine that powers your agent application during user interactions. It's the system that takes your defined agents, tools, and callbacks and orchestrates their execution in response to user input, managing the flow of information, state changes, and interactions with external services like LLMs or storage.
+El ADK Runtime es el motor subyacente que impulsa tu aplicación de agente durante las interacciones del usuario. Es el sistema que toma tus agentes, herramientas y callbacks definidos y orquesta su ejecución en respuesta a la entrada del usuario, gestionando el flujo de información, cambios de estado e interacciones con servicios externos como LLMs o almacenamiento.
 
-Think of the Runtime as the **"engine"** of your agentic application. You define the parts (agents, tools), and the Runtime handles how they connect and run together to fulfill a user's request.
+Piensa en el Runtime como el **"motor"** de tu aplicación agéntica. Tú defines las partes (agentes, herramientas), y el Runtime maneja cómo se conectan y ejecutan juntos para cumplir con la solicitud de un usuario.
 
-## Core Idea: The Event Loop
+## Idea Central: El Bucle de Eventos
 
-At its heart, the ADK Runtime operates on an **Event Loop**. This loop facilitates a back-and-forth communication between the `Runner` component and your defined "Execution Logic" (which includes your Agents, the LLM calls they make, Callbacks, and Tools).
+En su núcleo, el ADK Runtime opera sobre un **Bucle de Eventos**. Este bucle facilita una comunicación de ida y vuelta entre el componente `Runner` y tu "Lógica de Ejecución" definida (que incluye tus Agentes, las llamadas LLM que hacen, Callbacks y Herramientas).
 
 ![intro_components.png](../assets/event-loop.png)
 
-In simple terms:
+En términos simples:
 
-1. The `Runner` receives a user query and asks the main `Agent` to start processing.
-2. The `Agent` (and its associated logic) runs until it has something to report (like a response, a request to use a tool, or a state change) – it then **yields** or **emits** an `Event`.
-3. The `Runner` receives this `Event`, processes any associated actions (like saving state changes via `Services`), and forwards the event onwards (e.g., to the user interface).
-4. Only *after* the `Runner` has processed the event does the `Agent`'s logic **resume** from where it paused, now potentially seeing the effects of the changes committed by the Runner.
-5. This cycle repeats until the agent has no more events to yield for the current user query.
+1. El `Runner` recibe una consulta del usuario y solicita al `Agent` principal que comience el procesamiento.
+2. El `Agent` (y su lógica asociada) se ejecuta hasta que tiene algo que reportar (como una respuesta, una solicitud para usar una herramienta o un cambio de estado) – entonces **cede** o **emite** un `Event`.
+3. El `Runner` recibe este `Event`, procesa cualquier acción asociada (como guardar cambios de estado a través de `Services`), y reenvía el evento hacia adelante (por ejemplo, a la interfaz de usuario).
+4. Solo *después* de que el `Runner` ha procesado el evento, la lógica del `Agent` **se reanuda** desde donde se pausó, ahora potencialmente viendo los efectos de los cambios confirmados por el Runner.
+5. Este ciclo se repite hasta que el agente no tiene más eventos que ceder para la consulta actual del usuario.
 
-This event-driven loop is the fundamental pattern governing how ADK executes your agent code.
+Este bucle dirigido por eventos es el patrón fundamental que gobierna cómo ADK ejecuta tu código de agente.
 
-## The Heartbeat: The Event Loop - Inner workings
+## El Latido: El Bucle de Eventos - Funcionamiento interno
 
-The Event Loop is the core operational pattern defining the interaction between the `Runner` and your custom code (Agents, Tools, Callbacks, collectively referred to as "Execution Logic" or "Logic Components" in the design document). It establishes a clear division of responsibilities:
+El Bucle de Eventos es el patrón operativo central que define la interacción entre el `Runner` y tu código personalizado (Agentes, Herramientas, Callbacks, referidos colectivamente como "Lógica de Ejecución" o "Componentes de Lógica" en el documento de diseño). Establece una clara división de responsabilidades:
 
 !!! Note
-    The specific method names and parameter names may vary slightly by SDK language (e.g., `agent.run_async(...)` in Python, `agent.Run(...)` in Go, `agent.runAsync(...)` in Java and TypeScript). Refer to the language-specific API documentation for details.
+    Los nombres específicos de métodos y parámetros pueden variar ligeramente por lenguaje del SDK (por ejemplo, `agent.run_async(...)` en Python, `agent.Run(...)` en Go, `agent.runAsync(...)` en Java y TypeScript). Consulta la documentación de la API específica del lenguaje para más detalles.
 
-### Runner's Role (Orchestrator)
+### Rol del Runner (Orquestador)
 
-The `Runner` acts as the central coordinator for a single user invocation. Its responsibilities in the loop are:
+El `Runner` actúa como el coordinador central para una única invocación de usuario. Sus responsabilidades en el bucle son:
 
-1. **Initiation:** Receives the end user's query (`new_message`) and typically appends it to the session history via the `SessionService`.
-2. **Kick-off:** Starts the event generation process by calling the main agent's execution method (e.g., `agent_to_run.run_async(...)`).
-3. **Receive & Process:** Waits for the agent logic to `yield` or `emit` an `Event`. Upon receiving an event, the Runner **promptly processes** it. This involves:
-      * Using configured `Services` (`SessionService`, `ArtifactService`, `MemoryService`) to commit changes indicated in `event.actions` (like `state_delta`, `artifact_delta`).
-      * Performing other internal bookkeeping.
-4. **Yield Upstream:** Forwards the processed event onwards (e.g., to the calling application or UI for rendering).
-5. **Iterate:** Signals the agent logic that processing is complete for the yielded event, allowing it to resume and generate the *next* event.
+1. **Iniciación:** Recibe la consulta del usuario final (`new_message`) y típicamente la añade al historial de la sesión a través del `SessionService`.
+2. **Arranque:** Inicia el proceso de generación de eventos llamando al método de ejecución del agente principal (por ejemplo, `agent_to_run.run_async(...)`).
+3. **Recibir y Procesar:** Espera a que la lógica del agente `yield` o `emit` un `Event`. Al recibir un evento, el Runner **lo procesa de inmediato**. Esto involucra:
+      * Usar `Services` configurados (`SessionService`, `ArtifactService`, `MemoryService`) para confirmar cambios indicados en `event.actions` (como `state_delta`, `artifact_delta`).
+      * Realizar otra contabilidad interna.
+4. **Ceder hacia Arriba:** Reenvía el evento procesado hacia adelante (por ejemplo, a la aplicación llamadora o UI para renderizado).
+5. **Iterar:** Señala a la lógica del agente que el procesamiento está completo para el evento cedido, permitiéndole reanudar y generar el *siguiente* evento.
 
-*Conceptual Runner Loop:*
+*Bucle Conceptual del Runner:*
 
 === "Python"
 
     ```py
-    # Simplified view of Runner's main loop logic
+    # Vista simplificada de la lógica del bucle principal del Runner
     def run(new_query, ...) -> Generator[Event]:
-        # 1. Append new_query to session event history (via SessionService)
+        # 1. Añadir new_query al historial de eventos de la sesión (a través de SessionService)
         session_service.append_event(session, Event(author='user', content=new_query))
 
-        # 2. Kick off event loop by calling the agent
+        # 2. Iniciar bucle de eventos llamando al agente
         agent_event_generator = agent_to_run.run_async(context)
 
         async for event in agent_event_generator:
-            # 3. Process the generated event and commit changes
-            session_service.append_event(session, event) # Commits state/artifact deltas etc.
-            # memory_service.update_memory(...) # If applicable
-            # artifact_service might have already been called via context during agent run
+            # 3. Procesar el evento generado y confirmar cambios
+            session_service.append_event(session, event) # Confirma deltas de estado/artefactos, etc.
+            # memory_service.update_memory(...) # Si aplica
+            # artifact_service podría haber sido llamado ya a través del contexto durante la ejecución del agente
 
-            # 4. Yield event for upstream processing (e.g., UI rendering)
+            # 4. Ceder evento para procesamiento upstream (por ejemplo, renderizado de UI)
             yield event
-            # Runner implicitly signals agent generator can continue after yielding
+            # El Runner señala implícitamente que el generador del agente puede continuar después de ceder
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Simplified view of Runner's main loop logic
+    // Vista simplificada de la lógica del bucle principal del Runner
     async * runAsync(newQuery: Content, ...): AsyncGenerator<Event, void, void> {
-        // 1. Append newQuery to session event history (via SessionService)
+        // 1. Añadir newQuery al historial de eventos de la sesión (a través de SessionService)
         await sessionService.appendEvent({
             session,
             event: createEvent({author: 'user', content: newQuery})
         });
 
-        // 2. Kick off event loop by calling the agent
+        // 2. Iniciar bucle de eventos llamando al agente
         const agentEventGenerator = agentToRun.runAsync(context);
 
         for await (const event of agentEventGenerator) {
-            // 3. Process the generated event and commit changes
-            // Commits state/artifact deltas etc.
+            // 3. Procesar el evento generado y confirmar cambios
+            // Confirma deltas de estado/artefactos, etc.
             await sessionService.appendEvent({session, event});
-            // memoryService.updateMemory(...) // If applicable
-            // artifactService might have already been called via context during agent run
+            // memoryService.updateMemory(...) // Si aplica
+            // artifactService podría haber sido llamado ya a través del contexto durante la ejecución del agente
 
-            // 4. Yield event for upstream processing (e.g., UI rendering)
+            // 4. Ceder evento para procesamiento upstream (por ejemplo, renderizado de UI)
             yield event;
-            // Runner implicitly signals agent generator can continue after yielding
+            // El Runner señala implícitamente que el generador del agente puede continuar después de ceder
         }
     }
     ```
@@ -98,12 +98,12 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
 === "Go"
 
     ```go
-    // Simplified conceptual view of the Runner's main loop logic in Go
+    // Vista conceptual simplificada de la lógica del bucle principal del Runner en Go
     func (r *Runner) RunConceptual(ctx context.Context, session *session.Session, newQuery *genai.Content) iter.Seq2[*Event, error] {
         return func(yield func(*Event, error) bool) {
-            // 1. Append new_query to session event history (via SessionService)
+            // 1. Añadir new_query al historial de eventos de la sesión (a través de SessionService)
             // ...
-            userEvent := session.NewEvent(ctx.InvocationID()) // Simplified for conceptual view
+            userEvent := session.NewEvent(ctx.InvocationID()) // Simplificado para vista conceptual
             userEvent.Author = "user"
             userEvent.LLMResponse = model.LLMResponse{Content: newQuery}
 
@@ -112,35 +112,35 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
                 return
             }
 
-            // 2. Kick off event stream by calling the agent
-            // Assuming agent.Run also returns iter.Seq2[*Event, error]
+            // 2. Iniciar flujo de eventos llamando al agente
+            // Asumiendo que agent.Run también retorna iter.Seq2[*Event, error]
             agentEventsAndErrs := r.agent.Run(ctx, &agent.RunRequest{Session: session, Input: newQuery})
 
             for event, err := range agentEventsAndErrs {
                 if err != nil {
-                    if !yield(event, err) { // Yield event even if there's an error, then stop
+                    if !yield(event, err) { // Ceder evento incluso si hay error, luego detener
                         return
                     }
-                    return // Agent finished with an error
+                    return // El agente terminó con un error
                 }
 
-                // 3. Process the generated event and commit changes
-                // Only commit non-partial event to a session service (as seen in actual code)
+                // 3. Procesar el evento generado y confirmar cambios
+                // Solo confirmar evento no parcial a un servicio de sesión (como se ve en el código real)
                 if !event.LLMResponse.Partial {
                     if _, err := r.sessionService.Append(ctx, &session.AppendRequest{Event: event}); err != nil {
                         yield(nil, err)
                         return
                     }
                 }
-                // memory_service.update_memory(...) // If applicable
-                // artifact_service might have already been called via context during agent run
+                // memory_service.update_memory(...) // Si aplica
+                // artifact_service podría haber sido llamado ya a través del contexto durante la ejecución del agente
 
-                // 4. Yield event for upstream processing
+                // 4. Ceder evento para procesamiento upstream
                 if !yield(event, nil) {
-                    return // Upstream consumer stopped
+                    return // El consumidor upstream se detuvo
                 }
             }
-            // Agent finished successfully
+            // El agente terminó exitosamente
         }
     }
     ```
@@ -148,400 +148,400 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
 === "Java"
 
     ```java
-    // Simplified conceptual view of the Runner's main loop logic in Java.
+    // Vista conceptual simplificada de la lógica del bucle principal del Runner en Java.
     public Flowable<Event> runConceptual(
         Session session,
         InvocationContext invocationContext,
         Content newQuery
         ) {
 
-        // 1. Append new_query to session event history (via SessionService)
+        // 1. Añadir new_query al historial de eventos de la sesión (a través de SessionService)
         // ...
         sessionService.appendEvent(session, userEvent).blockingGet();
 
-        // 2. Kick off event stream by calling the agent
+        // 2. Iniciar flujo de eventos llamando al agente
         Flowable<Event> agentEventStream = agentToRun.runAsync(invocationContext);
 
-        // 3. Process each generated event, commit changes, and "yield" or "emit"
+        // 3. Procesar cada evento generado, confirmar cambios, y "ceder" o "emitir"
         return agentEventStream.map(event -> {
-            // This mutates the session object (adds event, applies stateDelta).
-            // The return value of appendEvent (a Single<Event>) is conceptually
-            // just the event itself after processing.
-            sessionService.appendEvent(session, event).blockingGet(); // Simplified blocking call
+            // Esto muta el objeto session (añade evento, aplica stateDelta).
+            // El valor de retorno de appendEvent (un Single<Event>) es conceptualmente
+            // solo el evento mismo después del procesamiento.
+            sessionService.appendEvent(session, event).blockingGet(); // Llamada bloqueante simplificada
 
-            // memory_service.update_memory(...) // If applicable - conceptual
-            // artifact_service might have already been called via context during agent run
+            // memory_service.update_memory(...) // Si aplica - conceptual
+            // artifact_service podría haber sido llamado ya a través del contexto durante la ejecución del agente
 
-            // 4. "Yield" event for upstream processing
-            //    In RxJava, returning the event in map effectively yields it to the next operator or subscriber.
+            // 4. "Ceder" evento para procesamiento upstream
+            //    En RxJava, retornar el evento en map efectivamente lo cede al siguiente operador o suscriptor.
             return event;
         });
     }
     ```
 
-### Execution Logic's Role (Agent, Tool, Callback)
+### Rol de la Lógica de Ejecución (Agent, Tool, Callback)
 
-Your code within agents, tools, and callbacks is responsible for the actual computation and decision-making. Its interaction with the loop involves:
+Tu código dentro de agentes, herramientas y callbacks es responsable de la computación y toma de decisiones real. Su interacción con el bucle involucra:
 
-1. **Execute:** Runs its logic based on the current `InvocationContext`, including the session state *as it was when execution resumed*.
-2. **Yield:** When the logic needs to communicate (send a message, call a tool, report a state change), it constructs an `Event` containing the relevant content and actions, and then `yield`s this event back to the `Runner`.
-3. **Pause:** Crucially, execution of the agent logic **pauses immediately** after the `yield` statement (or `return` in RxJava). It waits for the `Runner` to complete step 3 (processing and committing).
-4. **Resume:** *Only after* the `Runner` has processed the yielded event does the agent logic resume execution from the statement immediately following the `yield`.
-5. **See Updated State:** Upon resumption, the agent logic can now reliably access the session state (`ctx.session.state`) reflecting the changes that were committed by the `Runner` from the *previously yielded* event.
+1. **Ejecutar:** Ejecuta su lógica basada en el `InvocationContext` actual, incluyendo el estado de la sesión *tal como estaba cuando la ejecución se reanudó*.
+2. **Ceder:** Cuando la lógica necesita comunicarse (enviar un mensaje, llamar a una herramienta, reportar un cambio de estado), construye un `Event` que contiene el contenido y acciones relevantes, y luego `cede` este evento de vuelta al `Runner`.
+3. **Pausar:** Crucialmente, la ejecución de la lógica del agente **se pausa inmediatamente** después de la instrucción `yield` (o `return` en RxJava). Espera a que el `Runner` complete el paso 3 (procesamiento y confirmación).
+4. **Reanudar:** *Solo después* de que el `Runner` ha procesado el evento cedido, la lógica del agente reanuda la ejecución desde la instrucción inmediatamente siguiente al `yield`.
+5. **Ver Estado Actualizado:** Al reanudarse, la lógica del agente ahora puede acceder de manera confiable al estado de la sesión (`ctx.session.state`) reflejando los cambios que fueron confirmados por el `Runner` desde el evento *previamente cedido*.
 
-*Conceptual Execution Logic:*
+*Lógica de Ejecución Conceptual:*
 
 === "Python"
 
     ```py
-    # Simplified view of logic inside Agent.run_async, callbacks, or tools
+    # Vista simplificada de lógica dentro de Agent.run_async, callbacks o herramientas
 
-    # ... previous code runs based on current state ...
+    # ... código anterior se ejecuta basado en el estado actual ...
 
-    # 1. Determine a change or output is needed, construct the event
-    # Example: Updating state
+    # 1. Determinar que se necesita un cambio o salida, construir el evento
+    # Ejemplo: Actualizando estado
     update_data = {'field_1': 'value_2'}
     event_with_state_change = Event(
         author=self.name,
         actions=EventActions(state_delta=update_data),
-        content=types.Content(parts=[types.Part(text="State updated.")])
-        # ... other event fields ...
+        content=types.Content(parts=[types.Part(text="Estado actualizado.")])
+        # ... otros campos del evento ...
     )
 
-    # 2. Yield the event to the Runner for processing & commit
+    # 2. Ceder el evento al Runner para procesamiento y confirmación
     yield event_with_state_change
-    # <<<<<<<<<<<< EXECUTION PAUSES HERE >>>>>>>>>>>>
+    # <<<<<<<<<<<< LA EJECUCIÓN SE PAUSA AQUÍ >>>>>>>>>>>>
 
-    # <<<<<<<<<<<< RUNNER PROCESSES & COMMITS THE EVENT >>>>>>>>>>>>
+    # <<<<<<<<<<<< EL RUNNER PROCESA Y CONFIRMA EL EVENTO >>>>>>>>>>>>
 
-    # 3. Resume execution ONLY after Runner is done processing the above event.
-    # Now, the state committed by the Runner is reliably reflected.
-    # Subsequent code can safely assume the change from the yielded event happened.
+    # 3. Reanudar ejecución SOLO después de que el Runner terminó de procesar el evento anterior.
+    # Ahora, el estado confirmado por el Runner está reflejado de manera confiable.
+    # El código subsecuente puede asumir de manera segura que el cambio del evento cedido ocurrió.
     val = ctx.session.state['field_1']
-    # here `val` is guaranteed to be "value_2" (assuming Runner committed successfully)
-    print(f"Resumed execution. Value of field_1 is now: {val}")
+    # aquí `val` está garantizado a ser "value_2" (asumiendo que el Runner confirmó exitosamente)
+    print(f"Ejecución reanudada. El valor de field_1 es ahora: {val}")
 
-    # ... subsequent code continues ...
-    # Maybe yield another event later...
+    # ... código subsecuente continúa ...
+    # Tal vez ceder otro evento más tarde...
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Simplified view of logic inside Agent.runAsync, callbacks, or tools
+    // Vista simplificada de lógica dentro de Agent.runAsync, callbacks o herramientas
 
-    // ... previous code runs based on current state ...
+    // ... código anterior se ejecuta basado en el estado actual ...
 
-    // 1. Determine a change or output is needed, construct the event
-    // Example: Updating state
+    // 1. Determinar que se necesita un cambio o salida, construir el evento
+    // Ejemplo: Actualizando estado
     const updateData = {'field_1': 'value_2'};
     const eventWithStateChange = createEvent({
         author: this.name,
         actions: createEventActions({stateDelta: updateData}),
-        content: {parts: [{text: "State updated."}]}
-        // ... other event fields ...
+        content: {parts: [{text: "Estado actualizado."}]}
+        // ... otros campos del evento ...
     });
 
-    // 2. Yield the event to the Runner for processing & commit
+    // 2. Ceder el evento al Runner para procesamiento y confirmación
     yield eventWithStateChange;
-    // <<<<<<<<<<<< EXECUTION PAUSES HERE >>>>>>>>>>>>
+    // <<<<<<<<<<<< LA EJECUCIÓN SE PAUSA AQUÍ >>>>>>>>>>>>
 
-    // <<<<<<<<<<<< RUNNER PROCESSES & COMMITS THE EVENT >>>>>>>>>>>>
+    // <<<<<<<<<<<< EL RUNNER PROCESA Y CONFIRMA EL EVENTO >>>>>>>>>>>>
 
-    // 3. Resume execution ONLY after Runner is done processing the above event.
-    // Now, the state committed by the Runner is reliably reflected.
-    // Subsequent code can safely assume the change from the yielded event happened.
+    // 3. Reanudar ejecución SOLO después de que el Runner terminó de procesar el evento anterior.
+    // Ahora, el estado confirmado por el Runner está reflejado de manera confiable.
+    // El código subsecuente puede asumir de manera segura que el cambio del evento cedido ocurrió.
     const val = ctx.session.state['field_1'];
-    // here `val` is guaranteed to be "value_2" (assuming Runner committed successfully)
-    console.log(`Resumed execution. Value of field_1 is now: ${val}`);
+    // aquí `val` está garantizado a ser "value_2" (asumiendo que el Runner confirmó exitosamente)
+    console.log(`Ejecución reanudada. El valor de field_1 es ahora: ${val}`);
 
-    // ... subsequent code continues ...
-    // Maybe yield another event later...
+    // ... código subsecuente continúa ...
+    // Tal vez ceder otro evento más tarde...
     ```
 
 === "Go"
 
     ```go
-    // Simplified view of logic inside Agent.Run, callbacks, or tools
+    // Vista simplificada de lógica dentro de Agent.Run, callbacks o herramientas
 
-    // ... previous code runs based on current state ...
+    // ... código anterior se ejecuta basado en el estado actual ...
 
-    // 1. Determine a change or output is needed, construct the event
-    // Example: Updating state
+    // 1. Determinar que se necesita un cambio o salida, construir el evento
+    // Ejemplo: Actualizando estado
     updateData := map[string]interface{}{"field_1": "value_2"}
     eventWithStateChange := &Event{
         Author: self.Name(),
         Actions: &EventActions{StateDelta: updateData},
-        Content: genai.NewContentFromText("State updated.", "model"),
-        // ... other event fields ...
+        Content: genai.NewContentFromText("Estado actualizado.", "model"),
+        // ... otros campos del evento ...
     }
 
-    // 2. Yield the event to the Runner for processing & commit
-    // In Go, this is done by sending the event to a channel.
+    // 2. Ceder el evento al Runner para procesamiento y confirmación
+    // En Go, esto se hace enviando el evento a un canal.
     eventsChan <- eventWithStateChange
-    // <<<<<<<<<<<< EXECUTION PAUSES HERE (conceptually) >>>>>>>>>>>>
-    // The Runner on the other side of the channel will receive and process the event.
-    // The agent's goroutine might continue, but the logical flow waits for the next input or step.
+    // <<<<<<<<<<<< LA EJECUCIÓN SE PAUSA AQUÍ (conceptualmente) >>>>>>>>>>>>
+    // El Runner del otro lado del canal recibirá y procesará el evento.
+    // La goroutine del agente podría continuar, pero el flujo lógico espera el siguiente input o paso.
 
-    // <<<<<<<<<<<< RUNNER PROCESSES & COMMITS THE EVENT >>>>>>>>>>>>
+    // <<<<<<<<<<<< EL RUNNER PROCESA Y CONFIRMA EL EVENTO >>>>>>>>>>>>
 
-    // 3. Resume execution ONLY after Runner is done processing the above event.
-    // In a real Go implementation, this would likely be handled by the agent receiving
-    // a new RunRequest or context indicating the next step. The updated state
-    // would be part of the session object in that new request.
-    // For this conceptual example, we'll just check the state.
+    // 3. Reanudar ejecución SOLO después de que el Runner terminó de procesar el evento anterior.
+    // En una implementación real de Go, esto probablemente se manejaría por el agente recibiendo
+    // un nuevo RunRequest o contexto indicando el siguiente paso. El estado actualizado
+    // sería parte del objeto session en esa nueva solicitud.
+    // Para este ejemplo conceptual, solo verificaremos el estado.
     val := ctx.State.Get("field_1")
-    // here `val` is guaranteed to be "value_2" because the Runner would have
-    // updated the session state before calling the agent again.
-    fmt.Printf("Resumed execution. Value of field_1 is now: %v\n", val)
+    // aquí `val` está garantizado a ser "value_2" porque el Runner habría
+    // actualizado el estado de la sesión antes de llamar al agente nuevamente.
+    fmt.Printf("Ejecución reanudada. El valor de field_1 es ahora: %v\n", val)
 
-    // ... subsequent code continues ...
-    // Maybe send another event to the channel later...
+    // ... código subsecuente continúa ...
+    // Tal vez enviar otro evento al canal más tarde...
     ```
 
 === "Java"
 
     ```java
-    // Simplified view of logic inside Agent.runAsync, callbacks, or tools
-    // ... previous code runs based on current state ...
+    // Vista simplificada de lógica dentro de Agent.runAsync, callbacks o herramientas
+    // ... código anterior se ejecuta basado en el estado actual ...
 
-    // 1. Determine a change or output is needed, construct the event
-    // Example: Updating state
+    // 1. Determinar que se necesita un cambio o salida, construir el evento
+    // Ejemplo: Actualizando estado
     ConcurrentMap<String, Object> updateData = new ConcurrentHashMap<>();
     updateData.put("field_1", "value_2");
 
     EventActions actions = EventActions.builder().stateDelta(updateData).build();
-    Content eventContent = Content.builder().parts(Part.fromText("State updated.")).build();
+    Content eventContent = Content.builder().parts(Part.fromText("Estado actualizado.")).build();
 
     Event eventWithStateChange = Event.builder()
         .author(self.name())
         .actions(actions)
         .content(Optional.of(eventContent))
-        // ... other event fields ...
+        // ... otros campos del evento ...
         .build();
 
-    // 2. "Yield" the event. In RxJava, this means emitting it into the stream.
-    //    The Runner (or upstream consumer) will subscribe to this Flowable.
-    //    When the Runner receives this event, it will process it (e.g., call sessionService.appendEvent).
-    //    The 'appendEvent' in Java ADK mutates the 'Session' object held within 'ctx' (InvocationContext).
+    // 2. "Ceder" el evento. En RxJava, esto significa emitirlo al flujo.
+    //    El Runner (o consumidor upstream) se suscribirá a este Flowable.
+    //    Cuando el Runner reciba este evento, lo procesará (por ejemplo, llamará a sessionService.appendEvent).
+    //    El 'appendEvent' en Java ADK muta el objeto 'Session' contenido en 'ctx' (InvocationContext).
 
-    // <<<<<<<<<<<< CONCEPTUAL PAUSE POINT >>>>>>>>>>>>
-    // In RxJava, the emission of 'eventWithStateChange' happens, and then the stream
-    // might continue with a 'flatMap' or 'concatMap' operator that represents
-    // the logic *after* the Runner has processed this event.
+    // <<<<<<<<<<<< PUNTO DE PAUSA CONCEPTUAL >>>>>>>>>>>>
+    // En RxJava, la emisión de 'eventWithStateChange' ocurre, y luego el flujo
+    // podría continuar con un operador 'flatMap' o 'concatMap' que representa
+    // la lógica *después* de que el Runner ha procesado este evento.
 
-    // To model the "resume execution ONLY after Runner is done processing":
-    // The Runner's `appendEvent` is usually an async operation itself (returns Single<Event>).
-    // The agent's flow needs to be structured such that subsequent logic
-    // that depends on the committed state runs *after* that `appendEvent` completes.
+    // Para modelar "reanudar ejecución SOLO después de que el Runner terminó de procesar":
+    // El `appendEvent` del Runner es usualmente una operación async en sí misma (retorna Single<Event>).
+    // El flujo del agente necesita estar estructurado de tal manera que la lógica subsecuente
+    // que depende del estado confirmado se ejecute *después* de que ese `appendEvent` se complete.
 
-    // This is how the Runner typically orchestrates it:
+    // Así es como el Runner típicamente lo orquesta:
     // Runner:
     //   agent.runAsync(ctx)
     //     .concatMapEager(eventFromAgent ->
-    //         sessionService.appendEvent(ctx.session(), eventFromAgent) // This updates ctx.session().state()
-    //             .toFlowable() // Emits the event after it's processed
+    //         sessionService.appendEvent(ctx.session(), eventFromAgent) // Esto actualiza ctx.session().state()
+    //             .toFlowable() // Emite el evento después de que se procesa
     //     )
-    //     .subscribe(processedEvent -> { /* UI renders processedEvent */ });
+    //     .subscribe(processedEvent -> { /* La UI renderiza processedEvent */ });
 
-    // So, within the agent's own logic, if it needs to do something *after* an event it yielded
-    // has been processed and its state changes are reflected in ctx.session().state(),
-    // that subsequent logic would typically be in another step of its reactive chain.
+    // Entonces, dentro de la propia lógica del agente, si necesita hacer algo *después* de un evento que cedió
+    // ha sido procesado y sus cambios de estado están reflejados en ctx.session().state(),
+    // esa lógica subsecuente típicamente estaría en otro paso de su cadena reactiva.
 
-    // For this conceptual example, we'll emit the event, and then simulate the "resume"
-    // as a subsequent operation in the Flowable chain.
+    // Para este ejemplo conceptual, emitiremos el evento, y luego simularemos la "reanudación"
+    // como una operación subsecuente en la cadena Flowable.
 
-    return Flowable.just(eventWithStateChange) // Step 2: Yield the event
+    return Flowable.just(eventWithStateChange) // Paso 2: Ceder el evento
         .concatMap(yieldedEvent -> {
-            // <<<<<<<<<<<< RUNNER CONCEPTUALLY PROCESSES & COMMITS THE EVENT >>>>>>>>>>>>
-            // At this point, in a real runner, ctx.session().appendEvent(yieldedEvent) would have been called
-            // by the Runner, and ctx.session().state() would be updated.
-            // Since we are *inside* the agent's conceptual logic trying to model this,
-            // we assume the Runner's action has implicitly updated our 'ctx.session()'.
+            // <<<<<<<<<<<< EL RUNNER CONCEPTUALMENTE PROCESA Y CONFIRMA EL EVENTO >>>>>>>>>>>>
+            // En este punto, en un runner real, ctx.session().appendEvent(yieldedEvent) habría sido llamado
+            // por el Runner, y ctx.session().state() estaría actualizado.
+            // Ya que estamos *dentro* de la lógica conceptual del agente tratando de modelar esto,
+            // asumimos que la acción del Runner ha actualizado implícitamente nuestro 'ctx.session()'.
 
-            // 3. Resume execution.
-            // Now, the state committed by the Runner (via sessionService.appendEvent)
-            // is reliably reflected in ctx.session().state().
+            // 3. Reanudar ejecución.
+            // Ahora, el estado confirmado por el Runner (a través de sessionService.appendEvent)
+            // está reflejado de manera confiable en ctx.session().state().
             Object val = ctx.session().state().get("field_1");
-            // here `val` is guaranteed to be "value_2" because the `sessionService.appendEvent`
-            // called by the Runner would have updated the session state within the `ctx` object.
+            // aquí `val` está garantizado a ser "value_2" porque el `sessionService.appendEvent`
+            // llamado por el Runner habría actualizado el estado de la sesión dentro del objeto `ctx`.
 
-            System.out.println("Resumed execution. Value of field_1 is now: " + val);
+            System.out.println("Ejecución reanudada. El valor de field_1 es ahora: " + val);
 
-            // ... subsequent code continues ...
-            // If this subsequent code needs to yield another event, it would do so here.
+            // ... código subsecuente continúa ...
+            // Si este código subsecuente necesita ceder otro evento, lo haría aquí.
     ```
 
-This cooperative yield/pause/resume cycle between the `Runner` and your Execution Logic, mediated by `Event` objects, forms the core of the ADK Runtime.
+Este ciclo cooperativo de ceder/pausar/reanudar entre el `Runner` y tu Lógica de Ejecución, mediado por objetos `Event`, forma el núcleo del ADK Runtime.
 
-## Key components of the Runtime
+## Componentes clave del Runtime
 
-Several components work together within the ADK Runtime to execute an agent invocation. Understanding their roles clarifies how the event loop functions:
+Varios componentes trabajan juntos dentro del ADK Runtime para ejecutar una invocación de agente. Entender sus roles aclara cómo funciona el bucle de eventos:
 
 1. ### `Runner`
 
-      * **Role:** The main entry point and orchestrator for a single user query (`run_async`).
-      * **Function:** Manages the overall Event Loop, receives events yielded by the Execution Logic, coordinates with Services to process and commit event actions (state/artifact changes), and forwards processed events upstream (e.g., to the UI). It essentially drives the conversation turn by turn based on yielded events. (Defined in `google.adk.runners.runner`).
+      * **Rol:** El punto de entrada principal y orquestador para una única consulta de usuario (`run_async`).
+      * **Función:** Gestiona el Bucle de Eventos general, recibe eventos cedidos por la Lógica de Ejecución, coordina con Services para procesar y confirmar acciones de eventos (cambios de estado/artefactos), y reenvía eventos procesados upstream (por ejemplo, a la UI). Esencialmente impulsa la conversación turno por turno basado en eventos cedidos. (Definido en `google.adk.runners.runner`).
 
-2. ### Execution Logic Components
+2. ### Componentes de Lógica de Ejecución
 
-      * **Role:** The parts containing your custom code and the core agent capabilities.
-      * **Components:**
-      * `Agent` (`BaseAgent`, `LlmAgent`, etc.): Your primary logic units that process information and decide on actions. They implement the `_run_async_impl` method which yields events.
-      * `Tools` (`BaseTool`, `FunctionTool`, `AgentTool`, etc.): External functions or capabilities used by agents (often `LlmAgent`) to interact with the outside world or perform specific tasks. They execute and return results, which are then wrapped in events.
-      * `Callbacks` (Functions): User-defined functions attached to agents (e.g., `before_agent_callback`, `after_model_callback`) that hook into specific points in the execution flow, potentially modifying behavior or state, whose effects are captured in events.
-      * **Function:** Perform the actual thinking, calculation, or external interaction. They communicate their results or needs by **yielding `Event` objects** and pausing until the Runner processes them.
+      * **Rol:** Las partes que contienen tu código personalizado y las capacidades centrales del agente.
+      * **Componentes:**
+      * `Agent` (`BaseAgent`, `LlmAgent`, etc.): Tus unidades de lógica primarias que procesan información y deciden acciones. Implementan el método `_run_async_impl` que cede eventos.
+      * `Tools` (`BaseTool`, `FunctionTool`, `AgentTool`, etc.): Funciones o capacidades externas usadas por agentes (a menudo `LlmAgent`) para interactuar con el mundo exterior o realizar tareas específicas. Se ejecutan y retornan resultados, que luego se envuelven en eventos.
+      * `Callbacks` (Funciones): Funciones definidas por el usuario adjuntas a agentes (por ejemplo, `before_agent_callback`, `after_model_callback`) que se conectan a puntos específicos en el flujo de ejecución, potencialmente modificando comportamiento o estado, cuyos efectos son capturados en eventos.
+      * **Función:** Realizan el pensamiento, cálculo o interacción externa real. Comunican sus resultados o necesidades **cediendo objetos `Event`** y pausando hasta que el Runner los procese.
 
 3. ### `Event`
 
-      * **Role:** The message passed back and forth between the `Runner` and the Execution Logic.
-      * **Function:** Represents an atomic occurrence (user input, agent text, tool call/result, state change request, control signal). It carries both the content of the occurrence and the intended side effects (`actions` like `state_delta`).
+      * **Rol:** El mensaje pasado de ida y vuelta entre el `Runner` y la Lógica de Ejecución.
+      * **Función:** Representa una ocurrencia atómica (input del usuario, texto del agente, llamada/resultado de herramienta, solicitud de cambio de estado, señal de control). Lleva tanto el contenido de la ocurrencia como los efectos secundarios pretendidos (`actions` como `state_delta`).
 
 4. ### `Services`
 
-      * **Role:** Backend components responsible for managing persistent or shared resources. Used primarily by the `Runner` during event processing.
-      * **Components:**
-      * `SessionService` (`BaseSessionService`, `InMemorySessionService`, etc.): Manages `Session` objects, including saving/loading them, applying `state_delta` to the session state, and appending events to the `event history`.
-      * `ArtifactService` (`BaseArtifactService`, `InMemoryArtifactService`, `GcsArtifactService`, etc.): Manages the storage and retrieval of binary artifact data. Although `save_artifact` is called via context during execution logic, the `artifact_delta` in the event confirms the action for the Runner/SessionService.
-      * `MemoryService` (`BaseMemoryService`, etc.): (Optional) Manages long-term semantic memory across sessions for a user.
-      * **Function:** Provide the persistence layer. The `Runner` interacts with them to ensure changes signaled by `event.actions` are reliably stored *before* the Execution Logic resumes.
+      * **Rol:** Componentes backend responsables de gestionar recursos persistentes o compartidos. Usados principalmente por el `Runner` durante el procesamiento de eventos.
+      * **Componentes:**
+      * `SessionService` (`BaseSessionService`, `InMemorySessionService`, etc.): Gestiona objetos `Session`, incluyendo guardar/cargarlos, aplicar `state_delta` al estado de la sesión, y añadir eventos al `historial de eventos`.
+      * `ArtifactService` (`BaseArtifactService`, `InMemoryArtifactService`, `GcsArtifactService`, etc.): Gestiona el almacenamiento y recuperación de datos de artefactos binarios. Aunque `save_artifact` se llama a través del contexto durante la lógica de ejecución, el `artifact_delta` en el evento confirma la acción para el Runner/SessionService.
+      * `MemoryService` (`BaseMemoryService`, etc.): (Opcional) Gestiona memoria semántica a largo plazo a través de sesiones para un usuario.
+      * **Función:** Proveen la capa de persistencia. El `Runner` interactúa con ellos para asegurar que los cambios señalados por `event.actions` estén almacenados de manera confiable *antes* de que la Lógica de Ejecución se reanude.
 
 5. ### `Session`
 
-      * **Role:** A data container holding the state and history for *one specific conversation* between a user and the application.
-      * **Function:** Stores the current `state` dictionary, the list of all past `events` (`event history`), and references to associated artifacts. It's the primary record of the interaction, managed by the `SessionService`.
+      * **Rol:** Un contenedor de datos que contiene el estado e historial para *una conversación específica* entre un usuario y la aplicación.
+      * **Función:** Almacena el diccionario `state` actual, la lista de todos los `events` pasados (`historial de eventos`), y referencias a artefactos asociados. Es el registro primario de la interacción, gestionado por el `SessionService`.
 
 6. ### `Invocation`
 
-      * **Role:** A conceptual term representing everything that happens in response to a *single* user query, from the moment the `Runner` receives it until the agent logic finishes yielding events for that query.
-      * **Function:** An invocation might involve multiple agent runs (if using agent transfer or `AgentTool`), multiple LLM calls, tool executions, and callback executions, all tied together by a single `invocation_id` within the `InvocationContext`. State variables prefixed with `temp:` are strictly scoped to a single invocation and discarded afterwards.
+      * **Rol:** Un término conceptual que representa todo lo que sucede en respuesta a una *única* consulta de usuario, desde el momento en que el `Runner` la recibe hasta que la lógica del agente termina de ceder eventos para esa consulta.
+      * **Función:** Una invocación podría involucrar múltiples ejecuciones de agentes (si se usa transferencia de agente o `AgentTool`), múltiples llamadas LLM, ejecuciones de herramientas y ejecuciones de callbacks, todos unidos por un único `invocation_id` dentro del `InvocationContext`. Las variables de estado con prefijo `temp:` están estrictamente limitadas a una única invocación y se descartan después.
 
-These players interact continuously through the Event Loop to process a user's request.
+Estos actores interactúan continuamente a través del Bucle de Eventos para procesar la solicitud de un usuario.
 
-## How It Works: A Simplified Invocation
+## Cómo Funciona: Una Invocación Simplificada
 
-Let's trace a simplified flow for a typical user query that involves an LLM agent calling a tool:
+Tracemos un flujo simplificado para una consulta típica de usuario que involucra un agente LLM llamando a una herramienta:
 
 ![intro_components.png](../assets/invocation-flow.png)
 
-### Step-by-Step Breakdown
+### Desglose Paso a Paso
 
-1. **User Input:** The User sends a query (e.g., "What's the capital of France?").
-2. **Runner Starts:** `Runner.run_async` begins. It interacts with the `SessionService` to load the relevant `Session` and adds the user query as the first `Event` to the session history. An `InvocationContext` (`ctx`) is prepared.
-3. **Agent Execution:** The `Runner` calls `agent.run_async(ctx)` on the designated root agent (e.g., an `LlmAgent`).
-4. **LLM Call (Example):** The `Agent_Llm` determines it needs information, perhaps by calling a tool. It prepares a request for the `LLM`. Let's assume the LLM decides to call `MyTool`.
-5. **Yield FunctionCall Event:** The `Agent_Llm` receives the `FunctionCall` response from the LLM, wraps it in an `Event(author='Agent_Llm', content=Content(parts=[Part(function_call=...)]))`, and `yields` or `emits` this event.
-6. **Agent Pauses:** The `Agent_Llm`'s execution pauses immediately after the `yield`.
-7. **Runner Processes:** The `Runner` receives the FunctionCall event. It passes it to the `SessionService` to record it in the history. The `Runner` then yields the event upstream to the `User` (or application).
-8. **Agent Resumes:** The `Runner` signals that the event is processed, and `Agent_Llm` resumes execution.
-9. **Tool Execution:** The `Agent_Llm`'s internal flow now proceeds to execute the requested `MyTool`. It calls `tool.run_async(...)`.
-10. **Tool Returns Result:** `MyTool` executes and returns its result (e.g., `{'result': 'Paris'}`).
-11. **Yield FunctionResponse Event:** The agent (`Agent_Llm`) wraps the tool result into an `Event` containing a `FunctionResponse` part (e.g., `Event(author='Agent_Llm', content=Content(role='user', parts=[Part(function_response=...)]))`). This event might also contain `actions` if the tool modified state (`state_delta`) or saved artifacts (`artifact_delta`). The agent `yield`s this event.
-12. **Agent Pauses:** `Agent_Llm` pauses again.
-13. **Runner Processes:** `Runner` receives the FunctionResponse event. It passes it to `SessionService` which applies any `state_delta`/`artifact_delta` and adds the event to history. `Runner` yields the event upstream.
-14. **Agent Resumes:** `Agent_Llm` resumes, now knowing the tool result and any state changes are committed.
-15. **Final LLM Call (Example):** `Agent_Llm` sends the tool result back to the `LLM` to generate a natural language response.
-16. **Yield Final Text Event:** `Agent_Llm` receives the final text from the `LLM`, wraps it in an `Event(author='Agent_Llm', content=Content(parts=[Part(text=...)]))`, and `yield`s it.
-17. **Agent Pauses:** `Agent_Llm` pauses.
-18. **Runner Processes:** `Runner` receives the final text event, passes it to `SessionService` for history, and yields it upstream to the `User`. This is likely marked as the `is_final_response()`.
-19. **Agent Resumes & Finishes:** `Agent_Llm` resumes. Having completed its task for this invocation, its `run_async` generator finishes.
-20. **Runner Completes:** The `Runner` sees the agent's generator is exhausted and finishes its loop for this invocation.
+1. **Input del Usuario:** El Usuario envía una consulta (por ejemplo, "¿Cuál es la capital de Francia?").
+2. **Runner Inicia:** `Runner.run_async` comienza. Interactúa con el `SessionService` para cargar la `Session` relevante y añade la consulta del usuario como el primer `Event` al historial de la sesión. Se prepara un `InvocationContext` (`ctx`).
+3. **Ejecución del Agente:** El `Runner` llama a `agent.run_async(ctx)` en el agente raíz designado (por ejemplo, un `LlmAgent`).
+4. **Llamada LLM (Ejemplo):** El `Agent_Llm` determina que necesita información, tal vez llamando a una herramienta. Prepara una solicitud para el `LLM`. Asumamos que el LLM decide llamar a `MyTool`.
+5. **Ceder Evento FunctionCall:** El `Agent_Llm` recibe la respuesta `FunctionCall` del LLM, la envuelve en un `Event(author='Agent_Llm', content=Content(parts=[Part(function_call=...)]))`, y `cede` o `emite` este evento.
+6. **Agente se Pausa:** La ejecución del `Agent_Llm` se pausa inmediatamente después del `yield`.
+7. **Runner Procesa:** El `Runner` recibe el evento FunctionCall. Lo pasa al `SessionService` para registrarlo en el historial. El `Runner` luego cede el evento upstream al `User` (o aplicación).
+8. **Agente se Reanuda:** El `Runner` señala que el evento está procesado, y `Agent_Llm` reanuda la ejecución.
+9. **Ejecución de Herramienta:** El flujo interno del `Agent_Llm` ahora procede a ejecutar la `MyTool` solicitada. Llama a `tool.run_async(...)`.
+10. **Herramienta Retorna Resultado:** `MyTool` se ejecuta y retorna su resultado (por ejemplo, `{'result': 'Paris'}`).
+11. **Ceder Evento FunctionResponse:** El agente (`Agent_Llm`) envuelve el resultado de la herramienta en un `Event` conteniendo una parte `FunctionResponse` (por ejemplo, `Event(author='Agent_Llm', content=Content(role='user', parts=[Part(function_response=...)]))`). Este evento también podría contener `actions` si la herramienta modificó el estado (`state_delta`) o guardó artefactos (`artifact_delta`). El agente `cede` este evento.
+12. **Agente se Pausa:** `Agent_Llm` se pausa nuevamente.
+13. **Runner Procesa:** `Runner` recibe el evento FunctionResponse. Lo pasa a `SessionService` que aplica cualquier `state_delta`/`artifact_delta` y añade el evento al historial. `Runner` cede el evento upstream.
+14. **Agente se Reanuda:** `Agent_Llm` se reanuda, ahora sabiendo que el resultado de la herramienta y cualquier cambio de estado están confirmados.
+15. **Llamada LLM Final (Ejemplo):** `Agent_Llm` envía el resultado de la herramienta de vuelta al `LLM` para generar una respuesta en lenguaje natural.
+16. **Ceder Evento de Texto Final:** `Agent_Llm` recibe el texto final del `LLM`, lo envuelve en un `Event(author='Agent_Llm', content=Content(parts=[Part(text=...)]))`, y lo `cede`.
+17. **Agente se Pausa:** `Agent_Llm` se pausa.
+18. **Runner Procesa:** `Runner` recibe el evento de texto final, lo pasa a `SessionService` para el historial, y lo cede upstream al `User`. Esto probablemente está marcado como `is_final_response()`.
+19. **Agente se Reanuda y Termina:** `Agent_Llm` se reanuda. Habiendo completado su tarea para esta invocación, su generador `run_async` termina.
+20. **Runner Completa:** El `Runner` ve que el generador del agente está agotado y termina su bucle para esta invocación.
 
-This yield/pause/process/resume cycle ensures that state changes are consistently applied and that the execution logic always operates on the most recently committed state after yielding an event.
+Este ciclo de ceder/pausar/procesar/reanudar asegura que los cambios de estado se apliquen consistentemente y que la lógica de ejecución siempre opere sobre el estado confirmado más recientemente después de ceder un evento.
 
-## Important Runtime Behaviors
+## Comportamientos Importantes del Runtime
 
-Understanding a few key aspects of how the ADK Runtime handles state, streaming, and asynchronous operations is crucial for building predictable and efficient agents.
+Entender algunos aspectos clave de cómo el ADK Runtime maneja estado, streaming y operaciones asíncronas es crucial para construir agentes predecibles y eficientes.
 
-### State Updates & Commitment Timing
+### Actualizaciones de Estado y Momento de Confirmación
 
-* **The Rule:** When your code (in an agent, tool, or callback) modifies the session state (e.g., `context.state['my_key'] = 'new_value'`), this change is initially recorded locally within the current `InvocationContext`. The change is only **guaranteed to be persisted** (saved by the `SessionService`) *after* the `Event` carrying the corresponding `state_delta` in its `actions` has been `yield`\-ed by your code and subsequently processed by the `Runner`.
+* **La Regla:** Cuando tu código (en un agente, herramienta o callback) modifica el estado de la sesión (por ejemplo, `context.state['my_key'] = 'new_value'`), este cambio se registra inicialmente de manera local dentro del `InvocationContext` actual. El cambio solo está **garantizado a ser persistido** (guardado por el `SessionService`) *después* de que el `Event` que lleva el `state_delta` correspondiente en sus `actions` ha sido `cedido` por tu código y subsecuentemente procesado por el `Runner`.
 
-* **Implication:** Code that runs *after* resuming from a `yield` can reliably assume that the state changes signaled in the *yielded event* have been committed.
+* **Implicación:** El código que se ejecuta *después* de reanudar de un `yield` puede asumir de manera confiable que los cambios de estado señalados en el *evento cedido* han sido confirmados.
 
 === "Python"
 
     ```py
-    # Inside agent logic (conceptual)
+    # Dentro de lógica del agente (conceptual)
 
-    # 1. Modify state
+    # 1. Modificar estado
     ctx.session.state['status'] = 'processing'
     event1 = Event(..., actions=EventActions(state_delta={'status': 'processing'}))
 
-    # 2. Yield event with the delta
+    # 2. Ceder evento con el delta
     yield event1
-    # --- PAUSE --- Runner processes event1, SessionService commits 'status' = 'processing' ---
+    # --- PAUSA --- Runner procesa event1, SessionService confirma 'status' = 'processing' ---
 
-    # 3. Resume execution
-    # Now it's safe to rely on the committed state
-    current_status = ctx.session.state['status'] # Guaranteed to be 'processing'
-    print(f"Status after resuming: {current_status}")
+    # 3. Reanudar ejecución
+    # Ahora es seguro confiar en el estado confirmado
+    current_status = ctx.session.state['status'] # Garantizado a ser 'processing'
+    print(f"Estado después de reanudar: {current_status}")
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Inside agent logic (conceptual)
+    // Dentro de lógica del agente (conceptual)
 
-    // 1. Modify state
-    // In TypeScript, you modify state via the context, which tracks the change.
+    // 1. Modificar estado
+    // En TypeScript, modificas estado a través del contexto, que rastrea el cambio.
     ctx.state.set('status', 'processing');
-    // The framework will automatically populate actions with the state
-    // delta from the context. For illustration, it's shown here.
+    // El framework automáticamente poblará actions con el delta de estado
+    // desde el contexto. Para ilustración, se muestra aquí.
     const event1 = createEvent({
         actions: createEventActions({stateDelta: {'status': 'processing'}}),
-        // ... other event fields
+        // ... otros campos del evento
     });
 
-    // 2. Yield event with the delta
+    // 2. Ceder evento con el delta
     yield event1;
-    // --- PAUSE --- Runner processes event1, SessionService commits 'status' = 'processing' ---
+    // --- PAUSA --- Runner procesa event1, SessionService confirma 'status' = 'processing' ---
 
-    // 3. Resume execution
-    // Now it's safe to rely on the committed state in the session object.
-    const currentStatus = ctx.session.state['status']; // Guaranteed to be 'processing'
-    console.log(`Status after resuming: ${currentStatus}`);
+    // 3. Reanudar ejecución
+    // Ahora es seguro confiar en el estado confirmado en el objeto session.
+    const currentStatus = ctx.session.state['status']; // Garantizado a ser 'processing'
+    console.log(`Estado después de reanudar: ${currentStatus}`);
     ```
 
 === "Go"
 
     ```go
-      // Inside agent logic (conceptual)
+      // Dentro de lógica del agente (conceptual)
 
     func (a *Agent) RunConceptual(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
-      // The entire logic is wrapped in a function that will be returned as an iterator.
+      // Toda la lógica está envuelta en una función que será retornada como un iterador.
       return func(yield func(*session.Event, error) bool) {
-          // ... previous code runs based on current state from the input `ctx` ...
-          // e.g., val := ctx.State().Get("field_1") might return "value_1" here.
+          // ... código anterior se ejecuta basado en el estado actual del input `ctx` ...
+          // por ejemplo, val := ctx.State().Get("field_1") podría retornar "value_1" aquí.
 
-          // 1. Determine a change or output is needed, construct the event
+          // 1. Determinar que se necesita un cambio o salida, construir el evento
           updateData := map[string]interface{}{"field_1": "value_2"}
           eventWithStateChange := session.NewEvent(ctx.InvocationID())
           eventWithStateChange.Author = a.Name()
           eventWithStateChange.Actions = &session.EventActions{StateDelta: updateData}
-          // ... other event fields ...
+          // ... otros campos del evento ...
 
 
-          // 2. Yield the event to the Runner for processing & commit.
-          // The agent's execution continues immediately after this call.
+          // 2. Ceder el evento al Runner para procesamiento y confirmación.
+          // La ejecución del agente continúa inmediatamente después de esta llamada.
           if !yield(eventWithStateChange, nil) {
-              // If yield returns false, it means the consumer (the Runner)
-              // has stopped listening, so we should stop producing events.
+              // Si yield retorna false, significa que el consumidor (el Runner)
+              // ha dejado de escuchar, así que deberíamos dejar de producir eventos.
               return
           }
 
-          // <<<<<<<<<<<< RUNNER PROCESSES & COMMITS THE EVENT >>>>>>>>>>>>
-          // This happens outside the agent, after the agent's iterator has
-          // produced the event.
+          // <<<<<<<<<<<< EL RUNNER PROCESA Y CONFIRMA EL EVENTO >>>>>>>>>>>>
+          // Esto sucede fuera del agente, después de que el iterador del agente ha
+          // producido el evento.
 
-          // 3. The agent CANNOT immediately see the state change it just yielded.
-          // The state is immutable within a single `Run` invocation.
+          // 3. El agente NO PUEDE ver inmediatamente el cambio de estado que acaba de ceder.
+          // El estado es inmutable dentro de una única invocación `Run`.
           val := ctx.State().Get("field_1")
-          // `val` here is STILL "value_1" (or whatever it was at the start).
-          // The updated state ("value_2") will only be available in the `ctx`
-          // of the *next* `Run` invocation in a subsequent turn.
+          // `val` aquí es TODAVÍA "value_1" (o lo que fuera al inicio).
+          // El estado actualizado ("value_2") solo estará disponible en el `ctx`
+          // de la *siguiente* invocación `Run` en un turno subsecuente.
 
-          // ... subsequent code continues, potentially yielding more events ...
+          // ... código subsecuente continúa, potencialmente cediendo más eventos ...
           finalEvent := session.NewEvent(ctx.InvocationID())
           finalEvent.Author = a.Name()
           // ...
@@ -553,143 +553,143 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
 === "Java"
 
     ```java
-    // Inside agent logic (conceptual)
-    // ... previous code runs based on current state ...
+    // Dentro de lógica del agente (conceptual)
+    // ... código anterior se ejecuta basado en el estado actual ...
 
-    // 1. Prepare state modification and construct the event
+    // 1. Preparar modificación de estado y construir el evento
     ConcurrentHashMap<String, Object> stateChanges = new ConcurrentHashMap<>();
     stateChanges.put("status", "processing");
 
     EventActions actions = EventActions.builder().stateDelta(stateChanges).build();
-    Content content = Content.builder().parts(Part.fromText("Status update: processing")).build();
+    Content content = Content.builder().parts(Part.fromText("Actualización de estado: processing")).build();
 
     Event event1 = Event.builder()
         .actions(actions)
         // ...
         .build();
 
-    // 2. Yield event with the delta
+    // 2. Ceder evento con el delta
     return Flowable.just(event1)
         .map(
             emittedEvent -> {
-                // --- CONCEPTUAL PAUSE & RUNNER PROCESSING ---
-                // 3. Resume execution (conceptually)
-                // Now it's safe to rely on the committed state.
+                // --- PAUSA CONCEPTUAL Y PROCESAMIENTO DEL RUNNER ---
+                // 3. Reanudar ejecución (conceptualmente)
+                // Ahora es seguro confiar en el estado confirmado.
                 String currentStatus = (String) ctx.session().state().get("status");
-                System.out.println("Status after resuming (inside agent logic): " + currentStatus); // Guaranteed to be 'processing'
+                System.out.println("Estado después de reanudar (dentro de lógica del agente): " + currentStatus); // Garantizado a ser 'processing'
 
-                // The event itself (event1) is passed on.
-                // If subsequent logic within this agent step produced *another* event,
-                // you'd use concatMap to emit that new event.
+                // El evento mismo (event1) se pasa adelante.
+                // Si la lógica subsecuente dentro de este paso del agente produjo *otro* evento,
+                // usarías concatMap para emitir ese nuevo evento.
                 return emittedEvent;
             });
 
-    // ... subsequent agent logic might involve further reactive operators
-    // or emitting more events based on the now-updated `ctx.session().state()`.
+    // ... lógica subsecuente del agente podría involucrar más operadores reactivos
+    // o emitir más eventos basados en el ahora-actualizado `ctx.session().state()`.
     ```
 
-### "Dirty Reads" of Session State
+### "Lecturas Sucias" del Estado de la Sesión
 
-* **Definition:** While commitment happens *after* the yield, code running *later within the same invocation*, but *before* the state-changing event is actually yielded and processed, **can often see the local, uncommitted changes**. This is sometimes called a "dirty read".
-* **Example:**
+* **Definición:** Aunque la confirmación sucede *después* del yield, el código ejecutándose *más tarde dentro de la misma invocación*, pero *antes* de que el evento que cambia el estado sea realmente cedido y procesado, **a menudo puede ver los cambios locales no confirmados**. Esto a veces se llama una "lectura sucia".
+* **Ejemplo:**
 
 === "Python"
 
     ```py
-    # Code in before_agent_callback
+    # Código en before_agent_callback
     callback_context.state['field_1'] = 'value_1'
-    # State is locally set to 'value_1', but not yet committed by Runner
+    # El estado está configurado localmente a 'value_1', pero aún no confirmado por el Runner
 
-    # ... agent runs ...
+    # ... el agente se ejecuta ...
 
-    # Code in a tool called later *within the same invocation*
-    # Readable (dirty read), but 'value_1' isn't guaranteed persistent yet.
-    val = tool_context.state['field_1'] # 'val' will likely be 'value_1' here
-    print(f"Dirty read value in tool: {val}")
+    # Código en una herramienta llamada más tarde *dentro de la misma invocación*
+    # Legible (lectura sucia), pero 'value_1' aún no está garantizado persistente.
+    val = tool_context.state['field_1'] # 'val' probablemente será 'value_1' aquí
+    print(f"Valor de lectura sucia en herramienta: {val}")
 
-    # Assume the event carrying the state_delta={'field_1': 'value_1'}
-    # is yielded *after* this tool runs and is processed by the Runner.
+    # Asume que el evento llevando state_delta={'field_1': 'value_1'}
+    # es cedido *después* de que esta herramienta se ejecuta y es procesado por el Runner.
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Code in beforeAgentCallback
+    // Código en beforeAgentCallback
     callbackContext.state.set('field_1', 'value_1');
-    // State is locally set to 'value_1', but not yet committed by Runner
+    // El estado está configurado localmente a 'value_1', pero aún no confirmado por el Runner
 
-    // --- agent runs ... ---
+    // --- el agente se ejecuta ... ---
 
-    // --- Code in a tool called later *within the same invocation* ---
-    // Readable (dirty read), but 'value_1' isn't guaranteed persistent yet.
-    const val = toolContext.state.get('field_1'); // 'val' will likely be 'value_1' here
-    console.log(`Dirty read value in tool: ${val}`);
+    // --- Código en una herramienta llamada más tarde *dentro de la misma invocación* ---
+    // Legible (lectura sucia), pero 'value_1' aún no está garantizado persistente.
+    const val = toolContext.state.get('field_1'); // 'val' probablemente será 'value_1' aquí
+    console.log(`Valor de lectura sucia en herramienta: ${val}`);
 
-    // Assume the event carrying the state_delta={'field_1': 'value_1'}
-    // is yielded *after* this tool runs and is processed by the Runner.
+    // Asume que el evento llevando state_delta={'field_1': 'value_1'}
+    // es cedido *después* de que esta herramienta se ejecuta y es procesado por el Runner.
     ```
 
 === "Go"
 
     ```go
-    // Code in before_agent_callback
-    // The callback would modify the context's session state directly.
-    // This change is local to the current invocation context.
+    // Código en before_agent_callback
+    // El callback modificaría el estado de la sesión del contexto directamente.
+    // Este cambio es local al contexto de invocación actual.
     ctx.State.Set("field_1", "value_1")
-    // State is locally set to 'value_1', but not yet committed by Runner
+    // El estado está configurado localmente a 'value_1', pero aún no confirmado por el Runner
 
-    // ... agent runs ...
+    // ... el agente se ejecuta ...
 
-    // Code in a tool called later *within the same invocation*
-    // Readable (dirty read), but 'value_1' isn't guaranteed persistent yet.
-    val := ctx.State.Get("field_1") // 'val' will likely be 'value_1' here
-    fmt.Printf("Dirty read value in tool: %v\n", val)
+    // Código en una herramienta llamada más tarde *dentro de la misma invocación*
+    // Legible (lectura sucia), pero 'value_1' aún no está garantizado persistente.
+    val := ctx.State.Get("field_1") // 'val' probablemente será 'value_1' aquí
+    fmt.Printf("Valor de lectura sucia en herramienta: %v\n", val)
 
-    // Assume the event carrying the state_delta={'field_1': 'value_1'}
-    // is yielded *after* this tool runs and is processed by the Runner.
+    // Asume que el evento llevando state_delta={'field_1': 'value_1'}
+    // es cedido *después* de que esta herramienta se ejecuta y es procesado por el Runner.
     ```
 
 === "Java"
 
     ```java
-    // Modify state - Code in BeforeAgentCallback
-    // AND stages this change in callbackContext.eventActions().stateDelta().
+    // Modificar estado - Código en BeforeAgentCallback
+    // Y prepara este cambio en callbackContext.eventActions().stateDelta().
     callbackContext.state().put("field_1", "value_1");
 
-    // --- agent runs ... ---
+    // --- el agente se ejecuta ... ---
 
-    // --- Code in a tool called later *within the same invocation* ---
-    // Readable (dirty read), but 'value_1' isn't guaranteed persistent yet.
-    Object val = toolContext.state().get("field_1"); // 'val' will likely be 'value_1' here
-    System.out.println("Dirty read value in tool: " + val);
-    // Assume the event carrying the state_delta={'field_1': 'value_1'}
-    // is yielded *after* this tool runs and is processed by the Runner.
+    // --- Código en una herramienta llamada más tarde *dentro de la misma invocación* ---
+    // Legible (lectura sucia), pero 'value_1' aún no está garantizado persistente.
+    Object val = toolContext.state().get("field_1"); // 'val' probablemente será 'value_1' aquí
+    System.out.println("Valor de lectura sucia en herramienta: " + val);
+    // Asume que el evento llevando state_delta={'field_1': 'value_1'}
+    // es cedido *después* de que esta herramienta se ejecuta y es procesado por el Runner.
     ```
 
-* **Implications:**
-  * **Benefit:** Allows different parts of your logic within a single complex step (e.g., multiple callbacks or tool calls before the next LLM turn) to coordinate using state without waiting for a full yield/commit cycle.
-  * **Caveat:** Relying heavily on dirty reads for critical logic can be risky. If the invocation fails *before* the event carrying the `state_delta` is yielded and processed by the `Runner`, the uncommitted state change will be lost. For critical state transitions, ensure they are associated with an event that gets successfully processed.
+* **Implicaciones:**
+  * **Beneficio:** Permite que diferentes partes de tu lógica dentro de un único paso complejo (por ejemplo, múltiples callbacks o llamadas de herramientas antes del siguiente turno LLM) coordinen usando estado sin esperar un ciclo completo de yield/confirmación.
+  * **Advertencia:** Depender fuertemente de lecturas sucias para lógica crítica puede ser arriesgado. Si la invocación falla *antes* de que el evento llevando el `state_delta` sea cedido y procesado por el `Runner`, el cambio de estado no confirmado se perderá. Para transiciones de estado críticas, asegura que estén asociadas con un evento que sea procesado exitosamente.
 
-### Streaming vs. Non-Streaming Output (`partial=True`)
+### Salida Streaming vs. No-Streaming (`partial=True`)
 
-This primarily relates to how responses from the LLM are handled, especially when using streaming generation APIs.
+Esto se relaciona principalmente con cómo se manejan las respuestas del LLM, especialmente cuando se usan APIs de generación streaming.
 
-* **Streaming:** The LLM generates its response token-by-token or in small chunks.
-  * The framework (often within `BaseLlmFlow`) yields multiple `Event` objects for a single conceptual response. Most of these events will have `partial=True`.
-  * The `Runner`, upon receiving an event with `partial=True`, typically **forwards it immediately** upstream (for UI display) but **skips processing its `actions`** (like `state_delta`).
-  * Eventually, the framework yields a final event for that response, marked as non-partial (`partial=False` or implicitly via `turn_complete=True`).
-  * The `Runner` **fully processes only this final event**, committing any associated `state_delta` or `artifact_delta`.
-* **Non-Streaming:** The LLM generates the entire response at once. The framework yields a single event marked as non-partial, which the `Runner` processes fully.
-* **Why it Matters:** Ensures that state changes are applied atomically and only once based on the *complete* response from the LLM, while still allowing the UI to display text progressively as it's generated.
+* **Streaming:** El LLM genera su respuesta token por token o en pequeños fragmentos.
+  * El framework (a menudo dentro de `BaseLlmFlow`) cede múltiples objetos `Event` para una única respuesta conceptual. La mayoría de estos eventos tendrán `partial=True`.
+  * El `Runner`, al recibir un evento con `partial=True`, típicamente **lo reenvía inmediatamente** upstream (para visualización en UI) pero **omite procesar sus `actions`** (como `state_delta`).
+  * Eventualmente, el framework cede un evento final para esa respuesta, marcado como no parcial (`partial=False` o implícitamente a través de `turn_complete=True`).
+  * El `Runner` **procesa completamente solo este evento final**, confirmando cualquier `state_delta` o `artifact_delta` asociado.
+* **No-Streaming:** El LLM genera la respuesta completa de una vez. El framework cede un único evento marcado como no parcial, que el `Runner` procesa completamente.
+* **Por qué Importa:** Asegura que los cambios de estado se apliquen atómicamente y solo una vez basado en la respuesta *completa* del LLM, mientras aún permite que la UI muestre texto progresivamente a medida que se genera.
 
-## Async is Primary (`run_async`)
+## Async es Primario (`run_async`)
 
-* **Core Design:** The ADK Runtime is fundamentally built on asynchronous patterns and libraries (like Python's `asyncio`, Java's `RxJava`, and native `Promise`s and `AsyncGenerator`s in TypeScript) to handle concurrent operations (like waiting for LLM responses or tool executions) efficiently without blocking.
-* **Main Entry Point:** `Runner.run_async` is the primary method for executing agent invocations. All core runnable components (Agents, specific flows) use `asynchronous` methods internally.
-* **Synchronous Convenience (`run`):** A synchronous `Runner.run` method exists mainly for convenience (e.g., in simple scripts or testing environments). However, internally, `Runner.run` typically just calls `Runner.run_async` and manages the async event loop execution for you.
-* **Developer Experience:** We recommend designing your applications (e.g., web servers using ADK) to be asynchronous for best performance. In Python, this means using `asyncio`; in Java, leverage `RxJava`'s reactive programming model; and in TypeScript, this means building using native `Promise`s and `AsyncGenerator`s.
-* **Sync Callbacks/Tools:** The ADK framework supports both asynchronous and synchronous functions for tools and callbacks.
-    * **Blocking I/O:** For long-running synchronous I/O operations, the framework attempts to prevent stalls. Python ADK may use asyncio.to_thread, while Java ADK often relies on appropriate RxJava schedulers or wrappers for blocking calls. In TypeScript, the framework simply awaits the function; if a synchronous function performs blocking I/O, it will stall the event loop. Developers should use asynchronous I/O APIs (which return a Promise) whenever possible.
-    * **CPU-Bound Work:** Purely CPU-intensive synchronous tasks will still block their execution thread in both environments.
+* **Diseño Central:** El ADK Runtime está fundamentalmente construido sobre patrones y bibliotecas asíncronos (como `asyncio` de Python, `RxJava` de Java, y `Promise`s y `AsyncGenerator`s nativos en TypeScript) para manejar operaciones concurrentes (como esperar respuestas LLM o ejecuciones de herramientas) eficientemente sin bloquear.
+* **Punto de Entrada Principal:** `Runner.run_async` es el método primario para ejecutar invocaciones de agente. Todos los componentes ejecutables centrales (Agentes, flujos específicos) usan métodos `asíncronos` internamente.
+* **Conveniencia Síncrona (`run`):** Existe un método síncrono `Runner.run` principalmente por conveniencia (por ejemplo, en scripts simples o entornos de prueba). Sin embargo, internamente, `Runner.run` típicamente solo llama a `Runner.run_async` y gestiona la ejecución del bucle de eventos async por ti.
+* **Experiencia del Desarrollador:** Recomendamos diseñar tus aplicaciones (por ejemplo, servidores web usando ADK) para ser asíncronas para mejor rendimiento. En Python, esto significa usar `asyncio`; en Java, aprovechar el modelo de programación reactiva de `RxJava`; y en TypeScript, esto significa construir usando `Promise`s y `AsyncGenerator`s nativos.
+* **Callbacks/Tools Síncronos:** El framework ADK soporta tanto funciones asíncronas como síncronas para herramientas y callbacks.
+    * **I/O Bloqueante:** Para operaciones síncronas de I/O de larga duración, el framework intenta prevenir estancamientos. Python ADK puede usar asyncio.to_thread, mientras que Java ADK a menudo depende de planificadores RxJava apropiados o wrappers para llamadas bloqueantes. En TypeScript, el framework simplemente espera la función; si una función síncrona realiza I/O bloqueante, estancará el bucle de eventos. Los desarrolladores deberían usar APIs de I/O asíncronas (que retornan una Promise) siempre que sea posible.
+    * **Trabajo CPU-intensivo:** Las tareas síncronas puramente intensivas en CPU aún bloquearán su hilo de ejecución en ambos entornos.
 
-Understanding these behaviors helps you write more robust ADK applications and debug issues related to state consistency, streaming updates, and asynchronous execution.
+Entender estos comportamientos te ayuda a escribir aplicaciones ADK más robustas y depurar problemas relacionados con consistencia de estado, actualizaciones streaming y ejecución asíncrona.

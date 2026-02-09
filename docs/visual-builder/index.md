@@ -1,127 +1,127 @@
-# Visual Builder for agents
+# Constructor Visual para agentes
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-preview">Experimental</span>
 </div>
 
-The ADK Visual Builder is a web-based tool that provides a visual workflow
-design environment for creating and managing ADK agents. It allows you to
-design, build, and test your agents in a beginner-friendly graphical interface,
-and includes an AI-powered assistant to help you build agents.
+El Constructor Visual de ADK es una herramienta basada en web que proporciona un entorno
+visual de diseño de flujos de trabajo para crear y gestionar agentes ADK. Te permite
+diseñar, construir y probar tus agentes en una interfaz gráfica amigable para principiantes,
+e incluye un asistente impulsado por IA para ayudarte a construir agentes.
 
 ![Visual Agent Builder](../assets/visual-builder.png)
 
 !!! example "Experimental"
-    The Visual Builder feature is an experimental release. We welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md)!
+    La función Constructor Visual es un lanzamiento experimental. ¡Damos la bienvenida a tus
+    [comentarios](https://github.com/google/adk-python/issues/new?template=feature_request.md)!
 
-## Get started
+## Primeros pasos
 
-The Visual Builder interface is part of the ADK Web tool user interface.
-Make sure you have ADK library
-[installed](/adk-docs/get-started/installation/#python)
-and then run the ADK Web user interface.
+La interfaz del Constructor Visual es parte de la interfaz de usuario de la herramienta ADK Web.
+Asegúrate de tener la biblioteca ADK
+[instalada](/adk-docs/get-started/installation/#python)
+y luego ejecuta la interfaz de usuario de ADK Web.
 
 ```console
 adk web --port 8000
 ```
 
-??? tip "Tip: Run from a code development directory"
+??? tip "Consejo: Ejecuta desde un directorio de desarrollo de código"
 
-    The Visual Builder tool writes project files to new subdirectories located
-    in the directory where you run the ADK Web tool. Make sure you run this
-    command from a developer directory location where you have write access.
+    La herramienta Constructor Visual escribe archivos de proyecto en nuevos subdirectorios ubicados
+    en el directorio desde donde ejecutas la herramienta ADK Web. Asegúrate de ejecutar este
+    comando desde un directorio de desarrollo donde tengas acceso de escritura.
 
 ![Visual Agent Builder start](../assets/visual-builder-start.png)
-**Figure 1:** ADK Web controls to start the Visual Builder tool.
+**Figura 1:** Controles de ADK Web para iniciar la herramienta Constructor Visual.
 
-To create an agent with Visual Builder:
+Para crear un agente con el Constructor Visual:
 
-1.  In top left of the page, select the **+** (plus sign), as shown in *Figure 1*, to start creating an agent.
-1.  Type a name for your agent application and select **Create**.
-1.  Edit your agent by doing any of the following:
-    *   In the left panel, edit agent component values.
-    *   In the central panel, add new agent components .
-    *   In the right panel, use prompts to modify the agent or get help.
-1.  In bottom left corner, select **Save** to save your agent.
-1.  Interact with your new agent to test it.
-1.  In top left of the page, select the pencil icon, as shown in *Figure 1*, to continue editing your agent.
+1.  En la parte superior izquierda de la página, selecciona el **+** (signo más), como se muestra en la *Figura 1*, para comenzar a crear un agente.
+1.  Escribe un nombre para tu aplicación de agente y selecciona **Create**.
+1.  Edita tu agente haciendo cualquiera de lo siguiente:
+    *   En el panel izquierdo, edita los valores de los componentes del agente.
+    *   En el panel central, agrega nuevos componentes de agente.
+    *   En el panel derecho, usa indicaciones para modificar el agente u obtener ayuda.
+1.  En la esquina inferior izquierda, selecciona **Save** para guardar tu agente.
+1.  Interactúa con tu nuevo agente para probarlo.
+1.  En la parte superior izquierda de la página, selecciona el ícono de lápiz, como se muestra en la *Figura 1*, para continuar editando tu agente.
 
-Here are few things to note when using Visual Builder:
+Aquí hay algunas cosas a tener en cuenta al usar el Constructor Visual:
 
-*   **Create agent and save:** When creating an agent, make sure you select
-    **Save** before exiting the editing interface, otherwise your new agent may
-    not be editable.
-*   **Agent editing:** Edit (pencil icon) for agents is *only* available for
-    agents created with Visual Builder
-*   **Add tools:** When adding existing custom Tools to a Visual Builder
-    agent, specify a fully-qualified Python function name.
+*   **Crear agente y guardar:** Al crear un agente, asegúrate de seleccionar
+    **Save** antes de salir de la interfaz de edición, de lo contrario tu nuevo agente puede
+    no ser editable.
+*   **Edición de agente:** La edición (ícono de lápiz) para agentes *solo* está disponible para
+    agentes creados con el Constructor Visual
+*   **Agregar herramientas:** Al agregar Herramientas personalizadas existentes a un agente del Constructor Visual,
+    especifica un nombre de función Python completamente calificado.
 
-## Workflow component support
+## Soporte de componentes de flujo de trabajo
 
-The Visual Builder tool provides a drag-and-drop user interface for constructing agents, as
-well as an AI-powered development Assistant that can answer questions and edit your agent workflow.
-The tool supports all the essential components for building an ADK agent workflow, including:
+La herramienta Constructor Visual proporciona una interfaz de usuario de arrastrar y soltar para construir agentes, así
+como un Asistente de desarrollo impulsado por IA que puede responder preguntas y editar tu flujo de trabajo de agente.
+La herramienta soporta todos los componentes esenciales para construir un flujo de trabajo de agente ADK, incluyendo:
 
-*   **Agents**
-    *   **Root Agent**: The primary controlling agent for a workflow. All other agents in
-        an ADK agent workflow are considered Sub Agents.
-    *   [**LLM Agent:**](/adk-docs/agents/llm-agents/)
-        An agent powered by a generative AI model.
-    *   [**Sequential Agent:**](/adk-docs/agents/workflow-agents/sequential-agents/)
-        A workflow agent that executes a series of sub-agents in a sequence.
-    *   [**Loop Agent:**](/adk-docs/agents/workflow-agents/loop-agents/)
-        A workflow agent that repeatedly executes a sub-agent until a certain condition is met.
-    *   [**Parallel Agent:**](/adk-docs/agents/workflow-agents/parallel-agents/)
-        A workflow agent that executes multiple sub-agents concurrently.
-*   **Tools**
-    *   [**Prebuilt tools:**](/adk-docs/tools/built-in-tools/)
-        A limited set of ADK-provided tools can be added to agents.
-    *   [**Custom tools:**](/adk-docs/tools-custom/)
-        You can build and add custom tools to your workflow.
-*   **Components**
+*   **Agentes**
+    *   **Agente Raíz**: El agente controlador principal para un flujo de trabajo. Todos los demás agentes en
+        un flujo de trabajo de agente ADK se consideran Sub Agentes.
+    *   [**Agente LLM:**](/adk-docs/agents/llm-agents/)
+        Un agente impulsado por un modelo de IA generativa.
+    *   [**Agente Secuencial:**](/adk-docs/agents/workflow-agents/sequential-agents/)
+        Un agente de flujo de trabajo que ejecuta una serie de sub-agentes en una secuencia.
+    *   [**Agente de Bucle:**](/adk-docs/agents/workflow-agents/loop-agents/)
+        Un agente de flujo de trabajo que ejecuta repetidamente un sub-agente hasta que se cumple cierta condición.
+    *   [**Agente Paralelo:**](/adk-docs/agents/workflow-agents/parallel-agents/)
+        Un agente de flujo de trabajo que ejecuta múltiples sub-agentes concurrentemente.
+*   **Herramientas**
+    *   [**Herramientas preconstruidas:**](/adk-docs/tools/built-in-tools/)
+        Un conjunto limitado de herramientas proporcionadas por ADK que se pueden agregar a los agentes.
+    *   [**Herramientas personalizadas:**](/adk-docs/tools-custom/)
+        Puedes construir y agregar herramientas personalizadas a tu flujo de trabajo.
+*   **Componentes**
     *   [**Callbacks**](/adk-docs/callbacks/)
-        A flow control component that lets you modify the behavior of agents at the start
-        and end of agent workflow events.
+        Un componente de control de flujo que te permite modificar el comportamiento de los agentes al inicio
+        y al final de los eventos del flujo de trabajo del agente.
 
-Some advanced ADK features are not supported by Visual Builder due to
-limitations of the Agent Config feature. For more information, see the
-Agent Config [Known limitations](/adk-docs/agents/config/#known-limitations).
+Algunas funciones avanzadas de ADK no son soportadas por el Constructor Visual debido a
+limitaciones de la función Agent Config. Para más información, consulta las
+[Limitaciones conocidas](/adk-docs/agents/config/#known-limitations) de Agent Config.
 
-## Project code output
+## Salida de código del proyecto
 
-The Visual Builder tool generates code in the [Agent Config](/adk-docs/agents/config/)
-format, using `.yaml` configuration files for agents and Python code for custom
-tools. These files are generated in a subfolder of the directory where you ran
-the ADK Web interface. The following listing shows an example layout for a
-DiceAgent project:
+La herramienta Constructor Visual genera código en el formato [Agent Config](/adk-docs/agents/config/),
+usando archivos de configuración `.yaml` para agentes y código Python para herramientas
+personalizadas. Estos archivos se generan en una subcarpeta del directorio donde ejecutaste
+la interfaz ADK Web. El siguiente listado muestra un diseño de ejemplo para un
+proyecto DiceAgent:
 
 ```none
 DiceAgent/
-    root_agent.yaml    # main agent code
-    sub_agent_1.yaml   # sub agents (if any)
-    tools/             # tools directory
+    root_agent.yaml    # código del agente principal
+    sub_agent_1.yaml   # sub agentes (si hay)
+    tools/             # directorio de herramientas
         __init__.py
-        dice_tool.py   # tool code
+        dice_tool.py   # código de la herramienta
 ```
 
-!!! note "Editing generated agents"
+!!! note "Editando agentes generados"
 
-    You can edit the generated files in your development environment. However,
-    some changes may not be compatible with Visual Builder.
+    Puedes editar los archivos generados en tu entorno de desarrollo. Sin embargo,
+    algunos cambios pueden no ser compatibles con el Constructor Visual.
 
-## Next steps
+## Próximos pasos
 
-Using the Visual Builder development Assistant, try building a new agent using
-this prompt:
+Usando el Asistente de desarrollo del Constructor Visual, intenta construir un nuevo agente usando
+esta indicación:
 
 ```none
 Help me add a dice roll tool to my current agent.
 Use the default model if you need to configure that.
 ```
 
-Check out more information on the Agent Config code format used by Visual Builder
-and the available options:
+Consulta más información sobre el formato de código Agent Config usado por el Constructor Visual
+y las opciones disponibles:
 
 *   [Agent Config](/adk-docs/agents/config/)
-*   [Agent Config YAML schema](/adk-docs/api-reference/agentconfig/)
+*   [Esquema YAML de Agent Config](/adk-docs/api-reference/agentconfig/)

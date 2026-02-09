@@ -1,9 +1,9 @@
-# ADK release notes
+# Notas de versión de ADK
 
-You can find the release notes in the code repositories for each supported
-language. For detailed information on ADK releases, see these locations:
+Puedes encontrar las notas de versión en los repositorios de código para cada
+lenguaje soportado. Para información detallada sobre las versiones de ADK, consulta estas ubicaciones:
 
-*   [ADK Python release notes](https://github.com/google/adk-python/releases)
-*   [ADK TypeScript release notes](https://github.com/google/adk-js/releases)
-*   [ADK Go release notes](https://github.com/google/adk-go/releases)
-*   [ADK Java release notes](https://github.com/google/adk-java/releases)
+*   [Notas de versión de ADK Python](https://github.com/google/adk-python/releases)
+*   [Notas de versión de ADK TypeScript](https://github.com/google/adk-js/releases)
+*   [Notas de versión de ADK Go](https://github.com/google/adk-go/releases)
+*   [Notas de versión de ADK Java](https://github.com/google/adk-java/releases)

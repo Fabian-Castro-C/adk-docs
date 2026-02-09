@@ -1,27 +1,26 @@
-# ADK with Agent2Agent (A2A) Protocol
+# ADK con Protocolo Agent2Agent (A2A)
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Compatible con ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-preview">Experimental</span>
 </div>
 
-With Agent Development Kit (ADK), you can build complex multi-agent systems where different agents need to collaborate and interact using [Agent2Agent (A2A) Protocol](https://a2a-protocol.org/)! This section provides a comprehensive guide to building powerful multi-agent systems where agents can communicate and collaborate securely and efficiently.
+Con Agent Development Kit (ADK), puedes construir sistemas multi-agente complejos donde diferentes agentes necesitan colaborar e interactuar usando el [Protocolo Agent2Agent (A2A)](https://a2a-protocol.org/). Esta sección proporciona una guía completa para construir poderosos sistemas multi-agente donde los agentes pueden comunicarse y colaborar de forma segura y eficiente.
 
-Navigate through the guides below to learn about ADK's A2A capabilities:
+Navega a través de las guías a continuación para aprender sobre las capacidades A2A de ADK:
 
-  **[Introduction to A2A](./intro.md)**
+  **[Introducción a A2A](./intro.md)**
 
-  Start here to learn the fundamentals of A2A by building a multi-agent system with a root agent, a local sub-agent, and a remote A2A agent. The following guides cover how do I expose your agent so that other agents can use it via the A2A protocol:
+  Comienza aquí para aprender los fundamentos de A2A construyendo un sistema multi-agente con un agente raíz, un sub-agente local y un agente A2A remoto. Las siguientes guías cubren cómo exponer tu agente para que otros agentes puedan usarlo a través del protocolo A2A:
 
-  *   **[A2A Quickstart (Exposing) for Python](./quickstart-exposing.md)**
-  *   **[A2A Quickstart (Exposing) for Go](./quickstart-exposing-go.md)**
+  *   **[Inicio Rápido A2A (Exposición) para Python](./quickstart-exposing.md)**
+  *   **[Inicio Rápido A2A (Exposición) para Go](./quickstart-exposing-go.md)**
 
-  These guides show you how to allow your agent to use another, remote agent using A2A protocol:
+  Estas guías te muestran cómo permitir que tu agente use otro agente remoto utilizando el protocolo A2A:
 
-  *   **[A2A Quickstart (Consuming) for Python](./quickstart-consuming.md)**
-  *   **[A2A Quickstart (Consuming) for Go](./quickstart-consuming-go.md)**
+  *   **[Inicio Rápido A2A (Consumo) para Python](./quickstart-consuming.md)**
+  *   **[Inicio Rápido A2A (Consumo) para Go](./quickstart-consuming-go.md)**
 
 
-  [**Official Website for Agent2Agent (A2A) Protocol**](https://a2a-protocol.org/)
+  [**Sitio Web Oficial del Protocolo Agent2Agent (A2A)**](https://a2a-protocol.org/)
 
-  The official website for A2A Protocol.
-  
+  El sitio web oficial del Protocolo A2A.

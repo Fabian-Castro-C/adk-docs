@@ -4,25 +4,24 @@ catalog_description: Interact with Spanner to retrieve data, search, and execute
 catalog_icon: /adk-docs/assets/tools-spanner.png
 ---
 
-# Spanner database tool for ADK
+# Herramienta de base de datos Spanner para ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v1.11.0</span>
 </div>
 
-These are a set of tools aimed to provide integration with Spanner, namely:
+Este es un conjunto de herramientas destinadas a proporcionar integración con Spanner, a saber:
 
-* **`list_table_names`**: Fetches table names present in a GCP Spanner database.
-* **`list_table_indexes`**: Fetches table indexes present in a GCP Spanner database.
-* **`list_table_index_columns`**: Fetches table index columns present in a GCP Spanner database.
-* **`list_named_schemas`**: Fetches named schema for a Spanner database.
-* **`get_table_schema`**: Fetches Spanner database table schema and metadata information.
-* **`execute_sql`**: Runs a SQL query in Spanner database and fetch the result.
-* **`similarity_search`**: Similarity search in Spanner using a text query.
+* **`list_table_names`**: Obtiene los nombres de tablas presentes en una base de datos GCP Spanner.
+* **`list_table_indexes`**: Obtiene los índices de tablas presentes en una base de datos GCP Spanner.
+* **`list_table_index_columns`**: Obtiene las columnas de índice de tablas presentes en una base de datos GCP Spanner.
+* **`list_named_schemas`**: Obtiene el esquema nombrado de una base de datos Spanner.
+* **`get_table_schema`**: Obtiene el esquema de tabla de la base de datos Spanner e información de metadatos.
+* **`execute_sql`**: Ejecuta una consulta SQL en la base de datos Spanner y obtiene el resultado.
+* **`similarity_search`**: Búsqueda por similitud en Spanner usando una consulta de texto.
 
-They are packaged in the toolset `SpannerToolset`.
+Están empaquetadas en el conjunto de herramientas `SpannerToolset`.
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/spanner.py"
 ```
-

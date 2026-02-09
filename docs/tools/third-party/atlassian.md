@@ -10,30 +10,30 @@ catalog_icon: /adk-docs/assets/tools-atlassian.png
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [Atlassian MCP Server](https://github.com/atlassian/atlassian-mcp-server)
-connects your ADK agent to the [Atlassian](https://www.atlassian.com/)
-ecosystem, bridging the gap between project tracking in Jira and knowledge
-management in Confluence. This integration gives your agent the ability to
-manage issues, search and update documentation pages, and streamline
-collaboration workflows using natural language.
+El [Servidor MCP de Atlassian](https://github.com/atlassian/atlassian-mcp-server)
+conecta tu agente ADK al ecosistema de [Atlassian](https://www.atlassian.com/),
+cerrando la brecha entre el seguimiento de proyectos en Jira y la gestión del
+conocimiento en Confluence. Esta integración le da a tu agente la capacidad de
+gestionar incidencias, buscar y actualizar páginas de documentación, y optimizar
+flujos de trabajo de colaboración usando lenguaje natural.
 
-## Use cases
+## Casos de uso
 
-- **Unified Knowledge Search**: Search across both Jira issues and Confluence
-  pages simultaneously to find project specs, decisions, or historical context.
+- **Búsqueda Unificada de Conocimiento**: Busca simultáneamente en incidencias de Jira y
+  páginas de Confluence para encontrar especificaciones de proyectos, decisiones o contexto histórico.
 
-- **Automate Issue Management**: Create, edit, and transition Jira issues, or
-  add comments to existing tickets.
+- **Automatizar Gestión de Incidencias**: Crea, edita y transiciona incidencias de Jira, o
+  agrega comentarios a tickets existentes.
 
-- **Documentation Assistant**: Retrieve page content, generate drafts, or add
-  inline comments to Confluence documents directly from your agent.
+- **Asistente de Documentación**: Recupera contenido de páginas, genera borradores, o agrega
+  comentarios en línea a documentos de Confluence directamente desde tu agente.
 
-## Prerequisites
+## Requisitos previos
 
-- Sign up for an [Atlassian account](https://id.atlassian.com/signup)
-- An Atlassian Cloud site with Jira and/or Confluence
+- Regístrate para una [cuenta de Atlassian](https://id.atlassian.com/signup)
+- Un sitio de Atlassian Cloud con Jira y/o Confluence
 
-## Use with agent
+## Usar con agente
 
 === "Python"
 
@@ -99,44 +99,44 @@ collaboration workflows using natural language.
 
 !!! note
 
-    When you run this agent for the first time, a browser window opens
-    automatically to request access via OAuth. Alternatively, you can use the
-    authorization URL printed in the console. You must approve this request to
-    allow the agent to access your Atlassian data.
+    Cuando ejecutes este agente por primera vez, una ventana del navegador se abre
+    automáticamente para solicitar acceso vía OAuth. Alternativamente, puedes usar la
+    URL de autorización impresa en la consola. Debes aprobar esta solicitud para
+    permitir que el agente acceda a tus datos de Atlassian.
 
-## Available tools
+## Herramientas disponibles
 
 Tool | Description
 ---- | -----------
-`atlassianUserInfo` | Get information about the user
-`getAccessibleAtlassianResources` | Get information about accessible Atlassian resources
-`getJiraIssue` | Get information about a Jira issue
-`editJiraIssue` | Edit a Jira issue
-`createJiraIssue` | Create a new Jira issue
-`getTransitionsForJiraIssue` | Get transitions for a Jira issue
-`transitionJiraIssue` | Transition a Jira issue
-`lookupJiraAccountId` | Lookup a Jira account ID
-`searchJiraIssuesUsingJql` | Search Jira issues using JQL
-`addCommentToJiraIssue` | Add a comment to a Jira issue
-`getJiraIssueRemoteIssueLinks` | Get remote issue links for a Jira issue
-`getVisibleJiraProjects` | Get visible Jira projects
-`getJiraProjectIssueTypesMetadata` | Get issue types metadata for a Jira project
-`getJiraIssueTypeMetaWithFields` | Get issue type metadata with fields for a Jira issue
-`getConfluenceSpaces` | Get information about Confluence spaces
-`getConfluencePage` | Get information about a Confluence page
-`getPagesInConfluenceSpace` | Get information about pages in a Confluence space
-`getConfluencePageFooterComments` | Get information about footer comments in a Confluence page
-`getConfluencePageInlineComments` | Get information about inline comments in a Confluence page
-`getConfluencePageDescendants` | Get information about descendants of a Confluence page
-`createConfluencePage` | Create a new Confluence page
-`updateConfluencePage` | Update an existing Confluence page
-`createConfluenceFooterComment` | Create a footer comment in a Confluence page
-`createConfluenceInlineComment` | Create an inline comment in a Confluence page
-`searchConfluenceUsingCql` | Search Confluence using CQL
-`search` | Search for information
-`fetch` | Fetch information
+`atlassianUserInfo` | Obtener información sobre el usuario
+`getAccessibleAtlassianResources` | Obtener información sobre recursos de Atlassian accesibles
+`getJiraIssue` | Obtener información sobre una incidencia de Jira
+`editJiraIssue` | Editar una incidencia de Jira
+`createJiraIssue` | Crear una nueva incidencia de Jira
+`getTransitionsForJiraIssue` | Obtener transiciones para una incidencia de Jira
+`transitionJiraIssue` | Transicionar una incidencia de Jira
+`lookupJiraAccountId` | Buscar un ID de cuenta de Jira
+`searchJiraIssuesUsingJql` | Buscar incidencias de Jira usando JQL
+`addCommentToJiraIssue` | Agregar un comentario a una incidencia de Jira
+`getJiraIssueRemoteIssueLinks` | Obtener enlaces de incidencias remotas para una incidencia de Jira
+`getVisibleJiraProjects` | Obtener proyectos de Jira visibles
+`getJiraProjectIssueTypesMetadata` | Obtener metadatos de tipos de incidencias para un proyecto de Jira
+`getJiraIssueTypeMetaWithFields` | Obtener metadatos de tipo de incidencia con campos para una incidencia de Jira
+`getConfluenceSpaces` | Obtener información sobre espacios de Confluence
+`getConfluencePage` | Obtener información sobre una página de Confluence
+`getPagesInConfluenceSpace` | Obtener información sobre páginas en un espacio de Confluence
+`getConfluencePageFooterComments` | Obtener información sobre comentarios de pie de página en una página de Confluence
+`getConfluencePageInlineComments` | Obtener información sobre comentarios en línea en una página de Confluence
+`getConfluencePageDescendants` | Obtener información sobre descendientes de una página de Confluence
+`createConfluencePage` | Crear una nueva página de Confluence
+`updateConfluencePage` | Actualizar una página de Confluence existente
+`createConfluenceFooterComment` | Crear un comentario de pie de página en una página de Confluence
+`createConfluenceInlineComment` | Crear un comentario en línea en una página de Confluence
+`searchConfluenceUsingCql` | Buscar en Confluence usando CQL
+`search` | Buscar información
+`fetch` | Obtener información
 
-## Additional resources
+## Recursos adicionales
 
-- [Atlassian MCP Server Repository](https://github.com/atlassian/atlassian-mcp-server)
-- [Atlassian MCP Server Documentation](https://support.atlassian.com/atlassian-rovo-mcp-server/docs/getting-started-with-the-atlassian-remote-mcp-server/)
+- [Repositorio del Servidor MCP de Atlassian](https://github.com/atlassian/atlassian-mcp-server)
+- [Documentación del Servidor MCP de Atlassian](https://support.atlassian.com/atlassian-rovo-mcp-server/docs/getting-started-with-the-atlassian-remote-mcp-server/)

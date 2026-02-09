@@ -1,33 +1,33 @@
-# Apigee AI Gateway for ADK agents
+# Apigee AI Gateway para agentes ADK
 
 <div class="language-support-tag">
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-java">Java v0.4.0</span>
 </div>
 
 [Apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
-provides a powerful [AI Gateway](https://cloud.google.com/solutions/apigee-ai),
-transforming how you manage and govern your generative AI model traffic. By
-exposing your AI model endpoint (like Vertex AI or the Gemini API) through an
-Apigee proxy, you immediately gain enterprise-grade capabilities:
+proporciona un poderoso [AI Gateway](https://cloud.google.com/solutions/apigee-ai),
+transformando la forma en que administras y gobiernas el tráfico de tus modelos de IA generativa. Al
+exponer el endpoint de tu modelo de IA (como Vertex AI o la API de Gemini) a través de un
+proxy de Apigee, obtienes inmediatamente capacidades de nivel empresarial:
 
-- **Model Safety:** Implement security policies like Model Armor for threat protection.
+- **Seguridad del Modelo:** Implementa políticas de seguridad como Model Armor para protección contra amenazas.
 
-- **Traffic Governance:** Enforce Rate Limiting and Token Limiting to manage costs and prevent abuse.
+- **Gobernanza de Tráfico:** Aplica Rate Limiting y Token Limiting para gestionar costos y prevenir abusos.
 
-- **Performance:** Improve response times and efficiency using Semantic Caching and advanced model routing.
+- **Rendimiento:** Mejora los tiempos de respuesta y la eficiencia usando Semantic Caching y enrutamiento avanzado de modelos.
 
-- **Monitoring & Visibility:** Get granular monitoring, analysis, and auditing of all your AI requests.
+- **Monitoreo y Visibilidad:** Obtén monitoreo granular, análisis y auditoría de todas tus solicitudes de IA.
 
 !!! note
 
-    The `ApigeeLLM` wrapper is currently designed for use with Vertex AI
-    and the Gemini API (generateContent). We are continually expanding support for
-    other models and interfaces.
+    El wrapper `ApigeeLLM` está actualmente diseñado para uso con Vertex AI
+    y la API de Gemini (generateContent). Estamos expandiendo continuamente el soporte para
+    otros modelos e interfaces.
 
-## Example implementation
+## Ejemplo de implementación
 
-Integrate Apigee's governance into your agent's workflow by instantiating the
-`ApigeeLlm` wrapper object and pass it to an `LlmAgent` or other agent type.
+Integra la gobernanza de Apigee en el flujo de trabajo de tu agente instanciando el
+objeto wrapper `ApigeeLlm` y pasándolo a un `LlmAgent` u otro tipo de agente.
 
 === "Python"
 
@@ -36,22 +36,22 @@ Integrate Apigee's governance into your agent's workflow by instantiating the
     from google.adk.agents import LlmAgent
     from google.adk.models.apigee_llm import ApigeeLlm
 
-    # Instantiate the ApigeeLlm wrapper
+    # Instancia el wrapper ApigeeLlm
     model = ApigeeLlm(
-        # Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation (https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm).
+        # Especifica la ruta de Apigee hacia tu modelo. Para más información, consulta la documentación de ApigeeLlm (https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm).
         model="apigee/gemini-2.5-flash",
-        # The proxy URL of your deployed Apigee proxy including the base path
+        # La URL del proxy de tu proxy Apigee desplegado incluyendo la ruta base
         proxy_url=f"https://{APIGEE_PROXY_URL}",
-        # Pass necessary authentication/authorization headers (like an API key)
+        # Pasa los encabezados necesarios de autenticación/autorización (como una clave API)
         custom_headers={"foo": "bar"}
     )
 
-    # Pass the configured model wrapper to your LlmAgent
+    # Pasa el wrapper del modelo configurado a tu LlmAgent
     agent = LlmAgent(
         model=model,
         name="my_governed_agent",
         instruction="You are a helpful assistant powered by Gemini and governed by Apigee.",
-        # ... other agent parameters
+        # ... otros parámetros del agente
     )
 
     ```
@@ -65,9 +65,9 @@ Integrate Apigee's governance into your agent's workflow by instantiating the
 
     ApigeeLlm apigeeLlm =
             ApigeeLlm.builder()
-                .modelName("apigee/gemini-2.5-flash") // Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation
-                .proxyUrl(APIGEE_PROXY_URL) //The proxy URL of your deployed Apigee proxy including the base path
-                .customHeaders(ImmutableMap.of("foo", "bar")) //Pass necessary authentication/authorization headers (like an API key)
+                .modelName("apigee/gemini-2.5-flash") // Especifica la ruta de Apigee hacia tu modelo. Para más información, consulta la documentación de ApigeeLlm
+                .proxyUrl(APIGEE_PROXY_URL) //La URL del proxy de tu proxy Apigee desplegado incluyendo la ruta base
+                .customHeaders(ImmutableMap.of("foo", "bar")) //Pasa los encabezados necesarios de autenticación/autorización (como una clave API)
                 .build();
     LlmAgent agent =
         LlmAgent.builder()
@@ -75,12 +75,12 @@ Integrate Apigee's governance into your agent's workflow by instantiating the
             .name("my_governed_agent")
             .description("my_governed_agent")
             .instruction("You are a helpful assistant powered by Gemini and governed by Apigee.")
-            // tools will be added next
+            // las herramientas se añadirán a continuación
             .build();
     ```
 
-With this configuration, every API call from your agent will be routed through
-Apigee first, where all necessary policies (security, rate limiting, logging)
-are executed before the request is securely forwarded to the underlying AI model
-endpoint. For a full code example using the Apigee proxy, see
+Con esta configuración, cada llamada a la API desde tu agente será enrutada primero a través de
+Apigee, donde se ejecutan todas las políticas necesarias (seguridad, limitación de tasa, registro)
+antes de que la solicitud sea reenviada de forma segura al endpoint del modelo de IA
+subyacente. Para un ejemplo de código completo usando el proxy de Apigee, consulta
 [Hello World Apigee LLM](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm).

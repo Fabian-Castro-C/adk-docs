@@ -1,54 +1,54 @@
-# Agents
+# Agentes
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
 </div>
 
-In Agent Development Kit (ADK), an **Agent** is a self-contained execution unit designed to act autonomously to achieve specific goals. Agents can perform tasks, interact with users, utilize external tools, and coordinate with other agents.
+En Agent Development Kit (ADK), un **Agente** es una unidad de ejecución autónoma diseñada para actuar de forma independiente y lograr objetivos específicos. Los agentes pueden realizar tareas, interactuar con usuarios, utilizar herramientas externas y coordinarse con otros agentes.
 
-The foundation for all agents in ADK is the `BaseAgent` class. It serves as the fundamental blueprint. To create functional agents, you typically extend `BaseAgent` in one of three main ways, catering to different needs – from intelligent reasoning to structured process control.
+La base para todos los agentes en ADK es la clase `BaseAgent`. Sirve como el modelo fundamental. Para crear agentes funcionales, típicamente extiendes `BaseAgent` de una de tres formas principales, adaptándose a diferentes necesidades – desde razonamiento inteligente hasta control de procesos estructurados.
 
 <img src="../assets/agent-types.png" alt="Types of agents in ADK">
 
-## Core Agent Categories
+## Categorías Principales de Agentes
 
-ADK provides distinct agent categories to build sophisticated applications:
+ADK proporciona categorías distintas de agentes para construir aplicaciones sofisticadas:
 
-1. [**LLM Agents (`LlmAgent`, `Agent`)**](llm-agents.md): These agents utilize Large Language Models (LLMs) as their core engine to understand natural language, reason, plan, generate responses, and dynamically decide how to proceed or which tools to use, making them ideal for flexible, language-centric tasks. [Learn more about LLM Agents...](llm-agents.md)
+1. [**Agentes LLM (`LlmAgent`, `Agent`)**](llm-agents.md): Estos agentes utilizan Modelos de Lenguaje Grandes (LLMs) como su motor principal para comprender lenguaje natural, razonar, planificar, generar respuestas y decidir dinámicamente cómo proceder o qué herramientas usar, haciéndolos ideales para tareas flexibles centradas en el lenguaje. [Aprende más sobre Agentes LLM...](llm-agents.md)
 
-2. [**Workflow Agents (`SequentialAgent`, `ParallelAgent`, `LoopAgent`)**](workflow-agents/index.md): These specialized agents control the execution flow of other agents in predefined, deterministic patterns (sequence, parallel, or loop) without using an LLM for the flow control itself, perfect for structured processes needing predictable execution. [Explore Workflow Agents...](workflow-agents/index.md)
+2. [**Agentes de Flujo de Trabajo (`SequentialAgent`, `ParallelAgent`, `LoopAgent`)**](workflow-agents/index.md): Estos agentes especializados controlan el flujo de ejecución de otros agentes en patrones predefinidos y deterministas (secuencia, paralelo o bucle) sin usar un LLM para el control de flujo en sí, perfectos para procesos estructurados que necesitan ejecución predecible. [Explora Agentes de Flujo de Trabajo...](workflow-agents/index.md)
 
-3. [**Custom Agents**](custom-agents.md): Created by extending `BaseAgent` directly, these agents allow you to implement unique operational logic, specific control flows, or specialized integrations not covered by the standard types, catering to highly tailored application requirements. [Discover how to build Custom Agents...](custom-agents.md)
+3. [**Agentes Personalizados**](custom-agents.md): Creados al extender `BaseAgent` directamente, estos agentes te permiten implementar lógica operacional única, flujos de control específicos o integraciones especializadas no cubiertas por los tipos estándar, atendiendo a requisitos de aplicación altamente personalizados. [Descubre cómo construir Agentes Personalizados...](custom-agents.md)
 
-## Choosing the Right Agent Type
+## Eligiendo el Tipo de Agente Correcto
 
-The following table provides a high-level comparison to help distinguish between the agent types. As you explore each type in more detail in the subsequent sections, these distinctions will become clearer.
+La siguiente tabla proporciona una comparación de alto nivel para ayudar a distinguir entre los tipos de agentes. A medida que explores cada tipo con más detalle en las secciones subsiguientes, estas distinciones se volverán más claras.
 
-| Feature              | LLM Agent (`LlmAgent`)              | Workflow Agent                              | Custom Agent (`BaseAgent` subclass)      |
+| Característica       | Agente LLM (`LlmAgent`)             | Agente de Flujo de Trabajo                  | Agente Personalizado (subclase de `BaseAgent`) |
 | :------------------- | :---------------------------------- | :------------------------------------------ |:-----------------------------------------|
-| **Primary Function** | Reasoning, Generation, Tool Use     | Controlling Agent Execution Flow            | Implementing Unique Logic/Integrations   |
-| **Core Engine**  | Large Language Model (LLM)          | Predefined Logic (Sequence, Parallel, Loop) | Custom Code                              |
-| **Determinism**  | Non-deterministic (Flexible)        | Deterministic (Predictable)                 | Can be either, based on implementation   |
-| **Primary Use**  | Language tasks, Dynamic decisions   | Structured processes, Orchestration         | Tailored requirements, Specific workflows|
+| **Función Principal** | Razonamiento, Generación, Uso de Herramientas | Control del Flujo de Ejecución de Agentes | Implementación de Lógica/Integraciones Únicas |
+| **Motor Principal**  | Modelo de Lenguaje Grande (LLM)     | Lógica Predefinida (Secuencia, Paralelo, Bucle) | Código Personalizado                     |
+| **Determinismo**  | No determinista (Flexible)           | Determinista (Predecible)                   | Puede ser cualquiera, según la implementación |
+| **Uso Principal**  | Tareas de lenguaje, Decisiones dinámicas | Procesos estructurados, Orquestación     | Requisitos personalizados, Flujos de trabajo específicos |
 
-## Agents Working Together: Multi-Agent Systems
+## Agentes Trabajando Juntos: Sistemas Multi-Agente
 
-While each agent type serves a distinct purpose, the true power often comes from combining them. Complex applications frequently employ [multi-agent architectures](multi-agents.md) where:
+Mientras que cada tipo de agente cumple un propósito distinto, el verdadero poder a menudo proviene de combinarlos. Las aplicaciones complejas frecuentemente emplean [arquitecturas multi-agente](multi-agents.md) donde:
 
-* **LLM Agents** handle intelligent, language-based task execution.
-* **Workflow Agents** manage the overall process flow using standard patterns.
-* **Custom Agents** provide specialized capabilities or rules needed for unique integrations.
+* **Agentes LLM** manejan ejecución de tareas inteligentes basadas en lenguaje.
+* **Agentes de Flujo de Trabajo** gestionan el flujo general del proceso usando patrones estándar.
+* **Agentes Personalizados** proporcionan capacidades especializadas o reglas necesarias para integraciones únicas.
 
-Understanding these core types is the first step toward building sophisticated, capable AI applications with ADK.
+Comprender estos tipos fundamentales es el primer paso hacia la construcción de aplicaciones de IA sofisticadas y capaces con ADK.
 
 ---
 
-## What's Next?
+## ¿Qué Sigue?
 
-Now that you have an overview of the different agent types available in ADK, dive deeper into how they work and how to use them effectively:
+Ahora que tienes una visión general de los diferentes tipos de agentes disponibles en ADK, profundiza en cómo funcionan y cómo usarlos efectivamente:
 
-* [**LLM Agents:**](llm-agents.md) Explore how to configure agents powered by large language models, including setting instructions, providing tools, and enabling advanced features like planning and code execution.
-* [**Workflow Agents:**](workflow-agents/index.md) Learn how to orchestrate tasks using `SequentialAgent`, `ParallelAgent`, and `LoopAgent` for structured and predictable processes.
-* [**Custom Agents:**](custom-agents.md) Discover the principles of extending `BaseAgent` to build agents with unique logic and integrations tailored to your specific needs.
-* [**Multi-Agents:**](multi-agents.md) Understand how to combine different agent types to create sophisticated, collaborative systems capable of tackling complex problems.
-* [**Models:**](/adk-docs/agents/models/) Learn about the different LLM integrations available and how to select the right model for your agents.
+* [**Agentes LLM:**](llm-agents.md) Explora cómo configurar agentes impulsados por modelos de lenguaje grandes, incluyendo establecer instrucciones, proporcionar herramientas y habilitar características avanzadas como planificación y ejecución de código.
+* [**Agentes de Flujo de Trabajo:**](workflow-agents/index.md) Aprende cómo orquestar tareas usando `SequentialAgent`, `ParallelAgent` y `LoopAgent` para procesos estructurados y predecibles.
+* [**Agentes Personalizados:**](custom-agents.md) Descubre los principios de extender `BaseAgent` para construir agentes con lógica e integraciones únicas adaptadas a tus necesidades específicas.
+* [**Multi-Agentes:**](multi-agents.md) Comprende cómo combinar diferentes tipos de agentes para crear sistemas sofisticados y colaborativos capaces de abordar problemas complejos.
+* [**Modelos:**](/adk-docs/agents/models/) Aprende sobre las diferentes integraciones de LLM disponibles y cómo seleccionar el modelo correcto para tus agentes.

@@ -1,94 +1,93 @@
-# Context
+# Contexto
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-In the Agent Development Kit (ADK), "context" refers to the crucial bundle of information available to your agent and its tools during specific operations. Think of it as the necessary background knowledge and resources needed to handle a current task or conversation turn effectively.
+En el Agent Development Kit (ADK), "contexto" se refiere al paquete crucial de información disponible para tu agente y sus herramientas durante operaciones específicas. Piénsalo como el conocimiento de fondo y los recursos necesarios para manejar una tarea actual o un turno de conversación de manera efectiva.
 
-Agents often need more than just the latest user message to perform well. Context is essential because it enables:
+Los agentes a menudo necesitan más que solo el último mensaje del usuario para funcionar bien. El contexto es esencial porque permite:
 
-1. **Maintaining State:** Remembering details across multiple steps in a conversation (e.g., user preferences, previous calculations, items in a shopping cart). This is primarily managed through **session state**.
-2. **Passing Data:** Sharing information discovered or generated in one step (like an LLM call or a tool execution) with subsequent steps. Session state is key here too.
-3. **Accessing Services:** Interacting with framework capabilities like:
-    * **Artifact Storage:** Saving or loading files or data blobs (like PDFs, images, configuration files) associated with the session.
-    * **Memory:** Searching for relevant information from past interactions or external knowledge sources connected to the user.
-    * **Authentication:** Requesting and retrieving credentials needed by tools to access external APIs securely.
-4. **Identity and Tracking:** Knowing which agent is currently running (`agent.name`) and uniquely identifying the current request-response cycle (`invocation_id`) for logging and debugging.
-5. **Tool-Specific Actions:** Enabling specialized operations within tools, such as requesting authentication or searching memory, which require access to the current interaction's details.
+1. **Mantener Estado:** Recordar detalles a través de múltiples pasos en una conversación (por ejemplo, preferencias del usuario, cálculos previos, elementos en un carrito de compras). Esto se gestiona principalmente a través del **estado de sesión**.
+2. **Pasar Datos:** Compartir información descubierta o generada en un paso (como una llamada LLM o la ejecución de una herramienta) con los pasos subsiguientes. El estado de sesión es clave aquí también.
+3. **Acceder a Servicios:** Interactuar con capacidades del framework como:
+    * **Almacenamiento de Artefactos:** Guardar o cargar archivos o blobs de datos (como PDFs, imágenes, archivos de configuración) asociados con la sesión.
+    * **Memoria:** Buscar información relevante de interacciones pasadas o fuentes de conocimiento externas conectadas al usuario.
+    * **Autenticación:** Solicitar y recuperar credenciales necesarias por las herramientas para acceder a APIs externas de forma segura.
+4. **Identidad y Seguimiento:** Saber qué agente se está ejecutando actualmente (`agent.name`) e identificar de manera única el ciclo actual de solicitud-respuesta (`invocation_id`) para logging y depuración.
+5. **Acciones Específicas de Herramientas:** Habilitar operaciones especializadas dentro de las herramientas, como solicitar autenticación o buscar en memoria, que requieren acceso a los detalles de la interacción actual.
 
-
-The central piece holding all this information together for a single, complete user-request-to-final-response cycle (an **invocation**) is the `InvocationContext`. However, you typically won't create or manage this object directly. The ADK framework creates it when an invocation starts (e.g., via `runner.run_async`) and passes the relevant contextual information implicitly to your agent code, callbacks, and tools.
+La pieza central que mantiene toda esta información junta para un solo ciclo completo de solicitud-de-usuario-a-respuesta-final (una **invocación**) es el `InvocationContext`. Sin embargo, típicamente no crearás ni gestionarás este objeto directamente. El framework ADK lo crea cuando una invocación comienza (por ejemplo, vía `runner.run_async`) y pasa la información contextual relevante de forma implícita a tu código de agente, callbacks y herramientas.
 
 === "Python"
 
     ```python
-    # Conceptual Pseudocode: How the framework provides context (Internal Logic)
+    # Pseudocódigo Conceptual: Cómo el framework proporciona contexto (Lógica Interna)
 
     # runner = Runner(agent=my_root_agent, session_service=..., artifact_service=...)
     # user_message = types.Content(...)
-    # session = session_service.get_session(...) # Or create new
+    # session = session_service.get_session(...) # O crear nueva
 
-    # --- Inside runner.run_async(...) ---
-    # 1. Framework creates the main context for this specific run
+    # --- Dentro de runner.run_async(...) ---
+    # 1. El framework crea el contexto principal para esta ejecución específica
     # invocation_context = InvocationContext(
     #     invocation_id="unique-id-for-this-run",
     #     session=session,
     #     user_content=user_message,
-    #     agent=my_root_agent, # The starting agent
+    #     agent=my_root_agent, # El agente inicial
     #     session_service=session_service,
     #     artifact_service=artifact_service,
     #     memory_service=memory_service,
-    #     # ... other necessary fields ...
+    #     # ... otros campos necesarios ...
     # )
     #
-    # 2. Framework calls the agent's run method, passing the context implicitly
-    #    (The agent's method signature will receive it, e.g., runAsyncImpl(InvocationContext invocationContext))
+    # 2. El framework llama al método run del agente, pasando el contexto implícitamente
+    #    (La firma del método del agente lo recibirá, ej., runAsyncImpl(InvocationContext invocationContext))
     # await my_root_agent.run_async(invocation_context)
-    #   --- End Internal Logic ---
+    #   --- Fin Lógica Interna ---
     #
-    # As a developer, you work with the context objects provided in method arguments.
+    # Como desarrollador, trabajas con los objetos de contexto proporcionados en los argumentos de método.
     ```
 
 === "TypeScript"
 
     ```typescript
-    /* Conceptual Pseudocode: How the framework provides context (Internal Logic) */
+    /* Pseudocódigo Conceptual: Cómo el framework proporciona contexto (Lógica Interna) */
 
     const runner = new InMemoryRunner({ agent: myRootAgent });
     const session = await runner.sessionService.createSession({ ... });
     const userMessage = createUserContent(...);
 
-    // --- Inside runner.runAsync(...) ---
-    // 1. Framework creates the main context for this specific run
+    // --- Dentro de runner.runAsync(...) ---
+    // 1. El framework crea el contexto principal para esta ejecución específica
     const invocationContext = new InvocationContext({
       invocationId: "unique-id-for-this-run",
       session: session,
       userContent: userMessage,
-      agent: myRootAgent, // The starting agent
+      agent: myRootAgent, // El agente inicial
       sessionService: runner.sessionService,
       pluginManager: runner.pluginManager,
-      // ... other necessary fields ...
+      // ... otros campos necesarios ...
     });
     //
-    // 2. Framework calls the agent's run method, passing the context implicitly
+    // 2. El framework llama al método run del agente, pasando el contexto implícitamente
     await myRootAgent.runAsync(invocationContext);
-    //   --- End Internal Logic ---
+    //   --- Fin Lógica Interna ---
 
-    // As a developer, you work with the context objects provided in method arguments.
+    // Como desarrollador, trabajas con los objetos de contexto proporcionados en los argumentos de método.
     ```
 
 === "Go"
 
     ```go
-    /* Conceptual Pseudocode: How the framework provides context (Internal Logic) */
+    /* Pseudocódigo Conceptual: Cómo el framework proporciona contexto (Lógica Interna) */
     --8<-- "examples/go/snippets/context/main.go:conceptual_runner_example"
     ```
 
 === "Java"
 
     ```java
-    /* Conceptual Pseudocode: How the framework provides context (Internal Logic) */
+    /* Pseudocódigo Conceptual: Cómo el framework proporciona contexto (Lógica Interna) */
     InMemoryRunner runner = new InMemoryRunner(agent);
     Session session = runner
         .sessionService()
@@ -110,20 +109,20 @@ The central piece holding all this information together for a single, complete u
     }
     ```
 
-## The Different types of Context
+## Los Diferentes Tipos de Contexto
 
-While `InvocationContext` acts as the comprehensive internal container, ADK provides specialized context objects tailored to specific situations. This ensures you have the right tools and permissions for the task at hand without needing to handle the full complexity of the internal context everywhere. Here are the different "flavors" you'll encounter:
+Mientras `InvocationContext` actúa como el contenedor interno integral, ADK proporciona objetos de contexto especializados adaptados a situaciones específicas. Esto asegura que tengas las herramientas y permisos adecuados para la tarea en cuestión sin necesitar manejar la complejidad completa del contexto interno en todas partes. Aquí están los diferentes "sabores" que encontrarás:
 
 1.  **`InvocationContext`**
-    *   **Where Used:** Received as the `ctx` argument directly within an agent's core implementation methods (`_run_async_impl`, `_run_live_impl`).
-    *   **Purpose:** Provides access to the *entire* state of the current invocation. This is the most comprehensive context object.
-    *   **Key Contents:** Direct access to `session` (including `state` and `events`), the current `agent` instance, `invocation_id`, initial `user_content`, references to configured services (`artifact_service`, `memory_service`, `session_service`), and fields related to live/streaming modes.
-    *   **Use Case:** Primarily used when the agent's core logic needs direct access to the overall session or services, though often state and artifact interactions are delegated to callbacks/tools which use their own contexts. Also used to control the invocation itself (e.g., setting `ctx.end_invocation = True`).
+    *   **Dónde se Usa:** Recibido como el argumento `ctx` directamente dentro de los métodos de implementación principales de un agente (`_run_async_impl`, `_run_live_impl`).
+    *   **Propósito:** Proporciona acceso al estado *completo* de la invocación actual. Este es el objeto de contexto más integral.
+    *   **Contenidos Clave:** Acceso directo a `session` (incluyendo `state` y `events`), la instancia actual del `agent`, `invocation_id`, `user_content` inicial, referencias a servicios configurados (`artifact_service`, `memory_service`, `session_service`), y campos relacionados con modos live/streaming.
+    *   **Caso de Uso:** Usado principalmente cuando la lógica central del agente necesita acceso directo a la sesión general o servicios, aunque a menudo las interacciones de estado y artefactos se delegan a callbacks/herramientas que usan sus propios contextos. También se usa para controlar la invocación en sí (por ejemplo, configurando `ctx.end_invocation = True`).
 
     === "Python"
 
         ```python
-        # Pseudocode: Agent implementation receiving InvocationContext
+        # Pseudocódigo: Implementación de agente recibiendo InvocationContext
         from google.adk.agents import BaseAgent
         from google.adk.agents.invocation_context import InvocationContext
         from google.adk.events import Event
@@ -131,28 +130,28 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
 
         class MyAgent(BaseAgent):
             async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
-                # Direct access example
+                # Ejemplo de acceso directo
                 agent_name = ctx.agent.name
                 session_id = ctx.session.id
                 print(f"Agent {agent_name} running in session {session_id} for invocation {ctx.invocation_id}")
-                # ... agent logic using ctx ...
-                yield # ... event ...
+                # ... lógica del agente usando ctx ...
+                yield # ... evento ...
         ```
 
     === "TypeScript"
 
         ```typescript
-        // Pseudocode: Agent implementation receiving InvocationContext
+        // Pseudocódigo: Implementación de agente recibiendo InvocationContext
         import { BaseAgent, InvocationContext, Event } from '@google/adk';
 
         class MyAgent extends BaseAgent {
           async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
-            // Direct access example
+            // Ejemplo de acceso directo
             const agentName = ctx.agent.name;
             const sessionId = ctx.session.id;
             console.log(`Agent ${agentName} running in session ${sessionId} for invocation ${ctx.invocationId}`);
-            // ... agent logic using ctx ...
-            yield; // ... event ...
+            // ... lógica del agente usando ctx ...
+            yield; // ... evento ...
           }
         }
         ```
@@ -171,7 +170,7 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     === "Java"
 
         ```java
-        // Pseudocode: Agent implementation receiving InvocationContext
+        // Pseudocódigo: Implementación de agente recibiendo InvocationContext
         import com.google.adk.agents.BaseAgent;
         import com.google.adk.agents.InvocationContext;
 
@@ -218,44 +217,44 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
               }
 
             protected Flowable<Event> runAsyncImpl(InvocationContext invocationContext) {
-                // Direct access example
+                // Ejemplo de acceso directo
                 String agentName = invocationContext.agent.name
                 String sessionId = invocationContext.session.id
                 String invocationId = invocationContext.invocationId
                 System.out.println("Agent " + agent_name + " running in session " + session_id + " for invocation " + invocationId)
-                // ... agent logic using ctx ...
+                // ... lógica del agente usando ctx ...
             }
         ```
 
 2.  **`ReadonlyContext`**
-    *   **Where Used:** Provided in scenarios where only read access to basic information is needed and mutation is disallowed (e.g., `InstructionProvider` functions). It's also the base class for other contexts.
-    *   **Purpose:** Offers a safe, read-only view of fundamental contextual details.
-    *   **Key Contents:** `invocation_id`, `agent_name`, and a read-only *view* of the current `state`.
+    *   **Dónde se Usa:** Proporcionado en escenarios donde solo se necesita acceso de lectura a información básica y la mutación no está permitida (por ejemplo, funciones `InstructionProvider`). También es la clase base para otros contextos.
+    *   **Propósito:** Ofrece una vista segura y de solo lectura de detalles contextuales fundamentales.
+    *   **Contenidos Clave:** `invocation_id`, `agent_name`, y una *vista* de solo lectura del `state` actual.
 
     === "Python"
 
         ```python
-        # Pseudocode: Instruction provider receiving ReadonlyContext
+        # Pseudocódigo: Proveedor de instrucciones recibiendo ReadonlyContext
         from google.adk.agents.readonly_context import ReadonlyContext
 
         def my_instruction_provider(context: ReadonlyContext) -> str:
-            # Read-only access example
-            user_tier = context.state().get("user_tier", "standard") # Can read state
-            # context.state['new_key'] = 'value' # This would typically cause an error or be ineffective
+            # Ejemplo de acceso solo lectura
+            user_tier = context.state().get("user_tier", "standard") # Puede leer estado
+            # context.state['new_key'] = 'value' # Esto típicamente causaría un error o sería inefectivo
             return f"Process the request for a {user_tier} user."
         ```
 
     === "TypeScript"
 
         ```typescript
-        // Pseudocode: Instruction provider receiving ReadonlyContext
+        // Pseudocódigo: Proveedor de instrucciones recibiendo ReadonlyContext
         import { ReadonlyContext } from '@google/adk';
 
         function myInstructionProvider(context: ReadonlyContext): string {
-          // Read-only access example
-          // The state object is read-only
+          // Ejemplo de acceso solo lectura
+          // El objeto state es de solo lectura
           const userTier = context.state.get('user_tier') ?? 'standard';
-          // context.state.set('new_key', 'value'); // This would fail or throw an error
+          // context.state.set('new_key', 'value'); // Esto fallaría o lanzaría un error
           return `Process the request for a ${userTier} user.`;
         }
         ```
@@ -271,61 +270,61 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     === "Java"
 
         ```java
-        // Pseudocode: Instruction provider receiving ReadonlyContext
+        // Pseudocódigo: Proveedor de instrucciones recibiendo ReadonlyContext
         import com.google.adk.agents.ReadonlyContext;
 
         public String myInstructionProvider(ReadonlyContext context){
-            // Read-only access example
+            // Ejemplo de acceso solo lectura
             String userTier = context.state().get("user_tier", "standard");
-            context.state().put('new_key', 'value'); //This would typically cause an error
+            context.state().put('new_key', 'value'); // Esto típicamente causaría un error
             return "Process the request for a " + userTier + " user."
         }
         ```
 
 3.  **`CallbackContext`**
-    *   **Where Used:** Passed as `callback_context` to agent lifecycle callbacks (`before_agent_callback`, `after_agent_callback`) and model interaction callbacks (`before_model_callback`, `after_model_callback`).
-    *   **Purpose:** Facilitates inspecting and modifying state, interacting with artifacts, and accessing invocation details *specifically within callbacks*.
-    *   **Key Capabilities (Adds to `ReadonlyContext`):**
-        *   **Mutable `state` Property:** Allows reading *and writing* to session state. Changes made here (`callback_context.state['key'] = value`) are tracked and associated with the event generated by the framework after the callback.
-        *   **Artifact Methods:** `load_artifact(filename)` and `save_artifact(filename, part)` methods for interacting with the configured `artifact_service`.
-        *   Direct `user_content` access.
+    *   **Dónde se Usa:** Pasado como `callback_context` a callbacks del ciclo de vida del agente (`before_agent_callback`, `after_agent_callback`) y callbacks de interacción con el modelo (`before_model_callback`, `after_model_callback`).
+    *   **Propósito:** Facilita inspeccionar y modificar estado, interactuar con artefactos, y acceder a detalles de invocación *específicamente dentro de callbacks*.
+    *   **Capacidades Clave (Agrega a `ReadonlyContext`):**
+        *   **Propiedad `state` Mutable:** Permite leer *y escribir* al estado de sesión. Los cambios hechos aquí (`callback_context.state['key'] = value`) se rastrean y asocian con el evento generado por el framework después del callback.
+        *   **Métodos de Artefactos:** Métodos `load_artifact(filename)` y `save_artifact(filename, part)` para interactuar con el `artifact_service` configurado.
+        *   Acceso directo a `user_content`.
 
     === "Python"
 
         ```python
-        # Pseudocode: Callback receiving CallbackContext
+        # Pseudocódigo: Callback recibiendo CallbackContext
         from google.adk.agents.callback_context import CallbackContext
         from google.adk.models import LlmRequest
         from google.genai import types
         from typing import Optional
 
         def my_before_model_cb(callback_context: CallbackContext, request: LlmRequest) -> Optional[types.Content]:
-            # Read/Write state example
+            # Ejemplo de lectura/escritura de estado
             call_count = callback_context.state.get("model_calls", 0)
-            callback_context.state["model_calls"] = call_count + 1 # Modify state
+            callback_context.state["model_calls"] = call_count + 1 # Modificar estado
 
-            # Optionally load an artifact
+            # Opcionalmente cargar un artefacto
             # config_part = callback_context.load_artifact("model_config.json")
             print(f"Preparing model call #{call_count + 1} for invocation {callback_context.invocation_id}")
-            return None # Allow model call to proceed
+            return None # Permitir que la llamada al modelo proceda
         ```
 
     === "TypeScript"
 
         ```typescript
-        // Pseudocode: Callback receiving CallbackContext
+        // Pseudocódigo: Callback recibiendo CallbackContext
         import { CallbackContext, LlmRequest } from '@google/adk';
         import { Content } from '@google/genai';
 
         function myBeforeModelCb(callbackContext: CallbackContext, request: LlmRequest): Content | undefined {
-          // Read/Write state example
+          // Ejemplo de lectura/escritura de estado
           const callCount = (callbackContext.state.get('model_calls') as number) || 0;
-          callbackContext.state.set('model_calls', callCount + 1); // Modify state
+          callbackContext.state.set('model_calls', callCount + 1); // Modificar estado
 
-          // Optionally load an artifact
+          // Opcionalmente cargar un artefacto
           // const configPart = await callbackContext.loadArtifact('model_config.json');
           console.log(`Preparing model call #${callCount + 1} for invocation ${callbackContext.invocationId}`);
-          return undefined; // Allow model call to proceed
+          return undefined; // Permitir que la llamada al modelo proceda
         }
         ```
 
@@ -343,56 +342,56 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     === "Java"
 
         ```java
-        // Pseudocode: Callback receiving CallbackContext
+        // Pseudocódigo: Callback recibiendo CallbackContext
         import com.google.adk.agents.CallbackContext;
         import com.google.adk.models.LlmRequest;
         import com.google.genai.types.Content;
         import java.util.Optional;
 
         public Maybe<LlmResponse> myBeforeModelCb(CallbackContext callbackContext, LlmRequest request){
-            // Read/Write state example
+            // Ejemplo de lectura/escritura de estado
             callCount = callbackContext.state().get("model_calls", 0)
-            callbackContext.state().put("model_calls") = callCount + 1 # Modify state
+            callbackContext.state().put("model_calls") = callCount + 1 # Modificar estado
 
-            // Optionally load an artifact
+            // Opcionalmente cargar un artefacto
             // Maybe<Part> configPart = callbackContext.loadArtifact("model_config.json");
             System.out.println("Preparing model call " + callCount + 1);
-            return Maybe.empty(); // Allow model call to proceed
+            return Maybe.empty(); // Permitir que la llamada al modelo proceda
         }
         ```
 
 4.  **`ToolContext`**
-    *   **Where Used:** Passed as `tool_context` to the functions backing `FunctionTool`s and to tool execution callbacks (`before_tool_callback`, `after_tool_callback`).
-    *   **Purpose:** Provides everything `CallbackContext` does, plus specialized methods essential for tool execution, like handling authentication, searching memory, and listing artifacts.
-    *   **Key Capabilities (Adds to `CallbackContext`):**
-        *   **Authentication Methods:** `request_credential(auth_config)` to trigger an auth flow, and `get_auth_response(auth_config)` to retrieve credentials provided by the user/system.
-        *   **Artifact Listing:** `list_artifacts()` to discover available artifacts in the session.
-        *   **Memory Search:** `search_memory(query)` to query the configured `memory_service`.
-        *   **`function_call_id` Property:** Identifies the specific function call from the LLM that triggered this tool execution, crucial for linking authentication requests or responses back correctly.
-        *   **`actions` Property:** Direct access to the `EventActions` object for this step, allowing the tool to signal state changes, auth requests, etc.
+    *   **Dónde se Usa:** Pasado como `tool_context` a las funciones que respaldan `FunctionTool`s y a callbacks de ejecución de herramientas (`before_tool_callback`, `after_tool_callback`).
+    *   **Propósito:** Proporciona todo lo que `CallbackContext` hace, más métodos especializados esenciales para la ejecución de herramientas, como manejar autenticación, buscar en memoria y listar artefactos.
+    *   **Capacidades Clave (Agrega a `CallbackContext`):**
+        *   **Métodos de Autenticación:** `request_credential(auth_config)` para activar un flujo de autenticación, y `get_auth_response(auth_config)` para recuperar credenciales proporcionadas por el usuario/sistema.
+        *   **Listado de Artefactos:** `list_artifacts()` para descubrir artefactos disponibles en la sesión.
+        *   **Búsqueda en Memoria:** `search_memory(query)` para consultar el `memory_service` configurado.
+        *   **Propiedad `function_call_id`:** Identifica la llamada de función específica del LLM que activó esta ejecución de herramienta, crucial para vincular solicitudes o respuestas de autenticación correctamente.
+        *   **Propiedad `actions`:** Acceso directo al objeto `EventActions` para este paso, permitiendo que la herramienta señale cambios de estado, solicitudes de autenticación, etc.
 
     === "Python"
 
         ```python
-        # Pseudocode: Tool function receiving ToolContext
+        # Pseudocódigo: Función de herramienta recibiendo ToolContext
         from google.adk.tools import ToolContext
         from typing import Dict, Any
 
-        # Assume this function is wrapped by a FunctionTool
+        # Asumir que esta función está envuelta por un FunctionTool
         def search_external_api(query: str, tool_context: ToolContext) -> Dict[str, Any]:
             api_key = tool_context.state.get("api_key")
             if not api_key:
-                # Define required auth config
+                # Definir configuración de autenticación requerida
                 # auth_config = AuthConfig(...)
-                # tool_context.request_credential(auth_config) # Request credentials
-                # Use the 'actions' property to signal the auth request has been made
+                # tool_context.request_credential(auth_config) # Solicitar credenciales
+                # Usar la propiedad 'actions' para señalar que se ha hecho la solicitud de autenticación
                 # tool_context.actions.requested_auth_configs[tool_context.function_call_id] = auth_config
                 return {"status": "Auth Required"}
 
-            # Use the API key...
+            # Usar la API key...
             print(f"Tool executing for query '{query}' using API key. Invocation: {tool_context.invocation_id}")
 
-            # Optionally search memory or list artifacts
+            # Opcionalmente buscar en memoria o listar artefactos
             # relevant_docs = tool_context.search_memory(f"info related to {query}")
             # available_files = tool_context.list_artifacts()
 
@@ -402,26 +401,26 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     === "TypeScript"
 
         ```typescript
-        // Pseudocode: Tool function receiving ToolContext
+        // Pseudocódigo: Función de herramienta recibiendo ToolContext
         import { ToolContext } from '@google/adk';
 
-        // __Assume this function is wrapped by a FunctionTool__
+        // __Asumir que esta función está envuelta por un FunctionTool__
         function searchExternalApi(query: string, toolContext: ToolContext): { [key: string]: string } {
           const apiKey = toolContext.state.get('api_key') as string;
           if (!apiKey) {
-             // Define required auth config
+             // Definir configuración de autenticación requerida
              // const authConfig = new AuthConfig(...);
-             // toolContext.requestCredential(authConfig); // Request credentials
-             // The 'actions' property is now automatically updated by requestCredential
+             // toolContext.requestCredential(authConfig); // Solicitar credenciales
+             // La propiedad 'actions' ahora se actualiza automáticamente por requestCredential
              return { status: 'Auth Required' };
           }
 
-          // Use the API key...
+          // Usar la API key...
           console.log(`Tool executing for query '${query}' using API key. Invocation: ${toolContext.invocationId}`);
 
-          // Optionally search memory or list artifacts
-          // Note: accessing services like memory/artifacts is typically async in TS,
-          // so you would need to mark this function 'async' if you reused them.
+          // Opcionalmente buscar en memoria o listar artefactos
+          // Nota: acceder a servicios como memoria/artefactos es típicamente async en TS,
+          // así que necesitarías marcar esta función como 'async' si los reutilizaras.
           // toolContext.searchMemory(`info related to ${query}`).then(...)
           // toolContext.listArtifacts().then(...)
 
@@ -440,97 +439,96 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     === "Java"
 
         ```java
-        // Pseudocode: Tool function receiving ToolContext
+        // Pseudocódigo: Función de herramienta recibiendo ToolContext
         import com.google.adk.tools.ToolContext;
         import java.util.HashMap;
         import java.util.Map;
 
-        // Assume this function is wrapped by a FunctionTool
+        // Asumir que esta función está envuelta por un FunctionTool
         public Map<String, Object> searchExternalApi(String query, ToolContext toolContext){
             String apiKey = toolContext.state.get("api_key");
             if(apiKey.isEmpty()){
-                // Define required auth config
+                // Definir configuración de autenticación requerida
                 // authConfig = AuthConfig(...);
-                // toolContext.requestCredential(authConfig); # Request credentials
-                // Use the 'actions' property to signal the auth request has been made
+                // toolContext.requestCredential(authConfig); # Solicitar credenciales
+                // Usar la propiedad 'actions' para señalar que se ha hecho la solicitud de autenticación
                 ...
                 return Map.of("status", "Auth Required");
 
-            // Use the API key...
+            // Usar la API key...
             System.out.println("Tool executing for query " + query + " using API key. ");
 
-            // Optionally list artifacts
+            // Opcionalmente listar artefactos
             // Single<List<String>> availableFiles = toolContext.listArtifacts();
 
             return Map.of("result", "Data for " + query + " fetched");
         }
         ```
 
-Understanding these different context objects and when to use them is key to effectively managing state, accessing services, and controlling the flow of your ADK application. The next section will detail common tasks you can perform using these contexts.
+Entender estos diferentes objetos de contexto y cuándo usarlos es clave para gestionar efectivamente el estado, acceder a servicios y controlar el flujo de tu aplicación ADK. La siguiente sección detallará tareas comunes que puedes realizar usando estos contextos.
 
+## Tareas Comunes Usando Contexto
 
-## Common Tasks Using Context
+Ahora que entiendes los diferentes objetos de contexto, enfoquémonos en cómo usarlos para tareas comunes al construir tus agentes y herramientas.
 
-Now that you understand the different context objects, let's focus on how to use them for common tasks when building your agents and tools.
+### Acceder a Información
 
-### Accessing Information
+Frecuentemente necesitarás leer información almacenada dentro del contexto.
 
-You'll frequently need to read information stored within the context.
-
-*   **Reading Session State:** Access data saved in previous steps or user/app-level settings. Use dictionary-like access on the `state` property.
+*   **Leer Estado de Sesión:** Acceder datos guardados en pasos previos o configuraciones de nivel usuario/app. Usa acceso tipo diccionario en la propiedad `state`.
 
     === "Python"
 
         ```python
-        # Pseudocode: In a Tool function
+        # Pseudocódigo: En una función de Herramienta
         from google.adk.tools import ToolContext
 
         def my_tool(tool_context: ToolContext, **kwargs):
             user_pref = tool_context.state.get("user_display_preference", "default_mode")
-            api_endpoint = tool_context.state.get("app:api_endpoint") # Read app-level state
+            api_endpoint = tool_context.state.get("app:api_endpoint") # Leer estado a nivel app
 
             if user_pref == "dark_mode":
-                # ... apply dark mode logic ...
+                # ... aplicar lógica de modo oscuro ...
                 pass
             print(f"Using API endpoint: {api_endpoint}")
-            # ... rest of tool logic ...
+            # ... resto de la lógica de la herramienta ...
 
-        # Pseudocode: In a Callback function
+        # Pseudocódigo: En una función de Callback
         from google.adk.agents.callback_context import CallbackContext
 
         def my_callback(callback_context: CallbackContext, **kwargs):
-            last_tool_result = callback_context.state.get("temp:last_api_result") # Read temporary state
+            last_tool_result = callback_context.state.get("temp:last_api_result") # Leer estado temporal
             if last_tool_result:
                 print(f"Found temporary result from last tool: {last_tool_result}")
-            # ... callback logic ...
+            # ... lógica del callback ...
         ```
 
     === "TypeScript"
 
         ```typescript
-        // Pseudocode: In a Tool function
+        // Pseudocódigo: En una función de Herramienta
         import { ToolContext } from '@google/adk';
 
         async function myTool(toolContext: ToolContext) {
           const userPref = toolContext.state.get('user_display_preference', 'default_mode');
-          const apiEndpoint = toolContext.state.get('app:api_endpoint'); // Read app-level state
+          const apiEndpoint = toolContext.state.get('app:api_endpoint'); // Leer estado a nivel app
 
           if (userPref === 'dark_mode') {
-            // ... apply dark mode logic ...
+            // ... aplicar lógica de modo oscuro ...
           }
           console.log(`Using API endpoint: ${apiEndpoint}`);
-          // ... rest of tool logic ...
+          // ... resto de la lógica de la herramienta ...
         }
 
-        // Pseudocode: In a Callback function
+        // Pseudocódigo: En una función de Callback
         import { CallbackContext } from '@google/adk';
 
         function myCallback(callbackContext: CallbackContext) {
-          const lastToolResult = callbackContext.state.get('temp:last_api_result'); // Read temporary state
+          const lastToolResult = callbackContext.state.get('temp:last_api_result'); // Leer estado temporal
           if (lastToolResult) {
             console.log(`Found temporary result from last tool: ${lastToolResult}`);
           }
-          // ... callback logic ...
+          // ... lógica del callback ...
         }
         ```
 
@@ -552,45 +550,45 @@ You'll frequently need to read information stored within the context.
     === "Java"
 
         ```java
-        // Pseudocode: In a Tool function
+        // Pseudocódigo: En una función de Herramienta
         import com.google.adk.tools.ToolContext;
 
         public void myTool(ToolContext toolContext){
            String userPref = toolContext.state().get("user_display_preference");
-           String apiEndpoint = toolContext.state().get("app:api_endpoint"); // Read app-level state
+           String apiEndpoint = toolContext.state().get("app:api_endpoint"); // Leer estado a nivel app
            if(userPref.equals("dark_mode")){
-                // ... apply dark mode logic ...
+                // ... aplicar lógica de modo oscuro ...
                 pass
             }
            System.out.println("Using API endpoint: " + api_endpoint);
-           // ... rest of tool logic ...
+           // ... resto de la lógica de la herramienta ...
         }
 
 
-        // Pseudocode: In a Callback function
+        // Pseudocódigo: En una función de Callback
         import com.google.adk.agents.CallbackContext;
 
             public void myCallback(CallbackContext callbackContext){
-                String lastToolResult = (String) callbackContext.state().get("temp:last_api_result"); // Read temporary state
+                String lastToolResult = (String) callbackContext.state().get("temp:last_api_result"); // Leer estado temporal
             }
             if(!(lastToolResult.isEmpty())){
                 System.out.println("Found temporary result from last tool: " + lastToolResult);
             }
-            // ... callback logic ...
+            // ... lógica del callback ...
         ```
 
-*   **Getting Current Identifiers:** Useful for logging or custom logic based on the current operation.
+*   **Obtener Identificadores Actuales:** Útil para logging o lógica personalizada basada en la operación actual.
 
     === "Python"
 
         ```python
-        # Pseudocode: In any context (ToolContext shown)
+        # Pseudocódigo: En cualquier contexto (ToolContext mostrado)
         from google.adk.tools import ToolContext
 
         def log_tool_usage(tool_context: ToolContext, **kwargs):
             agent_name = tool_context.agent_name
             inv_id = tool_context.invocation_id
-            func_call_id = getattr(tool_context, 'function_call_id', 'N/A') # Specific to ToolContext
+            func_call_id = getattr(tool_context, 'function_call_id', 'N/A') # Específico a ToolContext
 
             print(f"Log: Invocation={inv_id}, Agent={agent_name}, FunctionCallID={func_call_id} - Tool Executed.")
         ```
@@ -598,13 +596,13 @@ You'll frequently need to read information stored within the context.
     === "TypeScript"
 
         ```typescript
-        // Pseudocode: In any context (ToolContext shown)
+        // Pseudocódigo: En cualquier contexto (ToolContext mostrado)
         import { ToolContext } from '@google/adk';
 
         function logToolUsage(toolContext: ToolContext) {
           const agentName = toolContext.agentName;
           const invId = toolContext.invocationId;
-          const functionCallId = toolContext.functionCallId ?? 'N/A'; // Specific to ToolContext
+          const functionCallId = toolContext.functionCallId ?? 'N/A'; // Específico a ToolContext
 
           console.log(`Log: Invocation=${invId}, Agent=${agentName}, FunctionCallID=${functionCallId} - Tool Executed.`);
         }
@@ -621,23 +619,23 @@ You'll frequently need to read information stored within the context.
     === "Java"
 
         ```java
-        // Pseudocode: In any context (ToolContext shown)
+        // Pseudocódigo: En cualquier contexto (ToolContext mostrado)
          import com.google.adk.tools.ToolContext;
 
          public void logToolUsage(ToolContext toolContext){
                     String agentName = toolContext.agentName;
                     String invId = toolContext.invocationId;
-                    String functionCallId = toolContext.functionCallId().get(); // Specific to ToolContext
+                    String functionCallId = toolContext.functionCallId().get(); // Específico a ToolContext
                     System.out.println("Log: Invocation= " + invId &+ " Agent= " + agentName);
                 }
         ```
 
-*   **Accessing the Initial User Input:** Refer back to the message that started the current invocation.
+*   **Acceder a la Entrada Inicial del Usuario:** Referirse de vuelta al mensaje que inició la invocación actual.
 
     === "Python"
 
         ```python
-        # Pseudocode: In a Callback
+        # Pseudocódigo: En un Callback
         from google.adk.agents.callback_context import CallbackContext
 
         def check_initial_intent(callback_context: CallbackContext, **kwargs):
@@ -647,7 +645,7 @@ You'll frequently need to read information stored within the context.
 
             print(f"This invocation started with user input: '{initial_text}'")
 
-        # Pseudocode: In an Agent's _run_async_impl
+        # Pseudocódigo: En el _run_async_impl de un Agente
         # async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
         #     if ctx.user_content and ctx.user_content.parts:
         #         initial_text = ctx.user_content.parts[0].text
@@ -658,7 +656,7 @@ You'll frequently need to read information stored within the context.
     === "TypeScript"
 
         ```typescript
-        // Pseudocode: In a Callback
+        // Pseudocódigo: En un Callback
         import { CallbackContext } from '@google/adk';
 
         function checkInitialIntent(callbackContext: CallbackContext) {
@@ -686,7 +684,7 @@ You'll frequently need to read information stored within the context.
     === "Java"
 
         ```java
-        // Pseudocode: In a Callback
+        // Pseudocódigo: En un Callback
         import com.google.adk.agents.CallbackContext;
 
         public void checkInitialIntent(CallbackContext callbackContext){
@@ -699,53 +697,53 @@ You'll frequently need to read information stored within the context.
         }
         ```
 
-### Managing State
+### Gestionar Estado
 
-State is crucial for memory and data flow. When you modify state using `CallbackContext` or `ToolContext`, the changes are automatically tracked and persisted by the framework.
+El estado es crucial para la memoria y el flujo de datos. Cuando modificas el estado usando `CallbackContext` o `ToolContext`, los cambios se rastrean y persisten automáticamente por el framework.
 
-*   **How it Works:** Writing to `callback_context.state['my_key'] = my_value` or `tool_context.state['my_key'] = my_value` adds this change to the `EventActions.state_delta` associated with the current step's event. The `SessionService` then applies these deltas when persisting the event.
+*   **Cómo Funciona:** Escribir a `callback_context.state['my_key'] = my_value` o `tool_context.state['my_key'] = my_value` agrega este cambio al `EventActions.state_delta` asociado con el evento del paso actual. El `SessionService` luego aplica estos deltas al persistir el evento.
 
-*  **Passing Data Between Tools**
+*  **Pasar Datos Entre Herramientas**
 
     === "Python"
 
         ```python
-        # Pseudocode: Tool 1 - Fetches user ID
+        # Pseudocódigo: Herramienta 1 - Obtiene ID de usuario
         from google.adk.tools import ToolContext
         import uuid
 
         def get_user_profile(tool_context: ToolContext) -> dict:
-            user_id = str(uuid.uuid4()) # Simulate fetching ID
-            # Save the ID to state for the next tool
+            user_id = str(uuid.uuid4()) # Simular obtención de ID
+            # Guardar el ID en el estado para la siguiente herramienta
             tool_context.state["temp:current_user_id"] = user_id
             return {"profile_status": "ID generated"}
 
-        # Pseudocode: Tool 2 - Uses user ID from state
+        # Pseudocódigo: Herramienta 2 - Usa ID de usuario del estado
         def get_user_orders(tool_context: ToolContext) -> dict:
             user_id = tool_context.state.get("temp:current_user_id")
             if not user_id:
                 return {"error": "User ID not found in state"}
 
             print(f"Fetching orders for user ID: {user_id}")
-            # ... logic to fetch orders using user_id ...
+            # ... lógica para obtener órdenes usando user_id ...
             return {"orders": ["order123", "order456"]}
         ```
 
     === "TypeScript"
 
         ```typescript
-        // Pseudocode: Tool 1 - Fetches user ID
+        // Pseudocódigo: Herramienta 1 - Obtiene ID de usuario
         import { ToolContext } from '@google/adk';
         import { v4 as uuidv4 } from 'uuid';
 
         function getUserProfile(toolContext: ToolContext): Record<string, string> {
-          const userId = uuidv4(); // Simulate fetching ID
-          // Save the ID to state for the next tool
+          const userId = uuidv4(); // Simular obtención de ID
+          // Guardar el ID en el estado para la siguiente herramienta
           toolContext.state.set('temp:current_user_id', userId);
           return { profile_status: 'ID generated' };
         }
 
-        // Pseudocode: Tool 2 - Uses user ID from state
+        // Pseudocódigo: Herramienta 2 - Usa ID de usuario del estado
         function getUserOrders(toolContext: ToolContext): Record<string, string | string[]> {
           const userId = toolContext.state.get('temp:current_user_id');
           if (!userId) {
@@ -753,7 +751,7 @@ State is crucial for memory and data flow. When you modify state using `Callback
           }
 
           console.log(`Fetching orders for user ID: ${userId}`);
-          // ... logic to fetch orders using user_id ...
+          // ... lógica para obtener órdenes usando user_id ...
           return { orders: ['order123', 'order456'] };
         }
         ```
@@ -771,39 +769,39 @@ State is crucial for memory and data flow. When you modify state using `Callback
     === "Java"
 
         ```java
-        // Pseudocode: Tool 1 - Fetches user ID
+        // Pseudocódigo: Herramienta 1 - Obtiene ID de usuario
         import com.google.adk.tools.ToolContext;
         import java.util.UUID;
 
         public Map<String, String> getUserProfile(ToolContext toolContext){
             String userId = UUID.randomUUID().toString();
-            // Save the ID to state for the next tool
+            // Guardar el ID en el estado para la siguiente herramienta
             toolContext.state().put("temp:current_user_id", user_id);
             return Map.of("profile_status", "ID generated");
         }
 
-        // Pseudocode: Tool 2 - Uses user ID from state
+        // Pseudocódigo: Herramienta 2 - Usa ID de usuario del estado
         public  Map<String, String> getUserOrders(ToolContext toolContext){
             String userId = toolContext.state().get("temp:current_user_id");
             if(userId.isEmpty()){
                 return Map.of("error", "User ID not found in state");
             }
             System.out.println("Fetching orders for user id: " + userId);
-             // ... logic to fetch orders using user_id ...
+             // ... lógica para obtener órdenes usando user_id ...
             return Map.of("orders", "order123");
         }
         ```
 
-*   **Updating User Preferences:**
+*   **Actualizar Preferencias del Usuario:**
 
     === "Python"
 
         ```python
-        # Pseudocode: Tool or Callback identifies a preference
-        from google.adk.tools import ToolContext # Or CallbackContext
+        # Pseudocódigo: Herramienta o Callback identifica una preferencia
+        from google.adk.tools import ToolContext # O CallbackContext
 
         def set_user_preference(tool_context: ToolContext, preference: str, value: str) -> dict:
-            # Use 'user:' prefix for user-level state (if using a persistent SessionService)
+            # Usar prefijo 'user:' para estado a nivel usuario (si se usa un SessionService persistente)
             state_key = f"user:{preference}"
             tool_context.state[state_key] = value
             print(f"Set user preference '{preference}' to '{value}'")
@@ -813,11 +811,11 @@ State is crucial for memory and data flow. When you modify state using `Callback
     === "TypeScript"
 
         ```typescript
-        // Pseudocode: Tool or Callback identifies a preference
-        import { ToolContext } from '@google/adk'; // Or CallbackContext
+        // Pseudocódigo: Herramienta o Callback identifica una preferencia
+        import { ToolContext } from '@google/adk'; // O CallbackContext
 
         function setUserPreference(toolContext: ToolContext, preference: string, value: string): Record<string, string> {
-          // Use 'user:' prefix for user-level state (if using a persistent SessionService)
+          // Usar prefijo 'user:' para estado a nivel usuario (si se usa un SessionService persistente)
           const stateKey = `user:${preference}`;
           toolContext.state.set(stateKey, value);
           console.log(`Set user preference '${preference}' to '${value}'`);
@@ -836,11 +834,11 @@ State is crucial for memory and data flow. When you modify state using `Callback
     === "Java"
 
         ```java
-        // Pseudocode: Tool or Callback identifies a preference
-        import com.google.adk.tools.ToolContext; // Or CallbackContext
+        // Pseudocódigo: Herramienta o Callback identifica una preferencia
+        import com.google.adk.tools.ToolContext; // O CallbackContext
 
         public Map<String, String> setUserPreference(ToolContext toolContext, String preference, String value){
-            // Use 'user:' prefix for user-level state (if using a persistent SessionService)
+            // Usar prefijo 'user:' para estado a nivel usuario (si se usa un SessionService persistente)
             String stateKey = "user:" + preference;
             toolContext.state().put(stateKey, value);
             System.out.println("Set user preference '" + preference + "' to '" + value + "'");
@@ -848,63 +846,63 @@ State is crucial for memory and data flow. When you modify state using `Callback
         }
         ```
 
-*   **State Prefixes:** While basic state is session-specific, prefixes like `app:` and `user:` can be used with persistent `SessionService` implementations (like `DatabaseSessionService` or `VertexAiSessionService`) to indicate broader scope (app-wide or user-wide across sessions). `temp:` can denote data only relevant within the current invocation.
+*   **Prefijos de Estado:** Mientras que el estado básico es específico de la sesión, prefijos como `app:` y `user:` pueden usarse con implementaciones persistentes de `SessionService` (como `DatabaseSessionService` o `VertexAiSessionService`) para indicar un alcance más amplio (a nivel app o usuario a través de sesiones). `temp:` puede denotar datos solo relevantes dentro de la invocación actual.
 
-### Working with Artifacts
+### Trabajar con Artefactos
 
-Use artifacts to handle files or large data blobs associated with the session. Common use case: processing uploaded documents.
+Usa artefactos para manejar archivos o blobs de datos grandes asociados con la sesión. Caso de uso común: procesar documentos cargados.
 
-*   **Document Summarizer Example Flow:**
+*   **Ejemplo de Flujo de Resumidor de Documentos:**
 
-    1.  **Ingest Reference (e.g., in a Setup Tool or Callback):** Save the *path or URI* of the document, not the entire content, as an artifact.
+    1.  **Ingerir Referencia (por ejemplo, en una Herramienta de Configuración o Callback):** Guardar la *ruta o URI* del documento, no el contenido completo, como un artefacto.
 
         === "Python"
 
                ```python
-               # Pseudocode: In a callback or initial tool
-               from google.adk.agents.callback_context import CallbackContext # Or ToolContext
+               # Pseudocódigo: En un callback o herramienta inicial
+               from google.adk.agents.callback_context import CallbackContext # O ToolContext
                from google.genai import types
 
                def save_document_reference(context: CallbackContext, file_path: str) -> None:
-                   # Assume file_path is something like "gs://my-bucket/docs/report.pdf" or "/local/path/to/report.pdf"
+                   # Asumir que file_path es algo como "gs://my-bucket/docs/report.pdf" o "/local/path/to/report.pdf"
                    try:
-                       # Create a Part containing the path/URI text
+                       # Crear un Part conteniendo el texto de la ruta/URI
                        artifact_part = types.Part(text=file_path)
                        version = context.save_artifact("document_to_summarize.txt", artifact_part)
                        print(f"Saved document reference '{file_path}' as artifact version {version}")
-                       # Store the filename in state if needed by other tools
+                       # Almacenar el nombre del archivo en el estado si es necesario para otras herramientas
                        context.state["temp:doc_artifact_name"] = "document_to_summarize.txt"
                    except ValueError as e:
-                       print(f"Error saving artifact: {e}") # E.g., Artifact service not configured
+                       print(f"Error saving artifact: {e}") # Por ejemplo, Servicio de artefactos no configurado
                    except Exception as e:
                        print(f"Unexpected error saving artifact reference: {e}")
 
-               # Example usage:
+               # Ejemplo de uso:
                # save_document_reference(callback_context, "gs://my-bucket/docs/report.pdf")
                ```
 
         === "TypeScript"
 
                ```typescript
-               // Pseudocode: In a callback or initial tool
-               import { CallbackContext } from '@google/adk'; // Or ToolContext
+               // Pseudocódigo: En un callback o herramienta inicial
+               import { CallbackContext } from '@google/adk'; // O ToolContext
                import type { Part } from '@google/genai';
 
                async function saveDocumentReference(context: CallbackContext, filePath: string) {
-                 // Assume filePath is something like "gs://my-bucket/docs/report.pdf" or "/local/path/to/report.pdf"
+                 // Asumir que filePath es algo como "gs://my-bucket/docs/report.pdf" o "/local/path/to/report.pdf"
                  try {
-                   // Create a Part containing the path/URI text
+                   // Crear un Part conteniendo el texto de la ruta/URI
                    const artifactPart: Part = { text: filePath };
                    const version = await context.saveArtifact('document_to_summarize.txt', artifactPart);
                    console.log(`Saved document reference '${filePath}' as artifact version ${version}`);
-                   // Store the filename in state if needed by other tools
+                   // Almacenar el nombre del archivo en el estado si es necesario para otras herramientas
                    context.state.set('temp:doc_artifact_name', 'document_to_summarize.txt');
                  } catch (e) {
                    console.error(`Unexpected error saving artifact reference: ${e}`);
                  }
                }
 
-               // Example usage:
+               // Ejemplo de uso:
                // saveDocumentReference(callbackContext, "gs://my-bucket/docs/report.pdf");
                ```
 
@@ -922,40 +920,40 @@ Use artifacts to handle files or large data blobs associated with the session. C
         === "Java"
 
                ```java
-               // Pseudocode: In a callback or initial tool
+               // Pseudocódigo: En un callback o herramienta inicial
                import com.google.adk.agents.CallbackContext;
                import com.google.genai.types.Content;
                import com.google.genai.types.Part;
 
 
                pubic void saveDocumentReference(CallbackContext context, String filePath){
-                   // Assume file_path is something like "gs://my-bucket/docs/report.pdf" or "/local/path/to/report.pdf"
+                   // Asumir que file_path es algo como "gs://my-bucket/docs/report.pdf" o "/local/path/to/report.pdf"
                    try{
-                       // Create a Part containing the path/URI text
+                       // Crear un Part conteniendo el texto de la ruta/URI
                        Part artifactPart = types.Part(filePath)
                        Optional<Integer> version = context.saveArtifact("document_to_summarize.txt", artifactPart)
                        System.out.println("Saved document reference" + filePath + " as artifact version " + version);
-                       // Store the filename in state if needed by other tools
+                       // Almacenar el nombre del archivo en el estado si es necesario para otras herramientas
                        context.state().put("temp:doc_artifact_name", "document_to_summarize.txt");
                    } catch(Exception e){
                        System.out.println("Unexpected error saving artifact reference: " + e);
                    }
                }
 
-               // Example usage:
+               // Ejemplo de uso:
                // saveDocumentReference(context, "gs://my-bucket/docs/report.pdf")
                ```
 
-    2.  **Summarizer Tool:** Load the artifact to get the path/URI, read the actual document content using appropriate libraries, summarize, and return the result.
+    2.  **Herramienta Resumidora:** Cargar el artefacto para obtener la ruta/URI, leer el contenido real del documento usando bibliotecas apropiadas, resumir y devolver el resultado.
 
         === "Python"
 
             ```python
-            # Pseudocode: In the Summarizer tool function
+            # Pseudocódigo: En la función de herramienta Resumidora
             from google.adk.tools import ToolContext
             from google.genai import types
-            # Assume libraries like google.cloud.storage or built-in open are available
-            # Assume a 'summarize_text' function exists
+            # Asumir que bibliotecas como google.cloud.storage o open integrado están disponibles
+            # Asumir que existe una función 'summarize_text'
             # from my_summarizer_lib import summarize_text
 
             def summarize_document_tool(tool_context: ToolContext) -> dict:
@@ -964,7 +962,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
                     return {"error": "Document artifact name not found in state."}
 
                 try:
-                    # 1. Load the artifact part containing the path/URI
+                    # 1. Cargar el part del artefacto conteniendo la ruta/URI
                     artifact_part = tool_context.load_artifact(artifact_name)
                     if not artifact_part or not artifact_part.text:
                         return {"error": f"Could not load artifact or artifact has no text path: {artifact_name}"}
@@ -972,28 +970,28 @@ Use artifacts to handle files or large data blobs associated with the session. C
                     file_path = artifact_part.text
                     print(f"Loaded document reference: {file_path}")
 
-                    # 2. Read the actual document content (outside ADK context)
+                    # 2. Leer el contenido real del documento (fuera del contexto ADK)
                     document_content = ""
                     if file_path.startswith("gs://"):
-                        # Example: Use GCS client library to download/read
+                        # Ejemplo: Usar biblioteca cliente GCS para descargar/leer
                         # from google.cloud import storage
                         # client = storage.Client()
                         # blob = storage.Blob.from_string(file_path, client=client)
-                        # document_content = blob.download_as_text() # Or bytes depending on format
-                        pass # Replace with actual GCS reading logic
+                        # document_content = blob.download_as_text() # O bytes dependiendo del formato
+                        pass # Reemplazar con lógica real de lectura GCS
                     elif file_path.startswith("/"):
-                         # Example: Use local file system
+                         # Ejemplo: Usar sistema de archivos local
                          with open(file_path, 'r', encoding='utf-8') as f:
                              document_content = f.read()
                     else:
                         return {"error": f"Unsupported file path scheme: {file_path}"}
 
-                    # 3. Summarize the content
+                    # 3. Resumir el contenido
                     if not document_content:
                          return {"error": "Failed to read document content."}
 
-                    # summary = summarize_text(document_content) # Call your summarization logic
-                    summary = f"Summary of content from {file_path}" # Placeholder
+                    # summary = summarize_text(document_content) # Llamar tu lógica de resumen
+                    summary = f"Summary of content from {file_path}" # Marcador de posición
 
                     return {"summary": summary}
 
@@ -1001,14 +999,14 @@ Use artifacts to handle files or large data blobs associated with the session. C
                      return {"error": f"Artifact service error: {e}"}
                 except FileNotFoundError:
                      return {"error": f"Local file not found: {file_path}"}
-                # except Exception as e: # Catch specific exceptions for GCS etc.
+                # except Exception as e: # Capturar excepciones específicas para GCS etc.
                 #      return {"error": f"Error reading document {file_path}: {e}"}
             ```
 
         === "TypeScript"
 
             ```typescript
-            // Pseudocode: In the Summarizer tool function
+            // Pseudocódigo: En la función de herramienta Resumidora
             import { ToolContext } from '@google/adk';
 
             async function summarizeDocumentTool(toolContext: ToolContext): Promise<Record<string, string>> {
@@ -1018,7 +1016,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
               }
 
               try {
-                // 1. Load the artifact part containing the path/URI
+                // 1. Cargar el part del artefacto conteniendo la ruta/URI
                 const artifactPart = await toolContext.loadArtifact(artifactName);
                 if (!artifactPart?.text) {
                   return { error: `Could not load artifact or artifact has no text path: ${artifactName}` };
@@ -1027,30 +1025,30 @@ Use artifacts to handle files or large data blobs associated with the session. C
                 const filePath = artifactPart.text;
                 console.log(`Loaded document reference: ${filePath}`);
 
-                // 2. Read the actual document content (outside ADK context)
+                // 2. Leer el contenido real del documento (fuera del contexto ADK)
                 let documentContent = '';
                 if (filePath.startsWith('gs://')) {
-                  // Example: Use GCS client library to download/read
+                  // Ejemplo: Usar biblioteca cliente GCS para descargar/leer
                   // const storage = new Storage();
                   // const bucket = storage.bucket('my-bucket');
                   // const file = bucket.file(filePath.replace('gs://my-bucket/', ''));
                   // const [contents] = await file.download();
                   // documentContent = contents.toString();
                 } else if (filePath.startsWith('/')) {
-                  // Example: Use local file system
+                  // Ejemplo: Usar sistema de archivos local
                   // import { readFile } from 'fs/promises';
                   // documentContent = await readFile(filePath, 'utf8');
                 } else {
                   return { error: `Unsupported file path scheme: ${filePath}` };
                 }
 
-                // 3. Summarize the content
+                // 3. Resumir el contenido
                 if (!documentContent) {
                    return { error: 'Failed to read document content.' };
                 }
 
-                // const summary = summarizeText(documentContent); // Call your summarization logic
-                const summary = `Summary of content from ${filePath}`; // Placeholder
+                // const summary = summarizeText(documentContent); // Llamar tu lógica de resumen
+                const summary = `Summary of content from ${filePath}`; // Marcador de posición
 
                 return { summary };
 
@@ -1071,7 +1069,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
         === "Java"
 
             ```java
-            // Pseudocode: In the Summarizer tool function
+            // Pseudocódigo: En la función de herramienta Resumidora
             import com.google.adk.tools.ToolContext;
             import com.google.genai.types.Content;
             import com.google.genai.types.Part;
@@ -1082,7 +1080,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
                     return Map.of("error", "Document artifact name not found in state.");
                 }
                 try{
-                    // 1. Load the artifact part containing the path/URI
+                    // 1. Cargar el part del artefacto conteniendo la ruta/URI
                     Maybe<Part> artifactPart = toolContext.loadArtifact(artifactName);
                     if((artifactPart == null) || (artifactPart.text().isEmpty())){
                         return Map.of("error", "Could not load artifact or artifact has no text path: " + artifactName);
@@ -1090,24 +1088,24 @@ Use artifacts to handle files or large data blobs associated with the session. C
                     filePath = artifactPart.text();
                     System.out.println("Loaded document reference: " + filePath);
 
-                    // 2. Read the actual document content (outside ADK context)
+                    // 2. Leer el contenido real del documento (fuera del contexto ADK)
                     String documentContent = "";
                     if(filePath.startsWith("gs://")){
-                        // Example: Use GCS client library to download/read into documentContent
-                        pass; // Replace with actual GCS reading logic
+                        // Ejemplo: Usar biblioteca cliente GCS para descargar/leer en documentContent
+                        pass; // Reemplazar con lógica real de lectura GCS
                     } else if(){
-                        // Example: Use local file system to download/read into documentContent
+                        // Ejemplo: Usar sistema de archivos local para descargar/leer en documentContent
                     } else{
                         return Map.of("error", "Unsupported file path scheme: " + filePath);
                     }
 
-                    // 3. Summarize the content
+                    // 3. Resumir el contenido
                     if(documentContent.isEmpty()){
                         return Map.of("error", "Failed to read document content.");
                     }
 
-                    // summary = summarizeText(documentContent) // Call your summarization logic
-                    summary = "Summary of content from " + filePath; // Placeholder
+                    // summary = summarizeText(documentContent) // Llamar tu lógica de resumen
+                    summary = "Summary of content from " + filePath; // Marcador de posición
 
                     return Map.of("summary", summary);
                 } catch(IllegalArgumentException e){
@@ -1120,12 +1118,12 @@ Use artifacts to handle files or large data blobs associated with the session. C
             }
             ```
 
-*   **Listing Artifacts:** Discover what files are available.
+*   **Listar Artefactos:** Descubrir qué archivos están disponibles.
 
     === "Python"
 
         ```python
-        # Pseudocode: In a tool function
+        # Pseudocódigo: En una función de herramienta
         from google.adk.tools import ToolContext
 
         def check_available_docs(tool_context: ToolContext) -> dict:
@@ -1140,7 +1138,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
     === "TypeScript"
 
         ```typescript
-        // Pseudocode: In a tool function
+        // Pseudocódigo: En una función de herramienta
         import { ToolContext } from '@google/adk';
 
         async function checkAvailableDocs(toolContext: ToolContext): Promise<Record<string, string[] | string>> {
@@ -1165,7 +1163,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
     === "Java"
 
         ```java
-        // Pseudocode: In a tool function
+        // Pseudocódigo: En una función de herramienta
         import com.google.adk.tools.ToolContext;
 
         public Map<String, String> checkAvailableDocs(ToolContext toolContext){
@@ -1179,61 +1177,61 @@ Use artifacts to handle files or large data blobs associated with the session. C
         }
         ```
 
-### Handling Tool Authentication
+### Manejar Autenticación de Herramientas
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-Securely manage API keys or other credentials needed by tools.
+Gestionar de manera segura API keys u otras credenciales necesarias para las herramientas.
 
 === "Python"
 
     ```python
-    # Pseudocode: Tool requiring auth
+    # Pseudocódigo: Herramienta que requiere autenticación
     from google.adk.tools import ToolContext
-    from google.adk.auth import AuthConfig # Assume appropriate AuthConfig is defined
+    from google.adk.auth import AuthConfig # Asumir que se define un AuthConfig apropiado
 
-    # Define your required auth configuration (e.g., OAuth, API Key)
+    # Definir tu configuración de autenticación requerida (por ejemplo, OAuth, API Key)
     MY_API_AUTH_CONFIG = AuthConfig(...)
-    AUTH_STATE_KEY = "user:my_api_credential" # Key to store retrieved credential
+    AUTH_STATE_KEY = "user:my_api_credential" # Clave para almacenar la credencial recuperada
 
     def call_secure_api(tool_context: ToolContext, request_data: str) -> dict:
-        # 1. Check if credential already exists in state
+        # 1. Verificar si la credencial ya existe en el estado
         credential = tool_context.state.get(AUTH_STATE_KEY)
 
         if not credential:
-            # 2. If not, request it
+            # 2. Si no, solicitarla
             print("Credential not found, requesting...")
             try:
                 tool_context.request_credential(MY_API_AUTH_CONFIG)
-                # The framework handles yielding the event. The tool execution stops here for this turn.
+                # El framework maneja el yield del evento. La ejecución de la herramienta se detiene aquí para este turno.
                 return {"status": "Authentication required. Please provide credentials."}
             except ValueError as e:
-                return {"error": f"Auth error: {e}"} # e.g., function_call_id missing
+                return {"error": f"Auth error: {e}"} # por ejemplo, function_call_id faltante
             except Exception as e:
                 return {"error": f"Failed to request credential: {e}"}
 
-        # 3. If credential exists (might be from a previous turn after request)
-        #    or if this is a subsequent call after auth flow completed externally
+        # 3. Si la credencial existe (podría ser de un turno previo después de la solicitud)
+        #    o si esta es una llamada subsiguiente después de que el flujo de autenticación se completó externamente
         try:
-            # Optionally, re-validate/retrieve if needed, or use directly
-            # This might retrieve the credential if the external flow just completed
+            # Opcionalmente, re-validar/recuperar si es necesario, o usar directamente
+            # Esto podría recuperar la credencial si el flujo externo acaba de completarse
             auth_credential_obj = tool_context.get_auth_response(MY_API_AUTH_CONFIG)
-            api_key = auth_credential_obj.api_key # Or access_token, etc.
+            api_key = auth_credential_obj.api_key # O access_token, etc.
 
-            # Store it back in state for future calls within the session
-            tool_context.state[AUTH_STATE_KEY] = auth_credential_obj.model_dump() # Persist retrieved credential
+            # Almacenarla de vuelta en el estado para futuras llamadas dentro de la sesión
+            tool_context.state[AUTH_STATE_KEY] = auth_credential_obj.model_dump() # Persistir credencial recuperada
 
             print(f"Using retrieved credential to call API with data: {request_data}")
-            # ... Make the actual API call using api_key ...
+            # ... Hacer la llamada real a la API usando api_key ...
             api_result = f"API result for {request_data}"
 
             return {"result": api_result}
         except Exception as e:
-            # Handle errors retrieving/using the credential
+            # Manejar errores al recuperar/usar la credencial
             print(f"Error using credential: {e}")
-            # Maybe clear the state key if credential is invalid?
+            # Tal vez limpiar la clave de estado si la credencial es inválida?
             # tool_context.state[AUTH_STATE_KEY] = None
             return {"error": "Failed to use credential"}
     ```
@@ -1241,198 +1239,19 @@ Securely manage API keys or other credentials needed by tools.
 === "TypeScript"
 
     ```typescript
-    // Pseudocode: Tool requiring auth
-    import { ToolContext } from '@google/adk'; // AuthConfig from ADK or custom
+    // Pseudocódigo: Herramienta que requiere autenticación
+    import { ToolContext } from '@google/adk'; // AuthConfig de ADK o personalizado
 
-    // Define a local AuthConfig interface as it's not publicly exported by ADK
+    // Definir una interfaz local AuthConfig ya que no es exportada públicamente por ADK
     interface AuthConfig {
       credentialKey: string;
-      authScheme: { type: string }; // Minimal representation for the example
-      // Add other properties if they become relevant for the example
+      authScheme: { type: string }; // Representación mínima para el ejemplo
+      // Agregar otras propiedades si se vuelven relevantes para el ejemplo
     }
 
-    // Define your required auth configuration (e.g., OAuth, API Key)
+    // Definir tu configuración de autenticación requerida (por ejemplo, OAuth, API Key)
     const MY_API_AUTH_CONFIG: AuthConfig = {
-      credentialKey: 'my-api-key', // Example key
-      authScheme: { type: 'api-key' }, // Example scheme type
+      credentialKey: 'my-api-key', // Ejemplo de clave
+      authScheme: { type: 'api-key' }, // Ejemplo de tipo de esquema
     };
-    const AUTH_STATE_KEY = 'user:my_api_credential'; // Key to store retrieved credential
-
-    async function callSecureApi(toolContext: ToolContext, requestData: string): Promise<Record<string, string>> {
-      // 1. Check if credential already exists in state
-      const credential = toolContext.state.get(AUTH_STATE_KEY);
-
-      if (!credential) {
-        // 2. If not, request it
-        console.log('Credential not found, requesting...');
-        try {
-          toolContext.requestCredential(MY_API_AUTH_CONFIG);
-          // The framework handles yielding the event. The tool execution stops here for this turn.
-          return { status: 'Authentication required. Please provide credentials.' };
-        } catch (e) {
-          return { error: `Auth or credential request error: ${e}` };
-        }
-      }
-
-      // 3. If credential exists (might be from a previous turn after request)
-      //    or if this is a subsequent call after auth flow completed externally
-      try {
-        // Optionally, re-validate/retrieve if needed, or use directly
-        // This might retrieve the credential if the external flow just completed
-        const authCredentialObj = toolContext.getAuthResponse(MY_API_AUTH_CONFIG);
-        const apiKey = authCredentialObj?.apiKey; // Or accessToken, etc.
-
-        // Store it back in state for future calls within the session
-        // Note: In strict TS, might need to cast or serialize authCredentialObj
-        toolContext.state.set(AUTH_STATE_KEY, JSON.stringify(authCredentialObj));
-
-        console.log(`Using retrieved credential to call API with data: ${requestData}`);
-        // ... Make the actual API call using apiKey ...
-        const apiResult = `API result for ${requestData}`;
-
-        return { result: apiResult };
-      } catch (e) {
-        // Handle errors retrieving/using the credential
-        console.error(`Error using credential: ${e}`);
-        // Maybe clear the state key if credential is invalid?
-        // toolContext.state.set(AUTH_STATE_KEY, null);
-        return { error: 'Failed to use credential' };
-      }
-    }
-    ```
-
-*Remember: `request_credential` pauses the tool and signals the need for authentication. The user/system provides credentials, and on a subsequent call, `get_auth_response` (or checking state again) allows the tool to proceed.* The `tool_context.function_call_id` is used implicitly by the framework to link the request and response.
-
-### Leveraging Memory
-
-<div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
-</div>
-
-Access relevant information from the past or external sources.
-
-=== "Python"
-
-    ```python
-    # Pseudocode: Tool using memory search
-    from google.adk.tools import ToolContext
-
-    def find_related_info(tool_context: ToolContext, topic: str) -> dict:
-        try:
-            search_results = tool_context.search_memory(f"Information about {topic}")
-            if search_results.results:
-                print(f"Found {len(search_results.results)} memory results for '{topic}'")
-                # Process search_results.results (which are SearchMemoryResponseEntry)
-                top_result_text = search_results.results[0].text
-                return {"memory_snippet": top_result_text}
-            else:
-                return {"message": "No relevant memories found."}
-        except ValueError as e:
-            return {"error": f"Memory service error: {e}"} # e.g., Service not configured
-        except Exception as e:
-            return {"error": f"Unexpected error searching memory: {e}"}
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    // Pseudocode: Tool using memory search
-    import { ToolContext } from '@google/adk';
-
-    async function findRelatedInfo(toolContext: ToolContext, topic: string): Promise<Record<string, string>> {
-      try {
-        const searchResults = await toolContext.searchMemory(`Information about ${topic}`);
-        if (searchResults.results?.length) {
-          console.log(`Found ${searchResults.results.length} memory results for '${topic}'`);
-          // Process searchResults.results
-          const topResultText = searchResults.results[0].text;
-          return { memory_snippet: topResultText };
-        } else {
-          return { message: 'No relevant memories found.' };
-        }
-      } catch (e) {
-         return { error: `Memory service error: ${e}` }; // e.g., Service not configured
-      }
-    }
-    ```
-
-### Advanced: Direct `InvocationContext` Usage
-
-<div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
-</div>
-
-While most interactions happen via `CallbackContext` or `ToolContext`, sometimes the agent's core logic (`_run_async_impl`/`_run_live_impl`) needs direct access.
-
-=== "Python"
-
-    ```python
-    # Pseudocode: Inside agent's _run_async_impl
-    from google.adk.agents import BaseAgent
-    from google.adk.agents.invocation_context import InvocationContext
-    from google.adk.events import Event
-    from typing import AsyncGenerator
-
-    class MyControllingAgent(BaseAgent):
-        async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
-            # Example: Check if a specific service is available
-            if not ctx.memory_service:
-                print("Memory service is not available for this invocation.")
-                # Potentially change agent behavior
-
-            # Example: Early termination based on some condition
-            if ctx.session.state.get("critical_error_flag"):
-                print("Critical error detected, ending invocation.")
-                ctx.end_invocation = True # Signal framework to stop processing
-                yield Event(author=self.name, invocation_id=ctx.invocation_id, content="Stopping due to critical error.")
-                return # Stop this agent's execution
-
-            # ... Normal agent processing ...
-            yield # ... event ...
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    // Pseudocode: Inside agent's runAsyncImpl
-    import { BaseAgent, InvocationContext } from '@google/adk';
-    import type { Event } from '@google/adk';
-
-    class MyControllingAgent extends BaseAgent {
-      async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
-        // Example: Check if a specific service is available
-        if (!ctx.memoryService) {
-          console.log('Memory service is not available for this invocation.');
-          // Potentially change agent behavior
-        }
-
-        // Example: Early termination based on some condition
-        // Direct access to state via ctx.session.state or through ctx.session.state property if wrapped
-        if ((ctx.session.state as { 'critical_error_flag': boolean })['critical_error_flag']) {
-          console.log('Critical error detected, ending invocation.');
-          ctx.endInvocation = true; // Signal framework to stop processing
-          yield {
-            author: this.name,
-            invocationId: ctx.invocationId,
-            content: { parts: [{ text: 'Stopping due to critical error.' }] }
-          } as Event;
-          return; // Stop this agent's execution
-        }
-
-        // ... Normal agent processing ...
-        yield; // ... event ...
-      }
-    }
-    ```
-
-Setting `ctx.end_invocation = True` is a way to gracefully stop the entire request-response cycle from within the agent or its callbacks/tools (via their respective context objects which also have access to modify the underlying `InvocationContext`'s flag).
-
-## Key Takeaways & Best Practices
-
-*   **Use the Right Context:** Always use the most specific context object provided (`ToolContext` in tools/tool-callbacks, `CallbackContext` in agent/model-callbacks, `ReadonlyContext` where applicable). Use the full `InvocationContext` (`ctx`) directly in `_run_async_impl` / `_run_live_impl` only when necessary.
-*   **State for Data Flow:** `context.state` is the primary way to share data, remember preferences, and manage conversational memory *within* an invocation. Use prefixes (`app:`, `user:`, `temp:`) thoughtfully when using persistent storage.
-*   **Artifacts for Files:** Use `context.save_artifact` and `context.load_artifact` for managing file references (like paths or URIs) or larger data blobs. Store references, load content on demand.
-*   **Tracked Changes:** Modifications to state or artifacts made via context methods are automatically linked to the current step's `EventActions` and handled by the `SessionService`.
-*   **Start Simple:** Focus on `state` and basic artifact usage first. Explore authentication, memory, and advanced `InvocationContext` fields (like those for live streaming) as your needs become more complex.
-
-By understanding and effectively using these context objects, you can build more sophisticated, stateful, and capable agents with ADK.
+    const AUTH_STATE_KEY = 'user:my_api_credential'; // Clave para almacenar la credencial

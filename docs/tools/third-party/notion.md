@@ -7,46 +7,46 @@ catalog_icon: /adk-docs/assets/tools-notion.png
 # Notion
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [Notion MCP Server](https://github.com/makenotion/notion-mcp-server)
-connects your ADK agent to Notion, allowing it to search, create, and manage
-pages, databases, and more within a workspace. This gives your agent the ability
-to query, create, and organize content in your Notion workspace using natural
-language.
+El [Servidor MCP de Notion](https://github.com/makenotion/notion-mcp-server)
+conecta tu agente ADK a Notion, permitiéndole buscar, crear y gestionar
+páginas, bases de datos y más dentro de un espacio de trabajo. Esto le da a tu agente la capacidad
+de consultar, crear y organizar contenido en tu espacio de trabajo de Notion usando lenguaje
+natural.
 
-## Use cases
+## Casos de uso
 
-- **Search your workspace**: Find project pages, meeting notes, or documents
-  based on content.
+- **Busca en tu espacio de trabajo**: Encuentra páginas de proyectos, notas de reuniones o documentos
+  basándote en el contenido.
 
-- **Create new content**: Generate new pages for meeting notes, project plans,
-  or tasks.
+- **Crea nuevo contenido**: Genera nuevas páginas para notas de reuniones, planes de proyectos
+  o tareas.
 
-- **Manage tasks and databases**: Update the status of a task, add items to a
-  database, or change properties.
+- **Gestiona tareas y bases de datos**: Actualiza el estado de una tarea, agrega elementos a una
+  base de datos o cambia propiedades.
 
-- **Organize your workspace**: Move pages, duplicate templates, or add comments
-  to documents.
+- **Organiza tu espacio de trabajo**: Mueve páginas, duplica plantillas o agrega comentarios
+  a documentos.
 
-## Prerequisites
+## Requisitos previos
 
-- Obtain a Notion integration token by going to
-  [Notion Integrations](https://www.notion.so/profile/integrations) in your
-  profile. Refer to the
-  [authorization documentation](https://developers.notion.com/docs/authorization)
-  for more details.
-- Ensure relevant pages and databases can be accessed by your integration. Visit
-  the Access tab in your
-  [Notion Integration](https://www.notion.so/profile/integrations) settings,
-  then grant access by selecting the pages you'd like to use.
+- Obtén un token de integración de Notion yendo a
+  [Integraciones de Notion](https://www.notion.so/profile/integrations) en tu
+  perfil. Consulta la
+  [documentación de autorización](https://developers.notion.com/docs/authorization)
+  para más detalles.
+- Asegúrate de que las páginas y bases de datos relevantes puedan ser accedidas por tu integración. Visita
+  la pestaña de Acceso en la configuración de tu
+  [Integración de Notion](https://www.notion.so/profile/integrations),
+  luego otorga acceso seleccionando las páginas que deseas usar.
 
-## Use with agent
+## Uso con agente
 
 === "Python"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```python
         from google.adk.agents import Agent
@@ -59,7 +59,7 @@ language.
         root_agent = Agent(
             model="gemini-2.5-pro",
             name="notion_agent",
-            instruction="Help users get information from Notion",
+            instruction="Help users get information from Notion", # Ayuda a los usuarios a obtener información de Notion
             tools=[
                 McpToolset(
                     connection_params=StdioConnectionParams(
@@ -82,7 +82,7 @@ language.
 
 === "TypeScript"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -92,7 +92,7 @@ language.
         const rootAgent = new LlmAgent({
             model: "gemini-2.5-pro",
             name: "notion_agent",
-            instruction: "Help users get information from Notion",
+            instruction: "Help users get information from Notion", // Ayuda a los usuarios a obtener información de Notion
             tools: [
                 new MCPToolset({
                     type: "StdioConnectionParams",
@@ -110,26 +110,26 @@ language.
         export { rootAgent };
         ```
 
-## Available tools
+## Herramientas disponibles
 
-Tool <img width="200px"/> | Description
+Herramienta <img width="200px"/> | Descripción
 ---- | -----------
-`notion-search` | Search across your Notion workspace and connected tools like Slack, Google Drive, and Jira. Falls back to basic workspace search if AI features aren’t available.
-`notion-fetch` | Retrieves content from a Notion page or database by its URL
-`notion-create-pages` | Creates one or more Notion pages with specified properties and content.
-`notion-update-page` | Update a Notion page's properties or content.
-`notion-move-pages` | Move one or more Notion pages or databases to a new parent.
-`notion-duplicate-page` | Duplicate a Notion page within your workspace. This action is completed async.
-`notion-create-database` | Creates a new Notion database, initial data source, and initial view with the specified properties.
-`notion-update-database` | Update a Notion data source's properties, name, description, or other attributes.
-`notion-create-comment` | Add a comment to a page
-`notion-get-comments` | Lists all comments on a specific page, including threaded discussions.
-`notion-get-teams` | Retrieves a list of teams (teamspaces) in the current workspace.
-`notion-get-users` | Lists all users in the workspace with their details.
-`notion-get-user` | Retrieve your user information by ID
-`notion-get-self` | Retrieves information about your own bot user and the Notion workspace you’re connected to.
+`notion-search` | Busca en tu espacio de trabajo de Notion y herramientas conectadas como Slack, Google Drive y Jira. Recurre a la búsqueda básica del espacio de trabajo si las características de IA no están disponibles.
+`notion-fetch` | Recupera contenido de una página o base de datos de Notion por su URL
+`notion-create-pages` | Crea una o más páginas de Notion con propiedades y contenido especificados.
+`notion-update-page` | Actualiza las propiedades o contenido de una página de Notion.
+`notion-move-pages` | Mueve una o más páginas o bases de datos de Notion a un nuevo padre.
+`notion-duplicate-page` | Duplica una página de Notion dentro de tu espacio de trabajo. Esta acción se completa de forma asíncrona.
+`notion-create-database` | Crea una nueva base de datos de Notion, fuente de datos inicial y vista inicial con las propiedades especificadas.
+`notion-update-database` | Actualiza las propiedades, nombre, descripción u otros atributos de una fuente de datos de Notion.
+`notion-create-comment` | Agrega un comentario a una página
+`notion-get-comments` | Lista todos los comentarios en una página específica, incluyendo discusiones en hilos.
+`notion-get-teams` | Recupera una lista de equipos (espacios de equipo) en el espacio de trabajo actual.
+`notion-get-users` | Lista todos los usuarios en el espacio de trabajo con sus detalles.
+`notion-get-user` | Recupera la información de tu usuario por ID
+`notion-get-self` | Recupera información sobre tu propio usuario bot y el espacio de trabajo de Notion al que estás conectado.
 
-## Additional resources
+## Recursos adicionales
 
-- [Notion MCP Server Documentation](https://developers.notion.com/docs/mcp)
-- [Notion MCP Server Repository](https://github.com/makenotion/notion-mcp-server)
+- [Documentación del Servidor MCP de Notion](https://developers.notion.com/docs/mcp)
+- [Repositorio del Servidor MCP de Notion](https://github.com/makenotion/notion-mcp-server)

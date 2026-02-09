@@ -1,57 +1,58 @@
-# Test deployed agents in Agent Engine
+# Probar agentes desplegados en Agent Engine
 
-These instructions explain how to test an ADK agent deployed to the
-[Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
-runtime environment. Before using these instructions, you need to have completed
-the deployment of your agent to the Agent Engine runtime environment using one
-of the [available methods](/adk-docs/deploy/agent-engine/). This guide shows you
-how to view, interact, and test your deployed agent through the Google Cloud
-Console, and interact with the agent using REST API calls or the Vertex AI SDK
-for Python.
+Estas instrucciones explican cómo probar un agente ADK desplegado en el
+entorno de ejecución de
+[Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
+Antes de usar estas instrucciones, necesitas haber completado el despliegue de
+tu agente en el entorno de ejecución de Agent Engine usando uno de los
+[métodos disponibles](/adk-docs/deploy/agent-engine/). Esta guía te muestra
+cómo ver, interactuar y probar tu agente desplegado a través de Google Cloud
+Console, e interactuar con el agente usando llamadas a la API REST o el SDK de
+Vertex AI para Python.
 
-## View deployed agent in Cloud Console
+## Ver el agente desplegado en Cloud Console
 
-To view your deployed agent in the Cloud Console:
+Para ver tu agente desplegado en Cloud Console:
 
--   Navigate to the Agent Engine page in the Google Cloud Console:
+-   Navega a la página de Agent Engine en Google Cloud Console:
     [https://console.cloud.google.com/vertex-ai/agents/agent-engines](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
 
-This page lists all deployed agents in your currently selected Google Cloud
-project. If you do not see your agent listed, make sure you have your
-target project selected in Google Cloud Console. For more information on
-selecting an existing Google Cloud project, see
-[Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects).
+Esta página enumera todos los agentes desplegados en tu proyecto de Google Cloud
+actualmente seleccionado. Si no ves tu agente en la lista, asegúrate de tener tu
+proyecto objetivo seleccionado en Google Cloud Console. Para más información sobre
+cómo seleccionar un proyecto de Google Cloud existente, consulta
+[Crear y gestionar proyectos](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects).
 
-## Find Google Cloud project information
+## Encontrar información del proyecto de Google Cloud
 
-You need the address and resource identification for your project (`PROJECT_ID`,
-`LOCATION_ID`, `RESOURCE_ID`) to be able to test your deployment. You can use Cloud
-Console or the `gcloud` command line tool to find this information.
+Necesitas la dirección y la identificación de recursos para tu proyecto (`PROJECT_ID`,
+`LOCATION_ID`, `RESOURCE_ID`) para poder probar tu despliegue. Puedes usar Cloud
+Console o la herramienta de línea de comandos `gcloud` para encontrar esta información.
 
-??? note "Vertex AI express mode API key"
-    If you are using Vertex AI express mode, you can skip this step and use your API key.
+??? note "Clave API del modo express de Vertex AI"
+    Si estás usando el modo express de Vertex AI, puedes omitir este paso y usar tu clave API.
 
-To find your project information with Google Cloud Console:
+Para encontrar la información de tu proyecto con Google Cloud Console:
 
-1.  In the Google Cloud Console, navigate to the Agent Engine page:
+1.  En Google Cloud Console, navega a la página de Agent Engine:
     [https://console.cloud.google.com/vertex-ai/agents/agent-engines](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
 
-1.  At the top of the page, select **API URLs**, and then copy the **Query
-    URL** string for your deployed agent, which should be in this format:
+1.  En la parte superior de la página, selecciona **API URLs**, y luego copia la
+    cadena de **Query URL** para tu agente desplegado, que debería estar en este formato:
 
         https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines/$(RESOURCE_ID):query
 
-To find your project information with the `gcloud` command line tool:
+Para encontrar la información de tu proyecto con la herramienta de línea de comandos `gcloud`:
 
-1.  In your development environment, make sure you are authenticated to
-    Google Cloud and run the following command to list your project:
+1.  En tu entorno de desarrollo, asegúrate de estar autenticado en
+    Google Cloud y ejecuta el siguiente comando para listar tu proyecto:
 
     ```shell
     gcloud projects list
     ```
 
-1.  With the Project ID you used for deployment, run this command to get
-    the additional details:
+1.  Con el Project ID que usaste para el despliegue, ejecuta este comando para obtener
+    los detalles adicionales:
 
     ```shell
     gcloud asset search-all-resources \
@@ -60,25 +61,24 @@ To find your project information with the `gcloud` command line tool:
         --format="table(name,assetType,location,reasoning_engine_id)"
     ```
 
-## Test using REST calls
+## Probar usando llamadas REST
 
-A simple way to interact with your deployed agent in Agent Engine is to use REST
-calls with the `curl` tool. This section describes how to check your
-connection to the agent and also to test processing of a request by the deployed
-agent.
+Una forma simple de interactuar con tu agente desplegado en Agent Engine es usar llamadas
+REST con la herramienta `curl`. Esta sección describe cómo verificar tu conexión al agente
+y también cómo probar el procesamiento de una solicitud por parte del agente desplegado.
 
-### Check connection to agent
+### Verificar la conexión al agente
 
-You can check your connection to the running agent using the **Query URL**
-available in the Agent Engine section of the Cloud Console. This check does not
-execute the deployed agent, but returns information about the agent.
+Puedes verificar tu conexión al agente en ejecución usando la **Query URL**
+disponible en la sección de Agent Engine de Cloud Console. Esta verificación no
+ejecuta el agente desplegado, pero devuelve información sobre el agente.
 
-To send a REST call and get a response from deployed agent:
+Para enviar una llamada REST y obtener una respuesta del agente desplegado:
 
--   In a terminal window of your development environment, build a request
-    and execute it:
+-   En una ventana de terminal de tu entorno de desarrollo, construye una solicitud
+    y ejecútala:
 
-    === "Google Cloud Project"
+    === "Proyecto de Google Cloud"
 
         ```shell
         curl -X GET \
@@ -86,7 +86,7 @@ To send a REST call and get a response from deployed agent:
             "https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines"
         ```
 
-    === "Vertex AI express mode"
+    === "Modo express de Vertex AI"
 
         ```shell
         curl -X GET \
@@ -94,30 +94,30 @@ To send a REST call and get a response from deployed agent:
             "https://aiplatform.googleapis.com/v1/reasoningEngines"
         ```
 
-If your deployment was successful, this request responds with a list of valid
-requests and expected data formats.
+Si tu despliegue fue exitoso, esta solicitud responde con una lista de solicitudes
+válidas y formatos de datos esperados.
 
-!!! tip "Remove `:query` parameter for connection URL"
-    If you use the **Query URL** available in the Agent Engine section of the Cloud
-    Console, make sure to remove the `:query` parameter from end of the address.
+!!! tip "Eliminar el parámetro `:query` para la URL de conexión"
+    Si usas la **Query URL** disponible en la sección de Agent Engine de Cloud
+    Console, asegúrate de eliminar el parámetro `:query` del final de la dirección.
 
-!!! tip "Access for agent connections"
-    This connection test requires the calling user has a valid access token for the
-    deployed agent. When testing from other environments, make sure the calling user
-    has access to connect to the agent in your Google Cloud project.
+!!! tip "Acceso para conexiones de agente"
+    Esta prueba de conexión requiere que el usuario que realiza la llamada tenga un token de acceso válido para el
+    agente desplegado. Al probar desde otros entornos, asegúrate de que el usuario que realiza la llamada
+    tenga acceso para conectarse al agente en tu proyecto de Google Cloud.
 
-### Send an agent request
+### Enviar una solicitud al agente
 
-When getting responses from your agent project, you must first create a
-session, receive a Session ID, and then send your requests using that Session
-ID. This process is described in the following instructions.
+Al obtener respuestas de tu proyecto de agente, primero debes crear una
+sesión, recibir un Session ID y luego enviar tus solicitudes usando ese Session
+ID. Este proceso se describe en las siguientes instrucciones.
 
-To test interaction with the deployed agent via REST:
+Para probar la interacción con el agente desplegado mediante REST:
 
-1.  In a terminal window of your development environment, create a session
-    by building a request using this template:
+1.  En una ventana de terminal de tu entorno de desarrollo, crea una sesión
+    construyendo una solicitud usando esta plantilla:
 
-    === "Google Cloud Project"
+    === "Proyecto de Google Cloud"
 
         ```shell
         curl \
@@ -127,7 +127,7 @@ To test interaction with the deployed agent via REST:
             -d '{"class_method": "async_create_session", "input": {"user_id": "u_123"},}'
         ```
 
-    === "Vertex AI express mode"
+    === "Modo express de Vertex AI"
 
         ```shell
         curl \
@@ -137,8 +137,8 @@ To test interaction with the deployed agent via REST:
             -d '{"class_method": "async_create_session", "input": {"user_id": "u_123"},}'
         ```
 
-1.  In the response from the previous command, extract the created **Session ID**
-    from the **id** field:
+1.  En la respuesta del comando anterior, extrae el **Session ID** creado
+    del campo **id**:
 
     ```json
     {
@@ -153,11 +153,11 @@ To test interaction with the deployed agent via REST:
     }
     ```
 
-1.  In a terminal window of your development environment, send a message to
-    your agent by building a request using this template and the Session ID
-    created in the previous step:
+1.  En una ventana de terminal de tu entorno de desarrollo, envía un mensaje a
+    tu agente construyendo una solicitud usando esta plantilla y el Session ID
+    creado en el paso anterior:
 
-    === "Google Cloud Project"
+    === "Proyecto de Google Cloud"
 
         ```shell
         curl \
@@ -173,7 +173,7 @@ To test interaction with the deployed agent via REST:
         }'
         ```
 
-    === "Vertex AI express mode"
+    === "Modo express de Vertex AI"
 
         ```shell
         curl \
@@ -189,33 +189,33 @@ To test interaction with the deployed agent via REST:
         }'
         ```
 
-This request should generate a response from your deployed agent code in JSON
-format. For more information about interacting with a deployed ADK agent in
-Agent Engine using REST calls, see
-[Manage deployed agents](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview#console)
-and
-[Use an Agent Development Kit agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/use/adk)
-in the Agent Engine documentation.
+Esta solicitud debería generar una respuesta de tu código de agente desplegado en formato
+JSON. Para más información sobre cómo interactuar con un agente ADK desplegado en
+Agent Engine usando llamadas REST, consulta
+[Gestionar agentes desplegados](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview#console)
+y
+[Usar un agente de Agent Development Kit](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/use/adk)
+en la documentación de Agent Engine.
 
-## Test using Python
+## Probar usando Python
 
-You can use Python code for more sophisticated and repeatable testing of your
-agent deployed in Agent Engine. These instructions describe how to create
-a session with the deployed agent, and then send a request to the agent for
-processing.
+Puedes usar código Python para realizar pruebas más sofisticadas y repetibles de tu
+agente desplegado en Agent Engine. Estas instrucciones describen cómo crear
+una sesión con el agente desplegado, y luego enviar una solicitud al agente para
+su procesamiento.
 
-### Create a remote session
+### Crear una sesión remota
 
-Use the `remote_app` object to create a connection to a deployed, remote agent:
+Usa el objeto `remote_app` para crear una conexión a un agente remoto desplegado:
 
 ```py
-# If you are in a new script or used the ADK CLI to deploy, you can connect like this:
+# Si estás en un script nuevo o usaste el CLI de ADK para desplegar, puedes conectarte así:
 # remote_app = agent_engines.get("your-agent-resource-name")
 remote_session = await remote_app.async_create_session(user_id="u_456")
 print(remote_session)
 ```
 
-Expected output for `create_session` (remote):
+Salida esperada para `create_session` (remoto):
 
 ```console
 {'events': [],
@@ -226,10 +226,10 @@ Expected output for `create_session` (remote):
 'last_update_time': 1743683353.030133}
 ```
 
-The `id` value is the session ID, and `app_name` is the resource ID of the
-deployed agent on Agent Engine.
+El valor `id` es el ID de sesión, y `app_name` es el ID de recurso del
+agente desplegado en Agent Engine.
 
-#### Send queries to your remote agent
+#### Enviar consultas a tu agente remoto
 
 ```py
 async for event in remote_app.async_stream_query(
@@ -240,7 +240,7 @@ async for event in remote_app.async_stream_query(
     print(event)
 ```
 
-Expected output for `async_stream_query` (remote):
+Salida esperada para `async_stream_query` (remoto):
 
 ```console
 {'parts': [{'function_call': {'id': 'af-f1906423-a531-4ecf-a1ef-723b05e85321', 'args': {'city': 'new york'}, 'name': 'get_weather'}}], 'role': 'model'}
@@ -248,18 +248,18 @@ Expected output for `async_stream_query` (remote):
 {'parts': [{'text': 'The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).'}], 'role': 'model'}
 ```
 
-For more information about interacting with a deployed ADK agent in
-Agent Engine, see
-[Manage deployed agents](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview)
-and
-[Use a Agent Development Kit agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/use/adk)
-in the Agent Engine documentation.
+Para más información sobre cómo interactuar con un agente ADK desplegado en
+Agent Engine, consulta
+[Gestionar agentes desplegados](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview)
+y
+[Usar un agente de Agent Development Kit](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/use/adk)
+en la documentación de Agent Engine.
 
-### Sending Multimodal Queries
+### Enviar consultas multimodales
 
-To send multimodal queries (e.g., including images) to your agent, you can construct the `message` parameter of `async_stream_query` with a list of `types.Part` objects. Each part can be text or an image.
+Para enviar consultas multimodales (por ejemplo, incluyendo imágenes) a tu agente, puedes construir el parámetro `message` de `async_stream_query` con una lista de objetos `types.Part`. Cada parte puede ser texto o una imagen.
 
-To include an image, you can use `types.Part.from_uri`, providing a Google Cloud Storage (GCS) URI for the image.
+Para incluir una imagen, puedes usar `types.Part.from_uri`, proporcionando un URI de Google Cloud Storage (GCS) para la imagen.
 
 ```python
 from google.genai import types
@@ -281,22 +281,22 @@ async for event in remote_app.async_stream_query(
 ```
 
 !!!note
-    While the underlying communication with the model may involve Base64
-    encoding for images, the recommended and supported method for sending image
-    data to an agent deployed on Agent Engine is by providing a GCS URI.
+    Aunque la comunicación subyacente con el modelo puede involucrar codificación Base64
+    para las imágenes, el método recomendado y soportado para enviar datos de imagen
+    a un agente desplegado en Agent Engine es proporcionando un URI de GCS.
 
-## Clean up deployments
+## Limpiar despliegues
 
-If you have performed deployments as tests, it is a good practice to clean up
-your cloud resources after you have finished. You can delete the deployed Agent
-Engine instance to avoid any unexpected charges on your Google Cloud account.
+Si has realizado despliegues como pruebas, es una buena práctica limpiar
+tus recursos en la nube después de haber terminado. Puedes eliminar la instancia de Agent
+Engine desplegada para evitar cargos inesperados en tu cuenta de Google Cloud.
 
 ```python
 remote_app.delete(force=True)
 ```
 
-The `force=True` parameter also deletes any child resources that were generated
-from the deployed agent, such as sessions. You can also delete your deployed
-agent via the
-[Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
-on Google Cloud.
+El parámetro `force=True` también elimina cualquier recurso hijo que se haya generado
+desde el agente desplegado, como sesiones. También puedes eliminar tu agente desplegado
+a través de la
+[interfaz de usuario de Agent Engine](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
+en Google Cloud.

@@ -1,26 +1,26 @@
-# Logging in the Agent Development Kit (ADK)
+# Registro (Logging) en el Agent Development Kit (ADK)
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-The Agent Development Kit (ADK) uses Python's standard `logging` module to provide flexible and powerful logging capabilities. Understanding how to configure and interpret these logs is crucial for monitoring agent behavior and debugging issues effectively.
+El Agent Development Kit (ADK) utiliza el módulo estándar `logging` de Python para proporcionar capacidades de registro flexibles y potentes. Entender cómo configurar e interpretar estos registros es crucial para monitorear el comportamiento del agente y depurar problemas de manera efectiva.
 
-## Logging Philosophy
+## Filosofía de Registro
 
-ADK's approach to logging is to provide detailed diagnostic information without being overly verbose by default. It is designed to be configured by the application developer, allowing you to tailor the log output to your specific needs, whether in a development or production environment.
+El enfoque de ADK para el registro es proporcionar información de diagnóstico detallada sin ser excesivamente verboso por defecto. Está diseñado para ser configurado por el desarrollador de la aplicación, permitiéndote adaptar la salida de registro a tus necesidades específicas, ya sea en un entorno de desarrollo o producción.
 
-- **Standard Library:** It uses the standard `logging` library, so any configuration or handler that works with it will work with ADK.
-- **Hierarchical Loggers:** Loggers are named hierarchically based on the module path (e.g., `google_adk.google.adk.agents.llm_agent`), allowing for fine-grained control over which parts of the framework produce logs.
-- **User-Configured:** The framework does not configure logging itself. It is the responsibility of the developer using the framework to set up the desired logging configuration in their application's entry point.
+- **Biblioteca Estándar:** Utiliza la biblioteca estándar `logging`, por lo que cualquier configuración o manejador que funcione con ella funcionará con ADK.
+- **Registradores Jerárquicos:** Los registradores se nombran jerárquicamente según la ruta del módulo (por ejemplo, `google_adk.google.adk.agents.llm_agent`), permitiendo un control fino sobre qué partes del framework producen registros.
+- **Configurado por el Usuario:** El framework no configura el registro por sí mismo. Es responsabilidad del desarrollador que usa el framework configurar la configuración de registro deseada en el punto de entrada de su aplicación.
 
-## How to Configure Logging
+## Cómo Configurar el Registro
 
-You can configure logging in your main application script (e.g., `main.py`) before you initialize and run your agent. The simplest way is to use `logging.basicConfig`.
+Puedes configurar el registro en tu script principal de la aplicación (por ejemplo, `main.py`) antes de inicializar y ejecutar tu agente. La forma más simple es usar `logging.basicConfig`.
 
-### Example Configuration
+### Ejemplo de Configuración
 
-To enable detailed logging, including `DEBUG` level messages, add the following to the top of your script:
+Para habilitar el registro detallado, incluyendo mensajes de nivel `DEBUG`, agrega lo siguiente al principio de tu script:
 
 ```python
 import logging
@@ -30,80 +30,80 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s'
 )
 
-# Your ADK agent code follows...
+# Tu código de agente ADK sigue...
 # from google.adk.agents import LlmAgent
 # ...
 ```
 
-### Configuring Logging with the ADK CLI
+### Configurando el Registro con la CLI de ADK
 
-When running agents using the ADK's built-in web or API servers, you can easily control the log verbosity directly from the command line. The `adk web`, `adk api_server`, and `adk deploy cloud_run` commands all accept a `--log_level` option.
+Al ejecutar agentes usando los servidores web o API integrados de ADK, puedes controlar fácilmente la verbosidad del registro directamente desde la línea de comandos. Los comandos `adk web`, `adk api_server` y `adk deploy cloud_run` aceptan una opción `--log_level`.
 
-This provides a convenient way to set the logging level without modifying your agent's source code.
+Esto proporciona una forma conveniente de establecer el nivel de registro sin modificar el código fuente de tu agente.
 
-> **Note:** The command-line setting always takes precedence over the programmatic configuration (like `logging.basicConfig`) for ADK's loggers. It's recommended to use `INFO` or `WARNING` in production and enable `DEBUG` only when troubleshooting.
+> **Nota:** La configuración de línea de comandos siempre tiene precedencia sobre la configuración programática (como `logging.basicConfig`) para los registradores de ADK. Se recomienda usar `INFO` o `WARNING` en producción y habilitar `DEBUG` solo cuando se esté solucionando problemas.
 
-**Example using `adk web`:**
+**Ejemplo usando `adk web`:**
 
-To start the web server with `DEBUG` level logging, run:
+Para iniciar el servidor web con registro de nivel `DEBUG`, ejecuta:
 
 ```bash
 adk web --log_level DEBUG path/to/your/agents_dir
 ```
 
-The available log levels for the `--log_level` option are:
+Los niveles de registro disponibles para la opción `--log_level` son:
 
 - `DEBUG`
-- `INFO` (default)
+- `INFO` (por defecto)
 - `WARNING`
 - `ERROR`
 - `CRITICAL`
 
-> You can also use `-v` or `--verbose` as a shortcut for `--log_level DEBUG`.
+> También puedes usar `-v` o `--verbose` como atajo para `--log_level DEBUG`.
 >
 > ```bash
 > adk web -v path/to/your/agents_dir
 > ```
 
-### Log Levels
+### Niveles de Registro
 
-ADK uses standard log levels to categorize messages. The configured level determines what information gets logged.
+ADK utiliza niveles de registro estándar para categorizar mensajes. El nivel configurado determina qué información se registra.
 
-| Level | Description | Type of Information Logged  |
+| Nivel | Descripción | Tipo de Información Registrada  |
 | :--- | :--- | :--- |
-| **`DEBUG`** | **Crucial for debugging.** The most verbose level for fine-grained diagnostic information. | <ul><li>**Full LLM Prompts:** The complete request sent to the language model, including system instructions, history, and tools.</li><li>Detailed API responses from services.</li><li>Internal state transitions and variable values.</li></ul> |
-| **`INFO`** | General information about the agent's lifecycle. | <ul><li>Agent initialization and startup.</li><li>Session creation and deletion events.</li><li>Execution of a tool, including its name and arguments.</li></ul> |
-| **`WARNING`** | Indicates a potential issue or deprecated feature use. The agent continues to function, but attention may be required. | <ul><li>Use of deprecated methods or parameters.</li><li>Non-critical errors that the system recovered from.</li></ul> |
-| **`ERROR`** | A serious error that prevented an operation from completing. | <ul><li>Failed API calls to external services (e.g., LLM, Session Service).</li><li>Unhandled exceptions during agent execution.</li><li>Configuration errors.</li></ul> |
+| **`DEBUG`** | **Crucial para la depuración.** El nivel más verboso para información de diagnóstico detallada. | <ul><li>**Prompts Completos del LLM:** La solicitud completa enviada al modelo de lenguaje, incluyendo instrucciones del sistema, historial y herramientas.</li><li>Respuestas detalladas de API de servicios.</li><li>Transiciones de estado interno y valores de variables.</li></ul> |
+| **`INFO`** | Información general sobre el ciclo de vida del agente. | <ul><li>Inicialización y arranque del agente.</li><li>Eventos de creación y eliminación de sesiones.</li><li>Ejecución de una herramienta, incluyendo su nombre y argumentos.</li></ul> |
+| **`WARNING`** | Indica un problema potencial o uso de características obsoletas. El agente continúa funcionando, pero puede requerir atención. | <ul><li>Uso de métodos o parámetros obsoletos.</li><li>Errores no críticos de los que el sistema se recuperó.</li></ul> |
+| **`ERROR`** | Un error grave que impidió que una operación se completara. | <ul><li>Llamadas de API fallidas a servicios externos (por ejemplo, LLM, Servicio de Sesión).</li><li>Excepciones no manejadas durante la ejecución del agente.</li><li>Errores de configuración.</li></ul> |
 
-> **Note:** It is recommended to use `INFO` or `WARNING` in production environments. Only enable `DEBUG` when actively troubleshooting an issue, as `DEBUG` logs can be very verbose and may contain sensitive information.
+> **Nota:** Se recomienda usar `INFO` o `WARNING` en entornos de producción. Solo habilita `DEBUG` cuando estés solucionando activamente un problema, ya que los registros `DEBUG` pueden ser muy verbosos y pueden contener información sensible.
 
-## Reading and Understanding the Logs
+## Leer y Entender los Registros
 
-The `format` string in the `basicConfig` example determines the structure of each log message.
+La cadena `format` en el ejemplo de `basicConfig` determina la estructura de cada mensaje de registro.
 
-Here’s a sample log entry:
+Aquí hay una entrada de registro de ejemplo:
 
 ```text
 2025-07-08 11:22:33,456 - DEBUG - google_adk.google.adk.models.google_llm - LLM Request: contents { ... }
 ```
 
-| Log Segment                     | Format Specifier | Meaning                                        |
+| Segmento de Registro            | Especificador de Formato | Significado                                         |
 | ------------------------------- | ---------------- | ---------------------------------------------- |
-| `2025-07-08 11:22:33,456`       | `%(asctime)s`    | Timestamp                                      |
-| `DEBUG`                         | `%(levelname)s`  | Severity level                                 |
-| `google_adk.models.google_llm`  | `%(name)s`       | Logger name (the module that produced the log) |
-| `LLM Request: contents { ... }` | `%(message)s`    | The actual log message                         |
+| `2025-07-08 11:22:33,456`       | `%(asctime)s`    | Marca de tiempo                                      |
+| `DEBUG`                         | `%(levelname)s`  | Nivel de severidad                                 |
+| `google_adk.models.google_llm`  | `%(name)s`       | Nombre del registrador (el módulo que produjo el registro) |
+| `LLM Request: contents { ... }` | `%(message)s`    | El mensaje de registro real                         |
 
-By reading the logger name, you can immediately pinpoint the source of the log and understand its context within the agent's architecture.
+Al leer el nombre del registrador, puedes identificar inmediatamente la fuente del registro y entender su contexto dentro de la arquitectura del agente.
 
-## Debugging with Logs: A Practical Example
+## Depurando con Registros: Un Ejemplo Práctico
 
-**Scenario:** Your agent is not producing the expected output, and you suspect the prompt being sent to the LLM is incorrect or missing information.
+**Escenario:** Tu agente no está produciendo la salida esperada, y sospechas que el prompt que se envía al LLM es incorrecto o le falta información.
 
-**Steps:**
+**Pasos:**
 
-1.  **Enable DEBUG Logging:** In your `main.py`, set the logging level to `DEBUG` as shown in the configuration example.
+1.  **Habilitar el Registro DEBUG:** En tu `main.py`, establece el nivel de registro a `DEBUG` como se muestra en el ejemplo de configuración.
 
     ```python
     logging.basicConfig(
@@ -112,9 +112,9 @@ By reading the logger name, you can immediately pinpoint the source of the log a
     )
     ```
 
-2.  **Run Your Agent:** Execute your agent's task as you normally would.
+2.  **Ejecutar tu Agente:** Ejecuta la tarea de tu agente como lo harías normalmente.
 
-3.  **Inspect the Logs:** Look through the console output for a message from the `google.adk.models.google_llm` logger that starts with `LLM Request:`.
+3.  **Inspeccionar los Registros:** Busca en la salida de la consola un mensaje del registrador `google.adk.models.google_llm` que comience con `LLM Request:`.
 
     ```log
     ...
@@ -164,12 +164,12 @@ By reading the logger name, you can immediately pinpoint the source of the log a
     ...
     ```
 
-4.  **Analyze the Prompt:** By examining the `System Instruction`, `contents`, `functions` sections of the logged request, you can verify:
-    -   Is the system instruction correct?
-    -   Is the conversation history (`user` and `model` turns) accurate?
-    -   Is the most recent user query included?
-    -   Are the correct tools being provided to the model?
-    -   Are the tools correctly called by the model?
-    -   How long it takes for the model to respond?
+4.  **Analizar el Prompt:** Al examinar las secciones `System Instruction`, `contents` y `functions` de la solicitud registrada, puedes verificar:
+    -   ¿Es correcta la instrucción del sistema?
+    -   ¿Es preciso el historial de conversación (turnos `user` y `model`)?
+    -   ¿Está incluida la consulta más reciente del usuario?
+    -   ¿Se están proporcionando las herramientas correctas al modelo?
+    -   ¿Las herramientas están siendo llamadas correctamente por el modelo?
+    -   ¿Cuánto tiempo tarda el modelo en responder?
 
-This detailed output allows you to diagnose a wide range of issues, from incorrect prompt engineering to problems with tool definitions, directly from the log files.
+Esta salida detallada te permite diagnosticar una amplia gama de problemas, desde ingeniería de prompts incorrecta hasta problemas con definiciones de herramientas, directamente desde los archivos de registro.

@@ -7,35 +7,35 @@ catalog_icon: /adk-docs/assets/tools-github.png
 # GitHub
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+  <span class="lst-supported">Compatible con ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [GitHub MCP Server](https://github.com/github/github-mcp-server) connects AI
-tools directly to GitHub's platform. This gives your ADK agent the ability to
-read repositories and code files, manage issues and PRs, analyze code, and
-automate workflows using natural language.
+El [Servidor MCP de GitHub](https://github.com/github/github-mcp-server) conecta herramientas
+de IA directamente a la plataforma de GitHub. Esto le da a tu agente ADK la capacidad de
+leer repositorios y archivos de código, gestionar issues y PRs, analizar código, y
+automatizar flujos de trabajo usando lenguaje natural.
 
-## Use cases
+## Casos de uso
 
-- **Repository Management**: Browse and query code, search files, analyze
-  commits, and understand project structure across any repository you have
-  access to.
-- **Issue & PR Automation**: Create, update, and manage issues and pull
-  requests. Let AI help triage bugs, review code changes, and maintain project
-  boards.
-- **Code Analysis**: Examine security findings, review Dependabot alerts,
-  understand code patterns, and get comprehensive insights into your codebase.
+- **Gestión de Repositorios**: Navega y consulta código, busca archivos, analiza
+  commits, y comprende la estructura del proyecto en cualquier repositorio al que tengas
+  acceso.
+- **Automatización de Issues y PRs**: Crea, actualiza y gestiona issues y pull
+  requests. Deja que la IA ayude a clasificar bugs, revisar cambios de código y mantener tableros de
+  proyectos.
+- **Análisis de Código**: Examina hallazgos de seguridad, revisa alertas de Dependabot,
+  comprende patrones de código, y obtén información completa sobre tu base de código.
 
-## Prerequisites
+## Requisitos previos
 
-- Create a
-  [Personal Access Token](https://github.com/settings/personal-access-tokens/new) in GitHub. Refer to the [documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) for more information.
+- Crea un
+  [Token de Acceso Personal](https://github.com/settings/personal-access-tokens/new) en GitHub. Consulta la [documentación](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) para más información.
 
-## Use with agent
+## Uso con agente
 
 === "Python"
 
-    === "Remote MCP Server"
+    === "Servidor MCP Remoto"
 
         ```python
         from google.adk.agents import Agent
@@ -65,7 +65,7 @@ automate workflows using natural language.
 
 === "TypeScript"
 
-    === "Remote MCP Server"
+    === "Servidor MCP Remoto"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -92,50 +92,50 @@ automate workflows using natural language.
         export { rootAgent };
         ```
 
-## Available tools
+## Herramientas disponibles
 
-Tool | Description
+Herramienta | Descripción
 ---- | -----------
-`context` | Tools that provide context about the current user and GitHub context you are operating in
-`copilot` | Copilot related tools (e.g. Copilot Coding Agent)
-`copilot_spaces` | Copilot Spaces related tools
-`actions` | GitHub Actions workflows and CI/CD operations
-`code_security` | Code security related tools, such as GitHub Code Scanning
-`dependabot` | Dependabot tools
-`discussions` | GitHub Discussions related tools
-`experiments` | Experimental features that are not considered stable yet
-`gists` | GitHub Gist related tools
-`github_support_docs_search` | Search docs to answer GitHub product and support questions
-`issues` | GitHub Issues related tools
-`labels` | GitHub Labels related tools
-`notifications` | GitHub Notifications related tools
-`orgs` | GitHub Organization related tools
-`projects` | GitHub Projects related tools
-`pull_requests` | GitHub Pull Request related tools
-`repos` | GitHub Repository related tools
-`secret_protection` | Secret protection related tools, such as GitHub Secret Scanning
-`security_advisories` | Security advisories related tools
-`stargazers` | GitHub Stargazers related tools
-`users` | GitHub User related tools
+`context` | Herramientas que proporcionan contexto sobre el usuario actual y el contexto de GitHub en el que estás operando
+`copilot` | Herramientas relacionadas con Copilot (ej. Agente de Codificación de Copilot)
+`copilot_spaces` | Herramientas relacionadas con Copilot Spaces
+`actions` | Flujos de trabajo de GitHub Actions y operaciones de CI/CD
+`code_security` | Herramientas relacionadas con seguridad de código, como GitHub Code Scanning
+`dependabot` | Herramientas de Dependabot
+`discussions` | Herramientas relacionadas con GitHub Discussions
+`experiments` | Características experimentales que aún no se consideran estables
+`gists` | Herramientas relacionadas con GitHub Gist
+`github_support_docs_search` | Buscar documentos para responder preguntas sobre productos y soporte de GitHub
+`issues` | Herramientas relacionadas con GitHub Issues
+`labels` | Herramientas relacionadas con etiquetas de GitHub
+`notifications` | Herramientas relacionadas con notificaciones de GitHub
+`orgs` | Herramientas relacionadas con organizaciones de GitHub
+`projects` | Herramientas relacionadas con proyectos de GitHub
+`pull_requests` | Herramientas relacionadas con Pull Requests de GitHub
+`repos` | Herramientas relacionadas con repositorios de GitHub
+`secret_protection` | Herramientas relacionadas con protección de secretos, como GitHub Secret Scanning
+`security_advisories` | Herramientas relacionadas con avisos de seguridad
+`stargazers` | Herramientas relacionadas con Stargazers de GitHub
+`users` | Herramientas relacionadas con usuarios de GitHub
 
-## Configuration
+## Configuración
 
-The Remote GitHub MCP server has optional headers that can be used to configure
-available toolsets and read-only mode:
+El servidor MCP remoto de GitHub tiene encabezados opcionales que se pueden usar para configurar
+los conjuntos de herramientas disponibles y el modo de solo lectura:
 
-- `X-MCP-Toolsets`: Comma-separated list of toolsets to enable. (e.g., "repos,issues")
-    - If the list is empty, default toolsets will be used. If a bad toolset is
-      provided, the server will fail to start and emit a 400 bad request status.
-      Whitespace is ignored.
+- `X-MCP-Toolsets`: Lista separada por comas de conjuntos de herramientas a habilitar. (ej. "repos,issues")
+    - Si la lista está vacía, se usarán los conjuntos de herramientas predeterminados. Si se proporciona
+      un conjunto de herramientas incorrecto, el servidor fallará al iniciar y emitirá un estado de solicitud incorrecta 400.
+      Los espacios en blanco se ignoran.
 
-- `X-MCP-Readonly`: Enables only "read" tools.
-    - If this header is empty, "false", "f", "no", "n", "0", or "off" (ignoring
-      whitespace and case), it will be interpreted as false. All other values
-      are interpreted as true.
+- `X-MCP-Readonly`: Habilita solo herramientas de "lectura".
+    - Si este encabezado está vacío, es "false", "f", "no", "n", "0", o "off" (ignorando
+      espacios en blanco y mayúsculas), se interpretará como falso. Todos los demás valores
+      se interpretan como verdadero.
 
 
-## Additional resources
+## Recursos adicionales
 
-- [GitHub MCP Server Repository](https://github.com/github/github-mcp-server)
-- [Remote GitHub MCP Server Documentation](https://github.com/github/github-mcp-server/blob/main/docs/remote-server.md)
-- [Policies and Governance for the GitHub MCP Server](https://github.com/github/github-mcp-server/blob/main/docs/policies-and-governance.md)
+- [Repositorio del Servidor MCP de GitHub](https://github.com/github/github-mcp-server)
+- [Documentación del Servidor MCP Remoto de GitHub](https://github.com/github/github-mcp-server/blob/main/docs/remote-server.md)
+- [Políticas y Gobernanza para el Servidor MCP de GitHub](https://github.com/github/github-mcp-server/blob/main/docs/policies-and-governance.md)

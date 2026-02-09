@@ -1,45 +1,45 @@
-# Sequential agents
+# Agentes secuenciales
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-The `SequentialAgent` is a [workflow agent](index.md) that executes its sub-agents in the order they are specified in the list.
-Use the `SequentialAgent` when you want the execution to occur in a fixed, strict order.
+El `SequentialAgent` es un [agente de flujo de trabajo](index.md) que ejecuta sus sub-agentes en el orden en que están especificados en la lista.
+Usa el `SequentialAgent` cuando quieras que la ejecución ocurra en un orden fijo y estricto.
 
-### Example
+### Ejemplo
 
-* You want to build an agent that can summarize any webpage, using two tools: `Get Page Contents` and `Summarize Page`. Because the agent must always call `Get Page Contents` before calling `Summarize Page` (you can't summarize from nothing!), you should build your agent using a `SequentialAgent`.
+* Quieres construir un agente que pueda resumir cualquier página web, usando dos herramientas: `Get Page Contents` y `Summarize Page`. Dado que el agente siempre debe llamar a `Get Page Contents` antes de llamar a `Summarize Page` (¡no puedes resumir de la nada!), debes construir tu agente usando un `SequentialAgent`.
 
-As with other [workflow agents](index.md), the `SequentialAgent` is not powered by an LLM, and is thus deterministic in how it executes. That being said, workflow agents are concerned only with their execution (i.e. in sequence), and not their internal logic; the tools or sub-agents of a workflow agent may or may not utilize LLMs.
+Al igual que otros [agentes de flujo de trabajo](index.md), el `SequentialAgent` no está impulsado por un LLM, y por lo tanto es determinista en cómo se ejecuta. Dicho esto, los agentes de flujo de trabajo se preocupan solo por su ejecución (es decir, en secuencia), y no por su lógica interna; las herramientas o sub-agentes de un agente de flujo de trabajo pueden o no utilizar LLMs.
 
-### How it works
+### Cómo funciona
 
-When the `SequentialAgent`'s `Run Async` method is called, it performs the following actions:
+Cuando se llama al método `Run Async` del `SequentialAgent`, realiza las siguientes acciones:
 
-1. **Iteration:** It iterates through the sub agents list in the order they were provided.
-2. **Sub-Agent Execution:** For each sub-agent in the list, it calls the sub-agent's `Run Async` method.
+1. **Iteración:** Itera a través de la lista de sub-agentes en el orden en que fueron proporcionados.
+2. **Ejecución de Sub-Agentes:** Para cada sub-agente en la lista, llama al método `Run Async` del sub-agente.
 
 ![Sequential Agent](../../assets/sequential-agent.png){: width="600"}
 
-### Full Example: Code Development Pipeline
+### Ejemplo Completo: Pipeline de Desarrollo de Código
 
-Consider a simplified code development pipeline:
+Considera un pipeline simplificado de desarrollo de código:
 
-* **Code Writer Agent:**  An LLM Agent that generates initial code based on a specification.
-* **Code Reviewer Agent:**  An LLM Agent that reviews the generated code for errors, style issues, and adherence to best practices.  It receives the output of the Code Writer Agent.
-* **Code Refactorer Agent:** An LLM Agent that takes the reviewed code (and the reviewer's comments) and refactors it to improve quality and address issues.
+* **Code Writer Agent:** Un Agente LLM que genera código inicial basado en una especificación.
+* **Code Reviewer Agent:** Un Agente LLM que revisa el código generado en busca de errores, problemas de estilo y adherencia a las mejores prácticas. Recibe la salida del Code Writer Agent.
+* **Code Refactorer Agent:** Un Agente LLM que toma el código revisado (y los comentarios del revisor) y lo refactoriza para mejorar la calidad y abordar problemas.
 
-A `SequentialAgent` is perfect for this:
+Un `SequentialAgent` es perfecto para esto:
 
 ```py
 SequentialAgent(sub_agents=[CodeWriterAgent, CodeReviewerAgent, CodeRefactorerAgent])
 ```
 
-This ensures the code is written, *then* reviewed, and *finally* refactored, in a strict, dependable order. **The output from each sub-agent is passed to the next by storing them in state via [Output Key](../llm-agents.md#structuring-data-input_schema-output_schema-output_key)**.
+Esto asegura que el código se escriba, *luego* se revise, y *finalmente* se refactorice, en un orden estricto y confiable. **La salida de cada sub-agente se pasa al siguiente almacenándola en el estado a través de [Output Key](../llm-agents.md#structuring-data-input_schema-output_schema-output_key)**.
 
-!!! note "Shared Invocation Context"
-    The `SequentialAgent` passes the same `InvocationContext` to each of its sub-agents. This means they all share the same session state, including the temporary (`temp:`) namespace, making it easy to pass data between steps within a single turn.
+!!! note "Contexto de Invocación Compartido"
+    El `SequentialAgent` pasa el mismo `InvocationContext` a cada uno de sus sub-agentes. Esto significa que todos comparten el mismo estado de sesión, incluyendo el espacio de nombres temporal (`temp:`), facilitando el paso de datos entre pasos dentro de un solo turno.
 
 ???+ "Code"
 

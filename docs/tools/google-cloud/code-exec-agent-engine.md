@@ -4,53 +4,31 @@ catalog_description: Run AI-generated code in a secure and scalable GKE environm
 catalog_icon: /adk-docs/assets/tools-vertex-ai.png
 ---
 
-# Code Execution Tool with Agent Engine
+# Herramienta de Ejecución de Código con Agent Engine
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span><span class="lst-preview">Preview</span>
 </div>
 
-The Agent Engine Code Execution ADK Tool provides a low-latency, highly
-efficient method for running AI-generated code using the
-[Google Cloud Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
-service. This tool is designed for fast execution, tailored for agentic workflows,
-and uses sandboxed environments for improved security. The Code Execution tool 
-allows code and data to persist over multiple requests, enabling complex, 
-multi-step coding tasks, including:
+La Herramienta ADK de Ejecución de Código de Agent Engine proporciona un método de baja latencia y alta eficiencia para ejecutar código generado por IA utilizando el servicio [Google Cloud Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview). Esta herramienta está diseñada para una ejecución rápida, adaptada a flujos de trabajo agénticos, y utiliza entornos aislados para mejorar la seguridad. La herramienta de Ejecución de Código permite que el código y los datos persistan a lo largo de múltiples solicitudes, permitiendo tareas de codificación complejas y de múltiples pasos, incluyendo:
 
--   **Code development and debugging:** Create agent tasks that test and
-    iterate on versions of code over multiple requests.
--   **Code with data analysis:** Upload data files up to 100MB, and run
-    multiple code-based analyses without the need to reload data for each code run.
+-   **Desarrollo y depuración de código:** Crea tareas de agente que prueban e iteran sobre versiones de código a lo largo de múltiples solicitudes.
+-   **Código con análisis de datos:** Carga archivos de datos de hasta 100MB, y ejecuta múltiples análisis basados en código sin necesidad de recargar datos para cada ejecución de código.
 
-This code execution tool is part of the Agent Engine suite, however you do not
-have to deploy your agent to Agent Engine to use it. You can run your agent
-locally or with other services and use this tool. For more information about the
-Code Execution feature in Agent Engine, see the
-[Agent Engine Code Execution](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/overview)
-documentation.
+Esta herramienta de ejecución de código es parte de la suite de Agent Engine, sin embargo no es necesario desplegar tu agente en Agent Engine para usarla. Puedes ejecutar tu agente localmente o con otros servicios y usar esta herramienta. Para más información sobre la característica de Ejecución de Código en Agent Engine, consulta la documentación de [Agent Engine Code Execution](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/overview).
 
 !!! example "Preview release"
-    The Agent Engine Code Execution feature is a Preview release. For
-    more information, see the
-    [launch stage descriptions](https://cloud.google.com/products#product-launch-stages).
+    La característica de Ejecución de Código de Agent Engine es una versión Preview. Para más información, consulta las [descripciones de etapa de lanzamiento](https://cloud.google.com/products#product-launch-stages).
 
-## Use the Tool
+## Usar la Herramienta
 
-Using the Agent Engine Code Execution tool requires that you create a sandbox
-environment with Google Cloud Agent Engine before using the tool with an ADK
-agent.
+El uso de la herramienta de Ejecución de Código de Agent Engine requiere que crees un entorno sandbox con Google Cloud Agent Engine antes de usar la herramienta con un agente ADK.
 
-To use the Code Execution tool with your ADK agent:
+Para usar la herramienta de Ejecución de Código con tu agente ADK:
 
-1.  Follow the instructions in the Agent Engine
-    [Code Execution quickstart](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/quickstart)
-    to create a code execution sandbox environment.
-1.  Create an ADK agent with settings to access the Google Cloud project
-    where you created the sandbox environment.
-1.  The following code example shows an agent configured to use the Code
-    Executor tool. Replace `SANDBOX_RESOURCE_NAME` with the sandbox environment 
-    resource name you created.
+1.  Sigue las instrucciones en el [Code Execution quickstart](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/quickstart) de Agent Engine para crear un entorno sandbox de ejecución de código.
+1.  Crea un agente ADK con configuraciones para acceder al proyecto de Google Cloud donde creaste el entorno sandbox.
+1.  El siguiente ejemplo de código muestra un agente configurado para usar la herramienta Code Executor. Reemplaza `SANDBOX_RESOURCE_NAME` con el nombre de recurso del entorno sandbox que creaste.
 
 ```python
 from google.adk.agents.llm_agent import Agent
@@ -66,147 +44,111 @@ root_agent = Agent(
 )
 ```
 
-For details on the expected format of the `sandbox_resource_name` value, and the
-alternative `agent_engine_resource_name` parameter, see [Configuration
-parameters](#config-parameters). For a more advanced example, including
-recommended system instructions for the tool, see the [Advanced
-example](#advanced-example) or the full 
-[agent code example](https://github.com/google/adk-python/tree/main/contributing/samples/agent_engine_code_execution).
+Para detalles sobre el formato esperado del valor `sandbox_resource_name`, y el parámetro alternativo `agent_engine_resource_name`, consulta [Parámetros de configuración](#config-parameters). Para un ejemplo más avanzado, incluyendo instrucciones de sistema recomendadas para la herramienta, consulta el [Ejemplo avanzado](#advanced-example) o el [ejemplo de código de agente](https://github.com/google/adk-python/tree/main/contributing/samples/agent_engine_code_execution) completo.
 
-## How it works
+## Cómo funciona
 
-The `AgentEngineCodeExecutor` Tool maintains a single sandbox throughout an
-agent's task, meaning the sandbox's state persists across all operations within
-an ADK workflow session.
+La Herramienta `AgentEngineCodeExecutor` mantiene un único sandbox durante toda la tarea de un agente, lo que significa que el estado del sandbox persiste a través de todas las operaciones dentro de una sesión de flujo de trabajo ADK.
 
-1.  **Sandbox creation:** For multi-step tasks requiring code execution,
-    the Agent Engine creates a sandbox with specified language and machine
-    configurations, isolating the code execution environment. If no sandbox is
-    pre-created, the code execution tool will automatically create one using
-    default settings.
-1.  **Code execution with persistence:** AI-generated code for a tool call
-    is streamed to the sandbox and then executed within the isolated
-    environment. After execution, the sandbox *remains active* for subsequent
-    tool calls within the same session, preserving variables, imported modules,
-    and file state for the next tool call from the same agent.
-1.  **Result retrieval:** The standard output, and any captured error
-    streams are collected and passed back to the calling agent.
-1.  **Sandbox clean up:** Once the agent task or conversation concludes, the
-    agent can explicitly delete the sandbox, or rely on the TTL feature of the
-    sandbox specified when creating the sandbox.
+1.  **Creación de sandbox:** Para tareas de múltiples pasos que requieren ejecución de código, Agent Engine crea un sandbox con configuraciones de lenguaje y máquina especificadas, aislando el entorno de ejecución de código. Si no se ha creado ningún sandbox previamente, la herramienta de ejecución de código creará uno automáticamente usando configuraciones predeterminadas.
+1.  **Ejecución de código con persistencia:** El código generado por IA para una llamada de herramienta se transmite al sandbox y luego se ejecuta dentro del entorno aislado. Después de la ejecución, el sandbox *permanece activo* para llamadas de herramienta subsecuentes dentro de la misma sesión, preservando variables, módulos importados y estado de archivos para la siguiente llamada de herramienta del mismo agente.
+1.  **Recuperación de resultados:** La salida estándar y cualquier flujo de error capturado se recopilan y se devuelven al agente que los llamó.
+1.  **Limpieza de sandbox:** Una vez que la tarea del agente o conversación concluye, el agente puede eliminar explícitamente el sandbox, o depender de la característica TTL del sandbox especificada al crear el sandbox.
 
-## Key benefits
+## Beneficios clave
 
--   **Persistent state:** Solve complex tasks where data manipulation or
-    variable context must carry over between multiple tool calls.
--   **Targeted Isolation:** Provides robust process-level isolation,
-    ensuring that tool code execution is safe while remaining lightweight.
--   **Agent Engine integration:** Tightly integrated into the Agent Engine
-    tool-use and orchestration layer.
--   **Low-latency performance:** Designed for speed, allowing agents to
-    execute complex tool-use workflows efficiently without significant overhead.
--   **Flexible compute configurations:** Create sandboxes with specific
-    programming language, processing power, and memory configurations.
+-   **Estado persistente:** Resuelve tareas complejas donde la manipulación de datos o el contexto de variables debe mantenerse entre múltiples llamadas de herramienta.
+-   **Aislamiento dirigido:** Proporciona aislamiento robusto a nivel de proceso, asegurando que la ejecución de código de herramienta sea segura mientras permanece ligera.
+-   **Integración con Agent Engine:** Estrechamente integrada en la capa de orquestación y uso de herramientas de Agent Engine.
+-   **Rendimiento de baja latencia:** Diseñada para velocidad, permitiendo que los agentes ejecuten flujos de trabajo complejos de uso de herramientas eficientemente sin sobrecarga significativa.
+-   **Configuraciones de cómputo flexibles:** Crea sandboxes con lenguaje de programación, poder de procesamiento y configuraciones de memoria específicas.
 
-## System requirements¶
+## Requisitos del sistema¶
 
-The following requirements must be met to successfully use the Agent Engine
-Code Execution tool with your ADK agents:
+Los siguientes requisitos deben cumplirse para usar exitosamente la herramienta de Ejecución de Código de Agent Engine con tus agentes ADK:
 
--   Google Cloud project with Vertex API enabled
--   Agent's service account requires **roles/aiplatform.user** role, which
-    allow it to:
-    -   Create, get, list and delete code execution sandboxes
-    -   Execute code execution sandbox
+-   Proyecto de Google Cloud con la API de Vertex habilitada
+-   La cuenta de servicio del agente requiere el rol **roles/aiplatform.user**, que le permite:
+    -   Crear, obtener, listar y eliminar sandboxes de ejecución de código
+    -   Ejecutar sandbox de ejecución de código
 
-## Configuration parameters {#config-parameters}
+## Parámetros de configuración {#config-parameters}
 
-The Agent Engine Code Execution tool has the following parameters. You must set
-one of the following resource parameters:
+La herramienta de Ejecución de Código de Agent Engine tiene los siguientes parámetros. Debes configurar uno de los siguientes parámetros de recurso:
 
--   **`sandbox_resource_name`** : A sandbox resource path to an
-    existing sandbox environment it uses for each tool call. The expected
-string format is as follows:
+-   **`sandbox_resource_name`** : Una ruta de recurso de sandbox a un entorno sandbox existente que usa para cada llamada de herramienta. El formato de cadena esperado es el siguiente:
     ```
     projects/{$PROJECT_ID}/locations/{$LOCATION_ID}/reasoningEngines/{$REASONING_ENGINE_ID}/sandboxEnvironments/{$SANDBOX_ENVIRONMENT_ID}
     
-    # Example:
+    # Ejemplo:
     projects/my-vertex-agent-project/locations/us-central1/reasoningEngines/6842888880301111172/sandboxEnvironments/6545148888889161728
     ```
--   **`agent_engine_resource_name`**: Agent Engine resource name where the tool
-creates a sandbox environment. The expected string format is as follows:
+-   **`agent_engine_resource_name`**: Nombre de recurso de Agent Engine donde la herramienta crea un entorno sandbox. El formato de cadena esperado es el siguiente:
     ```
     projects/{$PROJECT_ID}/locations/{$LOCATION_ID}/reasoningEngines/{$REASONING_ENGINE_ID}
     
-    # Example:
+    # Ejemplo:
     projects/my-vertex-agent-project/locations/us-central1/reasoningEngines/6842888880301111172
     ```
 
-You can use Google Cloud Agent Engine's API to configure Agent Engine sandbox
-environments separately using a Google Cloud client connection, including the
-following settings:
+Puedes usar la API de Google Cloud Agent Engine para configurar entornos sandbox de Agent Engine por separado usando una conexión de cliente de Google Cloud, incluyendo las siguientes configuraciones:
 
--   **Programming languages,** including Python and JavaScript
--   **Compute environment**, including CPU and memory sizes
+-   **Lenguajes de programación,** incluyendo Python y JavaScript
+-   **Entorno de cómputo**, incluyendo tamaños de CPU y memoria
 
-For more information on connecting to Google Cloud Agent Engine and configuring
-sandbox environments, see the Agent Engine
-[Code Execution quickstart](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/quickstart#create_a_sandbox).
+Para más información sobre cómo conectarse a Google Cloud Agent Engine y configurar entornos sandbox, consulta el [Code Execution quickstart](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/quickstart#create_a_sandbox) de Agent Engine.
 
-## Advanced example {#advanced-example}
+## Ejemplo avanzado {#advanced-example}
 
-The following example code shows how to implement use of the Code Executor tool
-in an ADK agent. This example includes a `base_system_instruction` clause to set
-the operating guidelines for code execution. This instruction clause is
-optional, but strongly recommended for getting the best results from this tool.
+El siguiente ejemplo de código muestra cómo implementar el uso de la herramienta Code Executor en un agente ADK. Este ejemplo incluye una cláusula `base_system_instruction` para establecer las pautas operativas para la ejecución de código. Esta cláusula de instrucción es opcional, pero fuertemente recomendada para obtener los mejores resultados de esta herramienta.
 
 ```python
 from google.adk.agents.llm_agent import Agent
 from google.adk.code_executors.agent_engine_sandbox_code_executor import AgentEngineSandboxCodeExecutor
 
 def base_system_instruction():
-  """Returns: data science agent system instruction."""
+  """Devuelve: instrucción de sistema del agente de ciencia de datos."""
 
   return """
-  # Guidelines
+  # Pautas
 
-  **Objective:** Assist the user in achieving their data analysis goals, **with emphasis on avoiding assumptions and ensuring accuracy.** Reaching that goal can involve multiple steps. When you need to generate code, you **don't** need to solve the goal in one go. Only generate the next step at a time.
+  **Objetivo:** Ayudar al usuario a alcanzar sus objetivos de análisis de datos, **con énfasis en evitar suposiciones y garantizar precisión.** Alcanzar ese objetivo puede involucrar múltiples pasos. Cuando necesites generar código, **no** necesitas resolver el objetivo de una sola vez. Solo genera el siguiente paso a la vez.
 
-  **Code Execution:** All code snippets provided will be executed within the sandbox environment.
+  **Ejecución de Código:** Todos los fragmentos de código proporcionados se ejecutarán dentro del entorno sandbox.
 
-  **Statefulness:** All code snippets are executed and the variables stays in the environment. You NEVER need to re-initialize variables. You NEVER need to reload files. You NEVER need to re-import libraries.
+  **Estado:** Todos los fragmentos de código se ejecutan y las variables permanecen en el entorno. NUNCA necesitas reinicializar variables. NUNCA necesitas recargar archivos. NUNCA necesitas reimportar bibliotecas.
 
-  **Output Visibility:** Always print the output of code execution to visualize results, especially for data exploration and analysis. For example:
-    - To look a the shape of a pandas.DataFrame do:
+  **Visibilidad de Salida:** Siempre imprime la salida de la ejecución de código para visualizar resultados, especialmente para exploración y análisis de datos. Por ejemplo:
+    - Para ver la forma de un pandas.DataFrame haz:
       ```tool_code
       print(df.shape)
       ```
-      The output will be presented to you as:
+      La salida se te presentará como:
       ```tool_outputs
       (49, 7)
 
       ```
-    - To display the result of a numerical computation:
+    - Para mostrar el resultado de un cálculo numérico:
       ```tool_code
       x = 10 ** 9 - 12 ** 5
       print(f'{{x=}}')
       ```
-      The output will be presented to you as:
+      La salida se te presentará como:
       ```tool_outputs
       x=999751168
 
       ```
-    - You **never** generate ```tool_outputs yourself.
-    - You can then use this output to decide on next steps.
-    - Print just variables (e.g., `print(f'{{variable=}}')`.
+    - Tú **nunca** generas ```tool_outputs tú mismo.
+    - Luego puedes usar esta salida para decidir los siguientes pasos.
+    - Imprime solo variables (ej., `print(f'{{variable=}}')`.
 
-  **No Assumptions:** **Crucially, avoid making assumptions about the nature of the data or column names.** Base findings solely on the data itself. Always use the information obtained from `explore_df` to guide your analysis.
+  **Sin Suposiciones:** **Crucialmente, evita hacer suposiciones sobre la naturaleza de los datos o nombres de columnas.** Basa los hallazgos únicamente en los datos mismos. Siempre usa la información obtenida de `explore_df` para guiar tu análisis.
 
-  **Available files:** Only use the files that are available as specified in the list of available files.
+  **Archivos disponibles:** Solo usa los archivos que estén disponibles según lo especificado en la lista de archivos disponibles.
 
-  **Data in prompt:** Some queries contain the input data directly in the prompt. You have to parse that data into a pandas DataFrame. ALWAYS parse all the data. NEVER edit the data that are given to you.
+  **Datos en el prompt:** Algunas consultas contienen los datos de entrada directamente en el prompt. Tienes que analizar esos datos en un pandas DataFrame. SIEMPRE analiza todos los datos. NUNCA edites los datos que se te dan.
 
-  **Answerability:** Some queries may not be answerable with the available data. In those cases, inform the user why you cannot process their query and suggest what type of data would be needed to fulfill their request.
+  **Respondibilidad:** Algunas consultas pueden no ser respondibles con los datos disponibles. En esos casos, informa al usuario por qué no puedes procesar su consulta y sugiere qué tipo de datos se necesitarían para cumplir su solicitud.
 
   """
 
@@ -216,28 +158,27 @@ root_agent = Agent(
     instruction=base_system_instruction() + """
 
 
-You need to assist the user with their queries by looking at the data and the context in the conversation.
-You final answer should summarize the code and code execution relevant to the user query.
+Necesitas ayudar al usuario con sus consultas mirando los datos y el contexto en la conversación.
+Tu respuesta final debe resumir el código y la ejecución de código relevante a la consulta del usuario.
 
-You should include all pieces of data to answer the user query, such as the table from code execution results.
-If you cannot answer the question directly, you should follow the guidelines above to generate the next step.
-If the question can be answered directly with writing any code, you should do that.
-If you doesn't have enough data to answer the question, you should ask for clarification from the user.
+Debes incluir todas las piezas de datos para responder la consulta del usuario, como la tabla de los resultados de la ejecución de código.
+Si no puedes responder la pregunta directamente, debes seguir las pautas anteriores para generar el siguiente paso.
+Si la pregunta puede ser respondida directamente sin escribir ningún código, debes hacer eso.
+Si no tienes suficientes datos para responder la pregunta, debes pedir aclaración al usuario.
 
-You should NEVER install any package on your own like `pip install ...`.
-When plotting trends, you should make sure to sort and order the data by the x-axis.
+NUNCA debes instalar ningún paquete por tu cuenta como `pip install ...`.
+Al graficar tendencias, debes asegurarte de ordenar y organizar los datos por el eje x.
 
 
 """,
     code_executor=AgentEngineSandboxCodeExecutor(
-        # Replace with your sandbox resource name if you already have one.
+        # Reemplaza con el nombre de recurso de tu sandbox si ya tienes uno.
         sandbox_resource_name="SANDBOX_RESOURCE_NAME",
-        # Replace with agent engine resource name used for creating sandbox if
-        # sandbox_resource_name is not set:
+        # Reemplaza con el nombre de recurso de agent engine usado para crear sandbox si
+        # sandbox_resource_name no está configurado:
         # agent_engine_resource_name="AGENT_ENGINE_RESOURCE_NAME",
     ),
 )
 ```
 
-For a complete version of an ADK agent using this example code, see the
-[agent_engine_code_execution sample](https://github.com/google/adk-python/tree/main/contributing/samples/agent_engine_code_execution).
+Para una versión completa de un agente ADK usando este código de ejemplo, consulta el [ejemplo de agent_engine_code_execution](https://github.com/google/adk-python/tree/main/contributing/samples/agent_engine_code_execution).

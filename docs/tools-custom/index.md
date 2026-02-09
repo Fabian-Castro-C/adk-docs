@@ -1,89 +1,88 @@
-# Custom Tools for ADK
+# Herramientas Personalizadas para ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-In an ADK agent workflow, Tools are programming functions with structured input
-and output that can be called by an ADK Agent to perform actions. ADK Tools
-function similarly to how you use a
-[Function Call](https://ai.google.dev/gemini-api/docs/function-calling)
-with Gemini or other generative AI models. You can perform various actions and
-programming functions with an ADK Tool, such as:
+En un flujo de trabajo de agente ADK, las Herramientas son funciones de programación con entrada
+y salida estructurada que pueden ser llamadas por un Agente ADK para realizar acciones. Las Herramientas ADK
+funcionan de manera similar a cómo usas una
+[Llamada de Función](https://ai.google.dev/gemini-api/docs/function-calling)
+con Gemini u otros modelos de IA generativa. Puedes realizar varias acciones y
+funciones de programación con una Herramienta ADK, tales como:
 
-*   Querying databases
-*   Making API requests: getting weather data, booking systems
-*   Searching the web
-*   Executing code snippets
-*   Retrieving information from documents (RAG)
-*   Interacting with other software or services
+*   Consultar bases de datos
+*   Hacer solicitudes API: obtener datos del clima, sistemas de reservas
+*   Buscar en la web
+*   Ejecutar fragmentos de código
+*   Recuperar información de documentos (RAG)
+*   Interactuar con otro software o servicios
 
-!!! tip "[ADK Tools list](/adk-docs/tools/)"
-    Before building your own Tools for ADK, check out the
-    **[ADK Tools list](/adk-docs/tools/)**
-    for pre-built tools you can use with ADK Agents.
+!!! tip "[Lista de Herramientas ADK](/adk-docs/tools/)"
+    Antes de construir tus propias Herramientas para ADK, consulta la
+    **[Lista de Herramientas ADK](/adk-docs/tools/)**
+    para herramientas preconstruidas que puedes usar con Agentes ADK.
 
-## What is a Tool?
+## ¿Qué es una Herramienta?
 
-In the context of ADK, a Tool represents a specific
-capability provided to an AI agent, enabling it to perform actions and interact
-with the world beyond its core text generation and reasoning abilities. What
-distinguishes capable agents from basic language models is often their effective
-use of tools.
+En el contexto de ADK, una Herramienta representa una
+capacidad específica proporcionada a un agente de IA, permitiéndole realizar acciones e interactuar
+con el mundo más allá de sus capacidades básicas de generación de texto y razonamiento. Lo que
+distingue a los agentes capaces de los modelos de lenguaje básicos es a menudo su uso efectivo
+de herramientas.
 
-Technically, a tool is typically a modular code component—**like a Python, Java, or TypeScript
-function**, a class method, or even another specialized agent—designed to
-execute a distinct, predefined task. These tasks often involve interacting with
-external systems or data.
+Técnicamente, una herramienta es típicamente un componente de código modular—**como una función de Python, Java o TypeScript**, un método de clase, o incluso otro agente especializado—diseñado para
+ejecutar una tarea distinta y predefinida. Estas tareas a menudo involucran interactuar con
+sistemas o datos externos.
 
 <img src="../assets/agent-tool-call.png" alt="Agent tool call">
 
-### Key Characteristics
+### Características Clave
 
-**Action-Oriented:** Tools perform specific actions for an agent, such as
-searching for information, calling an API, or performing calculations.
+**Orientada a la Acción:** Las herramientas realizan acciones específicas para un agente, como
+buscar información, llamar a una API o realizar cálculos.
 
-**Extends Agent capabilities:** They empower agents to access real-time information, affect external systems, and overcome the knowledge limitations inherent in their training data.
+**Extiende las capacidades del Agente:** Empoderan a los agentes para acceder a información en tiempo real, afectar sistemas externos y superar las limitaciones de conocimiento inherentes a sus datos de entrenamiento.
 
-**Execute predefined logic:** Crucially, tools execute specific, developer-defined logic. They do not possess their own independent reasoning capabilities like the agent's core Large Language Model (LLM). The LLM reasons about which tool to use, when, and with what inputs, but the tool itself just executes its designated function.
+**Ejecuta lógica predefinida:** Crucialmente, las herramientas ejecutan lógica específica definida por el desarrollador. No poseen sus propias capacidades de razonamiento independientes como el Modelo de Lenguaje Grande (LLM) central del agente. El LLM razona sobre qué herramienta usar, cuándo y con qué entradas, pero la herramienta en sí solo ejecuta su función designada.
 
-## How Agents Use Tools
+## Cómo los Agentes Usan las Herramientas
 
-Agents leverage tools dynamically through mechanisms often involving function calling. The process generally follows these steps:
+Los agentes aprovechan las herramientas dinámicamente a través de mecanismos que a menudo involucran llamadas de función. El proceso generalmente sigue estos pasos:
 
-1. **Reasoning:** The agent's LLM analyzes its system instruction, conversation history, and user request.
-2. **Selection:** Based on the analysis, the LLM decides on which tool, if any, to execute, based on the tools available to the agent and the docstrings that describes each tool.
-3. **Invocation:** The LLM generates the required arguments (inputs) for the selected tool and triggers its execution.
-4. **Observation:** The agent receives the output (result) returned by the tool.
-5. **Finalization:** The agent incorporates the tool's output into its ongoing reasoning process to formulate the next response, decide the subsequent step, or determine if the goal has been achieved.
+1. **Razonamiento:** El LLM del agente analiza su instrucción del sistema, historial de conversación y solicitud del usuario.
+2. **Selección:** Basándose en el análisis, el LLM decide qué herramienta, si alguna, ejecutar, basándose en las herramientas disponibles para el agente y los docstrings que describen cada herramienta.
+3. **Invocación:** El LLM genera los argumentos requeridos (entradas) para la herramienta seleccionada y activa su ejecución.
+4. **Observación:** El agente recibe la salida (resultado) devuelta por la herramienta.
+5. **Finalización:** El agente incorpora la salida de la herramienta en su proceso de razonamiento continuo para formular la próxima respuesta, decidir el paso subsecuente o determinar si se ha logrado el objetivo.
 
-Think of the tools as a specialized toolkit that the agent's intelligent core (the LLM) can access and utilize as needed to accomplish complex tasks.
+Piensa en las herramientas como un kit de herramientas especializado al que el núcleo inteligente del agente (el LLM) puede acceder y utilizar según sea necesario para lograr tareas complejas.
 
-## Tool Types in ADK
+## Tipos de Herramientas en ADK
 
-ADK offers flexibility by supporting several types of tools:
+ADK ofrece flexibilidad al soportar varios tipos de herramientas:
 
-1. **[Function Tools](/adk-docs/tools-custom/function-tools/):** Tools created by you, tailored to your specific application's needs.
-    * **[Functions/Methods](/adk-docs/tools-custom/function-tools/#1-function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
-    * **[Agents-as-Tools](/adk-docs/tools-custom/function-tools/#3-agent-as-a-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
-    * **[Long Running Function Tools](/adk-docs/tools-custom/function-tools/#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
-2. **[Built-in Tools](/adk-docs/tools/built-in-tools/):** Ready-to-use tools provided by the framework for common tasks.
-        Examples: Google Search, Code Execution, Retrieval-Augmented Generation (RAG).
-3. **Third-Party Tools:** Integrate tools seamlessly from popular external libraries.
+1. **[Herramientas de Función](/adk-docs/tools-custom/function-tools/):** Herramientas creadas por ti, adaptadas a las necesidades específicas de tu aplicación.
+    * **[Funciones/Métodos](/adk-docs/tools-custom/function-tools/#1-function-tool):** Define funciones o métodos síncronos estándar en tu código (ej., Python def).
+    * **[Agentes-como-Herramientas](/adk-docs/tools-custom/function-tools/#3-agent-as-a-tool):** Usa otro agente, potencialmente especializado, como una herramienta para un agente padre.
+    * **[Herramientas de Función de Larga Duración](/adk-docs/tools-custom/function-tools/#2-long-running-function-tool):** Soporte para herramientas que realizan operaciones asíncronas o toman tiempo significativo para completarse.
+2. **[Herramientas Integradas](/adk-docs/tools/built-in-tools/):** Herramientas listas para usar proporcionadas por el framework para tareas comunes.
+        Ejemplos: Búsqueda de Google, Ejecución de Código, Generación Aumentada por Recuperación (RAG).
+3. **Herramientas de Terceros:** Integra herramientas sin problemas desde bibliotecas externas populares.
 
-Navigate to the respective documentation pages linked above for detailed information and examples for each tool type.
+Navega a las respectivas páginas de documentación enlazadas arriba para información detallada y ejemplos para cada tipo de herramienta.
 
-## Referencing Tool in Agent’s Instructions
+## Referenciar Herramientas en las Instrucciones del Agente
 
-Within an agent's instructions, you can directly reference a tool by using its **function name.** If the tool's **function name** and **docstring** are sufficiently descriptive, your instructions can primarily focus on **when the Large Language Model (LLM) should utilize the tool**. This promotes clarity and helps the model understand the intended use of each tool.
+Dentro de las instrucciones de un agente, puedes referenciar directamente una herramienta usando su **nombre de función.** Si el **nombre de función** y el **docstring** de la herramienta son suficientemente descriptivos, tus instrucciones pueden enfocarse principalmente en **cuándo el Modelo de Lenguaje Grande (LLM) debe utilizar la herramienta**. Esto promueve claridad y ayuda al modelo a entender el uso pretendido de cada herramienta.
 
-It is **crucial to clearly instruct the agent on how to handle different return values** that a tool might produce. For example, if a tool returns an error message, your instructions should specify whether the agent should retry the operation, give up on the task, or request additional information from the user.
+Es **crucial instruir claramente al agente sobre cómo manejar diferentes valores de retorno** que una herramienta puede producir. Por ejemplo, si una herramienta devuelve un mensaje de error, tus instrucciones deben especificar si el agente debe reintentar la operación, abandonar la tarea o solicitar información adicional del usuario.
 
-Furthermore, ADK supports the sequential use of tools, where the output of one tool can serve as the input for another. When implementing such workflows, it's important to **describe the intended sequence of tool usage** within the agent's instructions to guide the model through the necessary steps.
+Además, ADK soporta el uso secuencial de herramientas, donde la salida de una herramienta puede servir como entrada para otra. Al implementar tales flujos de trabajo, es importante **describir la secuencia pretendida del uso de herramientas** dentro de las instrucciones del agente para guiar al modelo a través de los pasos necesarios.
 
-### Example
+### Ejemplo
 
-The following example showcases how an agent can use tools by **referencing their function names in its instructions**. It also demonstrates how to guide the agent to **handle different return values from tools**, such as success or error messages, and how to orchestrate the **sequential use of multiple tools** to accomplish a task.
+El siguiente ejemplo muestra cómo un agente puede usar herramientas **referenciando sus nombres de función en sus instrucciones**. También demuestra cómo guiar al agente para **manejar diferentes valores de retorno de las herramientas**, como mensajes de éxito o error, y cómo orquestar el **uso secuencial de múltiples herramientas** para lograr una tarea.
 
 === "Python"
 
@@ -109,43 +108,43 @@ The following example showcases how an agent can use tools by **referencing thei
     --8<-- "examples/java/snippets/src/main/java/tools/WeatherSentimentAgentApp.java:full_code"
     ```
 
-## Tool Context
+## Contexto de Herramienta
 
-For more advanced scenarios, ADK allows you to access additional contextual information within your tool function by including the special parameter `tool_context: ToolContext`. By including this in the function signature, ADK will **automatically** provide an **instance of the ToolContext** class when your tool is called during agent execution.
+Para escenarios más avanzados, ADK te permite acceder a información contextual adicional dentro de tu función de herramienta incluyendo el parámetro especial `tool_context: ToolContext`. Al incluir esto en la firma de la función, ADK automáticamente proporcionará una **instancia de la clase ToolContext** cuando tu herramienta sea llamada durante la ejecución del agente.
 
-The **ToolContext** provides access to several key pieces of information and control levers:
+El **ToolContext** proporciona acceso a varias piezas clave de información y palancas de control:
 
-* `state: State`: Read and modify the current session's state. Changes made here are tracked and persisted.
+* `state: State`: Lee y modifica el estado de la sesión actual. Los cambios realizados aquí son rastreados y persistidos.
 
-* `actions: EventActions`: Influence the agent's subsequent actions after the tool runs (e.g., skip summarization, transfer to another agent).
+* `actions: EventActions`: Influye en las acciones subsecuentes del agente después de que la herramienta se ejecuta (ej., omitir resumen, transferir a otro agente).
 
-* `function_call_id: str`: The unique identifier assigned by the framework to this specific invocation of the tool. Useful for tracking and correlating with authentication responses. This can also be helpful when multiple tools are called within a single model response.
+* `function_call_id: str`: El identificador único asignado por el framework a esta invocación específica de la herramienta. Útil para rastrear y correlacionar con respuestas de autenticación. Esto también puede ser útil cuando múltiples herramientas son llamadas dentro de una sola respuesta del modelo.
 
-* `function_call_event_id: str`: This attribute provides the unique identifier of the **event** that triggered the current tool call. This can be useful for tracking and logging purposes.
+* `function_call_event_id: str`: Este atributo proporciona el identificador único del **evento** que activó la llamada de herramienta actual. Esto puede ser útil para propósitos de rastreo y registro.
 
-* `auth_response: Any`: Contains the authentication response/credentials if an authentication flow was completed before this tool call.
+* `auth_response: Any`: Contiene la respuesta/credenciales de autenticación si un flujo de autenticación fue completado antes de esta llamada de herramienta.
 
-* Access to Services: Methods to interact with configured services like Artifacts and Memory.
+* Acceso a Servicios: Métodos para interactuar con servicios configurados como Artifacts y Memory.
 
-Note that you shouldn't include the `tool_context` parameter in the tool function docstring. Since `ToolContext` is automatically injected by the ADK framework *after* the LLM decides to call the tool function, it is not relevant for the LLM's decision-making and including it can confuse the LLM.
+Nota que no debes incluir el parámetro `tool_context` en el docstring de la función de herramienta. Dado que `ToolContext` es automáticamente inyectado por el framework ADK *después* de que el LLM decide llamar a la función de herramienta, no es relevante para la toma de decisiones del LLM e incluirlo puede confundir al LLM.
 
-### **State Management**
+### **Gestión de Estado**
 
-The `tool_context.state` attribute provides direct read and write access to the state associated with the current session. It behaves like a dictionary but ensures that any modifications are tracked as deltas and persisted by the session service. This enables tools to maintain and share information across different interactions and agent steps.
+El atributo `tool_context.state` proporciona acceso directo de lectura y escritura al estado asociado con la sesión actual. Se comporta como un diccionario pero asegura que cualquier modificación sea rastreada como deltas y persistida por el servicio de sesión. Esto permite a las herramientas mantener y compartir información a través de diferentes interacciones y pasos del agente.
 
-* **Reading State**: Use standard dictionary access (`tool_context.state['my_key']`) or the `.get()` method (`tool_context.state.get('my_key', default_value)`).
+* **Leer Estado**: Usa acceso de diccionario estándar (`tool_context.state['my_key']`) o el método `.get()` (`tool_context.state.get('my_key', default_value)`).
 
-* **Writing State**: Assign values directly (`tool_context.state['new_key'] = 'new_value'`). These changes are recorded in the state_delta of the resulting event.
+* **Escribir Estado**: Asigna valores directamente (`tool_context.state['new_key'] = 'new_value'`). Estos cambios son registrados en el state_delta del evento resultante.
 
-* **State Prefixes**: Remember the standard state prefixes:
+* **Prefijos de Estado**: Recuerda los prefijos de estado estándar:
 
-    * `app:*`: Shared across all users of the application.
+    * `app:*`: Compartido a través de todos los usuarios de la aplicación.
 
-    * `user:*`: Specific to the current user across all their sessions.
+    * `user:*`: Específico al usuario actual a través de todas sus sesiones.
 
-    * (No prefix): Specific to the current session.
+    * (Sin prefijo): Específico a la sesión actual.
 
-    * `temp:*`: Temporary, not persisted across invocations (useful for passing data within a single run call but generally less useful inside a tool context which operates between LLM calls).
+    * `temp:*`: Temporal, no persistido a través de invocaciones (útil para pasar datos dentro de una sola llamada de ejecución pero generalmente menos útil dentro de un contexto de herramienta que opera entre llamadas LLM).
 
 === "Python"
 
@@ -171,38 +170,38 @@ The `tool_context.state` attribute provides direct read and write access to the 
     import com.google.adk.tools.FunctionTool;
     import com.google.adk.tools.ToolContext;
 
-    // Updates a user-specific preference.
+    // Actualiza una preferencia específica del usuario.
     public Map<String, String> updateUserThemePreference(String value, ToolContext toolContext) {
       String userPrefsKey = "user:preferences:theme";
 
-      // Get current preferences or initialize if none exist
+      // Obtiene las preferencias actuales o inicializa si no existen
       String preference = toolContext.state().getOrDefault(userPrefsKey, "").toString();
       if (preference.isEmpty()) {
         preference = value;
       }
 
-      // Write the updated dictionary back to the state
+      // Escribe el diccionario actualizado de vuelta al estado
       toolContext.state().put("user:preferences", preference);
       System.out.printf("Tool: Updated user preference %s to %s", userPrefsKey, preference);
 
       return Map.of("status", "success", "updated_preference", toolContext.state().get(userPrefsKey).toString());
-      // When the LLM calls updateUserThemePreference("dark"):
-      // The toolContext.state will be updated, and the change will be part of the
-      // resulting tool response event's actions.stateDelta.
+      // Cuando el LLM llama a updateUserThemePreference("dark"):
+      // El toolContext.state será actualizado, y el cambio será parte del
+      // actions.stateDelta del evento de respuesta de herramienta resultante.
     }
     ```
 
-### **Controlling Agent Flow**
+### **Controlando el Flujo del Agente**
 
-The `tool_context.actions` attribute in Python and TypeScript, `ToolContext.actions()` in Java, and `tool.Context.Actions()` in Go, holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
+El atributo `tool_context.actions` en Python y TypeScript, `ToolContext.actions()` en Java, y `tool.Context.Actions()` en Go, contiene un objeto **EventActions**. Modificar atributos en este objeto permite a tu herramienta influir en lo que el agente o framework hace después de que la herramienta termina su ejecución.
 
-* **`skip_summarization: bool`**: (Default: False) If set to True, instructs the ADK to bypass the LLM call that typically summarizes the tool's output. This is useful if your tool's return value is already a user-ready message.
+* **`skip_summarization: bool`**: (Por defecto: False) Si se establece en True, instruye al ADK a omitir la llamada LLM que típicamente resume la salida de la herramienta. Esto es útil si el valor de retorno de tu herramienta ya es un mensaje listo para el usuario.
 
-* **`transfer_to_agent: str`**: Set this to the name of another agent. The framework will halt the current agent's execution and **transfer control of the conversation to the specified agent**. This allows tools to dynamically hand off tasks to more specialized agents.
+* **`transfer_to_agent: str`**: Establece esto al nombre de otro agente. El framework detendrá la ejecución del agente actual y **transferirá el control de la conversación al agente especificado**. Esto permite a las herramientas entregar dinámicamente tareas a agentes más especializados.
 
-* **`escalate: bool`**: (Default: False) Setting this to True signals that the current agent cannot handle the request and should pass control up to its parent agent (if in a hierarchy). In a LoopAgent, setting **escalate=True** in a sub-agent's tool will terminate the loop.
+* **`escalate: bool`**: (Por defecto: False) Establecer esto en True señala que el agente actual no puede manejar la solicitud y debe pasar el control a su agente padre (si está en una jerarquía). En un LoopAgent, establecer **escalate=True** en la herramienta de un sub-agente terminará el bucle.
 
-#### Example
+#### Ejemplo
 
 === "Python"
 
@@ -228,44 +227,44 @@ The `tool_context.actions` attribute in Python and TypeScript, `ToolContext.acti
     --8<-- "examples/java/snippets/src/main/java/tools/CustomerSupportAgentApp.java:full_code"
     ```
 
-##### Explanation
+##### Explicación
 
-* We define two agents: `main_agent` and `support_agent`. The `main_agent` is designed to be the initial point of contact.
-* The `check_and_transfer` tool, when called by `main_agent`, examines the user's query.
-* If the query contains the word "urgent", the tool accesses the `tool_context`, specifically **`tool_context.actions`**, and sets the transfer\_to\_agent attribute to `support_agent`.
-* This action signals to the framework to **transfer the control of the conversation to the agent named `support_agent`**.
-* When the `main_agent` processes the urgent query, the `check_and_transfer` tool triggers the transfer. The subsequent response would ideally come from the `support_agent`.
-* For a normal query without urgency, the tool simply processes it without triggering a transfer.
+* Definimos dos agentes: `main_agent` y `support_agent`. El `main_agent` está diseñado para ser el punto inicial de contacto.
+* La herramienta `check_and_transfer`, cuando es llamada por `main_agent`, examina la consulta del usuario.
+* Si la consulta contiene la palabra "urgent", la herramienta accede al `tool_context`, específicamente **`tool_context.actions`**, y establece el atributo transfer\_to\_agent a `support_agent`.
+* Esta acción señala al framework para **transferir el control de la conversación al agente llamado `support_agent`**.
+* Cuando el `main_agent` procesa la consulta urgente, la herramienta `check_and_transfer` activa la transferencia. La respuesta subsecuente vendría idealmente del `support_agent`.
+* Para una consulta normal sin urgencia, la herramienta simplemente la procesa sin activar una transferencia.
 
-This example illustrates how a tool, through EventActions in its ToolContext, can dynamically influence the flow of the conversation by transferring control to another specialized agent.
+Este ejemplo ilustra cómo una herramienta, a través de EventActions en su ToolContext, puede influir dinámicamente en el flujo de la conversación transfiriendo el control a otro agente especializado.
 
-### **Authentication**
+### **Autenticación**
 
-ToolContext provides mechanisms for tools interacting with authenticated APIs. If your tool needs to handle authentication, you might use the following:
+ToolContext proporciona mecanismos para herramientas que interactúan con APIs autenticadas. Si tu herramienta necesita manejar autenticación, podrías usar lo siguiente:
 
-* **`auth_response`** (in Python): Contains credentials (e.g., a token) if authentication was already handled by the framework before your tool was called (common with RestApiTool and OpenAPI security schemes). In TypeScript, this is retrieved via the getAuthResponse() method.
+* **`auth_response`** (en Python): Contiene credenciales (ej., un token) si la autenticación ya fue manejada por el framework antes de que tu herramienta fuera llamada (común con RestApiTool y esquemas de seguridad OpenAPI). En TypeScript, esto se recupera a través del método getAuthResponse().
 
-* **`request_credential(auth_config: dict)`** (in Python) or **`requestCredential(authConfig: AuthConfig)`** (in TypeScript): Call this method if your tool determines authentication is needed but credentials aren't available. This signals the framework to start an authentication flow based on the provided auth_config.
+* **`request_credential(auth_config: dict)`** (en Python) o **`requestCredential(authConfig: AuthConfig)`** (en TypeScript): Llama a este método si tu herramienta determina que se necesita autenticación pero las credenciales no están disponibles. Esto señala al framework para iniciar un flujo de autenticación basado en el auth_config proporcionado.
 
-* **`get_auth_response()`** (in Python) or **`getAuthResponse(authConfig: AuthConfig)`** (in TypeScript): Call this in a subsequent invocation (after request_credential was successfully handled) to retrieve the credentials the user provided.
+* **`get_auth_response()`** (en Python) o **`getAuthResponse(authConfig: AuthConfig)`** (en TypeScript): Llama a esto en una invocación subsecuente (después de que request_credential fue manejado exitosamente) para recuperar las credenciales que el usuario proporcionó.
 
-For detailed explanations of authentication flows, configuration, and examples, please refer to the dedicated Tool Authentication documentation page.
+Para explicaciones detalladas de flujos de autenticación, configuración y ejemplos, por favor refiérete a la página de documentación dedicada a Autenticación de Herramientas.
 
-### **Context-Aware Data Access Methods**
+### **Métodos de Acceso a Datos Conscientes del Contexto**
 
-These methods provide convenient ways for your tool to interact with persistent data associated with the session or user, managed by configured services.
+Estos métodos proporcionan formas convenientes para que tu herramienta interactúe con datos persistentes asociados con la sesión o usuario, gestionados por servicios configurados.
 
-* **`list_artifacts()`** (in Python) or **`listArtifacts()`** (in Java and TypeScript): Returns a list of filenames (or keys) for all artifacts currently stored for the session via the artifact_service. Artifacts are typically files (images, documents, etc.) uploaded by the user or generated by tools/agents.
+* **`list_artifacts()`** (en Python) o **`listArtifacts()`** (en Java y TypeScript): Devuelve una lista de nombres de archivos (o claves) para todos los artefactos actualmente almacenados para la sesión a través del artifact_service. Los artefactos son típicamente archivos (imágenes, documentos, etc.) cargados por el usuario o generados por herramientas/agentes.
 
-* **`load_artifact(filename: str)`**: Retrieves a specific artifact by its filename from the **artifact_service**. You can optionally specify a version; if omitted, the latest version is returned. Returns a `google.genai.types.Part` object containing the artifact data and mime type, or None if not found.
+* **`load_artifact(filename: str)`**: Recupera un artefacto específico por su nombre de archivo del **artifact_service**. Opcionalmente puedes especificar una versión; si se omite, se devuelve la versión más reciente. Devuelve un objeto `google.genai.types.Part` conteniendo los datos del artefacto y el tipo mime, o None si no se encuentra.
 
-* **`save_artifact(filename: str, artifact: types.Part)`**: Saves a new version of an artifact to the artifact_service. Returns the new version number (starting from 0).
+* **`save_artifact(filename: str, artifact: types.Part)`**: Guarda una nueva versión de un artefacto en el artifact_service. Devuelve el nuevo número de versión (comenzando desde 0).
 
-* **`search_memory(query: str)`**: (Support in ADK Python, Go and TypeScript)
-    Queries the user's long-term memory using the configured `memory_service`. This is useful for retrieving relevant information from past interactions or stored knowledge. The structure of the **SearchMemoryResponse** depends on the specific memory service implementation but typically contains relevant text snippets or conversation excerpts.
+* **`search_memory(query: str)`**: (Soporte en ADK Python, Go y TypeScript)
+    Consulta la memoria a largo plazo del usuario usando el `memory_service` configurado. Esto es útil para recuperar información relevante de interacciones pasadas o conocimiento almacenado. La estructura del **SearchMemoryResponse** depende de la implementación específica del servicio de memoria pero típicamente contiene fragmentos de texto relevantes o extractos de conversación.
 
 
-#### Example
+#### Ejemplo
 
 === "Python"
 
@@ -288,18 +287,18 @@ These methods provide convenient ways for your tool to interact with persistent 
 === "Java"
 
     ```java
-    // Analyzes a document using context from memory.
-    // You can also list, load and save artifacts using Callback Context or LoadArtifacts tool.
+    // Analiza un documento usando contexto de la memoria.
+    // También puedes listar, cargar y guardar artefactos usando Callback Context o la herramienta LoadArtifacts.
     public static @NonNull Maybe<ImmutableMap<String, Object>> processDocument(
         @Annotations.Schema(description = "The name of the document to analyze.") String documentName,
         @Annotations.Schema(description = "The query for the analysis.") String analysisQuery,
         ToolContext toolContext) {
 
-      // 1. List all available artifacts
+      // 1. Lista todos los artefactos disponibles
       System.out.printf(
           "Listing all available artifacts %s:", toolContext.listArtifacts().blockingGet());
 
-      // 2. Load an artifact to memory
+      // 2. Carga un artefacto a memoria
       System.out.println("Tool: Attempting to load artifact: " + documentName);
       Part documentPart = toolContext.loadArtifact(documentName, Optional.empty()).blockingGet();
       if (documentPart == null) {
@@ -312,7 +311,7 @@ These methods provide convenient ways for your tool to interact with persistent 
       System.out.println(
           "Tool: Loaded document '" + documentName + "' (" + documentText.length() + " chars).");
 
-      // 3. Perform analysis (placeholder)
+      // 3. Realiza análisis (marcador de posición)
       String analysisResult =
           "Analysis of '"
               + documentName
@@ -321,7 +320,7 @@ These methods provide convenient ways for your tool to interact with persistent 
               + " [Placeholder Analysis Result]";
       System.out.println("Tool: Performed analysis.");
 
-      // 4. Save the analysis result as a new artifact
+      // 4. Guarda el resultado del análisis como un nuevo artefacto
       Part analysisPart = Part.fromText(analysisResult);
       String newArtifactName = "analysis_" + documentName;
 
@@ -335,69 +334,69 @@ These methods provide convenient ways for your tool to interact with persistent 
     }
     // FunctionTool processDocumentTool =
     //      FunctionTool.create(ToolContextArtifactExample.class, "processDocument");
-    // In the Agent, include this function tool.
+    // En el Agente, incluye esta herramienta de función.
     // LlmAgent agent = LlmAgent().builder().tools(processDocumentTool).build();
     ```
 
-By leveraging the **ToolContext**, developers can create more sophisticated and context-aware custom tools that seamlessly integrate with ADK's architecture and enhance the overall capabilities of their agents.
+Al aprovechar el **ToolContext**, los desarrolladores pueden crear herramientas personalizadas más sofisticadas y conscientes del contexto que se integran sin problemas con la arquitectura de ADK y mejoran las capacidades generales de sus agentes.
 
-## Defining Effective Tool Functions
+## Definiendo Funciones de Herramienta Efectivas
 
-When using a method or function as an ADK Tool, how you define it significantly impacts the agent's ability to use it correctly. The agent's Large Language Model (LLM) relies heavily on the function's **name**, **parameters (arguments)**, **type hints**, and **docstring** / **source code comments** to understand its purpose and generate the correct call.
+Cuando usas un método o función como una Herramienta ADK, cómo la defines impacta significativamente la capacidad del agente para usarla correctamente. El Modelo de Lenguaje Grande (LLM) del agente depende en gran medida del **nombre**, **parámetros (argumentos)**, **anotaciones de tipo** y **docstring** / **comentarios de código fuente** de la función para entender su propósito y generar la llamada correcta.
 
-Here are key guidelines for defining effective tool functions:
+Aquí hay pautas clave para definir funciones de herramienta efectivas:
 
-* **Function Name:**
-    * Use descriptive, verb-noun based names that clearly indicate the action (e.g., `get_weather`, `searchDocuments`, `schedule_meeting`).
-    * Avoid generic names like `run`, `process`, `handle_data`, or overly ambiguous names like `doStuff`. Even with a good description, a name like `do_stuff` might confuse the model about when to use the tool versus, for example, `cancelFlight`.
-    * The LLM uses the function name as a primary identifier during tool selection.
+* **Nombre de Función:**
+    * Usa nombres descriptivos basados en verbo-sustantivo que indiquen claramente la acción (ej., `get_weather`, `searchDocuments`, `schedule_meeting`).
+    * Evita nombres genéricos como `run`, `process`, `handle_data`, o nombres demasiado ambiguos como `doStuff`. Incluso con una buena descripción, un nombre como `do_stuff` podría confundir al modelo sobre cuándo usar la herramienta versus, por ejemplo, `cancelFlight`.
+    * El LLM usa el nombre de función como identificador principal durante la selección de herramienta.
 
-* **Parameters (Arguments):**
-    * Your function can have any number of parameters.
-    * Use clear and descriptive names (e.g., `city` instead of `c`, `search_query` instead of `q`).
-    * **Provide type hints in Python**  for all parameters (e.g., `city: str`, `user_id: int`, `items: list[str]`). This is essential for ADK to generate the correct schema for the LLM.
-    * Ensure all parameter types are **JSON serializable**. All java primitives as well as standard Python types like `str`, `int`, `float`, `bool`, `list`, `dict`, and their combinations are generally safe. Avoid complex custom class instances as direct parameters unless they have a clear JSON representation.
-    * **Do not set default values** for parameters. E.g., `def my_func(param1: str = "default")`. Default values are not reliably supported or used by the underlying models during function call generation. All necessary information should be derived by the LLM from the context or explicitly requested if missing.
-    * **`self` / `cls` Handled Automatically:** Implicit parameters like `self` (for instance methods) or `cls` (for class methods) are automatically handled by ADK and excluded from the schema shown to the LLM. You only need to define type hints and descriptions for the logical parameters your tool requires the LLM to provide.
+* **Parámetros (Argumentos):**
+    * Tu función puede tener cualquier número de parámetros.
+    * Usa nombres claros y descriptivos (ej., `city` en lugar de `c`, `search_query` en lugar de `q`).
+    * **Proporciona anotaciones de tipo en Python** para todos los parámetros (ej., `city: str`, `user_id: int`, `items: list[str]`). Esto es esencial para que ADK genere el esquema correcto para el LLM.
+    * Asegura que todos los tipos de parámetros sean **serializables en JSON**. Todos los primitivos de java así como tipos estándar de Python como `str`, `int`, `float`, `bool`, `list`, `dict`, y sus combinaciones son generalmente seguros. Evita instancias de clases personalizadas complejas como parámetros directos a menos que tengan una representación JSON clara.
+    * **No establezcas valores por defecto** para parámetros. Ej., `def my_func(param1: str = "default")`. Los valores por defecto no son confiablemente soportados o usados por los modelos subyacentes durante la generación de llamadas de función. Toda la información necesaria debe ser derivada por el LLM del contexto o solicitada explícitamente si falta.
+    * **`self` / `cls` Manejados Automáticamente:** Parámetros implícitos como `self` (para métodos de instancia) o `cls` (para métodos de clase) son automáticamente manejados por ADK y excluidos del esquema mostrado al LLM. Solo necesitas definir anotaciones de tipo y descripciones para los parámetros lógicos que tu herramienta requiere que el LLM proporcione.
 
-* **Return Type:**
-    * The function's return value **must be a dictionary (`dict`)** in Python, a **Map** in Java, or a plain **object** in TypeScript.
-    * If your function returns a non-dictionary type (e.g., a string, number, list), the ADK framework will automatically wrap it into a dictionary/Map like `{'result': your_original_return_value}` before passing the result back to the model.
-    * Design the dictionary/Map keys and values to be **descriptive and easily understood *by the LLM***. Remember, the model reads this output to decide its next step.
-    * Include meaningful keys. For example, instead of returning just an error code like `500`, return `{'status': 'error', 'error_message': 'Database connection failed'}`.
-    * It's a **highly recommended practice** to include a `status` key (e.g., `'success'`, `'error'`, `'pending'`, `'ambiguous'`) to clearly indicate the outcome of the tool execution for the model.
+* **Tipo de Retorno:**
+    * El valor de retorno de la función **debe ser un diccionario (`dict`)** en Python, un **Map** en Java, o un **object** plano en TypeScript.
+    * Si tu función devuelve un tipo no-diccionario (ej., una cadena, número, lista), el framework ADK automáticamente lo envolverá en un diccionario/Map como `{'result': your_original_return_value}` antes de pasar el resultado de vuelta al modelo.
+    * Diseña las claves y valores del diccionario/Map para ser **descriptivos y fácilmente entendidos *por el LLM***. Recuerda, el modelo lee esta salida para decidir su próximo paso.
+    * Incluye claves significativas. Por ejemplo, en lugar de devolver solo un código de error como `500`, devuelve `{'status': 'error', 'error_message': 'Database connection failed'}`.
+    * Es una **práctica altamente recomendada** incluir una clave `status` (ej., `'success'`, `'error'`, `'pending'`, `'ambiguous'`) para indicar claramente el resultado de la ejecución de la herramienta para el modelo.
 
-* **Docstring / Source Code Comments:**
-    * **This is critical.** The docstring is the primary source of descriptive information for the LLM.
-    * **Clearly state what the tool *does*.** Be specific about its purpose and limitations.
-    * **Explain *when* the tool should be used.** Provide context or example scenarios to guide the LLM's decision-making.
-    * **Describe *each parameter* clearly.** Explain what information the LLM needs to provide for that argument.
-    * Describe the **structure and meaning of the expected `dict` return value**, especially the different `status` values and associated data keys.
-    * **Do not describe the injected ToolContext parameter**. Avoid mentioning the optional `tool_context: ToolContext` parameter within the docstring description since it is not a parameter the LLM needs to know about. ToolContext is injected by ADK, *after* the LLM decides to call it.
+* **Docstring / Comentarios de Código Fuente:**
+    * **Esto es crítico.** El docstring es la fuente principal de información descriptiva para el LLM.
+    * **Declara claramente qué *hace* la herramienta.** Sé específico sobre su propósito y limitaciones.
+    * **Explica *cuándo* la herramienta debe ser usada.** Proporciona contexto o escenarios de ejemplo para guiar la toma de decisiones del LLM.
+    * **Describe *cada parámetro* claramente.** Explica qué información el LLM necesita proporcionar para ese argumento.
+    * Describe la **estructura y significado del valor de retorno `dict` esperado**, especialmente los diferentes valores de `status` y claves de datos asociadas.
+    * **No describas el parámetro ToolContext inyectado**. Evita mencionar el parámetro opcional `tool_context: ToolContext` dentro de la descripción del docstring ya que no es un parámetro que el LLM necesita conocer. ToolContext es inyectado por ADK, *después* de que el LLM decide llamarlo.
 
-    **Example of a good definition:**
+    **Ejemplo de una buena definición:**
 
 === "Python"
 
     ```python
     def lookup_order_status(order_id: str) -> dict:
-      """Fetches the current status of a customer's order using its ID.
+      """Obtiene el estado actual del pedido de un cliente usando su ID.
 
-      Use this tool ONLY when a user explicitly asks for the status of
-      a specific order and provides the order ID. Do not use it for
-      general inquiries.
+      Usa esta herramienta SOLO cuando un usuario pregunta explícitamente por el estado de
+      un pedido específico y proporciona el ID del pedido. No la uses para
+      consultas generales.
 
       Args:
-          order_id: The unique identifier of the order to look up.
+          order_id: El identificador único del pedido a buscar.
 
       Returns:
-          A dictionary indicating the outcome.
-          On success, status is 'success' and includes an 'order' dictionary.
-          On failure, status is 'error' and includes an 'error_message'.
-          Example success: {'status': 'success', 'order': {'state': 'shipped', 'tracking_number': '1Z9...'}}
-          Example error: {'status': 'error', 'error_message': 'Order ID not found.'}
+          Un diccionario indicando el resultado.
+          En éxito, status es 'success' e incluye un diccionario 'order'.
+          En falla, status es 'error' e incluye un 'error_message'.
+          Ejemplo éxito: {'status': 'success', 'order': {'state': 'shipped', 'tracking_number': '1Z9...'}}
+          Ejemplo error: {'status': 'error', 'error_message': 'Order ID not found.'}
       """
-      # ... function implementation to fetch status ...
+      # ... implementación de función para obtener estado ...
       if status_details := fetch_status_from_backend(order_id):
         return {
             "status": "success",
@@ -415,22 +414,22 @@ Here are key guidelines for defining effective tool functions:
 
     ```typescript
     /**
-     * Fetches the current status of a customer's order using its ID.
+     * Obtiene el estado actual del pedido de un cliente usando su ID.
      *
-     * Use this tool ONLY when a user explicitly asks for the status of
-     * a specific order and provides the order ID. Do not use it for
-     * general inquiries.
+     * Usa esta herramienta SOLO cuando un usuario pregunta explícitamente por el estado de
+     * un pedido específico y proporciona el ID del pedido. No la uses para
+     * consultas generales.
      *
-     * @param params The parameters for the function.
-     * @param params.order_id The unique identifier of the order to look up.
-     * @returns A dictionary indicating the outcome.
-     *          On success, status is 'success' and includes an 'order' dictionary.
-     *          On failure, status is 'error' and includes an 'error_message'.
-     *          Example success: {'status': 'success', 'order': {'state': 'shipped', 'tracking_number': '1Z9...'}}
-     *          Example error: {'status': 'error', 'error_message': 'Order ID not found.'}
+     * @param params Los parámetros para la función.
+     * @param params.order_id El identificador único del pedido a buscar.
+     * @returns Un diccionario indicando el resultado.
+     *          En éxito, status es 'success' e incluye un diccionario 'order'.
+     *          En falla, status es 'error' e incluye un 'error_message'.
+     *          Ejemplo éxito: {'status': 'success', 'order': {'state': 'shipped', 'tracking_number': '1Z9...'}}
+     *          Ejemplo error: {'status': 'error', 'error_message': 'Order ID not found.'}
      */
     async function lookupOrderStatus(params: { order_id: string }): Promise<Record<string, any>> {
-      // ... function implementation to fetch status from a backend ...
+      // ... implementación de función para obtener estado desde un backend ...
       const status_details = await fetchStatusFromBackend(params.order_id);
       if (status_details) {
         return {
@@ -445,7 +444,7 @@ Here are key guidelines for defining effective tool functions:
       }
     }
 
-    // Placeholder for a backend call
+    // Marcador de posición para una llamada backend
     async function fetchStatusFromBackend(order_id: string): Promise<{state: string, tracking: string} | null> {
         if (order_id === "12345") {
             return { state: "shipped", tracking: "1Z9..." };
@@ -464,11 +463,11 @@ Here are key guidelines for defining effective tool functions:
 
     ```java
     /**
-     * Retrieves the current weather report for a specified city.
+     * Recupera el reporte del clima actual para una ciudad especificada.
      *
-     * @param city The city for which to retrieve the weather report.
-     * @param toolContext The context for the tool.
-     * @return A dictionary containing the weather information.
+     * @param city La ciudad para la cual recuperar el reporte del clima.
+     * @param toolContext El contexto para la herramienta.
+     * @return Un diccionario conteniendo la información del clima.
      */
     public static Map<String, Object> getWeatherReport(String city, ToolContext toolContext) {
         Map<String, Object> response = new HashMap<>();
@@ -489,53 +488,53 @@ Here are key guidelines for defining effective tool functions:
     }
     ```
 
-* **Simplicity and Focus:**
-    * **Keep Tools Focused:** Each tool should ideally perform one well-defined task.
-    * **Fewer Parameters are Better:** Models generally handle tools with fewer, clearly defined parameters more reliably than those with many optional or complex ones.
-    * **Use Simple Data Types:** Prefer basic types (`str`, `int`, `bool`, `float`, `List[str]`, in **Python**; `int`, `byte`, `short`, `long`, `float`, `double`, `boolean` and `char` in **Java**; or `string`, `number`, `boolean`, and arrays like `string[]` in **TypeScript**) over complex custom classes or deeply nested structures as parameters when possible.
-    * **Decompose Complex Tasks:** Break down functions that perform multiple distinct logical steps into smaller, more focused tools. For instance, instead of a single `update_user_profile(profile: ProfileObject)` tool, consider separate tools like `update_user_name(name: str)`, `update_user_address(address: str)`, `update_user_preferences(preferences: list[str])`, etc. This makes it easier for the LLM to select and use the correct capability.
+* **Simplicidad y Enfoque:**
+    * **Mantén las Herramientas Enfocadas:** Cada herramienta idealmente debería realizar una tarea bien definida.
+    * **Menos Parámetros son Mejores:** Los modelos generalmente manejan herramientas con menos parámetros claramente definidos de manera más confiable que aquellas con muchos opcionales o complejos.
+    * **Usa Tipos de Datos Simples:** Prefiere tipos básicos (`str`, `int`, `bool`, `float`, `List[str]`, en **Python**; `int`, `byte`, `short`, `long`, `float`, `double`, `boolean` y `char` en **Java**; o `string`, `number`, `boolean`, y arrays como `string[]` en **TypeScript**) sobre clases personalizadas complejas o estructuras profundamente anidadas como parámetros cuando sea posible.
+    * **Descompone Tareas Complejas:** Divide funciones que realizan múltiples pasos lógicos distintos en herramientas más pequeñas y enfocadas. Por ejemplo, en lugar de una sola herramienta `update_user_profile(profile: ProfileObject)`, considera herramientas separadas como `update_user_name(name: str)`, `update_user_address(address: str)`, `update_user_preferences(preferences: list[str])`, etc. Esto hace más fácil para el LLM seleccionar y usar la capacidad correcta.
 
-By adhering to these guidelines, you provide the LLM with the clarity and structure it needs to effectively utilize your custom function tools, leading to more capable and reliable agent behavior.
+Al adherirse a estas pautas, proporcionas al LLM la claridad y estructura que necesita para utilizar efectivamente tus herramientas de función personalizadas, llevando a un comportamiento del agente más capaz y confiable.
 
-## Toolsets: Grouping and Dynamically Providing Tools
+## Toolsets: Agrupar y Proporcionar Herramientas Dinámicamente
 
 <div class="language-support-tag" title="This feature is currently available for Python and Typescript.">
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-typescript">Typescript v0.2.0</span>
 </div>
 
 
-Beyond individual tools, ADK introduces the concept of a **Toolset** via the `BaseToolset` interface (defined in `google.adk.tools.base_toolset`). A toolset allows you to manage and provide a collection of `BaseTool` instances, often dynamically, to an agent.
+Más allá de las herramientas individuales, ADK introduce el concepto de un **Toolset** a través de la interfaz `BaseToolset` (definida en `google.adk.tools.base_toolset`). Un toolset te permite gestionar y proporcionar una colección de instancias de `BaseTool`, a menudo dinámicamente, a un agente.
 
-This approach is beneficial for:
+Este enfoque es beneficioso para:
 
-*   **Organizing Related Tools:** Grouping tools that serve a common purpose (e.g., all tools for mathematical operations, or all tools interacting with a specific API).
-*   **Dynamic Tool Availability:** Enabling an agent to have different tools available based on the current context (e.g., user permissions, session state, or other runtime conditions). The `get_tools` method of a toolset can decide which tools to expose.
-*   **Integrating External Tool Providers:** Toolsets can act as adapters for tools coming from external systems, like an OpenAPI specification or an MCP server, converting them into ADK-compatible `BaseTool` objects.
+*   **Organizar Herramientas Relacionadas:** Agrupar herramientas que sirven un propósito común (ej., todas las herramientas para operaciones matemáticas, o todas las herramientas que interactúan con una API específica).
+*   **Disponibilidad Dinámica de Herramientas:** Permitir que un agente tenga diferentes herramientas disponibles basándose en el contexto actual (ej., permisos del usuario, estado de sesión, u otras condiciones de tiempo de ejecución). El método `get_tools` de un toolset puede decidir qué herramientas exponer.
+*   **Integrar Proveedores de Herramientas Externos:** Los toolsets pueden actuar como adaptadores para herramientas provenientes de sistemas externos, como una especificación OpenAPI o un servidor MCP, convirtiéndolas en objetos `BaseTool` compatibles con ADK.
 
-### The `BaseToolset` Interface
+### La Interfaz `BaseToolset`
 
-Any class acting as a toolset in ADK should implement the `BaseToolset` abstract base class. This interface primarily defines two methods:
+Cualquier clase que actúe como toolset en ADK debe implementar la clase base abstracta `BaseToolset`. Esta interfaz define principalmente dos métodos:
 
 *   **`async def get_tools(...) -> list[BaseTool]:`**
-    This is the core method of a toolset. When an ADK agent needs to know its available tools, it will call `get_tools()` on each `BaseToolset` instance provided in its `tools` list.
-    *   It receives an optional `readonly_context` (an instance of `ReadonlyContext`). This context provides read-only access to information like the current session state (`readonly_context.state`), agent name, and invocation ID. The toolset can use this context to dynamically decide which tools to return.
-    *   It **must** return a `list` of `BaseTool` instances (e.g., `FunctionTool`, `RestApiTool`).
+    Este es el método central de un toolset. Cuando un agente ADK necesita conocer sus herramientas disponibles, llamará a `get_tools()` en cada instancia de `BaseToolset` proporcionada en su lista de `tools`.
+    *   Recibe un `readonly_context` opcional (una instancia de `ReadonlyContext`). Este contexto proporciona acceso de solo lectura a información como el estado de sesión actual (`readonly_context.state`), nombre del agente e ID de invocación. El toolset puede usar este contexto para decidir dinámicamente qué herramientas devolver.
+    *   **Debe** devolver una `list` de instancias de `BaseTool` (ej., `FunctionTool`, `RestApiTool`).
 
 *   **`async def close(self) -> None:`**
-    This asynchronous method is called by the ADK framework when the toolset is no longer needed, for example, when an agent server is shutting down or the `Runner` is being closed. Implement this method to perform any necessary cleanup, such as closing network connections, releasing file handles, or cleaning up other resources managed by the toolset.
+    Este método asíncrono es llamado por el framework ADK cuando el toolset ya no es necesario, por ejemplo, cuando un servidor de agente se está cerrando o el `Runner` se está cerrando. Implementa este método para realizar cualquier limpieza necesaria, como cerrar conexiones de red, liberar manejadores de archivos, o limpiar otros recursos gestionados por el toolset.
 
-### Using Toolsets with Agents
+### Usando Toolsets con Agentes
 
-You can include instances of your `BaseToolset` implementations directly in an `LlmAgent`'s `tools` list, alongside individual `BaseTool` instances.
+Puedes incluir instancias de tus implementaciones de `BaseToolset` directamente en la lista de `tools` de un `LlmAgent`, junto con instancias individuales de `BaseTool`.
 
-When the agent initializes or needs to determine its available capabilities, the ADK framework will iterate through the `tools` list:
+Cuando el agente se inicializa o necesita determinar sus capacidades disponibles, el framework ADK iterará a través de la lista de `tools`:
 
-*   If an item is a `BaseTool` instance, it's used directly.
-*   If an item is a `BaseToolset` instance, its `get_tools()` method is called (with the current `ReadonlyContext`), and the returned list of `BaseTool`s is added to the agent's available tools.
+*   Si un ítem es una instancia de `BaseTool`, se usa directamente.
+*   Si un ítem es una instancia de `BaseToolset`, su método `get_tools()` es llamado (con el `ReadonlyContext` actual), y la lista devuelta de `BaseTool`s se agrega a las herramientas disponibles del agente.
 
-### Example: A Simple Math Toolset
+### Ejemplo: Un Toolset de Matemáticas Simple
 
-Let's create a basic example of a toolset that provides simple arithmetic operations.
+Creemos un ejemplo básico de un toolset que proporciona operaciones aritméticas simples.
 
 === "Python"
 
@@ -549,12 +548,12 @@ Let's create a basic example of a toolset that provides simple arithmetic operat
     --8<-- "examples/typescript/snippets/tools/overview/toolset_example.ts"
     ```
 
-In this example:
+En este ejemplo:
 
-*   `SimpleMathToolset` implements `BaseToolset` and its `get_tools()` method returns `FunctionTool` instances for `add_numbers` and `subtract_numbers`. It also customizes their names using a prefix.
-*   The `calculator_agent` is configured with both an individual `greet_tool` and an instance of `SimpleMathToolset`.
-*   When `calculator_agent` is run, ADK will call `math_toolset_instance.get_tools()`. The agent's LLM will then have access to `greet_user`, `calculator_add_numbers`, and `calculator_subtract_numbers` to handle user requests.
-*   The `add_numbers` tool demonstrates writing to `tool_context.state`, and the agent's instruction mentions reading this state.
-*   The `close()` method is called to ensure any resources held by the toolset are released.
+*   `SimpleMathToolset` implementa `BaseToolset` y su método `get_tools()` devuelve instancias de `FunctionTool` para `add_numbers` y `subtract_numbers`. También personaliza sus nombres usando un prefijo.
+*   El `calculator_agent` está configurado tanto con un `greet_tool` individual como con una instancia de `SimpleMathToolset`.
+*   Cuando `calculator_agent` se ejecuta, ADK llamará a `math_toolset_instance.get_tools()`. El LLM del agente entonces tendrá acceso a `greet_user`, `calculator_add_numbers`, y `calculator_subtract_numbers` para manejar solicitudes del usuario.
+*   La herramienta `add_numbers` demuestra escribir en `tool_context.state`, y la instrucción del agente menciona leer este estado.
+*   El método `close()` es llamado para asegurar que cualquier recurso retenido por el toolset sea liberado.
 
-Toolsets offer a powerful way to organize, manage, and dynamically provide collections of tools to your ADK agents, leading to more modular, maintainable, and adaptable agentic applications.
+Los toolsets ofrecen una forma poderosa de organizar, gestionar y proporcionar dinámicamente colecciones de herramientas a tus agentes ADK, llevando a aplicaciones agénticas más modulares, mantenibles y adaptables.

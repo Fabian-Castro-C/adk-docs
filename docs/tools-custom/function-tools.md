@@ -1,38 +1,38 @@
-# Function tools
+# Herramientas de función
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-When pre-built ADK tools don't meet your requirements, you can create custom *function tools*. Building function tools allows you to create tailored functionality, such as connecting to proprietary databases or implementing unique algorithms.
-For example, a function tool, `myfinancetool`, might be a function that calculates a specific financial metric. ADK also supports long-running functions, so if that calculation takes a while, the agent can continue working on other tasks.
+Cuando las herramientas predefinidas de ADK no cumplen con tus requisitos, puedes crear *herramientas de función* personalizadas. Construir herramientas de función te permite crear funcionalidad personalizada, como conectarte a bases de datos propietarias o implementar algoritmos únicos.
+Por ejemplo, una herramienta de función, `myfinancetool`, podría ser una función que calcula una métrica financiera específica. ADK también soporta funciones de larga ejecución, por lo que si ese cálculo toma un tiempo, el agente puede continuar trabajando en otras tareas.
 
-ADK offers several ways to create functions tools, each suited to different levels of complexity and control:
+ADK ofrece varias formas de crear herramientas de función, cada una adecuada para diferentes niveles de complejidad y control:
 
-*  [Function Tools](#function-tool)
-*  [Long Running Function Tools](#long-run-tool)
-*  [Agents-as-a-Tool](#agent-tool)
+*  [Herramientas de Función](#function-tool)
+*  [Herramientas de Función de Larga Ejecución](#long-run-tool)
+*  [Agentes como Herramienta](#agent-tool)
 
-## Function Tools {#function-tool}
+## Herramientas de Función {#function-tool}
 
-Transforming a Python function into a tool is a straightforward way to integrate custom logic into your agents. When you assign a function to an agent’s `tools` list, the framework automatically wraps it as a `FunctionTool`.
+Transformar una función de Python en una herramienta es una forma directa de integrar lógica personalizada en tus agentes. Cuando asignas una función a la lista `tools` de un agente, el framework la envuelve automáticamente como un `FunctionTool`.
 
-### How it Works
+### Cómo funciona
 
-The ADK framework automatically inspects your Python function's signature—including its name, docstring, parameters, type hints, and default values—to generate a schema. This schema is what the LLM uses to understand the tool's purpose, when to use it, and what arguments it requires.
+El framework ADK inspecciona automáticamente la firma de tu función de Python—incluyendo su nombre, docstring, parámetros, anotaciones de tipo y valores predeterminados—para generar un esquema. Este esquema es lo que el LLM usa para entender el propósito de la herramienta, cuándo usarla y qué argumentos requiere.
 
-### Defining Function Signatures
+### Definir firmas de función
 
-A well-defined function signature is crucial for the LLM to use your tool correctly.
+Una firma de función bien definida es crucial para que el LLM use tu herramienta correctamente.
 
-#### Parameters
+#### Parámetros
 
-##### Required Parameters
+##### Parámetros requeridos
 
 === "Python"
-    A parameter is considered **required** if it has a type hint but **no default value**. The LLM must provide a value for this argument when it calls the tool. The parameter's description is taken from the function's docstring.
+    Un parámetro se considera **requerido** si tiene una anotación de tipo pero **no tiene valor predeterminado**. El LLM debe proporcionar un valor para este argumento cuando llama a la herramienta. La descripción del parámetro se toma del docstring de la función.
 
-    ???+ "Example: Required Parameters"
+    ???+ "Ejemplo: Parámetros requeridos"
         ```python
         def get_weather(city: str, unit: str):
             """
@@ -45,16 +45,16 @@ A well-defined function signature is crucial for the LLM to use your tool correc
             # ... function logic ...
             return {"status": "success", "report": f"Weather for {city} is sunny."}
         ```
-    In this example, both `city` and `unit` are mandatory. If the LLM tries to call `get_weather` without one of them, the ADK will return an error to the LLM, prompting it to correct the call.
+    En este ejemplo, tanto `city` como `unit` son obligatorios. Si el LLM intenta llamar a `get_weather` sin uno de ellos, el ADK devolverá un error al LLM, solicitándole que corrija la llamada.
 
 === "Go"
-    In Go, you use struct tags to control the JSON schema. The two primary tags are `json` and `jsonschema`.
+    En Go, usas etiquetas de struct para controlar el esquema JSON. Las dos etiquetas principales son `json` y `jsonschema`.
 
-    A parameter is considered **required** if its struct field does **not** have the `omitempty` or `omitzero` option in its `json` tag.
+    Un parámetro se considera **requerido** si su campo de struct **no** tiene la opción `omitempty` o `omitzero` en su etiqueta `json`.
 
-    The `jsonschema` tag is used to provide the argument's description. This is crucial for the LLM to understand what the argument is for.
+    La etiqueta `jsonschema` se usa para proporcionar la descripción del argumento. Esto es crucial para que el LLM entienda para qué sirve el argumento.
 
-    ???+ "Example: Required Parameters"
+    ???+ "Ejemplo: Parámetros requeridos"
         ```go
         // GetWeatherParams defines the arguments for the getWeather tool.
         type GetWeatherParams struct {
@@ -66,14 +66,14 @@ A well-defined function signature is crucial for the LLM to use your tool correc
             Unit     string `json:"unit" jsonschema:"The temperature unit, either 'celsius' or 'fahrenheit'"`
         }
         ```
-    In this example, both `location` and `unit` are mandatory.
+    En este ejemplo, tanto `location` como `unit` son obligatorios.
 
-##### Optional Parameters
+##### Parámetros opcionales
 
 === "Python"
-    A parameter is considered **optional** if you provide a **default value**. This is the standard Python way to define optional arguments. You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+).
+    Un parámetro se considera **opcional** si proporcionas un **valor predeterminado**. Esta es la forma estándar de Python para definir argumentos opcionales. También puedes marcar un parámetro como opcional usando `typing.Optional[SomeType]` o la sintaxis `| None` (Python 3.10+).
 
-    ???+ "Example: Optional Parameters"
+    ???+ "Ejemplo: Parámetros opcionales"
         ```python
         def search_flights(destination: str, departure_date: str, flexible_days: int = 0):
             """
@@ -89,12 +89,12 @@ A well-defined function signature is crucial for the LLM to use your tool correc
                 return {"status": "success", "report": f"Found flexible flights to {destination}."}
             return {"status": "success", "report": f"Found flights to {destination} on {departure_date}."}
         ```
-    Here, `flexible_days` is optional. The LLM can choose to provide it, but it's not required.
+    Aquí, `flexible_days` es opcional. El LLM puede elegir proporcionarlo, pero no es requerido.
 
 === "Go"
-    A parameter is considered **optional** if its struct field has the `omitempty` or `omitzero` option in its `json` tag.
+    Un parámetro se considera **opcional** si su campo de struct tiene la opción `omitempty` o `omitzero` en su etiqueta `json`.
 
-    ???+ "Example: Optional Parameters"
+    ???+ "Ejemplo: Parámetros opcionales"
         ```go
         // GetWeatherParams defines the arguments for the getWeather tool.
         type GetWeatherParams struct {
@@ -108,12 +108,12 @@ A well-defined function signature is crucial for the LLM to use your tool correc
             Days int `json:"days,omitzero" jsonschema:"The number of forecast days to return (defaults to 1)"`
         }
         ```
-    Here, `unit` and `days` are optional. The LLM can choose to provide them, but they are not required.
+    Aquí, `unit` y `days` son opcionales. El LLM puede elegir proporcionarlos, pero no son requeridos.
 
-##### Optional Parameters with `typing.Optional`
-You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+). This signals that the parameter can be `None`. When combined with a default value of `None`, it behaves as a standard optional parameter.
+##### Parámetros opcionales con `typing.Optional`
+También puedes marcar un parámetro como opcional usando `typing.Optional[SomeType]` o la sintaxis `| None` (Python 3.10+). Esto indica que el parámetro puede ser `None`. Cuando se combina con un valor predeterminado de `None`, se comporta como un parámetro opcional estándar.
 
-???+ "Example: `typing.Optional`"
+???+ "Ejemplo: `typing.Optional`"
     === "Python"
         ```python
         from typing import Optional
@@ -132,43 +132,43 @@ You can also mark a parameter as optional using `typing.Optional[SomeType]` or t
             return {"status": "success", "message": f"Profile for {username} created."}
         ```
 
-##### Variadic Parameters (`*args` and `**kwargs`)
-While you can include `*args` (variable positional arguments) and `**kwargs` (variable keyword arguments) in your function signature for other purposes, they are **ignored by the ADK framework** when generating the tool schema for the LLM. The LLM will not be aware of them and cannot pass arguments to them. It's best to rely on explicitly defined parameters for all data you expect from the LLM.
+##### Parámetros variádicos (`*args` y `**kwargs`)
+Si bien puedes incluir `*args` (argumentos posicionales variables) y `**kwargs` (argumentos de palabra clave variables) en la firma de tu función para otros propósitos, son **ignorados por el framework ADK** al generar el esquema de herramienta para el LLM. El LLM no será consciente de ellos y no puede pasarles argumentos. Es mejor confiar en parámetros definidos explícitamente para todos los datos que esperas del LLM.
 
-#### Return Type
+#### Tipo de retorno
 
-The preferred return type for a Function Tool is a **dictionary** in Python, a **Map** in Java, or an **object** in TypeScript. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary, the framework automatically wraps it into a dictionary with a single key named **"result"**.
+El tipo de retorno preferido para una Herramienta de Función es un **diccionario** en Python, un **Map** en Java, o un **objeto** en TypeScript. Esto te permite estructurar la respuesta con pares clave-valor, proporcionando contexto y claridad al LLM. Si tu función devuelve un tipo diferente a un diccionario, el framework automáticamente lo envuelve en un diccionario con una única clave llamada **"result"**.
 
-Strive to make your return values as descriptive as possible. *For example,* instead of returning a numeric error code, return a dictionary with an "error_message" key containing a human-readable explanation. **Remember that the LLM**, not a piece of code, needs to understand the result. As a best practice, include a "status" key in your return dictionary to indicate the overall outcome (e.g., "success", "error", "pending"), providing the LLM with a clear signal about the operation's state.
+Esfuérzate por hacer tus valores de retorno lo más descriptivos posible. *Por ejemplo,* en lugar de devolver un código de error numérico, devuelve un diccionario con una clave "error_message" que contenga una explicación legible por humanos. **Recuerda que el LLM**, no un fragmento de código, necesita entender el resultado. Como mejor práctica, incluye una clave "status" en tu diccionario de retorno para indicar el resultado general (ej., "success", "error", "pending"), proporcionando al LLM una señal clara sobre el estado de la operación.
 
 #### Docstrings
 
-The docstring of your function serves as the tool's **description** and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values.
+El docstring de tu función sirve como la **descripción** de la herramienta y se envía al LLM. Por lo tanto, un docstring bien escrito y completo es crucial para que el LLM entienda cómo usar la herramienta efectivamente. Explica claramente el propósito de la función, el significado de sus parámetros y los valores de retorno esperados.
 
-### Passing Data Between Tools
+### Pasar datos entre herramientas
 
-When an agent calls multiple tools in a sequence, you might need to pass data from one tool to another. The recommended way to do this is by using the `temp:` prefix in the session state.
+Cuando un agente llama a múltiples herramientas en una secuencia, podrías necesitar pasar datos de una herramienta a otra. La forma recomendada de hacer esto es usando el prefijo `temp:` en el estado de sesión.
 
-A tool can write data to a `temp:` variable, and a subsequent tool can read it. This data is only available for the current invocation and is discarded afterwards.
+Una herramienta puede escribir datos en una variable `temp:`, y una herramienta subsecuente puede leerla. Estos datos solo están disponibles para la invocación actual y se descartan después.
 
-!!! note "Shared Invocation Context"
-    All tool calls within a single agent turn share the same `InvocationContext`. This means they also share the same temporary (`temp:`) state, which is how data can be passed between them.
+!!! note "Contexto de invocación compartido"
+    Todas las llamadas a herramientas dentro de un único turno de agente comparten el mismo `InvocationContext`. Esto significa que también comparten el mismo estado temporal (`temp:`), que es cómo se pueden pasar datos entre ellas.
 
-### Example
+### Ejemplo
 
-??? "Example"
+??? "Ejemplo"
 
     === "Python"
 
-        This tool is a python function which obtains the Stock price of a given Stock ticker/ symbol.
+        Esta herramienta es una función de python que obtiene el precio de una acción dado un ticker/símbolo de acción.
 
-        <u>Note</u>: You need to `pip install yfinance` library before using this tool.
+        <u>Nota</u>: Necesitas instalar la biblioteca `pip install yfinance` antes de usar esta herramienta.
 
         ```python
         --8<-- "examples/python/snippets/tools/function-tools/func_tool.py"
         ```
 
-        The return value from this tool will be wrapped into a dictionary.
+        El valor de retorno de esta herramienta será envuelto en un diccionario.
 
         ```json
         {"result": "$123"}
@@ -176,13 +176,13 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
 
     === "Typescript"
 
-        This tool retrieves the mocked value of a stock price.
+        Esta herramienta recupera el valor simulado de un precio de acción.
 
         ```typescript
         --8<-- "examples/typescript/snippets/tools/function-tools/function-tools-example.ts"
         ```
 
-        The return value from this tool will be an object.
+        El valor de retorno de esta herramienta será un objeto.
 
         ```json
         For input `GOOG`: {"price": 2800.0, "currency": "USD"}
@@ -190,7 +190,7 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
 
     === "Go"
 
-        This tool retrieves the mocked value of a stock price.
+        Esta herramienta recupera el valor simulado de un precio de acción.
 
         ```go
         import (
@@ -207,7 +207,7 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
         --8<-- "examples/go/snippets/tools/function-tools/func_tool.go"
         ```
 
-        The return value from this tool will be a `getStockPriceResults` instance.
+        El valor de retorno de esta herramienta será una instancia de `getStockPriceResults`.
 
         ```json
         For input `{"symbol": "GOOG"}`: {"price":300.6,"symbol":"GOOG"}
@@ -215,62 +215,62 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
 
     === "Java"
 
-        This tool retrieves the mocked value of a stock price.
+        Esta herramienta recupera el valor simulado de un precio de acción.
 
         ```java
         --8<-- "examples/java/snippets/src/main/java/tools/StockPriceAgent.java:full_code"
         ```
 
-        The return value from this tool will be wrapped into a Map<String, Object>.
+        El valor de retorno de esta herramienta será envuelto en un Map<String, Object>.
 
         ```json
         For input `GOOG`: {"symbol": "GOOG", "price": "1.0"}
         ```
 
-### Best Practices
+### Mejores prácticas
 
-While you have considerable flexibility in defining your function, remember that simplicity enhances usability for the LLM. Consider these guidelines:
+Aunque tienes considerable flexibilidad al definir tu función, recuerda que la simplicidad mejora la usabilidad para el LLM. Considera estas pautas:
 
-* **Fewer Parameters are Better:** Minimize the number of parameters to reduce complexity.
-* **Simple Data Types:** Favor primitive data types like `str` and `int` over custom classes whenever possible.
-* **Meaningful Names:** The function's name and parameter names significantly influence how the LLM interprets and utilizes the tool. Choose names that clearly reflect the function's purpose and the meaning of its inputs. Avoid generic names like `do_stuff()` or `beAgent()`.
-* **Build for Parallel Execution:** Improve function calling performance when multiple tools are run by building for asynchronous operation. For information on enabling parallel execution for tools, see
-[Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
+* **Menos parámetros es mejor:** Minimiza el número de parámetros para reducir la complejidad.
+* **Tipos de datos simples:** Favorece tipos de datos primitivos como `str` e `int` sobre clases personalizadas siempre que sea posible.
+* **Nombres significativos:** El nombre de la función y los nombres de los parámetros influyen significativamente en cómo el LLM interpreta y utiliza la herramienta. Elige nombres que reflejen claramente el propósito de la función y el significado de sus entradas. Evita nombres genéricos como `do_stuff()` o `beAgent()`.
+* **Construir para ejecución paralela:** Mejora el rendimiento de las llamadas a funciones cuando se ejecutan múltiples herramientas construyendo para operación asíncrona. Para información sobre cómo habilitar la ejecución paralela para herramientas, consulta
+[Aumentar el rendimiento de herramientas con ejecución paralela](/adk-docs/tools-custom/performance/).
 
-## Long Running Function Tools {#long-run-tool}
+## Herramientas de Función de Larga Ejecución {#long-run-tool}
 
-This tool is designed to help you start and manage tasks that are handled outside the operation of your agent workflow, and require a significant amount of processing time, without blocking the agent's execution. This tool is a subclass of `FunctionTool`.
+Esta herramienta está diseñada para ayudarte a iniciar y gestionar tareas que se manejan fuera de la operación de tu flujo de trabajo de agente, y requieren una cantidad significativa de tiempo de procesamiento, sin bloquear la ejecución del agente. Esta herramienta es una subclase de `FunctionTool`.
 
-When using a `LongRunningFunctionTool`, your function can initiate the long-running operation and optionally return an **initial result**, such as a long-running operation id. Once a long running function tool is invoked the agent runner pauses the agent run and lets the agent client to decide whether to continue or wait until the long-running operation finishes. The agent client can query the progress of the long-running operation and send back an intermediate or final response. The agent can then continue with other tasks. An example is the human-in-the-loop scenario where the agent needs human approval before proceeding with a task.
+Al usar un `LongRunningFunctionTool`, tu función puede iniciar la operación de larga ejecución y opcionalmente devolver un **resultado inicial**, como un id de operación de larga ejecución. Una vez que se invoca una herramienta de función de larga ejecución, el ejecutor del agente pausa la ejecución del agente y permite al cliente del agente decidir si continuar o esperar hasta que la operación de larga ejecución finalice. El cliente del agente puede consultar el progreso de la operación de larga ejecución y enviar de vuelta una respuesta intermedia o final. El agente puede entonces continuar con otras tareas. Un ejemplo es el escenario de humano en el bucle donde el agente necesita aprobación humana antes de proceder con una tarea.
 
-!!! warning "Warning: Execution handling"
-    Long Running Function Tools are designed to help you start and *manage* long running
-    tasks as part of your agent workflow, but ***not perform*** the actual, long task.
-    For tasks that require significant time to complete, you should implement a separate
-    server to do the task.
+!!! warning "Advertencia: Manejo de ejecución"
+    Las Herramientas de Función de Larga Ejecución están diseñadas para ayudarte a iniciar y *gestionar* tareas
+    de larga ejecución como parte de tu flujo de trabajo de agente, pero ***no realizar*** la tarea larga real.
+    Para tareas que requieren un tiempo significativo para completarse, debes implementar un servidor
+    separado para hacer la tarea.
 
-!!! tip "Tip: Parallel execution"
-    Depending on the type of tool you are building, designing for asynchronous
-    operation may be a better solution than creating a long running tool. For
-    more information, see
-    [Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
+!!! tip "Consejo: Ejecución paralela"
+    Dependiendo del tipo de herramienta que estés construyendo, diseñar para operación asíncrona
+    puede ser una mejor solución que crear una herramienta de larga ejecución. Para
+    más información, consulta
+    [Aumentar el rendimiento de herramientas con ejecución paralela](/adk-docs/tools-custom/performance/).
 
-### How it Works
+### Cómo funciona
 
-In Python, you wrap a function with `LongRunningFunctionTool`. In Java, you pass a Method name to `LongRunningFunctionTool.create()`. In TypeScript, you instantiate the `LongRunningFunctionTool` class.
+En Python, envuelves una función con `LongRunningFunctionTool`. En Java, pasas un nombre de Método a `LongRunningFunctionTool.create()`. En TypeScript, instancias la clase `LongRunningFunctionTool`.
 
 
-1. **Initiation:** When the LLM calls the tool, your function starts the long-running operation.
+1. **Iniciación:** Cuando el LLM llama a la herramienta, tu función inicia la operación de larga ejecución.
 
-2. **Initial Updates:** Your function should optionally return an initial result (e.g. the long-running operation id). The ADK framework takes the result and sends it back to the LLM packaged within a `FunctionResponse`. This allows the LLM to inform the user (e.g., status, percentage complete, messages). And then the agent run is ended / paused.
+2. **Actualizaciones iniciales:** Tu función debe opcionalmente devolver un resultado inicial (ej. el id de operación de larga ejecución). El framework ADK toma el resultado y lo envía de vuelta al LLM empaquetado dentro de un `FunctionResponse`. Esto permite al LLM informar al usuario (ej., estado, porcentaje completo, mensajes). Y luego la ejecución del agente termina/se pausa.
 
-3. **Continue or Wait:** After each agent run is completed. Agent client can query the progress of the long-running operation and decide whether to continue the agent run with an intermediate response (to update the progress) or wait until a final response is retrieved. Agent client should send the intermediate or final response back to the agent for the next run.
+3. **Continuar o esperar:** Después de que cada ejecución del agente se complete. El cliente del agente puede consultar el progreso de la operación de larga ejecución y decidir si continuar la ejecución del agente con una respuesta intermedia (para actualizar el progreso) o esperar hasta que se recupere una respuesta final. El cliente del agente debe enviar la respuesta intermedia o final de vuelta al agente para la siguiente ejecución.
 
-4. **Framework Handling:** The ADK framework manages the execution. It sends the intermediate or final `FunctionResponse` sent by agent client to the LLM to generate a user friendly message.
+4. **Manejo del framework:** El framework ADK gestiona la ejecución. Envía la `FunctionResponse` intermedia o final enviada por el cliente del agente al LLM para generar un mensaje amigable para el usuario.
 
-### Creating the Tool
+### Crear la herramienta
 
-Define your tool function and wrap it using the `LongRunningFunctionTool` class:
+Define tu función de herramienta y envuélvela usando la clase `LongRunningFunctionTool`:
 
 === "Python"
 
@@ -341,35 +341,34 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
     }
     ```
 
-### Intermediate / Final result Updates
+### Actualizaciones de resultado intermedio/final
 
-Agent client received an event with long running function calls and check the status of the ticket. Then Agent client can send the intermediate or final response back to update the progress. The framework packages this value (even if it's None) into the content of the `FunctionResponse` sent back to the LLM.
+El cliente del agente recibió un evento con llamadas a funciones de larga ejecución y verifica el estado del ticket. Luego, el cliente del agente puede enviar la respuesta intermedia o final de vuelta para actualizar el progreso. El framework empaqueta este valor (incluso si es None) en el contenido del `FunctionResponse` enviado de vuelta al LLM.
 
-!!! note "Note: Long running function response with Resume feature"
+!!! note "Nota: Respuesta de función de larga ejecución con funcionalidad de Resume"
 
-    If your ADK agent workflow is configured with the
-    [Resume](/adk-docs/runtime/resume/) feature, you also must include
-    the Invocation ID (`invocation_id`) parameter with the long running
-    function response. The Invocation ID you provide must be the same
-    invocation that generated the long running function request, otherwise
-    the system starts a new invocation with the response. If your
-    agent uses the Resume feature, consider including the Invocation ID
-    as a parameter with your long running function request, so it can be
-    included with the response. For more details on using the Resume
-    feature, see
-    [Resume stopped agents](/adk-docs/runtime/resume/).
+    Si tu flujo de trabajo de agente ADK está configurado con la
+    funcionalidad [Resume](/adk-docs/runtime/resume/), también debes incluir
+    el parámetro de ID de Invocación (`invocation_id`) con la respuesta de función de larga
+    ejecución. El ID de Invocación que proporciones debe ser la misma
+    invocación que generó la solicitud de función de larga ejecución, de lo contrario
+    el sistema inicia una nueva invocación con la respuesta. Si tu
+    agente usa la funcionalidad Resume, considera incluir el ID de Invocación
+    como parámetro con tu solicitud de función de larga ejecución, para que pueda ser
+    incluido con la respuesta. Para más detalles sobre el uso de la funcionalidad Resume, consulta
+    [Reanudar agentes detenidos](/adk-docs/runtime/resume/).
 
-??? Tip "Applies to only Java ADK"
+??? Tip "Aplica solo a ADK de Java"
 
-    When passing `ToolContext` with Function Tools, ensure that one of the following is true:
+    Al pasar `ToolContext` con Herramientas de Función, asegúrate de que una de las siguientes sea verdadera:
 
-    * The Schema is passed with the ToolContext parameter in the function signature, like:
+    * El Schema se pasa con el parámetro ToolContext en la firma de la función, como:
       ```
       @com.google.adk.tools.Annotations.Schema(name = "toolContext") ToolContext toolContext
       ```
-    OR
+    O
 
-    * The following `-parameters` flag is set to the mvn compiler plugin
+    * La siguiente bandera `-parameters` está configurada para el plugin del compilador mvn
 
     ```
     <build>
@@ -387,7 +386,7 @@ Agent client received an event with long running function calls and check the st
         </plugins>
     </build>
     ```
-    This constraint is temporary and will be removed.
+    Esta restricción es temporal y será eliminada.
 
 
 === "Python"
@@ -404,7 +403,7 @@ Agent client received an event with long running function calls and check the st
 
 === "Go"
 
-    The following example demonstrates a multi-turn workflow. First, the user asks the agent to create a ticket. The agent calls the long-running tool and the client captures the `FunctionCall` ID. The client then simulates the asynchronous work completing by sending subsequent `FunctionResponse` messages back to the agent to provide the ticket ID and final status.
+    El siguiente ejemplo demuestra un flujo de trabajo de múltiples turnos. Primero, el usuario le pide al agente que cree un ticket. El agente llama a la herramienta de larga ejecución y el cliente captura el ID de `FunctionCall`. El cliente luego simula que el trabajo asíncrono se completa enviando mensajes `FunctionResponse` subsecuentes de vuelta al agente para proporcionar el ID del ticket y el estado final.
 
     ```go
     --8<-- "examples/go/snippets/tools/function-tools/long-running-tool/long_running_tool.go:run_long_running_tool"
@@ -417,35 +416,35 @@ Agent client received an event with long running function calls and check the st
     ```
 
 
-??? "Python complete example: File Processing Simulation"
+??? "Ejemplo completo de Python: Simulación de procesamiento de archivos"
 
     ```python
     --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py"
     ```
 
-#### Key aspects of this example
+#### Aspectos clave de este ejemplo
 
-* **`LongRunningFunctionTool`**: Wraps the supplied method/function; the framework handles sending yielded updates and the final return value as sequential FunctionResponses.
+* **`LongRunningFunctionTool`**: Envuelve el método/función proporcionado; el framework maneja el envío de actualizaciones producidas y el valor de retorno final como FunctionResponses secuenciales.
 
-* **Agent instruction**: Directs the LLM to use the tool and understand the incoming FunctionResponse stream (progress vs. completion) for user updates.
+* **Instrucción del agente**: Dirige al LLM a usar la herramienta y entender el flujo de FunctionResponse entrante (progreso vs. finalización) para actualizaciones al usuario.
 
-* **Final return**: The function returns the final result dictionary, which is sent in the concluding FunctionResponse to indicate completion.
+* **Retorno final**: La función devuelve el diccionario de resultado final, que se envía en el FunctionResponse conclusivo para indicar finalización.
 
-## Agent-as-a-Tool {#agent-tool}
+## Agente como Herramienta {#agent-tool}
 
-This powerful feature allows you to leverage the capabilities of other agents within your system by calling them as tools. The Agent-as-a-Tool enables you to invoke another agent to perform a specific task, effectively **delegating responsibility**. This is conceptually similar to creating a Python function that calls another agent and uses the agent's response as the function's return value.
+Esta poderosa característica te permite aprovechar las capacidades de otros agentes dentro de tu sistema llamándolos como herramientas. El Agente como Herramienta te permite invocar otro agente para realizar una tarea específica, efectivamente **delegando responsabilidad**. Esto es conceptualmente similar a crear una función de Python que llama a otro agente y usa la respuesta del agente como el valor de retorno de la función.
 
-### Key difference from sub-agents
+### Diferencia clave con los sub-agentes
 
-It's important to distinguish an Agent-as-a-Tool from a Sub-Agent.
+Es importante distinguir un Agente como Herramienta de un Sub-Agente.
 
-* **Agent-as-a-Tool:** When Agent A calls Agent B as a tool (using Agent-as-a-Tool), Agent B's answer is **passed back** to Agent A, which then summarizes the answer and generates a response to the user. Agent A retains control and continues to handle future user input.
+* **Agente como Herramienta:** Cuando el Agente A llama al Agente B como una herramienta (usando Agente como Herramienta), la respuesta del Agente B se **pasa de vuelta** al Agente A, que luego resume la respuesta y genera una respuesta al usuario. El Agente A mantiene el control y continúa manejando futuras entradas del usuario.
 
-* **Sub-agent:** When Agent A calls Agent B as a sub-agent, the responsibility of answering the user is completely **transferred to Agent B**. Agent A is effectively out of the loop. All subsequent user input will be answered by Agent B.
+* **Sub-agente:** Cuando el Agente A llama al Agente B como un sub-agente, la responsabilidad de responder al usuario se **transfiere completamente** al Agente B. El Agente A queda efectivamente fuera del bucle. Todas las entradas subsecuentes del usuario serán respondidas por el Agente B.
 
-### Usage
+### Uso
 
-To use an agent as a tool, wrap the agent with the AgentTool class.
+Para usar un agente como una herramienta, envuelve el agente con la clase AgentTool.
 
 === "Python"
 
@@ -471,13 +470,13 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
     AgentTool.create(agent)
     ```
 
-### Customization
+### Personalización
 
-The `AgentTool` class provides the following attributes for customizing its behavior:
+La clase `AgentTool` proporciona los siguientes atributos para personalizar su comportamiento:
 
-* **skip\_summarization: bool:** If set to True, the framework will **bypass the LLM-based summarization** of the tool agent's response. This can be useful when the tool's response is already well-formatted and requires no further processing.
+* **skip\_summarization: bool:** Si se establece en True, el framework **omitirá la sumarización basada en LLM** de la respuesta del agente herramienta. Esto puede ser útil cuando la respuesta de la herramienta ya está bien formateada y no requiere procesamiento adicional.
 
-??? "Example"
+??? "Ejemplo"
 
     === "Python"
 
@@ -512,11 +511,11 @@ The `AgentTool` class provides the following attributes for customizing its beha
         --8<-- "examples/java/snippets/src/main/java/tools/AgentToolCustomization.java:full_code"
         ```
 
-### How it works
+### Cómo funciona
 
-1. When the `main_agent` receives the long text, its instruction tells it to use the 'summarize' tool for long texts.
-2. The framework recognizes 'summarize' as an `AgentTool` that wraps the `summary_agent`.
-3. Behind the scenes, the `main_agent` will call the `summary_agent` with the long text as input.
-4. The `summary_agent` will process the text according to its instruction and generate a summary.
-5. **The response from the `summary_agent` is then passed back to the `main_agent`.**
-6. The `main_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")
+1. Cuando el `main_agent` recibe el texto largo, su instrucción le dice que use la herramienta 'summarize' para textos largos.
+2. El framework reconoce 'summarize' como un `AgentTool` que envuelve al `summary_agent`.
+3. Detrás de escena, el `main_agent` llamará al `summary_agent` con el texto largo como entrada.
+4. El `summary_agent` procesará el texto de acuerdo a su instrucción y generará un resumen.
+5. **La respuesta del `summary_agent` se pasa luego de vuelta al `main_agent`.**
+6. El `main_agent` puede entonces tomar el resumen y formular su respuesta final al usuario (ej., "Aquí hay un resumen del texto: ...")

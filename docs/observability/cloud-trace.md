@@ -1,18 +1,18 @@
-# Agent Observability with Cloud Trace
+# Observabilidad de Agentes con Cloud Trace
 
-With ADK, you’ve already capable of inspecting and observing your agent interaction locally utilizing the powerful web development UI discussed in [here](https://google.github.io/adk-docs/evaluate/#debugging-with-the-trace-view). However, if we aim for cloud deployment, we will need a centralized dashboard to observe real traffic.
+Con ADK, ya eres capaz de inspeccionar y observar la interacción de tu agente localmente utilizando la potente interfaz de usuario de desarrollo web discutida en [aquí](https://google.github.io/adk-docs/evaluate/#debugging-with-the-trace-view). Sin embargo, si nuestro objetivo es el despliegue en la nube, necesitaremos un panel centralizado para observar el tráfico real.
 
-Cloud Trace is a component of Google Cloud Observability. It is a powerful tool for monitoring, debugging, and improving the performance of your applications by focusing specifically on tracing capabilities. For Agent Development Kit (ADK) applications, Cloud Trace enables comprehensive tracing, helping you understand how requests flow through your agent's interactions and identify performance bottlenecks or errors within your AI agents.
+Cloud Trace es un componente de Google Cloud Observability. Es una herramienta poderosa para monitorear, depurar y mejorar el rendimiento de tus aplicaciones enfocándose específicamente en capacidades de rastreo. Para aplicaciones del Agent Development Kit (ADK), Cloud Trace habilita rastreo integral, ayudándote a entender cómo fluyen las solicitudes a través de las interacciones de tu agente e identificar cuellos de botella de rendimiento o errores dentro de tus agentes de IA.
 
-## Overview
+## Descripción General
 
-Cloud Trace is built on [OpenTelemetry](https://opentelemetry.io/), an open-source standard that supports many languages and ingestion methods for generating trace data. This aligns with observability practices for ADK applications, which also leverage OpenTelemetry-compatible instrumentation, allowing you to :
+Cloud Trace está construido sobre [OpenTelemetry](https://opentelemetry.io/), un estándar de código abierto que soporta muchos lenguajes y métodos de ingesta para generar datos de rastreo. Esto se alinea con las prácticas de observabilidad para aplicaciones ADK, que también aprovechan la instrumentación compatible con OpenTelemetry, permitiéndote:
 
-- Trace agent interactions : Cloud Trace continuously gathers and analyzes trace data from your project, enabling you to rapidly diagnose latency issues and errors within your ADK applications. This automatic data collection simplifies the process of identifying problems in complex agent workflows.
-- Debug issues : Quickly diagnose latency issues and errors by analyzing detailed traces. Crucial for understanding issues that manifest as increased communication latency across different services or during specific agent actions like tool calls.
-- In-depth Analysis and Visualization: Trace Explorer is the primary tool for analyzing traces, offering visual aids like heatmaps for span duration and line charts for request/error rates. It also provides a spans table, groupable by service and operation, which gives one-click access to representative traces and a waterfall view to easily identify bottlenecks and sources of errors within your agent's execution path
+- Rastrear interacciones de agentes: Cloud Trace recopila y analiza continuamente datos de rastreo de tu proyecto, permitiéndote diagnosticar rápidamente problemas de latencia y errores dentro de tus aplicaciones ADK. Esta recopilación automática de datos simplifica el proceso de identificar problemas en flujos de trabajo complejos de agentes.
+- Depurar problemas: Diagnostica rápidamente problemas de latencia y errores analizando rastros detallados. Crucial para entender problemas que se manifiestan como aumento en la latencia de comunicación entre diferentes servicios o durante acciones específicas del agente como llamadas a herramientas.
+- Análisis y Visualización Profundos: Trace Explorer es la herramienta principal para analizar rastros, ofreciendo ayudas visuales como mapas de calor para la duración de spans y gráficos de líneas para tasas de solicitud/error. También proporciona una tabla de spans, agrupable por servicio y operación, que brinda acceso con un clic a rastros representativos y una vista en cascada para identificar fácilmente cuellos de botella y fuentes de errores dentro de la ruta de ejecución de tu agente.
 
-The following example will assume the following agent directory structure
+El siguiente ejemplo asumirá la siguiente estructura de directorios del agente:
 
 ```
 working_dir/
@@ -35,15 +35,15 @@ os.environ.setdefault("GOOGLE_CLOUD_LOCATION", "global")
 os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "True")
 
 
-# Define a tool function
+# Define una función de herramienta
 def get_weather(city: str) -> dict:
-    """Retrieves the current weather report for a specified city.
+    """Recupera el reporte de clima actual para una ciudad especificada.
 
     Args:
-        city (str): The name of the city for which to retrieve the weather report.
+        city (str): El nombre de la ciudad para la cual recuperar el reporte del clima.
 
     Returns:
-        dict: status and result or error msg.
+        dict: estado y resultado o mensaje de error.
     """
     if city.lower() == "new york":
         return {
@@ -60,7 +60,7 @@ def get_weather(city: str) -> dict:
         }
 
 
-# Create an agent with tools
+# Crea un agente con herramientas
 root_agent = Agent(
     name="weather_agent",
     model="gemini-2.5-flash",
@@ -70,13 +70,13 @@ root_agent = Agent(
 )
 ```
 
-## Cloud Trace Setup
+## Configuración de Cloud Trace
 
-### Setup for Agent Engine Deployment
+### Configuración para Despliegue en Agent Engine
 
-#### Agent Engine Deployment - from ADK CLI
+#### Despliegue en Agent Engine - desde ADK CLI
 
-You can enable cloud tracing by adding `--trace_to_cloud` flag when deploying your agent using `adk deploy agent_engine` command for agent engine deployment.
+Puedes habilitar el rastreo en la nube agregando la bandera `--trace_to_cloud` al desplegar tu agente usando el comando `adk deploy agent_engine` para el despliegue en agent engine.
 
 ```bash
 adk deploy agent_engine \
@@ -87,9 +87,9 @@ adk deploy agent_engine \
     $AGENT_PATH
 ```
 
-#### Agent Engine Deployment - from Python SDK
+#### Despliegue en Agent Engine - desde Python SDK
 
-If you prefer using Python SDK, you can enable cloud tracing by adding `enable_tracing=True` when initialize the `AdkApp` object
+Si prefieres usar Python SDK, puedes habilitar el rastreo en la nube agregando `enable_tracing=True` al inicializar el objeto `AdkApp`:
 
 ```python
 # deploy_agent_engine.py
@@ -127,11 +127,11 @@ remote_app = agent_engines.create(
 )
 ```
 
-### Setup for Cloud Run Deployment
+### Configuración para Despliegue en Cloud Run
 
-#### Cloud Run Deployment - from ADK CLI
+#### Despliegue en Cloud Run - desde ADK CLI
 
-You can enable cloud tracing by adding `--trace_to_cloud` flag when deploying your agent using `adk deploy cloud_run` command for cloud run deployment.
+Puedes habilitar el rastreo en la nube agregando la bandera `--trace_to_cloud` al desplegar tu agente usando el comando `adk deploy cloud_run` para el despliegue en cloud run.
 
 ```bash
 adk deploy cloud_run \
@@ -141,13 +141,13 @@ adk deploy cloud_run \
     $AGENT_PATH
 ```
 
-If you want to enable cloud tracing and using a customized agent service deployment on Cloud Run, you can refer to the [Setup for Customized Deployment](#setup-for-customized-deployment) section below
+Si deseas habilitar el rastreo en la nube y usar un despliegue de servicio de agente personalizado en Cloud Run, puedes consultar la sección [Configuración para Despliegue Personalizado](#setup-for-customized-deployment) a continuación.
 
-### Setup for Customized Deployment
+### Configuración para Despliegue Personalizado
 
-#### From Built-in `get_fast_api_app` Module
+#### Desde el Módulo Integrado `get_fast_api_app`
 
-If you want to customize your own agent service, you can enable cloud tracing by initialize the FastAPI app using built-in `get_fast_api_app` module and set `trace_to_cloud=True`
+Si deseas personalizar tu propio servicio de agente, puedes habilitar el rastreo en la nube inicializando la aplicación FastAPI usando el módulo integrado `get_fast_api_app` y configurando `trace_to_cloud=True`:
 
 ```python
 # deploy_fast_api_app.py
@@ -156,13 +156,13 @@ import os
 from google.adk.cli.fast_api import get_fast_api_app
 from fastapi import FastAPI
 
-# Set GOOGLE_CLOUD_PROJECT environment variable for cloud tracing
+# Establece la variable de entorno GOOGLE_CLOUD_PROJECT para rastreo en la nube
 os.environ.setdefault("GOOGLE_CLOUD_PROJECT", "alvin-exploratory-2")
 
-# Discover the `weather_agent` directory in current working dir
+# Descubre el directorio `weather_agent` en el directorio de trabajo actual
 AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Create FastAPI app with enabled cloud tracing
+# Crea la aplicación FastAPI con rastreo en la nube habilitado
 app: FastAPI = get_fast_api_app(
     agents_dir=AGENT_DIR,
     web=True,
@@ -173,7 +173,7 @@ app.title = "weather-agent"
 app.description = "API for interacting with the Agent weather-agent"
 
 
-# Main execution
+# Ejecución principal
 if __name__ == "__main__":
     import uvicorn
 
@@ -181,9 +181,9 @@ if __name__ == "__main__":
 ```
 
 
-#### From Customized Agent Runner
+#### Desde un Agent Runner Personalizado
 
-If you want to fully customize your ADK agent runtime, you can enable cloud tracing by using `CloudTraceSpanExporter` module from Opentelemetry.
+Si deseas personalizar completamente el runtime de tu agente ADK, puedes habilitar el rastreo en la nube usando el módulo `CloudTraceSpanExporter` de Opentelemetry.
 
 ```python
 # agent_runner.py
@@ -241,20 +241,20 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-## Inspect Cloud Traces
+## Inspeccionar Cloud Traces
 
-After the setup is complete, whenever you interact with the agent it will automatically send trace data to Cloud Trace. You can inspect the traces by going to [console.cloud.google.com](https://console.cloud.google.com) and visit the Trace Explorer on the configured Google Cloud Project
+Una vez completada la configuración, cada vez que interactúes con el agente, automáticamente enviará datos de rastreo a Cloud Trace. Puedes inspeccionar los rastros yendo a [console.cloud.google.com](https://console.cloud.google.com) y visitando el Trace Explorer en el Google Cloud Project configurado.
 
 ![cloud-trace](../assets/cloud-trace1.png)
 
-And then you will see all available traces produced by ADK agent which configured in several span names such as `invocation` , `agent_run` . `call_llm` and `execute_tool`
+Y luego verás todos los rastros disponibles producidos por el agente ADK que están configurados en varios nombres de span como `invocation`, `agent_run`, `call_llm` y `execute_tool`.
 
 ![cloud-trace](../assets/cloud-trace2.png)
 
-If you click on one of the traces, you will see the waterfall view of the detailed process, similar to what we see in the web development UI with `adk web` command.
+Si haces clic en uno de los rastros, verás la vista en cascada del proceso detallado, similar a lo que vemos en la interfaz de usuario de desarrollo web con el comando `adk web`.
 
 ![cloud-trace](../assets/cloud-trace3.png)
 
-## Resources
+## Recursos
 
-- [Google Cloud Trace Documentation](https://cloud.google.com/trace)
+- [Documentación de Google Cloud Trace](https://cloud.google.com/trace)

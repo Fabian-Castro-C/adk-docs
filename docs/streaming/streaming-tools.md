@@ -1,27 +1,27 @@
-# Streaming Tools
+# Herramientas de Streaming
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-preview">Experimental</span>
 </div>
 
-Streaming tools allows tools(functions) to stream intermediate results back to agents and agents can respond to those intermediate results. 
-For example, we can use streaming tools to monitor the changes of the stock price and have the agent react to it. Another example is we can have the agent monitor the video stream, and when there is changes in video stream, the agent can report the changes.
+Las herramientas de streaming permiten a las herramientas (funciones) transmitir resultados intermedios de vuelta a los agentes y los agentes pueden responder a esos resultados intermedios.
+Por ejemplo, podemos usar herramientas de streaming para monitorear los cambios en el precio de las acciones y hacer que el agente reaccione a ellos. Otro ejemplo es que podemos hacer que el agente monitoree la transmisión de video, y cuando hay cambios en la transmisión de video, el agente puede reportar los cambios.
 
 !!! info
 
-    This is only supported in streaming(live) agents/api.
+    Esto solo está soportado en agentes/API de streaming (en vivo).
 
-To define a streaming tool, you must adhere to the following:
+Para definir una herramienta de streaming, debes adherirte a lo siguiente:
 
-1.  **Asynchronous Function:** The tool must be an `async` Python function.
-2.  **AsyncGenerator Return Type:** The function must be typed to return an `AsyncGenerator`. The first type parameter to `AsyncGenerator` is the type of the data you `yield` (e.g., `str` for text messages, or a custom object for structured data). The second type parameter is typically `None` if the generator doesn't receive values via `send()`.
+1.  **Función Asíncrona:** La herramienta debe ser una función `async` de Python.
+2.  **Tipo de Retorno AsyncGenerator:** La función debe estar tipada para retornar un `AsyncGenerator`. El primer parámetro de tipo de `AsyncGenerator` es el tipo de los datos que haces `yield` (por ejemplo, `str` para mensajes de texto, o un objeto personalizado para datos estructurados). El segundo parámetro de tipo es típicamente `None` si el generador no recibe valores mediante `send()`.
 
 
-We support two types of streaming tools:
-- Simple type. This is a one type of streaming tools that only take non-video/-audio streams(the streams that you feed to adk web or adk runner) as input.
-- Video streaming tools. This only works in video streaming and the video stream(the streams that you feed to adk web or adk runner) will be passed into this function.
+Soportamos dos tipos de herramientas de streaming:
+- Tipo simple. Este es un tipo de herramientas de streaming que solo toma streams que no son de video/audio (los streams que alimentas a adk web o adk runner) como entrada.
+- Herramientas de streaming de video. Esto solo funciona en streaming de video y el stream de video (los streams que alimentas a adk web o adk runner) se pasará a esta función.
 
-Now let's define an agent that can monitor stock price changes and monitor the video stream changes. 
+Ahora definamos un agente que pueda monitorear cambios en el precio de las acciones y monitorear los cambios en la transmisión de video.
 
 ```python
 import asyncio
@@ -35,10 +35,10 @@ from google.genai import types as genai_types
 
 
 async def monitor_stock_price(stock_symbol: str) -> AsyncGenerator[str, None]:
-  """This function will monitor the price for the given stock_symbol in a continuous, streaming and asynchronously way."""
+  """Esta función monitoreará el precio del stock_symbol dado de manera continua, streaming y asíncrona."""
   print(f"Start monitor stock price for {stock_symbol}!")
 
-  # Let's mock stock price change.
+  # Simulemos el cambio de precio de las acciones.
   await asyncio.sleep(4)
   price_alert1 = f"the price for {stock_symbol} is 300"
   yield price_alert1
@@ -60,11 +60,11 @@ async def monitor_stock_price(stock_symbol: str) -> AsyncGenerator[str, None]:
   print(price_alert1)
 
 
-# for video streaming, `input_stream: LiveRequestQueue` is required and reserved key parameter for ADK to pass the video streams in.
+# para streaming de video, `input_stream: LiveRequestQueue` es un parámetro clave requerido y reservado para que ADK pase los streams de video.
 async def monitor_video_stream(
     input_stream: LiveRequestQueue,
 ) -> AsyncGenerator[str, None]:
-  """Monitor how many people are in the video streams."""
+  """Monitorea cuántas personas hay en los streams de video."""
   print("start monitor_video_stream!")
   client = Client(vertexai=False)
   prompt_text = (
@@ -76,18 +76,18 @@ async def monitor_video_stream(
     last_valid_req = None
     print("Start monitoring loop")
 
-    # use this loop to pull the latest images and discard the old ones
+    # usa este bucle para obtener las imágenes más recientes y descartar las antiguas
     while input_stream._queue.qsize() != 0:
       live_req = await input_stream.get()
 
       if live_req.blob is not None and live_req.blob.mime_type == "image/jpeg":
         last_valid_req = live_req
 
-    # If we found a valid image, process it
+    # Si encontramos una imagen válida, procesarla
     if last_valid_req is not None:
       print("Processing the most recent frame from the queue")
 
-      # Create an image part using the blob's data and mime type
+      # Crear una parte de imagen usando los datos y el tipo mime del blob
       image_part = genai_types.Part.from_bytes(
           data=last_valid_req.blob.data, mime_type=last_valid_req.blob.mime_type
       )
@@ -97,7 +97,7 @@ async def monitor_video_stream(
           parts=[image_part, genai_types.Part.from_text(prompt_text)],
       )
 
-      # Call the model to generate content based on the provided image and prompt
+      # Llamar al modelo para generar contenido basado en la imagen y el prompt proporcionados
       response = client.models.generate_content(
           model="gemini-2.0-flash-exp",
           contents=contents,
@@ -116,18 +116,18 @@ async def monitor_video_stream(
         yield response
         print("response:", response)
 
-    # Wait before checking for new images
+    # Esperar antes de verificar nuevas imágenes
     await asyncio.sleep(0.5)
 
 
-# Use this exact function to help ADK stop your streaming tools when requested.
-# for example, if we want to stop `monitor_stock_price`, then the agent will
-# invoke this function with stop_streaming(function_name=monitor_stock_price).
+# Usa exactamente esta función para ayudar a ADK a detener tus herramientas de streaming cuando se solicite.
+# por ejemplo, si queremos detener `monitor_stock_price`, entonces el agente
+# invocará esta función con stop_streaming(function_name=monitor_stock_price).
 def stop_streaming(function_name: str):
-  """Stop the streaming
+  """Detiene el streaming
 
   Args:
-    function_name: The name of the streaming function to stop.
+    function_name: El nombre de la función de streaming a detener.
   """
   pass
 
@@ -152,6 +152,6 @@ root_agent = Agent(
 )
 ```
 
-Here are some sample queries to test:
-- Help me monitor the stock price for $XYZ stock.
-- Help me monitor how many people are there in the video stream.
+Aquí hay algunas consultas de ejemplo para probar:
+- Ayúdame a monitorear el precio de las acciones de $XYZ.
+- Ayúdame a monitorear cuántas personas hay en la transmisión de video.

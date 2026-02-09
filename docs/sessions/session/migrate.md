@@ -1,30 +1,30 @@
-# Session database schema migration
+# Migración del esquema de base de datos de sesiones
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.22.1</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v1.22.1</span>
 </div>
 
-If you are using `DatabaseSessionService` and upgrading to ADK Python release
-v1.22.0 or higher, you should migrate your database to the new session database
-schema. Starting with ADK Python release v1.22.0, the database schema for
-`DatabaseSessionService` has been updated from `v0`, which is a pickle-based
-serialization, to `v1`, which uses JSON-based serialization. Previous `v0` session
-schema databases will continue to work with ADK Python v1.22.0 and higher versions,
-but the `v1` schema may be required in future releases.
+Si estás usando `DatabaseSessionService` y actualizando a la versión de ADK Python
+v1.22.0 o superior, debes migrar tu base de datos al nuevo esquema de base de datos
+de sesiones. A partir de la versión de ADK Python v1.22.0, el esquema de base de datos para
+`DatabaseSessionService` ha sido actualizado de `v0`, que utiliza serialización
+basada en pickle, a `v1`, que utiliza serialización basada en JSON. Las bases de datos
+con esquema de sesiones `v0` previas continuarán funcionando con ADK Python v1.22.0 y versiones superiores,
+pero el esquema `v1` puede ser requerido en versiones futuras.
 
 
-## Migrate session database
+## Migrar base de datos de sesiones
 
-A migration script is provided to facilitate the migration process. The script
-reads data from your existing database, converts it to the new format, and
-writes it to a new database. You can run the migration using the ADK Command
-Line Interface (CLI) `migrate session` command, as shown in the following examples:
+Se proporciona un script de migración para facilitar el proceso de migración. El script
+lee datos de tu base de datos existente, los convierte al nuevo formato y
+los escribe en una nueva base de datos. Puedes ejecutar la migración usando el comando
+`migrate session` de la Interfaz de Línea de Comandos (CLI) de ADK, como se muestra en los siguientes ejemplos:
 
-!!! warning "Required: ADK Python v1.22.1 or higher"
+!!! warning "Requerido: ADK Python v1.22.1 o superior"
 
-    ADK Python v1.22.1 is required for this procedure because it includes the
-    migration command line interface function and bug fixes to support the session
-    database schema change.
+    ADK Python v1.22.1 es requerido para este procedimiento porque incluye la
+    función de interfaz de línea de comandos de migración y correcciones de errores para soportar el
+    cambio de esquema de base de datos de sesiones.
 
 === "SQLite"
 
@@ -42,5 +42,5 @@ Line Interface (CLI) `migrate session` command, as shown in the following exampl
       --dest_db_url=postgresql://localhost:5432/v1
     ```
 
-After running the migration, update your `DatabaseSessionService` configuration
-to use the new database URL you specified for `dest_db_url`.
+Después de ejecutar la migración, actualiza tu configuración de `DatabaseSessionService`
+para usar la nueva URL de base de datos que especificaste para `dest_db_url`.

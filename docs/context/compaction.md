@@ -1,29 +1,16 @@
-# Compress agent context for performance
+# Comprimir el contexto del agente para mejorar el rendimiento
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span>
 </div>
 
-As an ADK agent runs it collects *context* information, including user
-instructions, retrieved data, tool responses, and generated content. As the size
-of this context data grows, agent processing times typically also increase.
-More and more data is sent to the generative AI model used by the agent,
-increasing processing time and slowing down responses. The ADK Context
-Compaction feature is designed to reduce the size of context as an agent
-is running by summarizing older parts of the agent workflow event history.
+A medida que un agente ADK se ejecuta, recopila información de *contexto*, incluyendo instrucciones del usuario, datos recuperados, respuestas de herramientas y contenido generado. A medida que el tamaño de estos datos de contexto crece, los tiempos de procesamiento del agente también suelen aumentar. Cada vez más datos se envían al modelo de IA generativa utilizado por el agente, aumentando el tiempo de procesamiento y ralentizando las respuestas. La característica de Compactación de Contexto del ADK está diseñada para reducir el tamaño del contexto mientras un agente se ejecuta, resumiendo las partes más antiguas del historial de eventos del flujo de trabajo del agente.
 
-The Context Compaction feature uses a *sliding window* approach for collecting
-and summarizing agent workflow event data within a
-[Session](/adk-docs/sessions/session/). When you configure this feature in your
-agent, it summarizes data from older events once it reaches a threshold of a
-specific number of workflow events, or invocations, with the current Session.
+La característica de Compactación de Contexto utiliza un enfoque de *ventana deslizante* para recopilar y resumir datos de eventos del flujo de trabajo del agente dentro de una [Session](/adk-docs/sessions/session/). Cuando configuras esta característica en tu agente, resume los datos de eventos más antiguos una vez que alcanza un umbral de un número específico de eventos de flujo de trabajo, o invocaciones, dentro de la sesión actual.
 
-## Configure context compaction
+## Configurar la compactación de contexto
 
-Add context compaction to your agent workflow by adding an Events Compaction
-Configuration setting to the App object of your workflow. As part of the
-configuration, you must specify a compaction interval and overlap size, as shown
-in the following sample code:
+Agrega la compactación de contexto al flujo de trabajo de tu agente añadiendo una configuración de Compactación de Eventos al objeto App de tu flujo de trabajo. Como parte de la configuración, debes especificar un intervalo de compactación y un tamaño de superposición, como se muestra en el siguiente código de ejemplo:
 
 ```python
 from google.adk.apps.app import App
@@ -33,65 +20,50 @@ app = App(
     name='my-agent',
     root_agent=root_agent,
     events_compaction_config=EventsCompactionConfig(
-        compaction_interval=3,  # Trigger compaction every 3 new invocations.
-        overlap_size=1          # Include last invocation from the previous window.
+        compaction_interval=3,  # Activar la compactación cada 3 invocaciones nuevas.
+        overlap_size=1          # Incluir la última invocación de la ventana anterior.
     ),
 )
 ```
 
-Once configured, the ADK `Runner` handles the compaction process in the
-background each time the session reaches the interval.
+Una vez configurado, el `Runner` del ADK maneja el proceso de compactación en segundo plano cada vez que la sesión alcanza el intervalo.
 
-## Example of context compaction
+## Ejemplo de compactación de contexto
 
-If you set `compaction_interval` to 3 and `overlap_size` to 1, the event data is
-compressed upon completion of events 3, 6, 9, and so on. The overlap setting
-increases size of the second summary compression, and each summary afterwards,
-as shown in Figure 1.
+Si estableces `compaction_interval` en 3 y `overlap_size` en 1, los datos de eventos se comprimen al completarse los eventos 3, 6, 9, y así sucesivamente. La configuración de superposición aumenta el tamaño de la segunda compresión resumida, y de cada resumen posterior, como se muestra en la Figura 1.
 
 ![Context compaction example illustration](/adk-docs/assets/context-compaction.svg)
-**Figure 1.** Ilustration of event compaction configuration with a interval of 3
-and overlap of 1.
+**Figura 1.** Ilustración de la configuración de compactación de eventos con un intervalo de 3 y una superposición de 1.
 
-With this example configuration, the context compression tasks happen as follows:
+Con esta configuración de ejemplo, las tareas de compresión de contexto ocurren de la siguiente manera:
 
-1.  **Event 3 completes**: All 3 events are compressed into a summary
-1.  **Event 6 completes**: Events 3 to 6 are compressed, including the overlap
-    of 1 prior event
-1.  **Event 9 completes**: Events 6 to 9 are compressed, including the overlap
-    of 1 prior event
+1.  **El evento 3 se completa**: Los 3 eventos se comprimen en un resumen
+1.  **El evento 6 se completa**: Los eventos 3 a 6 se comprimen, incluyendo la superposición de 1 evento anterior
+1.  **El evento 9 se completa**: Los eventos 6 a 9 se comprimen, incluyendo la superposición de 1 evento anterior
 
-## Configuration settings
+## Configuraciones
 
-The configuration settings for this feature control how frequently event data is compressed
-and how much data is retained as the agent workflow runs. Optionally, you can configure
-a compactor object
+Las configuraciones para esta característica controlan con qué frecuencia se comprimen los datos de eventos y cuántos datos se retienen mientras se ejecuta el flujo de trabajo del agente. Opcionalmente, puedes configurar un objeto compactador
 
-*   **`compaction_interval`**: Set the number of completed events that triggers compaction
-    of the prior event data.
-*   **`overlap_size`**: Set how many of the previously compacted events are included in a
-    newly compacted context set.
-*   **`summarizer`**: (Optional) Define a summarizer object including a specific AI model
-    to use for summarization. For more information, see
-    [Define a Summarizer](#define-summarizer).
+*   **`compaction_interval`**: Establece el número de eventos completados que activa la compactación de los datos de eventos anteriores.
+*   **`overlap_size`**: Establece cuántos de los eventos previamente compactados se incluyen en un conjunto de contexto recién compactado.
+*   **`summarizer`**: (Opcional) Define un objeto resumidor incluyendo un modelo de IA específico para usar en la resumición. Para más información, consulta [Definir un Resumidor](#define-summarizer).
 
-### Define a Summarizer {#define-summarizer}
-You can customize the process of context compression by defining a summarizer.
-The LlmEventSummarizer class allows you to specify a particular model for summarization.
-The following code example demonstrates how to define and configure a custom summarizer:
+### Definir un Resumidor {#define-summarizer}
+Puedes personalizar el proceso de compresión de contexto definiendo un resumidor. La clase LlmEventSummarizer te permite especificar un modelo particular para la resumición. El siguiente ejemplo de código demuestra cómo definir y configurar un resumidor personalizado:
 
 ```python
 from google.adk.apps.app import App, EventsCompactionConfig
 from google.adk.apps.llm_event_summarizer import LlmEventSummarizer
 from google.adk.models import Gemini
 
-# Define the AI model to be used for summarization:
+# Definir el modelo de IA a utilizar para la resumición:
 summarization_llm = Gemini(model="gemini-2.5-flash")
 
-# Create the summarizer with the custom model:
+# Crear el resumidor con el modelo personalizado:
 my_summarizer = LlmEventSummarizer(llm=summarization_llm)
 
-# Configure the App with the custom summarizer and compaction settings:
+# Configurar la App con el resumidor personalizado y las configuraciones de compactación:
 app = App(
     name='my-agent',
     root_agent=root_agent,
@@ -103,7 +75,4 @@ app = App(
 )
 ```
 
-You can further refine the operation of the `SlidingWindowCompactor` by
-by modifying its summarizer class `LlmEventSummarizer` including changing
-the `prompt_template` setting of that class. For more details, see the
-[`LlmEventSummarizer` code](https://github.com/google/adk-python/blob/main/src/google/adk/apps/llm_event_summarizer.py#L60).
+Puedes refinar aún más la operación del `SlidingWindowCompactor` modificando su clase resumidora `LlmEventSummarizer`, incluyendo cambiar la configuración `prompt_template` de esa clase. Para más detalles, consulta el [código de `LlmEventSummarizer`](https://github.com/google/adk-python/blob/main/src/google/adk/apps/llm_event_summarizer.py#L60).

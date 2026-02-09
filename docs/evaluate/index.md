@@ -1,79 +1,79 @@
-# Why Evaluate Agents
+# Por Qué Evaluar Agentes
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-In traditional software development, unit tests and integration tests provide confidence that code functions as expected and remains stable through changes. These tests provide a clear "pass/fail" signal, guiding further development. However, LLM agents introduce a level of variability that makes traditional testing approaches insufficient.
+En el desarrollo de software tradicional, las pruebas unitarias y las pruebas de integración proporcionan confianza de que el código funciona como se espera y permanece estable a través de los cambios. Estas pruebas proporcionan una señal clara de "pasa/falla", guiando el desarrollo posterior. Sin embargo, los agentes LLM introducen un nivel de variabilidad que hace que los enfoques de prueba tradicionales sean insuficientes.
 
-Due to the probabilistic nature of models, deterministic "pass/fail" assertions are often unsuitable for evaluating agent performance. Instead, we need qualitative evaluations of both the final output and the agent's trajectory \- the sequence of steps taken to reach the solution. This involves assessing the quality of the agent's decisions, its reasoning process, and the final result.
+Debido a la naturaleza probabilística de los modelos, las aserciones determinísticas de "pasa/falla" a menudo no son adecuadas para evaluar el rendimiento del agente. En cambio, necesitamos evaluaciones cualitativas tanto de la salida final como de la trayectoria del agente \- la secuencia de pasos tomados para alcanzar la solución. Esto implica evaluar la calidad de las decisiones del agente, su proceso de razonamiento y el resultado final.
 
-This may seem like a lot of extra work to set up, but the investment of automating evaluations pays off quickly. If you intend to progress beyond prototype, this is a highly recommended best practice.
+Esto puede parecer mucho trabajo adicional para configurar, pero la inversión de automatizar las evaluaciones se amortiza rápidamente. Si tienes la intención de progresar más allá del prototipo, esta es una práctica recomendada altamente recomendada.
 
 ![intro_components.png](../assets/evaluate_agent.png)
 
-## Preparing for Agent Evaluations
+## Preparándose para las Evaluaciones de Agentes
 
-Before automating agent evaluations, define clear objectives and success criteria:
+Antes de automatizar las evaluaciones de agentes, define objetivos claros y criterios de éxito:
 
-* **Define Success:** What constitutes a successful outcome for your agent?  
-* **Identify Critical Tasks:** What are the essential tasks your agent must accomplish?  
-* **Choose Relevant Metrics:** What metrics will you track to measure performance?
+* **Define el Éxito:** ¿Qué constituye un resultado exitoso para tu agente?  
+* **Identifica Tareas Críticas:** ¿Cuáles son las tareas esenciales que tu agente debe lograr?  
+* **Elige Métricas Relevantes:** ¿Qué métricas rastrearás para medir el rendimiento?
 
-These considerations will guide the creation of evaluation scenarios and enable effective monitoring of agent behavior in real-world deployments.
+Estas consideraciones guiarán la creación de escenarios de evaluación y permitirán un monitoreo efectivo del comportamiento del agente en despliegues del mundo real.
 
-## What to Evaluate?
+## ¿Qué Evaluar?
 
-To bridge the gap between a proof-of-concept and a production-ready AI agent, a robust and automated evaluation framework is essential. Unlike evaluating generative models, where the focus is primarily on the final output, agent evaluation requires a deeper understanding of the decision-making process. Agent evaluation can be broken down into two components:
+Para cerrar la brecha entre una prueba de concepto y un agente de IA listo para producción, un marco de evaluación robusto y automatizado es esencial. A diferencia de evaluar modelos generativos, donde el enfoque está principalmente en la salida final, la evaluación de agentes requiere una comprensión más profunda del proceso de toma de decisiones. La evaluación de agentes se puede dividir en dos componentes:
 
-1. **Evaluating Trajectory and Tool Use:** Analyzing the steps an agent takes to reach a solution, including its choice of tools, strategies, and the efficiency of its approach.  
-2. **Evaluating the Final Response:** Assessing the quality, relevance, and correctness of the agent's final output.
+1. **Evaluación de Trayectoria y Uso de Herramientas:** Analizar los pasos que un agente toma para alcanzar una solución, incluyendo su elección de herramientas, estrategias y la eficiencia de su enfoque.  
+2. **Evaluación de la Respuesta Final:** Evaluar la calidad, relevancia y corrección de la salida final del agente.
 
-The trajectory is just a list of steps the agent took before it returned to the user. We can compare that against the list of steps we expect the agent to have taken.
+La trayectoria es solo una lista de pasos que el agente tomó antes de regresar al usuario. Podemos comparar eso con la lista de pasos que esperamos que el agente haya tomado.
 
-### Evaluating trajectory and tool use
+### Evaluación de trayectoria y uso de herramientas
 
-Before responding to a user, an agent typically performs a series of actions, which we refer to as a 'trajectory.' It might compare the user input with session history to disambiguate a term, or lookup a policy document, search a knowledge base or invoke an API to save a ticket. We call this a ‘trajectory’ of actions. Evaluating an agent's performance requires comparing its actual trajectory to an expected, or ideal, one. This comparison can reveal errors and inefficiencies in the agent's process. The expected trajectory represents the ground truth \-- the list of steps we anticipate the agent should take.
+Antes de responder a un usuario, un agente típicamente realiza una serie de acciones, a las que nos referimos como una 'trayectoria'. Podría comparar la entrada del usuario con el historial de sesión para desambiguar un término, o buscar un documento de política, buscar en una base de conocimientos o invocar una API para guardar un ticket. Llamamos a esto una 'trayectoria' de acciones. Evaluar el rendimiento de un agente requiere comparar su trayectoria real con una esperada, o ideal. Esta comparación puede revelar errores e ineficiencias en el proceso del agente. La trayectoria esperada representa la verdad fundamental \-- la lista de pasos que anticipamos que el agente debería tomar.
 
-For example:
+Por ejemplo:
 
 ```python
-# Trajectory evaluation will compare
+# La evaluación de trayectoria comparará
 expected_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]
 actual_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]
 ```
 
-ADK provides both groundtruth based and rubric based tool use evaluation metrics. To select the appropriate metric for your agent's specific requirements and goals, please refer to our [recommendations](#recommendations-on-criteria).
+ADK proporciona métricas de evaluación de uso de herramientas tanto basadas en verdad fundamental como basadas en rúbricas. Para seleccionar la métrica apropiada para los requisitos y objetivos específicos de tu agente, consulta nuestras [recomendaciones](#recomendaciones-sobre-criterios).
 
-## How Evaluation works with the ADK
+## Cómo Funciona la Evaluación con el ADK
 
-The ADK offers two methods for evaluating agent performance against predefined datasets and evaluation criteria. While conceptually similar, they differ in the amount of data they can process, which typically dictates the appropriate use case for each.
+El ADK ofrece dos métodos para evaluar el rendimiento del agente contra conjuntos de datos predefinidos y criterios de evaluación. Aunque conceptualmente similares, difieren en la cantidad de datos que pueden procesar, lo que típicamente dicta el caso de uso apropiado para cada uno.
 
-### First approach: Using a test file
+### Primer enfoque: Usar un archivo de prueba
 
-This approach involves creating individual test files, each representing a single, simple agent-model interaction (a session). It's most effective during active agent development, serving as a form of unit testing. These tests are designed for rapid execution and should focus on simple session complexity. Each test file contains a single session, which may consist of multiple turns. A turn represents a single interaction between the user and the agent. Each turn includes
+Este enfoque implica crear archivos de prueba individuales, cada uno representando una única y simple interacción agente-modelo (una sesión). Es más efectivo durante el desarrollo activo del agente, sirviendo como una forma de prueba unitaria. Estas pruebas están diseñadas para ejecución rápida y deben enfocarse en complejidad de sesión simple. Cada archivo de prueba contiene una única sesión, que puede consistir en múltiples turnos. Un turno representa una única interacción entre el usuario y el agente. Cada turno incluye
 
--   `User Content`: The user issued query.
--   `Expected Intermediate Tool Use Trajectory`: The tool calls we expect the
-    agent to make in order to respond correctly to the user query.
--   `Expected Intermediate Agent Responses`: These are the natural language
-    responses that the agent (or sub-agents) generates as it moves towards
-    generating a final answer. These natural language responses are usually an
-    artifact of an multi-agent system, where your root agent depends on sub-agents to achieve a goal. These intermediate responses, may or may not be of
-    interest to the end user, but for a developer/owner of the system, are of
-    critical importance, as they give you the confidence that the agent went
-    through the right path to generate final response.
--   `Final Response`: The expected final response from the agent.
+-   `User Content`: La consulta emitida por el usuario.
+-   `Expected Intermediate Tool Use Trajectory`: Las llamadas de herramientas que esperamos que el
+    agente haga para responder correctamente a la consulta del usuario.
+-   `Expected Intermediate Agent Responses`: Estas son las respuestas en lenguaje natural
+    que el agente (o sub-agentes) genera mientras se mueve hacia
+    generar una respuesta final. Estas respuestas en lenguaje natural son generalmente un
+    artefacto de un sistema multi-agente, donde tu agente raíz depende de sub-agentes para lograr un objetivo. Estas respuestas intermedias, pueden o no ser de
+    interés para el usuario final, pero para un desarrollador/propietario del sistema, son de
+    importancia crítica, ya que te dan la confianza de que el agente pasó
+    por el camino correcto para generar la respuesta final.
+-   `Final Response`: La respuesta final esperada del agente.
 
-You can give the file any name for example `evaluation.test.json`. The framework only checks for the `.test.json` suffix, and the preceding part of the filename is not constrained. The test files are backed by a formal Pydantic data model. The two key schema files are
-[Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
+Puedes darle al archivo cualquier nombre, por ejemplo `evaluation.test.json`. El marco solo verifica el sufijo `.test.json`, y la parte precedente del nombre del archivo no está restringida. Los archivos de prueba están respaldados por un modelo de datos Pydantic formal. Los dos archivos de esquema clave son
+[Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) y
 [Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py).
-Here is a test file with a few examples:
+Aquí hay un archivo de prueba con algunos ejemplos:
 
-*(Note: Comments are included for explanatory purposes and should be removed for the JSON to be valid.)*
+*(Nota: Los comentarios están incluidos con fines explicativos y deben eliminarse para que el JSON sea válido.)*
 
 ```json
-# Do note that some fields are removed for sake of making this doc readable.
+# Nota que algunos campos se eliminan por el bien de hacer este documento legible.
 {
   "eval_set_id": "home_automation_agent_light_on_off_set",
   "name": "",
@@ -83,8 +83,8 @@ Here is a test file with a few examples:
       "eval_id": "eval_case_id",
       "conversation": [
         {
-          "invocation_id": "b7982664-0ab6-47cc-ab13-326656afdf75", # Unique identifier for the invocation.
-          "user_content": { # Content provided by the user in this invocation. This is the query.
+          "invocation_id": "b7982664-0ab6-47cc-ab13-326656afdf75", # Identificador único para la invocación.
+          "user_content": { # Contenido proporcionado por el usuario en esta invocación. Esta es la consulta.
             "parts": [
               {
                 "text": "Turn off device_2 in the Bedroom."
@@ -92,7 +92,7 @@ Here is a test file with a few examples:
             ],
             "role": "user"
           },
-          "final_response": { # Final response from the agent that acts as a reference of benchmark.
+          "final_response": { # Respuesta final del agente que actúa como referencia de punto de referencia.
             "parts": [
               {
                 "text": "I have set the device_2 status to off."
@@ -101,7 +101,7 @@ Here is a test file with a few examples:
             "role": "model"
           },
           "intermediate_data": {
-            "tool_uses": [ # Tool use trajectory in chronological order.
+            "tool_uses": [ # Trayectoria de uso de herramientas en orden cronológico.
               {
                 "args": {
                   "location": "Bedroom",
@@ -111,11 +111,11 @@ Here is a test file with a few examples:
                 "name": "set_device_info"
               }
             ],
-            "intermediate_responses": [] # Any intermediate sub-agent responses.
+            "intermediate_responses": [] # Cualquier respuesta intermedia de sub-agentes.
           }
         }
       ],
-      "session_input": { # Initial session input.
+      "session_input": { # Entrada de sesión inicial.
         "app_name": "home_automation_agent",
         "user_id": "test_user",
         "state": {}
@@ -125,38 +125,38 @@ Here is a test file with a few examples:
 }
 ```
 
-Test files can be organized into folders. Optionally, a folder can also include a `test_config.json` file that specifies the evaluation criteria.
+Los archivos de prueba se pueden organizar en carpetas. Opcionalmente, una carpeta también puede incluir un archivo `test_config.json` que especifica los criterios de evaluación.
 
-#### How to migrate test files not backed by the Pydantic schema?
+#### ¿Cómo migrar archivos de prueba que no están respaldados por el esquema Pydantic?
 
-NOTE: If your test files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
+NOTA: Si tus archivos de prueba no se adhieren al archivo de esquema [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py), entonces esta sección es relevante para ti.
 
-Please use `AgentEvaluator.migrate_eval_data_to_new_schema` to migrate your
-existing `*.test.json` files to the Pydantic backed schema.
+Por favor, usa `AgentEvaluator.migrate_eval_data_to_new_schema` para migrar tus
+archivos `*.test.json` existentes al esquema respaldado por Pydantic.
 
-The utility takes your current test data file and an optional initial session
-file, and generates a single output json file with data serialized in the new
-format. Given that the new schema is more cohesive, both the old test data file
-and initial session file can be ignored (or removed.)
+La utilidad toma tu archivo de datos de prueba actual y un archivo de sesión inicial
+opcional, y genera un único archivo json de salida con datos serializados en el nuevo
+formato. Dado que el nuevo esquema es más cohesivo, tanto el archivo de datos de prueba antiguo
+como el archivo de sesión inicial pueden ser ignorados (o eliminados).
 
-### Second approach: Using An Evalset File
+### Segundo enfoque: Usar un Archivo Evalset
 
-The evalset approach utilizes a dedicated dataset called an "evalset" for evaluating agent-model interactions. Similar to a test file, the evalset contains example interactions. However, an evalset can contain multiple, potentially lengthy sessions, making it ideal for simulating complex, multi-turn conversations. Due to its ability to represent complex sessions, the evalset is well-suited for integration tests. These tests are typically run less frequently than unit tests due to their more extensive nature.
+El enfoque evalset utiliza un conjunto de datos dedicado llamado "evalset" para evaluar interacciones agente-modelo. Similar a un archivo de prueba, el evalset contiene interacciones de ejemplo. Sin embargo, un evalset puede contener múltiples sesiones potencialmente largas, haciéndolo ideal para simular conversaciones complejas de múltiples turnos. Debido a su capacidad para representar sesiones complejas, el evalset es adecuado para pruebas de integración. Estas pruebas se ejecutan típicamente con menos frecuencia que las pruebas unitarias debido a su naturaleza más extensa.
 
-An evalset file contains multiple "evals," each representing a distinct session. Each eval consists of one or more "turns," which include the user query, expected tool use, expected intermediate agent responses, and a reference response. These fields have the same meaning as they do in the test file approach. Alternatively, an eval can define a *conversation scenario* which is used to [dynamically simulate](./user-sim.md) a user interaction with the agent. Each eval is identified by a unique name. Furthermore, each eval includes an associated initial session state.
+Un archivo evalset contiene múltiples "evals", cada uno representando una sesión distinta. Cada eval consiste en uno o más "turnos", que incluyen la consulta del usuario, el uso esperado de herramientas, las respuestas intermedias esperadas del agente y una respuesta de referencia. Estos campos tienen el mismo significado que tienen en el enfoque de archivo de prueba. Alternativamente, un eval puede definir un *escenario de conversación* que se usa para [simular dinámicamente](./user-sim.md) una interacción del usuario con el agente. Cada eval se identifica por un nombre único. Además, cada eval incluye un estado de sesión inicial asociado.
 
-Creating evalsets manually can be complex, therefore UI tools are provided to help capture relevant sessions and easily convert them into evals within your evalset. Learn more about using the web UI for evaluation below. Here is an example evalset containing two sessions. The eval set files are  backed by a formal Pydantic data model. The two key schema files are
-[Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
+Crear evalsets manualmente puede ser complejo, por lo tanto se proporcionan herramientas de UI para ayudar a capturar sesiones relevantes y convertirlas fácilmente en evals dentro de tu evalset. Aprende más sobre el uso de la UI web para evaluación a continuación. Aquí hay un ejemplo de evalset que contiene dos sesiones. Los archivos de eval set están respaldados por un modelo de datos Pydantic formal. Los dos archivos de esquema clave son
+[Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) y
 [Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py).
 
 !!! warning
-    This evalset evaluation method requires the use of a paid service,
+    Este método de evaluación evalset requiere el uso de un servicio de pago,
     [Vertex Gen AI Evaluation Service API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/evaluation).
 
-*(Note: Comments are included for explanatory purposes and should be removed for the JSON to be valid.)*
+*(Nota: Los comentarios están incluidos con fines explicativos y deben eliminarse para que el JSON sea válido.)*
 
 ```json
-# Do note that some fields are removed for sake of making this doc readable.
+# Nota que algunos campos se eliminan por el bien de hacer este documento legible.
 {
   "eval_set_id": "eval_set_example_with_multiple_sessions",
   "name": "Eval set with multiple sessions",
@@ -289,46 +289,46 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
 }
 ```
 
-#### How to migrate eval set files not backed by the Pydantic schema?
+#### ¿Cómo migrar archivos de eval set que no están respaldados por el esquema Pydantic?
 
-NOTE: If your eval set files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
+NOTA: Si tus archivos de eval set no se adhieren al archivo de esquema [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py), entonces esta sección es relevante para ti.
 
-Based on who is maintaining the eval set data, there are two routes:
+Basado en quién mantiene los datos del eval set, hay dos rutas:
 
-1.  **Eval set data maintained by ADK UI** If you use ADK UI to maintain your
-    Eval set data then *no action is needed* from you.
+1.  **Datos de eval set mantenidos por ADK UI** Si usas ADK UI para mantener tus
+    datos de Eval set entonces *no se necesita acción* de tu parte.
 
-2.  **Eval set data is developed and maintained manually and used in ADK eval CLI** A
-    migration tool is in the works, until then the ADK eval CLI command will
-    continue to support data in the old format.
+2.  **Los datos de eval set se desarrollan y mantienen manualmente y se usan en ADK eval CLI** Una
+    herramienta de migración está en proceso, hasta entonces el comando ADK eval CLI
+    continuará soportando datos en el formato antiguo.
 
-### Evaluation Criteria
+### Criterios de Evaluación
 
-ADK provides several built-in criteria for evaluating agent performance, ranging
-from tool trajectory matching to LLM-based response quality assessment. For a
-detailed list of available criteria and guidance on when to use them, please see
-[Evaluation Criteria](./criteria.md).
+ADK proporciona varios criterios integrados para evaluar el rendimiento del agente, que van
+desde la coincidencia de trayectoria de herramientas hasta la evaluación de calidad de respuesta basada en LLM. Para una
+lista detallada de criterios disponibles y orientación sobre cuándo usarlos, consulta
+[Criterios de Evaluación](./criteria.md).
 
-Here is a summary of all the available criteria:
+Aquí hay un resumen de todos los criterios disponibles:
 
-*   **tool_trajectory_avg_score**: Exact match of tool call trajectory.
-*   **response_match_score**: ROUGE-1 similarity to reference response.
-*   **final_response_match_v2**: LLM-judged semantic match to a reference
-    response.
-*   **rubric_based_final_response_quality_v1**: LLM-judged final response
-    quality based on custom rubrics.
-*   **rubric_based_tool_use_quality_v1**: LLM-judged tool usage quality based on
-    custom rubrics.
-*   **hallucinations_v1**: LLM-judged groundedness of agent response against
-    context.
-*   **safety_v1**: Safety/harmlessness of agent response.
+*   **tool_trajectory_avg_score**: Coincidencia exacta de la trayectoria de llamadas de herramientas.
+*   **response_match_score**: Similitud ROUGE-1 con la respuesta de referencia.
+*   **final_response_match_v2**: Coincidencia semántica juzgada por LLM con una respuesta de
+    referencia.
+*   **rubric_based_final_response_quality_v1**: Calidad de respuesta final juzgada por LLM
+    basada en rúbricas personalizadas.
+*   **rubric_based_tool_use_quality_v1**: Calidad de uso de herramientas juzgada por LLM basada en
+    rúbricas personalizadas.
+*   **hallucinations_v1**: Fundamentación juzgada por LLM de la respuesta del agente contra
+    el contexto.
+*   **safety_v1**: Seguridad/inocuidad de la respuesta del agente.
 
-If no evaluation criteria are provided, the following default configuration is used:
+Si no se proporcionan criterios de evaluación, se utiliza la siguiente configuración predeterminada:
 
-* `tool_trajectory_avg_score`: Defaults to 1.0, requiring a 100% match in the tool usage trajectory.  
-* `response_match_score`: Defaults to 0.8, allowing for a small margin of error in the agent's natural language responses.
+* `tool_trajectory_avg_score`: Por defecto es 1.0, requiriendo una coincidencia del 100% en la trayectoria de uso de herramientas.  
+* `response_match_score`: Por defecto es 0.8, permitiendo un pequeño margen de error en las respuestas en lenguaje natural del agente.
 
-Here is an example of a `test_config.json` file specifying custom evaluation criteria:
+Aquí hay un ejemplo de un archivo `test_config.json` que especifica criterios de evaluación personalizados:
 
 ```json
 {
@@ -339,129 +339,129 @@ Here is an example of a `test_config.json` file specifying custom evaluation cri
 }
 ```
 
-#### Recommendations on Criteria
+#### Recomendaciones sobre Criterios
 
-Choose criteria based on your evaluation goals:
+Elige criterios basados en tus objetivos de evaluación:
 
-*   **Enable tests in CI/CD pipelines or regression testing:** Use
-    `tool_trajectory_avg_score` and `response_match_score`. These criteria are
-    fast, predictable, and suitable for frequent automated checks.
-*   **Evaluate trusted reference responses:** Use `final_response_match_v2` to
-    evaluate semantic equivalence. This LLM-based check is more flexible than
-    exact matching and better captures whether the agent's response means the
-    same thing as the reference response.
-*   **Evaluate response quality without a reference response:** Use
-    `rubric_based_final_response_quality_v1`. This is useful when you don't have
-    a trusted reference, but you can define attributes of a good response (e.g.,
-    "The response is concise," "The response has a helpful tone").
-*   **Evaluate the correctness of tool usage:** Use
-    `rubric_based_tool_use_quality_v1`. This allows you to validate the agent's
-    reasoning process by checking, for example, that a specific tool was called
-    or that tools were called in the correct order (e.g., "Tool A must be called
-    before Tool B").
-*   **Check if responses are grounded in context:** Use `hallucinations_v1` to
-    detect if the agent makes claims that are unsupported by or contradictory to
-    the information available to it (e.g., tool outputs).
-*   **Check for harmful content:** Use `safety_v1` to ensure that agent
-    responses are safe and do not violate safety policies.
+*   **Habilitar pruebas en pipelines de CI/CD o pruebas de regresión:** Usa
+    `tool_trajectory_avg_score` y `response_match_score`. Estos criterios son
+    rápidos, predecibles y adecuados para verificaciones automatizadas frecuentes.
+*   **Evaluar respuestas de referencia confiables:** Usa `final_response_match_v2` para
+    evaluar equivalencia semántica. Esta verificación basada en LLM es más flexible que
+    la coincidencia exacta y captura mejor si la respuesta del agente significa lo
+    mismo que la respuesta de referencia.
+*   **Evaluar calidad de respuesta sin una respuesta de referencia:** Usa
+    `rubric_based_final_response_quality_v1`. Esto es útil cuando no tienes
+    una referencia confiable, pero puedes definir atributos de una buena respuesta (por ejemplo,
+    "La respuesta es concisa," "La respuesta tiene un tono útil").
+*   **Evaluar la corrección del uso de herramientas:** Usa
+    `rubric_based_tool_use_quality_v1`. Esto te permite validar el
+    proceso de razonamiento del agente verificando, por ejemplo, que se llamó a una herramienta específica
+    o que las herramientas se llamaron en el orden correcto (por ejemplo, "La herramienta A debe ser llamada
+    antes de la herramienta B").
+*   **Verificar si las respuestas están fundamentadas en el contexto:** Usa `hallucinations_v1` para
+    detectar si el agente hace afirmaciones que no están respaldadas por o son contradictorias a
+    la información disponible para él (por ejemplo, salidas de herramientas).
+*   **Verificar contenido dañino:** Usa `safety_v1` para asegurar que las
+    respuestas del agente sean seguras y no violen las políticas de seguridad.
 
-In addition, criteria which require information on expected agent tool use
-and/or responses are not supported in combination with
-[User Simulation](./user-sim.md).
-Currently, only the `hallucinations_v1` and `safety_v1` criteria support such evals.
+Además, los criterios que requieren información sobre el uso esperado de herramientas del agente
+y/o respuestas no son compatibles en combinación con
+[Simulación de Usuario](./user-sim.md).
+Actualmente, solo los criterios `hallucinations_v1` y `safety_v1` soportan tales evals.
 
-### User Simulation
+### Simulación de Usuario
 
-When evaluating conversational agents, it is not always practical to use a fixed
-set of user prompts, as the conversation can proceed in unexpected ways.
-For example, if the agent needs the user to supply two values to perform a task,
-it may ask for those values one at a time or both at once.
-To resolve this issue, ADK allows you test the behavior of the agent in a
-specific *conversation scenario* with user prompts that are dynamically
-generated by an AI model.
-For details on how to set up an eval with user simulation, see
-[User Simulation](./user-sim.md).
+Al evaluar agentes conversacionales, no siempre es práctico usar un conjunto fijo
+de prompts de usuario, ya que la conversación puede proceder de maneras inesperadas.
+Por ejemplo, si el agente necesita que el usuario proporcione dos valores para realizar una tarea,
+puede pedir esos valores uno a la vez o ambos a la vez.
+Para resolver este problema, ADK te permite probar el comportamiento del agente en un
+*escenario de conversación* específico con prompts de usuario que son dinámicamente
+generados por un modelo de IA.
+Para detalles sobre cómo configurar un eval con simulación de usuario, consulta
+[Simulación de Usuario](./user-sim.md).
 
-## How to run Evaluation with the ADK
+## Cómo Ejecutar la Evaluación con el ADK
 
-As a developer, you can evaluate your agents using the ADK in the following ways:
+Como desarrollador, puedes evaluar tus agentes usando el ADK de las siguientes maneras:
 
-1. **Web-based UI (**`adk web`**):** Evaluate agents interactively through a web-based interface.  
-2. **Programmatically (**`pytest`**)**: Integrate evaluation into your testing pipeline using `pytest` and test files.  
-3. **Command Line Interface (**`adk eval`**):** Run evaluations on an existing evaluation set file directly from the command line.
+1. **UI basada en web (**`adk web`**):** Evalúa agentes interactivamente a través de una interfaz basada en web.  
+2. **Programáticamente (**`pytest`**)**: Integra la evaluación en tu pipeline de pruebas usando `pytest` y archivos de prueba.  
+3. **Interfaz de Línea de Comandos (**`adk eval`**):** Ejecuta evaluaciones en un archivo de conjunto de evaluación existente directamente desde la línea de comandos.
 
-### 1\. `adk web` \- Run Evaluations via the Web UI
+### 1\. `adk web` \- Ejecutar Evaluaciones a través de la UI Web
 
-The web UI provides an interactive way to evaluate agents, generate evaluation datasets, and inspect agent behavior in detail.
+La UI web proporciona una forma interactiva de evaluar agentes, generar conjuntos de datos de evaluación e inspeccionar el comportamiento del agente en detalle.
 
-#### Step 1: Create and Save a Test Case
+#### Paso 1: Crear y Guardar un Caso de Prueba
 
-1. Start the web server by running: `adk web <path_to_your_agents_folder>`
-2. In the web interface, select an agent and interact with it to create a session.
-3. Navigate to the **Eval** tab on the right side of the interface.
-4. Create a new eval set or select an existing one.
-5. Click **"Add current session"** to save the conversation as a new evaluation case.
+1. Inicia el servidor web ejecutando: `adk web <path_to_your_agents_folder>`
+2. En la interfaz web, selecciona un agente e interactúa con él para crear una sesión.
+3. Navega a la pestaña **Eval** en el lado derecho de la interfaz.
+4. Crea un nuevo eval set o selecciona uno existente.
+5. Haz clic en **"Add current session"** para guardar la conversación como un nuevo caso de evaluación.
 
-#### Step 2: View and Edit Your Test Case
+#### Paso 2: Ver y Editar tu Caso de Prueba
 
-Once a case is saved, you can click its ID in the list to inspect it. To make changes, click the **Edit current eval case** icon (pencil). This interactive view allows you to:
+Una vez que se guarda un caso, puedes hacer clic en su ID en la lista para inspeccionarlo. Para hacer cambios, haz clic en el icono **Edit current eval case** (lápiz). Esta vista interactiva te permite:
 
-* **Modify** agent text responses to refine test scenarios.
-* **Delete** individual agent messages from the conversation.
-* **Delete** the entire evaluation case if it's no longer needed.
+* **Modificar** respuestas de texto del agente para refinar escenarios de prueba.
+* **Eliminar** mensajes individuales del agente de la conversación.
+* **Eliminar** el caso de evaluación completo si ya no es necesario.
 
 ![adk-eval-case.gif](../assets/adk-eval-case.gif)
 
-#### Step 3: Run the Evaluation with Custom Metrics
+#### Paso 3: Ejecutar la Evaluación con Métricas Personalizadas
 
-1. Select one or more test cases from your evalset.
-2. Click **Run Evaluation**. An **EVALUATION METRIC** dialog will appear.
-3. In the dialog, use the sliders to configure the thresholds for:
+1. Selecciona uno o más casos de prueba de tu evalset.
+2. Haz clic en **Run Evaluation**. Aparecerá un diálogo de **EVALUATION METRIC**.
+3. En el diálogo, usa los deslizadores para configurar los umbrales para:
     * **Tool trajectory avg score**
     * **Response match score**
-4. Click **Start** to run the evaluation using your custom criteria. The evaluation history will record the metrics used for each run.
+4. Haz clic en **Start** para ejecutar la evaluación usando tus criterios personalizados. El historial de evaluación registrará las métricas usadas para cada ejecución.
 
 ![adk-eval-config.gif](../assets/adk-eval-config.gif)
 
-#### Step 4: Analyze Results
+#### Paso 4: Analizar Resultados
 
-After the run completes, you can analyze the results:
+Después de que se complete la ejecución, puedes analizar los resultados:
 
-* **Analyze Run Failures**: Click on any **Pass** or **Fail** result. For failures, you can hover over the `Fail` label to see a side-by-side comparison of the **Actual vs. Expected Output** and the scores that caused the failure.
+* **Analizar Fallos de Ejecución**: Haz clic en cualquier resultado de **Pass** o **Fail**. Para fallos, puedes pasar el cursor sobre la etiqueta `Fail` para ver una comparación lado a lado de la **Salida Real vs. Esperada** y las puntuaciones que causaron el fallo.
 
-### Debugging with the Trace View
+### Depuración con la Vista de Traza
 
-The ADK web UI includes a powerful **Trace** tab for debugging agent behavior. This feature is available for any agent session, not just during evaluation.
+La UI web de ADK incluye una poderosa pestaña **Trace** para depurar el comportamiento del agente. Esta función está disponible para cualquier sesión del agente, no solo durante la evaluación.
 
-The **Trace** tab provides a detailed and interactive way to inspect your agent's execution flow. Traces are automatically grouped by user message, making it easy to follow the chain of events.
+La pestaña **Trace** proporciona una forma detallada e interactiva de inspeccionar el flujo de ejecución de tu agente. Las trazas se agrupan automáticamente por mensaje de usuario, facilitando el seguimiento de la cadena de eventos.
 
-Each trace row is interactive:
+Cada fila de traza es interactiva:
 
-* **Hovering** over a trace row highlights the corresponding message in the chat window.
-* **Clicking** on a trace row opens a detailed inspection panel with four tabs:
-    * **Event**: The raw event data.
-    * **Request**: The request sent to the model.
-    * **Response**: The response received from the model.
-    * **Graph**: A visual representation of the tool calls and agent logic flow.
+* **Pasar el cursor** sobre una fila de traza resalta el mensaje correspondiente en la ventana de chat.
+* **Hacer clic** en una fila de traza abre un panel de inspección detallado con cuatro pestañas:
+    * **Event**: Los datos de evento sin procesar.
+    * **Request**: La solicitud enviada al modelo.
+    * **Response**: La respuesta recibida del modelo.
+    * **Graph**: Una representación visual de las llamadas de herramientas y el flujo de lógica del agente.
 
 ![adk-trace1.gif](../assets/adk-trace1.gif)
 ![adk-trace2.gif](../assets/adk-trace2.gif)
 
-Blue rows in the trace view indicate that an event was generated from that interaction. Clicking on these blue rows will open the bottom event detail panel, providing deeper insights into the agent's execution flow.
+Las filas azules en la vista de traza indican que se generó un evento de esa interacción. Hacer clic en estas filas azules abrirá el panel de detalles de evento inferior, proporcionando información más profunda sobre el flujo de ejecución del agente.
 
-### 2\.  `pytest` \- Run Tests Programmatically
+### 2\.  `pytest` \- Ejecutar Pruebas Programáticamente
 
-You can also use **`pytest`** to run test files as part of your integration tests.
+También puedes usar **`pytest`** para ejecutar archivos de prueba como parte de tus pruebas de integración.
 
-#### Example Command
+#### Comando de Ejemplo
 
 ```shell
 pytest tests/integration/
 ```
 
-#### Example Test Code
+#### Código de Prueba de Ejemplo
 
-Here is an example of a `pytest` test case that runs a single test file:
+Aquí hay un ejemplo de un caso de prueba `pytest` que ejecuta un único archivo de prueba:
 
 ```py
 from google.adk.evaluation.agent_evaluator import AgentEvaluator
@@ -470,19 +470,20 @@ import pytest
 @pytest.mark.asyncio
 async def test_with_single_test_file():
     """Test the agent's basic ability via a session file."""
+    # Prueba la capacidad básica del agente a través de un archivo de sesión.
     await AgentEvaluator.evaluate(
         agent_module="home_automation_agent",
         eval_dataset_file_path_or_dir="tests/integration/fixture/home_automation_agent/simple_test.test.json",
     )
 ```
 
-This approach allows you to integrate agent evaluations into your CI/CD pipelines or larger test suites. If you want to specify the initial session state for your tests, you can do that by storing the session details in a file and passing that to `AgentEvaluator.evaluate` method.
+Este enfoque te permite integrar evaluaciones de agentes en tus pipelines de CI/CD o conjuntos de pruebas más grandes. Si deseas especificar el estado de sesión inicial para tus pruebas, puedes hacerlo almacenando los detalles de la sesión en un archivo y pasándolo al método `AgentEvaluator.evaluate`.
 
-### 3\. `adk eval` \- Run Evaluations via the CLI
+### 3\. `adk eval` \- Ejecutar Evaluaciones a través del CLI
 
-You can also run evaluation of an eval set file through the command line interface (CLI). This runs the same evaluation that runs on the UI, but it helps with automation, i.e. you can add this command as a part of your regular build generation and verification process.
+También puedes ejecutar la evaluación de un archivo de eval set a través de la interfaz de línea de comandos (CLI). Esto ejecuta la misma evaluación que se ejecuta en la UI, pero ayuda con la automatación, es decir, puedes agregar este comando como parte de tu proceso regular de generación y verificación de compilación.
 
-Here is the command:
+Aquí está el comando:
 
 ```shell
 adk eval \
@@ -492,7 +493,7 @@ adk eval \
     [--print_detailed_results]
 ```
 
-For example:
+Por ejemplo:
 
 ```shell
 adk eval \
@@ -500,11 +501,11 @@ adk eval \
     samples_for_testing/hello_world/hello_world_eval_set_001.evalset.json
 ```
 
-Here are the details for each command line argument:
+Aquí están los detalles para cada argumento de línea de comandos:
 
-* `AGENT_MODULE_FILE_PATH`: The path to the `__init__.py` file that contains a module by the name "agent". "agent" module contains a `root_agent`.  
-* `EVAL_SET_FILE_PATH`: The path to evaluations file(s). You can specify one or more eval set file paths. For each file, all evals will be run by default. If you want to run only specific evals from a eval set, first create a comma separated list of eval names and then add that as a suffix to the eval set file name, demarcated by a colon `:` .
-* For example: `sample_eval_set_file.json:eval_1,eval_2,eval_3`  
-  `This will only run eval_1, eval_2 and eval_3 from sample_eval_set_file.json`  
-* `CONFIG_FILE_PATH`: The path to the config file.  
-* `PRINT_DETAILED_RESULTS`: Prints detailed results on the console.
+* `AGENT_MODULE_FILE_PATH`: La ruta al archivo `__init__.py` que contiene un módulo con el nombre "agent". El módulo "agent" contiene un `root_agent`.  
+* `EVAL_SET_FILE_PATH`: La ruta a los archivos de evaluaciones. Puedes especificar una o más rutas de archivos de eval set. Para cada archivo, todos los evals se ejecutarán por defecto. Si deseas ejecutar solo evals específicos de un eval set, primero crea una lista separada por comas de nombres de eval y luego agrégala como un sufijo al nombre del archivo de eval set, demarcado por dos puntos `:` .
+* Por ejemplo: `sample_eval_set_file.json:eval_1,eval_2,eval_3`  
+  `Esto solo ejecutará eval_1, eval_2 y eval_3 de sample_eval_set_file.json`  
+* `CONFIG_FILE_PATH`: La ruta al archivo de configuración.  
+* `PRINT_DETAILED_RESULTS`: Imprime resultados detallados en la consola.

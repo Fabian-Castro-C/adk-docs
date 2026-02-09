@@ -1,40 +1,39 @@
-# Agent Observability and Evaluation with Freeplay
+# Observabilidad y Evaluación de Agentes con Freeplay
 
-[Freeplay](https://freeplay.ai/) provides an end-to-end workflow for building
-and optimizing AI agents, and it can be integrated with ADK. With Freeplay your
-whole team can easily collaborate to iterate on agent instructions (prompts),
-experiment with and compare different models and agent changes, run evals both
-offline and online to measure quality, monitor production, and review data by
-hand.
+[Freeplay](https://freeplay.ai/) proporciona un flujo de trabajo de extremo a extremo para construir
+y optimizar agentes de IA, y puede integrarse con ADK. Con Freeplay todo tu
+equipo puede colaborar fácilmente para iterar sobre las instrucciones del agente (prompts),
+experimentar con y comparar diferentes modelos y cambios de agentes, ejecutar evaluaciones tanto
+offline como online para medir la calidad, monitorear producción y revisar datos manualmente.
 
-Key benefits of Freeplay:
+Beneficios clave de Freeplay:
 
-* **Simple observability** - focused on agents, LLM calls and tool calls for easy human review
-* **Online evals/automated scorers** - for error detection in production
-* **Offline evals and experiment comparison** - to test changes before deploying
-* **Prompt management** - supports pushing changes straight from the Freeplay playground to code
-* **Human review workflow** - for collaboration on error analysis and data annotation
-* **Powerful UI** - makes it possible for domain experts to collaborate closely with engineers
+* **Observabilidad simple** - enfocada en agentes, llamadas a LLM y llamadas a herramientas para una fácil revisión humana
+* **Evaluaciones online/calificadores automatizados** - para detección de errores en producción
+* **Evaluaciones offline y comparación de experimentos** - para probar cambios antes de desplegar
+* **Gestión de prompts** - soporta enviar cambios directamente desde el playground de Freeplay al código
+* **Flujo de trabajo de revisión humana** - para colaboración en análisis de errores y anotación de datos
+* **UI poderosa** - hace posible que expertos del dominio colaboren estrechamente con ingenieros
 
-Freeplay and ADK complement one another. ADK gives you a powerful and expressive
-agent orchestration framework while Freeplay plugs in for observability, prompt
-management, evaluation and testing. Once you integrate with Freeplay, you can
-update prompts and evals from the Freeplay UI or from code, so that anyone on
-your team can contribute.
+Freeplay y ADK se complementan entre sí. ADK te brinda un framework de orquestación de agentes
+poderoso y expresivo mientras que Freeplay se conecta para observabilidad, gestión de prompts,
+evaluación y pruebas. Una vez que te integras con Freeplay, puedes
+actualizar prompts y evaluaciones desde la UI de Freeplay o desde el código, para que cualquiera en
+tu equipo pueda contribuir.
 
 <iframe width="672" height="378" src="https://www.youtube.com/embed/AV2zCkp4aYM?si=HVuOJFLMEkkpocF7" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-## Getting Started
+## Comenzando
 
-Below is a guide for getting started with Freeplay and ADK. You can also find a
-full sample ADK agent repo
-[here](https://github.com/228Labs/freeplay-google-demo).
+A continuación se presenta una guía para comenzar con Freeplay y ADK. También puedes encontrar un
+repositorio de ejemplo completo de un agente ADK
+[aquí](https://github.com/228Labs/freeplay-google-demo).
 
-### Create a Freeplay Account
+### Crea una Cuenta de Freeplay
 
-Sign up for a free [Freeplay account](https://freeplay.ai/signup).
+Regístrate para obtener una [cuenta gratuita de Freeplay](https://freeplay.ai/signup).
 
-After creating an account, you can define the following environment variables:
+Después de crear una cuenta, puedes definir las siguientes variables de entorno:
 
 ```
 FREEPLAY_PROJECT_ID=
@@ -42,23 +41,23 @@ FREEPLAY_API_KEY=
 FREEPLAY_API_URL=
 ```
 
-### Use Freeplay ADK Library
+### Usa la Biblioteca ADK de Freeplay
 
-Install the Freeplay ADK library:
+Instala la biblioteca ADK de Freeplay:
 
 ```
 pip install freeplay-python-adk
 ```
 
-Freeplay will automatically capture OTel logs from your ADK application when
-you initialize observability:
+Freeplay capturará automáticamente los logs OTel de tu aplicación ADK cuando
+inicialices la observabilidad:
 
 ```python
 from freeplay_python_adk.client import FreeplayADK
 FreeplayADK.initialize_observability()
 ```
 
-You'll also want to pass in the Freeplay plugin to your App:
+También querrás pasar el plugin de Freeplay a tu App:
 
 ```python
 from app.agent import root_agent
@@ -74,64 +73,64 @@ app = App(
 __all__ = ["app"]
 ```
 
-You can now use ADK as you normally would, and you will see logs flowing to
-Freeplay in the Observability section.
+Ahora puedes usar ADK como lo harías normalmente, y verás logs fluyendo a
+Freeplay en la sección de Observabilidad.
 
-## Observability
+## Observabilidad
 
-Freeplay's Observability feature gives you a clear view into how your agent is
-behaving in production. You can dig into individual agent traces to
-understand each step and diagnose issues:
+La función de Observabilidad de Freeplay te brinda una vista clara de cómo se está
+comportando tu agente en producción. Puedes profundizar en trazas individuales de agentes para
+entender cada paso y diagnosticar problemas:
 
 ![Trace detail](https://raw.githubusercontent.com/freeplayai/freeplay-google-demo/refs/heads/main/docs/images/trace_detail.png)
 
-You can also use Freeplay's filtering functionality to search and filter the
-data across any segment of interest:
+También puedes usar la funcionalidad de filtrado de Freeplay para buscar y filtrar los
+datos a través de cualquier segmento de interés:
 
 ![Filter](https://raw.githubusercontent.com/freeplayai/freeplay-google-demo/refs/heads/main/docs/images/filter.png)
 
-## Prompt Management (optional)
+## Gestión de Prompts (opcional)
 
-Freeplay offers
-[native prompt management](https://docs.freeplay.ai/docs/managing-prompts),
-which simplifies the process of version and testing different prompt versions.
-It allows you to experiment with changes to ADK agent instructions in the
-Freeplay UI, test different models, and push updates straight to your code,
-similar to a feature flag.
+Freeplay ofrece
+[gestión de prompts nativa](https://docs.freeplay.ai/docs/managing-prompts),
+que simplifica el proceso de versionar y probar diferentes versiones de prompts.
+Te permite experimentar con cambios a las instrucciones de agentes ADK en la
+UI de Freeplay, probar diferentes modelos y enviar actualizaciones directamente a tu código,
+similar a una feature flag.
 
-To leverage Freeplay's prompt management capabilities alongside ADK, you'll want
-to use the Freeplay ADK agent wrapper. `FreeplayLLMAgent` extends ADK's base
-`LlmAgent` class, so instead of having to hard code your prompts as agent
-instructions, you can version prompts in the Freeplay application.
+Para aprovechar las capacidades de gestión de prompts de Freeplay junto con ADK, querrás
+usar el wrapper de agente ADK de Freeplay. `FreeplayLLMAgent` extiende la clase base
+`LlmAgent` de ADK, así que en lugar de tener que codificar directamente tus prompts como
+instrucciones del agente, puedes versionar prompts en la aplicación Freeplay.
 
-First define a prompt in Freeplay by going to Prompts -> Create prompt template:
+Primero define un prompt en Freeplay yendo a Prompts -> Create prompt template:
 
 ![Prompt](https://raw.githubusercontent.com/freeplayai/freeplay-google-demo/refs/heads/main/docs/images/prompt.png)
 
-When creating your prompt template you'll need to add 3 elements, as described
-in the following sections:
+Al crear tu plantilla de prompt necesitarás agregar 3 elementos, como se describe
+en las siguientes secciones:
 
-### System Message
+### Mensaje del Sistema
 
-This corresponds to the "instructions" section in your code.
+Esto corresponde a la sección "instructions" en tu código.
 
-### Agent Context Variable
+### Variable de Contexto del Agente
 
-Adding the following to the bottom of your system message will create a variable
-for the ongoing agent context to be passed through:
+Agregar lo siguiente en la parte inferior de tu mensaje del sistema creará una variable
+para que el contexto del agente en curso sea pasado:
 
 ```python
 {{agent_context}}
 ```
 
-### History Block
+### Bloque de Historial
 
-Click new message and change the role to 'history'. This will ensure the past
-messages are passed through when present.
+Haz clic en nuevo mensaje y cambia el rol a 'history'. Esto asegurará que los
+mensajes pasados se pasen cuando estén presentes.
 
 ![Prompt Editor](https://raw.githubusercontent.com/freeplayai/freeplay-google-demo/refs/heads/main/docs/images/prompt_editor.png)
 
-Now in your code you can use the ```FreeplayLLMAgent```:
+Ahora en tu código puedes usar el ```FreeplayLLMAgent```:
 
 ```python
 from freeplay_python_adk.client import FreeplayADK
@@ -147,43 +146,43 @@ root_agent = FreeplayLLMAgent(
 )
 ```
 
-When the ```social_product_researcher``` is invoked, the prompt will be
-retrieved from Freeplay and formatted with the proper input variables.
+Cuando se invoca ```social_product_researcher```, el prompt será
+recuperado de Freeplay y formateado con las variables de entrada apropiadas.
 
-## Evaluation
+## Evaluación
 
-Freeplay enables you to define, version, and run
-[evaluations](https://docs.freeplay.ai/docs/evaluations) from the Freeplay web
-application. You can define evaluations for any of your prompts or agents by
-going to Evaluations -> "New evaluation".
+Freeplay te permite definir, versionar y ejecutar
+[evaluaciones](https://docs.freeplay.ai/docs/evaluations) desde la aplicación web
+de Freeplay. Puedes definir evaluaciones para cualquiera de tus prompts o agentes
+yendo a Evaluations -> "New evaluation".
 
 ![Creating a new evaluation in Freeplay](https://raw.githubusercontent.com/freeplayai/freeplay-google-demo/refs/heads/main/docs/images/eval_create.png)
 
-These evaluations can be configured to run for both online monitoring and
-offline evaluation. Datasets for offline evaluation can be uploaded to Freeplay
-or saved from log examples.
+Estas evaluaciones pueden configurarse para ejecutarse tanto para monitoreo online como para
+evaluación offline. Los conjuntos de datos para evaluación offline pueden cargarse a Freeplay
+o guardarse desde ejemplos de logs.
 
-## Dataset Management
+## Gestión de Conjuntos de Datos
 
-As you get data flowing into Freeplay, you can use these logs to start building
-up [datasets](https://docs.freeplay.ai/docs/datasets) to test against on a
-repeated basis. Use production logs to create golden datasets or collections of
-failure cases that you can use to test against as you make changes.
+A medida que obtienes datos fluyendo hacia Freeplay, puedes usar estos logs para comenzar a construir
+[conjuntos de datos](https://docs.freeplay.ai/docs/datasets) para probar de manera
+repetida. Usa logs de producción para crear conjuntos de datos dorados o colecciones de
+casos de fallo que puedes usar para probar a medida que realizas cambios.
 
 ![Save test case](https://raw.githubusercontent.com/freeplayai/freeplay-google-demo/refs/heads/main/docs/images/save_test_case.png)
 
-## Batch Testing
+## Pruebas por Lotes
 
-As you iterate on your agent, you can run batch tests (i.e., offline
-experiments) at both the
-[prompt](https://docs.freeplay.ai/docs/component-level-test-runs) and
-[end-to-end](https://docs.freeplay.ai/docs/end-to-end-test-runs) agent level.
-This allows you to compare multiple different models or prompt changes and
-quantify changes head to head across your full agent execution.
+A medida que iteras sobre tu agente, puedes ejecutar pruebas por lotes (es decir, experimentos
+offline) tanto a nivel de
+[prompt](https://docs.freeplay.ai/docs/component-level-test-runs) como
+[extremo a extremo](https://docs.freeplay.ai/docs/end-to-end-test-runs) del agente.
+Esto te permite comparar múltiples modelos diferentes o cambios de prompts y
+cuantificar cambios cara a cara a través de la ejecución completa de tu agente.
 
-[Here](https://github.com/freeplayai/freeplay-google-demo/blob/main/examples/example_test_run.py)
-is a code example for executing a batch test on Freeplay with ADK.
+[Aquí](https://github.com/freeplayai/freeplay-google-demo/blob/main/examples/example_test_run.py)
+hay un ejemplo de código para ejecutar una prueba por lotes en Freeplay con ADK.
 
-## Sign up now
+## Regístrate ahora
 
-Go to [Freeplay](https://freeplay.ai/) to sign up for an account, and check out a full Freeplay <> ADK Integration [here](https://github.com/freeplayai/freeplay-google-demo/tree/main)
+Ve a [Freeplay](https://freeplay.ai/) para registrarte y obtener una cuenta, y revisa una integración completa de Freeplay <> ADK [aquí](https://github.com/freeplayai/freeplay-google-demo/tree/main)

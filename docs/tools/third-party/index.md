@@ -3,8 +3,8 @@ hide:
   - toc
 ---
 
-# Third-Party Tools
+# Herramientas de Terceros
 
-Check out the following third-party tools and integrations you can use with ADK agents:
+Consulta las siguientes herramientas e integraciones de terceros que puedes usar con agentes ADK:
 
 {{$ render_catalog('tools/third-party/*.md') $}}

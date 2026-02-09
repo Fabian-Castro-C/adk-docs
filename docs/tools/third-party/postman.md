@@ -1,45 +1,45 @@
 ---
 catalog_title: Postman
-catalog_description: Manage API collections, workspaces, and generate client code
+catalog_description: Administra colecciones de API, espacios de trabajo y genera código de cliente
 catalog_icon: /adk-docs/assets/tools-postman.png
 ---
 
 # Postman
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+  <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-The [Postman MCP Server](https://github.com/postmanlabs/postman-mcp-server)
-connects your ADK agent to the [Postman](https://www.postman.com/) ecosystem.
-This integration gives your agent the ability to access workspaces, manage
-collections and environments, evaluate APIs, and automate workflows through
-natural language interactions.
+El [Servidor MCP de Postman](https://github.com/postmanlabs/postman-mcp-server)
+conecta tu agente ADK al ecosistema de [Postman](https://www.postman.com/).
+Esta integración le da a tu agente la capacidad de acceder a espacios de trabajo, administrar
+colecciones y entornos, evaluar APIs y automatizar flujos de trabajo a través
+de interacciones en lenguaje natural.
 
-## Use cases
+## Casos de uso
 
-- **API testing**: Continuously test your APIs using your Postman collections.
+- **Pruebas de API**: Prueba continuamente tus APIs usando tus colecciones de Postman.
 
-- **Collection management**: Create and tag collections, update documentation,
-  add comments, or perform actions across multiple collections without leaving
-  your editor.
+- **Administración de colecciones**: Crea y etiqueta colecciones, actualiza documentación,
+  agrega comentarios o realiza acciones en múltiples colecciones sin salir
+  de tu editor.
 
-- **Workspace and environment management**: Create workspaces and environments,
-  and manage your environment variables.
+- **Administración de espacios de trabajo y entornos**: Crea espacios de trabajo y entornos,
+  y administra tus variables de entorno.
 
-- **Client code generation**: Generate production-ready client code that
-  consumes APIs following best practices and project conventions.
+- **Generación de código de cliente**: Genera código de cliente listo para producción que
+  consume APIs siguiendo las mejores prácticas y convenciones del proyecto.
 
-## Prerequisites
+## Requisitos previos
 
-- Create a [Postman account](https://identity.getpostman.com/signup)
-- Generate a [Postman API key](https://postman.postman.co/settings/me/api-keys)
+- Crea una [cuenta de Postman](https://identity.getpostman.com/signup)
+- Genera una [clave API de Postman](https://postman.postman.co/settings/me/api-keys)
 
-## Use with agent
+## Uso con agente
 
 === "Python"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```python
         from google.adk.agents import Agent
@@ -52,7 +52,7 @@ natural language interactions.
         root_agent = Agent(
             model="gemini-2.5-pro",
             name="postman_agent",
-            instruction="Help users manage their Postman workspaces and collections",
+            instruction="Help users manage their Postman workspaces and collections",  # Ayuda a los usuarios a administrar sus espacios de trabajo y colecciones de Postman
             tools=[
                 McpToolset(
                     connection_params=StdioConnectionParams(
@@ -61,9 +61,9 @@ natural language interactions.
                             args=[
                                 "-y",
                                 "@postman/postman-mcp-server",
-                                # "--full",  # Use all 100+ tools
-                                # "--code",  # Use code generation tools
-                                # "--region", "eu",  # Use EU region
+                                # "--full",  # Usa todas las 100+ herramientas
+                                # "--code",  # Usa herramientas de generación de código
+                                # "--region", "eu",  # Usa región EU
                             ],
                             env={
                                 "POSTMAN_API_KEY": POSTMAN_API_KEY,
@@ -76,7 +76,7 @@ natural language interactions.
         )
         ```
 
-    === "Remote MCP Server"
+    === "Servidor MCP Remoto"
 
         ```python
         from google.adk.agents import Agent
@@ -88,7 +88,7 @@ natural language interactions.
         root_agent = Agent(
             model="gemini-2.5-pro",
             name="postman_agent",
-            instruction="Help users manage their Postman workspaces and collections",
+            instruction="Help users manage their Postman workspaces and collections",  # Ayuda a los usuarios a administrar sus espacios de trabajo y colecciones de Postman
             tools=[
                 McpToolset(
                     connection_params=StreamableHTTPServerParams(
@@ -96,6 +96,9 @@ natural language interactions.
                         # (Optional) Use "/minimal" for essential tools only
                         # (Optional) Use "/code" for code generation tools
                         # (Optional) Use "https://mcp.eu.postman.com" for EU region
+                        # (Opcional) Usa "/minimal" solo para herramientas esenciales
+                        # (Opcional) Usa "/code" para herramientas de generación de código
+                        # (Opcional) Usa "https://mcp.eu.postman.com" para la región EU
                         headers={
                             "Authorization": f"Bearer {POSTMAN_API_KEY}",
                         },
@@ -107,7 +110,7 @@ natural language interactions.
 
 === "TypeScript"
 
-    === "Local MCP Server"
+    === "Servidor MCP Local"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -117,7 +120,7 @@ natural language interactions.
         const rootAgent = new LlmAgent({
             model: "gemini-2.5-pro",
             name: "postman_agent",
-            instruction: "Help users manage their Postman workspaces and collections",
+            instruction: "Help users manage their Postman workspaces and collections",  // Ayuda a los usuarios a administrar sus espacios de trabajo y colecciones de Postman
             tools: [
                 new MCPToolset({
                     type: "StdioConnectionParams",
@@ -126,9 +129,9 @@ natural language interactions.
                         args: [
                             "-y",
                             "@postman/postman-mcp-server",
-                            // "--full",  // Use all 100+ tools
-                            // "--code",  // Use code generation tools
-                            // "--region", "eu",  // Use EU region
+                            // "--full",  // Usa todas las 100+ herramientas
+                            // "--code",  // Usa herramientas de generación de código
+                            // "--region", "eu",  // Usa región EU
                         ],
                         env: {
                             POSTMAN_API_KEY: POSTMAN_API_KEY,
@@ -141,7 +144,7 @@ natural language interactions.
         export { rootAgent };
         ```
 
-    === "Remote MCP Server"
+    === "Servidor MCP Remoto"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -151,7 +154,7 @@ natural language interactions.
         const rootAgent = new LlmAgent({
             model: "gemini-2.5-pro",
             name: "postman_agent",
-            instruction: "Help users manage their Postman workspaces and collections",
+            instruction: "Help users manage their Postman workspaces and collections",  // Ayuda a los usuarios a administrar sus espacios de trabajo y colecciones de Postman
             tools: [
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
@@ -159,6 +162,9 @@ natural language interactions.
                     // (Optional) Use "/minimal" for essential tools only
                     // (Optional) Use "/code" for code generation tools
                     // (Optional) Use "https://mcp.eu.postman.com" for EU region
+                    // (Opcional) Usa "/minimal" solo para herramientas esenciales
+                    // (Opcional) Usa "/code" para herramientas de generación de código
+                    // (Opcional) Usa "https://mcp.eu.postman.com" para la región EU
                     header: {
                         Authorization: `Bearer ${POSTMAN_API_KEY}`,
                     },
@@ -169,26 +175,26 @@ natural language interactions.
         export { rootAgent };
         ```
 
-## Configuration
+## Configuración
 
-Postman offers three tool configurations:
+Postman ofrece tres configuraciones de herramientas:
 
-- **Minimal** (default): Essential tools for basic Postman operations. Best for
-  simple modifications to collections, workspaces, or environments.
-- **Full**: All available Postman API tools (100+ tools). Ideal for advanced
-  collaboration and enterprise features.
-- **Code**: Tools for searching API definitions and generating client code.
-  Perfect for developers who need to consume APIs.
+- **Mínima** (predeterminada): Herramientas esenciales para operaciones básicas de Postman. Mejor para
+  modificaciones simples a colecciones, espacios de trabajo o entornos.
+- **Completa**: Todas las herramientas API de Postman disponibles (más de 100 herramientas). Ideal para
+  colaboración avanzada y características empresariales.
+- **Código**: Herramientas para buscar definiciones de API y generar código de cliente.
+  Perfecta para desarrolladores que necesitan consumir APIs.
 
-To select a configuration:
+Para seleccionar una configuración:
 
-- **Local server**: Add `--full` or `--code` to the `args` list.
-- **Remote server**: Change the URL path to `/minimal`, `/mcp` (full), or `/code`.
+- **Servidor local**: Agrega `--full` o `--code` a la lista de `args`.
+- **Servidor remoto**: Cambia la ruta de URL a `/minimal`, `/mcp` (completa) o `/code`.
 
-For EU region, use `--region eu` (local) or `https://mcp.eu.postman.com` (remote).
+Para la región EU, usa `--region eu` (local) o `https://mcp.eu.postman.com` (remoto).
 
-## Additional resources
+## Recursos adicionales
 
-- [Postman MCP Server on GitHub](https://github.com/postmanlabs/postman-mcp-server)
-- [Postman API key settings](https://postman.postman.co/settings/me/api-keys)
-- [Postman Learning Center](https://learning.postman.com/)
+- [Servidor MCP de Postman en GitHub](https://github.com/postmanlabs/postman-mcp-server)
+- [Configuración de claves API de Postman](https://postman.postman.co/settings/me/api-keys)
+- [Centro de Aprendizaje de Postman](https://learning.postman.com/)
