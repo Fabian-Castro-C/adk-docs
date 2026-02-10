@@ -1,6 +1,6 @@
 # Project information
 site_name: Agent Development Kit
-site_url: https://adk-es.fabian-castro-c.dev/adk-docs/
+site_url: https://adk-es.fabian-castro-c.dev/
 site_description: >-
   Build powerful multi-agent systems with Agent Development Kit
 site_dir: site
