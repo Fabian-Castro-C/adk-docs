@@ -1,6 +1,6 @@
 # Project information
 site_name: Agent Development Kit
-site_url: https://google.github.io/adk-docs
+site_url: https://adk-es.fabian-castro-c.dev/adk-docs/
 site_description: >-
   Build powerful multi-agent systems with Agent Development Kit
 site_dir: site
@@ -8,7 +8,7 @@ exclude_docs: api-reference/java/legal/*
 
 # Repository
 repo_name: adk-docs
-repo_url: https://github.com/google/adk-docs
+repo_url: https://github.com/fabian-castro-c/adk-docs
 edit_uri: edit/main/docs/
 
 # Copyright
