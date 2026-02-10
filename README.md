@@ -1,10 +1,8 @@
-# Agent Development Kit (ADK)
+# Agent Development Kit (ADK) — Documentación en Español 🇪🇸
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/google-adk)](https://pypi.org/project/google-adk/)
-[![NPM Version](https://img.shields.io/npm/v/@google/adk)](https://www.npmjs.com/package/@google/adk)
-[![Go Doc](https://img.shields.io/badge/Go%20Package-Doc-blue.svg)](https://pkg.go.dev/google.golang.org/adk)
-[![Maven Central](https://img.shields.io/maven-central/v/com.google.adk/google-adk)](https://search.maven.org/artifact/com.google.adk/google-adk)
+[![Sitio en vivo](https://img.shields.io/badge/Docs-Español-orange)](https://adk-es.fabian-castro-c.dev/)
+[![Original (EN)](https://img.shields.io/badge/Original-English-blue)](https://google.github.io/adk-docs/)
 
 <html>
   <h2 align="center">
@@ -12,84 +10,90 @@
   </h2>
 </html>
 
-**An open-source, code-first toolkit for building, evaluating, and
-deploying sophisticated AI agents with flexibility and control.**
-
-Agent Development Kit (ADK) is a flexible and modular framework for **developing
-and deploying AI agents**. While optimized for Gemini and the Google ecosystem,
-ADK is **model-agnostic**, **deployment-agnostic**, and is built for
-**compatibility with other frameworks**. ADK was designed to make agent
-development feel more like software development, to make it easier for
-developers to create, deploy, and orchestrate agentic architectures that range
-from simple tasks to complex workflows.
+> **Este repositorio es la traducción al español de la [documentación oficial de ADK](https://github.com/google/adk-docs).**
+> Mantenido por la comunidad como recurso externo, según lo acordado con los mantenedores del proyecto original ([ver issue #1222](https://github.com/google/adk-docs/issues/1222)).
+>
+> La traducción fue realizada con [**adk-translate**](https://github.com/Fabian-Castro-C/adk-translate), una herramienta CLI construida con el propio ADK.
 
 ---
 
-## ✨ Key Features
+**Un toolkit open-source, code-first para construir, evaluar y desplegar agentes de IA sofisticados con flexibilidad y control.**
 
-- **Rich Tool Ecosystem**: Utilize pre-built tools, custom functions,
-  OpenAPI specs, or integrate existing tools to give agents diverse
-  capabilities, all for tight integration with the Google ecosystem.
+Agent Development Kit (ADK) es un framework flexible y modular para **desarrollar
+y desplegar agentes de IA**. Aunque está optimizado para Gemini y el ecosistema de Google,
+ADK es **agnóstico al modelo**, **agnóstico al despliegue** y está diseñado para ser
+**compatible con otros frameworks**. ADK fue diseñado para que el desarrollo de agentes
+se sienta como desarrollo de software, facilitando a los desarrolladores crear, desplegar
+y orquestar arquitecturas agénticas que van desde tareas simples hasta flujos de trabajo complejos.
 
-- **Code-First Development**: Define agent logic, tools, and orchestration
-  directly for ultimate flexibility, testability, and versioning.
+---
 
-- **Modular Multi-Agent Systems**: Design scalable applications by composing
-  multiple specialized agents into flexible hierarchies.
+## ✨ Características principales
 
-- **Tracing and Monitoring**: Built-in agent observability for debugging and optimizing
-  workflows.
+- **Ecosistema rico de herramientas**: Utiliza herramientas preconstruidas, funciones personalizadas,
+  especificaciones OpenAPI o integra herramientas existentes para dar a los agentes diversas
+  capacidades, todo con una estrecha integración con el ecosistema de Google.
 
-- **Deploy Anywhere**: Easily containerize and deploy agents on Cloud Run or GKE, or
-  scale seamlessly with Vertex AI Agent Engine.
+- **Desarrollo code-first**: Define la lógica del agente, herramientas y orquestación
+  directamente para máxima flexibilidad, testeabilidad y versionado.
 
-## 🚀 Usage
+- **Sistemas multiagente modulares**: Diseña aplicaciones escalables componiendo
+  múltiples agentes especializados en jerarquías flexibles.
 
-You can use Agent Development Kit (ADK) with your preferred language:
+- **Trazabilidad y monitoreo**: Observabilidad integrada de agentes para depurar y optimizar
+  flujos de trabajo.
 
-- **[Get started with ADK Python](https://adk-es.fabian-castro-c.dev/get-started/python/)**
+- **Despliega en cualquier lugar**: Containeriza y despliega agentes fácilmente en Cloud Run o GKE, o
+  escala sin problemas con Vertex AI Agent Engine.
 
-- **[Get started with ADK TypeScript](https://adk-es.fabian-castro-c.dev/get-started/typescript/)**
+## 🚀 Uso
 
-- **[Get started with ADK Go](https://adk-es.fabian-castro-c.dev/get-started/go/)**
+Puedes usar Agent Development Kit (ADK) con tu lenguaje preferido:
 
-- **[Get started with ADK Java](https://adk-es.fabian-castro-c.dev/get-started/java/)**
+- **[Comenzar con ADK Python](https://adk-es.fabian-castro-c.dev/get-started/python/)**
 
-## 📚 Documentation
+- **[Comenzar con ADK TypeScript](https://adk-es.fabian-castro-c.dev/get-started/typescript/)**
 
-Explore the full documentation for detailed guides on building, evaluating, and
-deploying agents:
+- **[Comenzar con ADK Go](https://adk-es.fabian-castro-c.dev/get-started/go/)**
 
-- **[Documentation](https://google.github.io/adk-docs)**
+- **[Comenzar con ADK Java](https://adk-es.fabian-castro-c.dev/get-started/java/)**
+
+## 📚 Documentación
+
+Explora la documentación completa con guías detalladas para construir, evaluar y
+desplegar agentes:
+
+- **[Documentación en español](https://adk-es.fabian-castro-c.dev/)**
+- **[Documentación original (inglés)](https://google.github.io/adk-docs)**
 
 ## ✨ Vibe Coding
 
-Accelerate your ADK agent development workflow with AI-assisted coding. ADK
-provides optimized documentation context compatible with AI code editors:
+Acelera tu flujo de desarrollo de agentes con ADK usando programación asistida por IA.
+ADK proporciona contexto de documentación optimizado compatible con editores de código con IA:
 
-- **[llms.txt](https://adk-es.fabian-castro-c.dev/llms.txt)**: A structured index
-  of ADK documentation, designed to help LLMs navigate and locate specific
-  topics and guides.
-- **[llms-full.txt](https://adk-es.fabian-castro-c.dev/llms-full.txt)**: The
-  comprehensive documentation reference, ideal for complex implementations or
-  models with large context windows.
+- **[llms.txt](https://adk-es.fabian-castro-c.dev/llms.txt)**: Un índice estructurado
+  de la documentación de ADK, diseñado para ayudar a los LLMs a navegar y localizar
+  temas y guías específicos.
+- **[llms-full.txt](https://adk-es.fabian-castro-c.dev/llms-full.txt)**: La referencia
+  completa de documentación, ideal para implementaciones complejas o
+  modelos con ventanas de contexto grandes.
 
-You can also visit our
-**[Coding with AI](https://adk-es.fabian-castro-c.dev/tutorials/coding-with-ai/)**
-guide for instructions on using these files with development tools like Gemini
-CLI and Antigravity.
+También puedes visitar nuestra guía
+**[Programar con IA](https://adk-es.fabian-castro-c.dev/tutorials/coding-with-ai/)**
+para instrucciones sobre cómo usar estos archivos con herramientas de desarrollo como Gemini
+CLI y Antigravity.
 
-## 🤝 Contributing
+## 🤝 Contribuir
 
-We welcome contributions from the community! Whether it's bug reports, feature
-requests, documentation improvements, or code contributions, please see our
-**[Contributing Guidelines](./CONTRIBUTING.md)** to get started.
+¡Damos la bienvenida a contribuciones de la comunidad! Ya sean reportes de bugs, solicitudes
+de funcionalidades, mejoras de documentación o contribuciones de código, consulta nuestras
+**[Guías de contribución](./CONTRIBUTING.md)** para comenzar.
 
-## 📄 License
+## 📄 Licencia
 
-This project is licensed under the Apache 2.0 License - see the
-**[LICENSE](LICENSE)** file for details.
+Este proyecto está licenciado bajo la Licencia Apache 2.0 - consulta el archivo
+**[LICENSE](LICENSE)** para más detalles.
 
 ---
 
-*Happy Agent Building!*
+*¡Feliz construcción de agentes!*
