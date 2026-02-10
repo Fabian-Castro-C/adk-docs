@@ -59,10 +59,10 @@ desde tareas simples hasta flujos de trabajo complejos.
 </div>
 
 <p style="text-align:center;">
-  <a href="/adk-docs/get-started/python/" class="md-button" style="margin:3px">Comenzar con Python</a>
-  <a href="/adk-docs/get-started/typescript/" class="md-button" style="margin:3px">Comenzar con TypeScript</a>
-  <a href="/adk-docs/get-started/go/" class="md-button" style="margin:3px">Comenzar con Go</a>
-  <a href="/adk-docs/get-started/java/" class="md-button" style="margin:3px">Comenzar con Java</a>
+  <a href="/get-started/python/" class="md-button" style="margin:3px">Comenzar con Python</a>
+  <a href="/get-started/typescript/" class="md-button" style="margin:3px">Comenzar con TypeScript</a>
+  <a href="/get-started/go/" class="md-button" style="margin:3px">Comenzar con Go</a>
+  <a href="/get-started/java/" class="md-button" style="margin:3px">Comenzar con Java</a>
 </p>
 
 ---
