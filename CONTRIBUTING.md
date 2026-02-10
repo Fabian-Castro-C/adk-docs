@@ -10,7 +10,7 @@ please review the following sections before you begin.
 
 ### Find Something to Work On
 
-Check the [GitHub Issues](https://github.com/google/adk-docs/issues) for bug
+Check the [GitHub Issues](https://github.com/google/issues) for bug
 reports or feature requests. Feel free to pick up an existing issue or open a
 new one if you have an idea or find a bug.
 
@@ -141,7 +141,7 @@ agents. Examples include [Atlassian](docs/tools/third-party/atlassian.md),
     ---
     catalog_title: Tool Name
     catalog_description: A short description of what your tool does
-    catalog_icon: /adk-docs/assets/tools-<tool-name>.png
+    catalog_icon: /assets/tools-<tool-name>.png
     ---
 
     # Tool Name
@@ -212,7 +212,7 @@ Follow the same process as [third-party tools](#third-party-tools), but:
 -   Explain in the documentation that your contribution is a plugin (uses
     `BasePlugin` and callback hooks) rather than a tool
 
-Refer to the [Plugins documentation](https://google.github.io/adk-docs/plugins/) for details on how
+Refer to the [Plugins documentation](https://adk-es.fabian-castro-c.dev/plugins/) for details on how
 plugins work in ADK.
 
 ### Observability Integrations
