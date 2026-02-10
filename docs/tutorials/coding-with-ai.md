@@ -18,8 +18,8 @@ con cada actualización:
 
 Archivo | Mejor para... | URL
 ---- | ----------- | ---
-**`llms.txt`** | Herramientas que pueden obtener enlaces dinámicamente | [`https://google.github.io/adk-docs/llms.txt`](https://google.github.io/adk-docs/llms.txt)
-**`llms-full.txt`** | Herramientas que necesitan un volcado de texto estático y único de todo el sitio | [`https://google.github.io/adk-docs/llms-full.txt`](https://google.github.io/adk-docs/llms-full.txt)
+**`llms.txt`** | Herramientas que pueden obtener enlaces dinámicamente | [`https://google.github.io/llms.txt`](https://google.github.io/llms.txt)
+**`llms-full.txt`** | Herramientas que necesitan un volcado de texto estático y único de todo el sitio | [`https://google.github.io/llms-full.txt`](https://google.github.io/llms-full.txt)
 
 ## Uso en Herramientas de Desarrollo
 
@@ -85,7 +85,7 @@ manual.
             "mcpdoc",
             "mcpdoc",
             "--urls",
-            "AgentDevelopmentKit:https://google.github.io/adk-docs/llms.txt",
+            "AgentDevelopmentKit:https://google.github.io/llms.txt",
             "--transport",
             "stdio"
           ]
@@ -119,7 +119,7 @@ consultar la documentación del ADK agregando un
 Para agregar un servidor MCP para la documentación del ADK a Claude Code, ejecuta el siguiente comando:
 
 ```bash
-claude mcp add adk-docs --transport stdio -- uvx --from mcpdoc mcpdoc --urls AgentDevelopmentKit:https://google.github.io/adk-docs/llms.txt --transport stdio
+claude mcp add adk-docs --transport stdio -- uvx --from mcpdoc mcpdoc --urls AgentDevelopmentKit:https://google.github.io/llms.txt --transport stdio
 ```
 
 **Uso:**
@@ -164,7 +164,7 @@ manual.
             "mcpdoc",
             "mcpdoc",
             "--urls",
-            "AgentDevelopmentKit:https://google.github.io/adk-docs/llms.txt",
+            "AgentDevelopmentKit:https://google.github.io/llms.txt",
             "--transport",
             "stdio"
           ]
@@ -190,5 +190,5 @@ Una vez configurado, puedes dar instrucciones al agente de codificación como:
 
 Cualquier herramienta que soporte el estándar `llms.txt` o pueda ingerir documentación desde
 una URL puede beneficiarse de estos archivos. Puedes proporcionar la URL
-`https://google.github.io/adk-docs/llms.txt` (o `llms-full.txt`) a la
+`https://google.github.io/llms.txt` (o `llms-full.txt`) a la
 configuración de base de conocimiento de tu herramienta o configuración de servidor MCP.

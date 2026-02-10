@@ -5,7 +5,7 @@ entorno de ejecución de
 [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
 Antes de usar estas instrucciones, necesitas haber completado el despliegue de
 tu agente en el entorno de ejecución de Agent Engine usando uno de los
-[métodos disponibles](/adk-docs/deploy/agent-engine/). Esta guía te muestra
+[métodos disponibles](/deploy/agent-engine/). Esta guía te muestra
 cómo ver, interactuar y probar tu agente desplegado a través de Google Cloud
 Console, e interactuar con el agente usando llamadas a la API REST o el SDK de
 Vertex AI para Python.

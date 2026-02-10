@@ -16,7 +16,7 @@ servicios de agentes proporcionados por el producto Agent Engine.
 Esta guía incluye las siguientes rutas de despliegue, que sirven para diferentes
 propósitos:
 
-*   **[Despliegue estándar](/adk-docs/deploy/agent-engine/deploy/)**: Sigue
+*   **[Despliegue estándar](/deploy/agent-engine/deploy/)**: Sigue
     esta ruta de despliegue estándar si tienes un proyecto existente de Google Cloud
     y si deseas gestionar cuidadosamente el despliegue de un agente ADK en el
     runtime de Agent Engine. Esta ruta de despliegue utiliza Cloud Console, la interfaz de línea de
@@ -24,7 +24,7 @@ propósitos:
     para usuarios que ya están familiarizados con la configuración de proyectos de Google Cloud,
     y usuarios que se preparan para despliegues en producción.
 
-*   **[Despliegue con Agent Starter Pack](/adk-docs/deploy/agent-engine/asp/)**:
+*   **[Despliegue con Agent Starter Pack](/deploy/agent-engine/asp/)**:
     Sigue esta ruta de despliegue acelerada si no tienes un proyecto existente de
     Google Cloud y estás creando un proyecto específicamente para desarrollo
     y pruebas. El Agent Starter Pack (ASP) te ayuda a desplegar proyectos ADK

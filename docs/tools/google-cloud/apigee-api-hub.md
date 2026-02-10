@@ -1,7 +1,7 @@
 ---
 catalog_title: Apigee API Hub
 catalog_description: Convierte cualquier API documentada desde Apigee API hub en una herramienta
-catalog_icon: /adk-docs/assets/tools-apigee.png
+catalog_icon: /assets/tools-apigee.png
 ---
 
 # Herramientas de Apigee API Hub para ADK
@@ -17,7 +17,7 @@ APIs.
 
 **Requisitos previos**
 
-1. [Instalar ADK](/adk-docs/get-started/installation/)
+1. [Instalar ADK](/get-started/installation/)
 2. Instalar el
    [CLI de Google Cloud](https://cloud.google.com/sdk/docs/install?db=bigtable-docs#installation_instructions).
 3. Instancia de [Apigee API hub](https://cloud.google.com/apigee/docs/apihub/what-is-api-hub)

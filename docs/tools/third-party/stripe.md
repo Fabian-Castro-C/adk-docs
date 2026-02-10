@@ -1,7 +1,7 @@
 ---
 catalog_title: Stripe
 catalog_description: Manage payments, customers, subscriptions, and invoices
-catalog_icon: /adk-docs/assets/tools-stripe.png
+catalog_icon: /assets/tools-stripe.png
 ---
 
 # Stripe

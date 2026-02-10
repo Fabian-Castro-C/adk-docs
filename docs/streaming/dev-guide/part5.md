@@ -584,7 +584,7 @@ ADK proporciona soporte especial de herramientas para procesar fotogramas de vid
 
 **Importante**: Debes proporcionar una función `stop_streaming(function_name: str)` como herramienta para permitir que el modelo detenga explícitamente operaciones de transmisión.
 
-Para implementar herramientas de transmisión de video personalizadas que procesan y generan fotogramas de video al modelo, consulta la [documentación de Herramientas de Transmisión](https://google.github.io/adk-docs/streaming/streaming-tools/).
+Para implementar herramientas de transmisión de video personalizadas que procesan y generan fotogramas de video al modelo, consulta la [documentación de Herramientas de Transmisión](https://google.github.io/streaming/streaming-tools/).
 
 ## Comprendiendo Arquitecturas de Modelos de Audio
 

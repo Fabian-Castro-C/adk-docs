@@ -112,7 +112,7 @@
     </project>
     ```
 
-    Aquí hay un [pom.xml completo](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run/pom.xml) como referencia.
+    Aquí hay un [pom.xml completo](https://github.com/google/tree/main/examples/java/cloud-run/pom.xml) como referencia.
 
     Si estás usando gradle, agrega la dependencia a tu build.gradle:
 

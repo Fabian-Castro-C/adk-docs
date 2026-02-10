@@ -8,10 +8,10 @@ La clase ***App*** es un contenedor de nivel superior para un flujo de trabajo c
 
 Definir un objeto ***App*** en tu flujo de trabajo ADK es opcional y cambia cómo organizas tu código de agente y ejecutas tus agentes. Desde una perspectiva práctica, usas la clase ***App*** para configurar las siguientes características para tu flujo de trabajo de agente:
 
-*   [**Almacenamiento en caché de contexto**](/adk-docs/context/caching/)
-*   [**Compresión de contexto**](/adk-docs/context/compaction/)
-*   [**Reanudación de agente**](/adk-docs/runtime/resume/)
-*   [**Plugins**](/adk-docs/plugins/)
+*   [**Almacenamiento en caché de contexto**](/context/caching/)
+*   [**Compresión de contexto**](/context/compaction/)
+*   [**Reanudación de agente**](/runtime/resume/)
+*   [**Plugins**](/plugins/)
 
 Esta guía explica cómo usar la clase App para configurar y gestionar tus flujos de trabajo de agente ADK.
 

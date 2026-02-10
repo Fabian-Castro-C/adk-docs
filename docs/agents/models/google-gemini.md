@@ -7,10 +7,10 @@
 ADK soporta la familia Google Gemini de modelos de IA generativa que proporcionan un
 poderoso conjunto de modelos con una amplia gama de características. ADK proporciona soporte para muchas
 características de Gemini, incluyendo
-[Ejecución de código](/adk-docs/tools/gemini-api/code-execution/),
-[Búsqueda de Google](/adk-docs/tools/gemini-api/google-search/),
-[Caché de contexto](/adk-docs/context/caching/),
-[Uso de computadora](/adk-docs/tools/gemini-api/computer-use/)
+[Ejecución de código](/tools/gemini-api/code-execution/),
+[Búsqueda de Google](/tools/gemini-api/google-search/),
+[Caché de contexto](/context/caching/),
+[Uso de computadora](/tools/gemini-api/computer-use/)
 y la [API de Interacciones](#interactions-api).
 
 ## Comenzar
@@ -272,7 +272,7 @@ Para un ejemplo de código completo, consulta la
 
 La API de Interacciones **no** soporta mezclar herramientas de llamado de función personalizadas con
 herramientas integradas, como la
-herramienta [Búsqueda de Google](/adk-docs/tools/built-in-tools/#google-search),
+herramienta [Búsqueda de Google](/tools/built-in-tools/#google-search),
 dentro del mismo agente. Puedes solucionar esta limitación configurando la
 herramienta integrada para operar como una herramienta personalizada usando el parámetro `bypass_multi_tools_limit`:
 

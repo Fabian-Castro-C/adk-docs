@@ -1,7 +1,7 @@
 ---
 catalog_title: MongoDB
 catalog_description: Query collections, manage databases, and analyze schemas
-catalog_icon: /adk-docs/assets/tools-mongodb.png
+catalog_icon: /assets/tools-mongodb.png
 ---
 
 # MongoDB

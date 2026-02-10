@@ -64,9 +64,9 @@ proyecto y luego agrega archivos a tu proyecto con fines de despliegue.
 Estas instrucciones asumen que tienes un proyecto ADK existente que estás modificando
 para el despliegue. Si no tienes un proyecto ADK, o deseas usar un proyecto
 de prueba, completa la guía de Python
-[Inicio rápido](/adk-docs/get-started/quickstart/),
+[Inicio rápido](/get-started/quickstart/),
 que crea un proyecto
-[multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent).
+[multi_tool_agent](https://github.com/google/tree/main/examples/python/snippets/get-started/multi_tool_agent).
 Las siguientes instrucciones usan el proyecto `multi_tool_agent` como
 ejemplo.
 
@@ -172,14 +172,14 @@ Para desplegar tu proyecto ADK en Agent Engine en tu proyecto de Google Cloud:
 Una vez que este proceso se complete con éxito, deberías poder interactuar con
 el agente que se ejecuta en Google Cloud Agent Engine. Para obtener detalles sobre cómo probar el
 agente desplegado, consulta
-[Probar agente desplegado](/adk-docs/deploy/agent-engine/test/).
+[Probar agente desplegado](/deploy/agent-engine/test/).
 
 ### Cambios en tu proyecto ADK {#adk-asp-changes}
 
 Las herramientas ASP agregan más archivos a tu proyecto para el despliegue. El procedimiento
 a continuación hace una copia de seguridad de tus archivos de proyecto existentes antes de modificarlos. Esta guía
 usa el proyecto
-[multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent)
+[multi_tool_agent](https://github.com/google/tree/main/examples/python/snippets/get-started/multi_tool_agent)
 como ejemplo de referencia. El proyecto original tiene la siguiente estructura de archivos
 para comenzar:
 
@@ -217,4 +217,4 @@ Para obtener más información sobre el uso de Agent Starter Pack, consulta la
 Después de completar el despliegue de tu agente ADK, debes probar el flujo de trabajo en
 su nuevo entorno alojado. Para obtener más información sobre cómo probar un agente ADK
 desplegado en Agent Engine, consulta
-[Probar agentes desplegados en Agent Engine](/adk-docs/deploy/agent-engine/test/).
+[Probar agentes desplegados en Agent Engine](/deploy/agent-engine/test/).

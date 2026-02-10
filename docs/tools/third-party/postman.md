@@ -1,7 +1,7 @@
 ---
 catalog_title: Postman
 catalog_description: Administra colecciones de API, espacios de trabajo y genera código de cliente
-catalog_icon: /adk-docs/assets/tools-postman.png
+catalog_icon: /assets/tools-postman.png
 ---
 
 # Postman

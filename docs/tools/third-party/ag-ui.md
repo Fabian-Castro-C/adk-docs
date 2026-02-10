@@ -1,7 +1,7 @@
 ---
 catalog_title: AG-UI
 catalog_description: Crea interfaces de usuario de chat interactivas con streaming, sincronización de estado y acciones agénticas
-catalog_icon: /adk-docs/assets/tools-ag-ui.png
+catalog_icon: /assets/tools-ag-ui.png
 ---
 
 # Crea experiencias de chat con AG-UI y CopilotKit

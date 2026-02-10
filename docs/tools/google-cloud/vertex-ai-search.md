@@ -1,7 +1,7 @@
 ---
 catalog_title: Vertex AI Search
 catalog_description: Search across your private, configured data stores in Vertex AI Search
-catalog_icon: /adk-docs/assets/tools-vertex-ai.png
+catalog_icon: /assets/tools-vertex-ai.png
 ---
 
 # Herramienta Vertex AI Search para ADK
@@ -15,13 +15,13 @@ agente busque en sus almacenes de datos privados y configurados (por ejemplo, do
 políticas de la empresa, bases de conocimiento). Esta herramienta integrada requiere que
 proporcione el ID específico del almacén de datos durante la configuración. Para más detalles
 sobre la herramienta, consulte
-[Comprensión del grounding de Vertex AI Search](/adk-docs/grounding/vertex_ai_search_grounding/).
+[Comprensión del grounding de Vertex AI Search](/grounding/vertex_ai_search_grounding/).
 
 !!! warning "Advertencia: Limitación de una herramienta por agente"
 
     Esta herramienta solo puede usarse ***por sí misma*** dentro de una instancia de agente.
     Para más información sobre esta limitación y soluciones alternativas, consulte
-    [Limitaciones para las herramientas de ADK](/adk-docs/tools/limitations/#one-tool-one-agent).
+    [Limitaciones para las herramientas de ADK](/tools/limitations/#one-tool-one-agent).
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/vertexai_search.py"

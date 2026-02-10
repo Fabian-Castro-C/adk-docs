@@ -4,7 +4,7 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-[Vertex AI Search](/adk-docs/tools/google-cloud/vertex-ai-search/) es una herramienta poderosa para el Agent Development Kit (ADK) que permite a los agentes de IA acceder a información de tus documentos empresariales privados y repositorios de datos. Al conectar tus agentes a contenido empresarial indexado, puedes proporcionar a los usuarios respuestas fundamentadas en la base de conocimiento de tu organización.
+[Vertex AI Search](/tools/google-cloud/vertex-ai-search/) es una herramienta poderosa para el Agent Development Kit (ADK) que permite a los agentes de IA acceder a información de tus documentos empresariales privados y repositorios de datos. Al conectar tus agentes a contenido empresarial indexado, puedes proporcionar a los usuarios respuestas fundamentadas en la base de conocimiento de tu organización.
 
 Esta característica es particularmente valiosa para consultas específicas de la empresa que requieren información de documentación interna, políticas, artículos de investigación o cualquier contenido propietario que haya sido indexado en tu datastore de [Vertex AI Search](https://cloud.google.com/enterprise-search). Cuando tu agente determina que se necesita información de tu base de conocimiento, automáticamente busca en tus documentos indexados e incorpora los resultados en su respuesta con la atribución apropiada.
 

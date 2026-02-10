@@ -1,7 +1,7 @@
 ---
 catalog_title: Daytona
 catalog_description: Ejecuta código, ejecuta comandos de shell y administra archivos en sandboxes seguros
-catalog_icon: /adk-docs/assets/plugins-daytona.png
+catalog_icon: /assets/plugins-daytona.png
 ---
 
 # Daytona

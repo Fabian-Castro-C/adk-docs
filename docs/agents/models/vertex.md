@@ -270,7 +270,7 @@ documentación de [modelos abiertos de Vertex AI para MaaS](https://docs.cloud.g
 
     **Método de Integración:** Usa la clase de envoltura `LiteLlm` y establécela
     como el parámetro `model` de `LlmAgent`. Asegúrate de revisar la documentación
-    del [conector de modelo LiteLLM para agentes ADK](/adk-docs/agents/models/litellm/#litellm-model-connector-for-adk-agents)
+    del [conector de modelo LiteLLM para agentes ADK](/agents/models/litellm/#litellm-model-connector-for-adk-agents)
     sobre cómo usar LiteLLM en ADK
 
     **Configuración:**

@@ -1,7 +1,7 @@
 ---
 catalog_title: Code Execution
 catalog_description: Execute code and debug using Gemini models
-catalog_icon: /adk-docs/assets/tools-gemini-spark.svg
+catalog_icon: /assets/tools-gemini-spark.svg
 ---
 
 # Ejecución de Código con Gemini API
@@ -18,7 +18,7 @@ realizar tareas como cálculos, manipulación de datos o ejecutar pequeños scri
 
     Esta herramienta solo puede usarse ***por sí sola*** dentro de una instancia de agente.
     Para más información sobre esta limitación y soluciones alternativas, consulta
-    [Limitaciones para las herramientas de ADK](/adk-docs/tools/limitations/#one-tool-one-agent).
+    [Limitaciones para las herramientas de ADK](/tools/limitations/#one-tool-one-agent).
 
 === "Python"
 

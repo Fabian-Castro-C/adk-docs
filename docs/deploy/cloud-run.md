@@ -32,7 +32,7 @@ Para continuar, confirma que el código de tu agente esté configurado de la sig
     3. Tus archivos go.mod y go.sum están presentes en el directorio de tu proyecto para gestionar
        las dependencias.
 
-    Consulta la siguiente sección para más detalles. También puedes encontrar una [aplicación de ejemplo](https://github.com/google/adk-docs/tree/main/examples/go/cloud-run) en el repositorio de Github.
+    Consulta la siguiente sección para más detalles. También puedes encontrar una [aplicación de ejemplo](https://github.com/google/tree/main/examples/go/cloud-run) en el repositorio de Github.
 
 === "Java"
 
@@ -40,7 +40,7 @@ Para continuar, confirma que el código de tu agente esté configurado de la sig
     2. Tu variable de agente es global y sigue el formato `public static final BaseAgent ROOT_AGENT`.
     3. La definición de tu agente está presente en un método de clase estático.
 
-    Consulta la siguiente sección para más detalles. También puedes encontrar una [aplicación de ejemplo](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run) en el repositorio de Github.
+    Consulta la siguiente sección para más detalles. También puedes encontrar una [aplicación de ejemplo](https://github.com/google/tree/main/examples/java/cloud-run) en el repositorio de Github.
 
 
 ## Variables de entorno
@@ -437,7 +437,7 @@ el comando `adk deploy cloud_run`.
            * La definición del agente puede exponerse en un método estático o en línea durante la declaración.
 
         Consulta el código para el ejemplo `CapitalAgent` en el 
-        repositorio de [ejemplos](https://github.com/google/adk-docs/blob/main/examples/java/cloud-run/src/main/java/agents/capitalagent/CapitalAgent.java).
+        repositorio de [ejemplos](https://github.com/google/blob/main/examples/java/cloud-run/src/main/java/agents/capitalagent/CapitalAgent.java).
 
     2. Agrega las siguientes dependencias y plugin al archivo pom.xml.
 

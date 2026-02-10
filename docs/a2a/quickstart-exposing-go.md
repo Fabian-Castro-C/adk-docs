@@ -32,7 +32,7 @@ Puedes tomar un agente existente construido usando el ADK de Go y hacerlo compat
 
 Primero, asegúrate de tener Go instalado y tu entorno configurado.
 
-Puedes clonar y navegar al ejemplo [**`a2a_basic`**](https://github.com/google/adk-docs/tree/main/examples/go/a2a_basic) aquí:
+Puedes clonar y navegar al ejemplo [**`a2a_basic`**](https://github.com/google/tree/main/examples/go/a2a_basic) aquí:
 
 ```bash
 cd examples/go/a2a_basic

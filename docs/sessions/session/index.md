@@ -204,14 +204,14 @@ el backend de almacenamiento que mejor se adapte a tus necesidades:
 *   **Cómo funciona:** Utiliza la infraestructura de Google Cloud Vertex AI a través de llamadas API
     para la gestión de sesiones.
 *   **Persistencia:** Sí. Los datos se gestionan de manera confiable y escalable a través de
-    [Vertex AI Agent Engine](https://google.github.io/adk-docs/deploy/agent-engine/).
+    [Vertex AI Agent Engine](https://google.github.io/deploy/agent-engine/).
 *   **Requiere:**
     *   Un proyecto de Google Cloud (`pip install vertexai`)
     *   Un bucket de almacenamiento de Google Cloud que puede ser configurado con este
         [paso](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
     *   Un nombre/ID de recurso de Reasoning Engine que puede configurarse siguiendo este
-        [tutorial](https://google.github.io/adk-docs/deploy/agent-engine/).
-    *   Si no tienes un proyecto de Google Cloud y quieres probar el VertexAiSessionService, consulta [Vertex AI Express Mode](/adk-docs/tools/google-cloud/express-mode/).
+        [tutorial](https://google.github.io/deploy/agent-engine/).
+    *   Si no tienes un proyecto de Google Cloud y quieres probar el VertexAiSessionService, consulta [Vertex AI Express Mode](/tools/google-cloud/express-mode/).
 *   **Ideal para:** Aplicaciones de producción escalables desplegadas en Google Cloud,
     especialmente al integrarse con otras características de Vertex AI.
 
@@ -309,7 +309,7 @@ session_service = DatabaseSessionService(db_url=db_url)
 
     El esquema para la base de datos de sesión cambió en ADK Python v1.22.0, lo cual
     requiere migración de la Base de Datos de Sesión. Para más información, consulta
-    [Migración del esquema de base de datos de sesión](/adk-docs/sessions/session/migrate/).
+    [Migración del esquema de base de datos de sesión](/sessions/session/migrate/).
 
 ## El Ciclo de Vida de Session
 

@@ -1,7 +1,7 @@
 ---
 catalog_title: GKE Code Executor
 catalog_description: Run AI-generated code in a secure and scalable GKE environment
-catalog_icon: /adk-docs/assets/tools-gke.png
+catalog_icon: /assets/tools-gke.png
 ---
 
 # Herramienta GKE Code Executor para ADK
@@ -50,7 +50,7 @@ con la herramienta GKE Code Executor:
 Para una configuración completa y lista para usar, consulta la muestra
 [deployment_rbac.yaml](https://github.com/google/adk-python/blob/main/contributing/samples/gke_agent_sandbox/deployment_rbac.yaml). 
 Para más información sobre el despliegue de flujos de trabajo ADK en GKE, consulta
-[Desplegar en Google Kubernetes Engine (GKE)](/adk-docs/deploy/gke/).
+[Desplegar en Google Kubernetes Engine (GKE)](/deploy/gke/).
 
 === "Python"
 

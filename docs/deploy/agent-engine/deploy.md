@@ -53,7 +53,7 @@ Para desplegar tu agente en Agent Engine, necesitas un proyecto de Google Cloud:
       Asegúrate de anotar el ID del Proyecto (alfanumérico con guiones),
       _no_ el número de proyecto (numérico).
 
-    <img src="/adk-docs/assets/project-id.png" alt="Google Cloud Project ID">
+    <img src="/assets/project-id.png" alt="Google Cloud Project ID">
 
 4. **Habilitar Vertex AI en tu proyecto**
     * Para usar Agent Engine, necesitas [habilitar la API de Vertex AI](https://console.cloud.google.com/apis/library/aiplatform.googleapis.com). Haz clic en el botón "Enable" para habilitar la API. Una vez habilitada,
@@ -118,7 +118,7 @@ multi_tool_agent/
 
 Para más detalles sobre los archivos y formato del proyecto, consulta el
 ejemplo de código
-[multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent).
+[multi_tool_agent](https://github.com/google/tree/main/examples/python/snippets/get-started/multi_tool_agent).
 
 ## Desplegar el agente {#deploy-agent}
 
@@ -143,7 +143,7 @@ adk deploy agent_engine \
 Para `region`, puedes encontrar una lista de las regiones compatibles en la
 [página de ubicaciones de Vertex AI Agent Builder](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine).
 Para obtener información sobre las opciones de CLI para el comando `adk deploy agent_engine`, consulta la
-[Referencia de CLI de ADK](https://google.github.io/adk-docs/api-reference/cli/cli.html#adk-deploy-agent-engine).
+[Referencia de CLI de ADK](https://google.github.io/api-reference/cli/cli.html#adk-deploy-agent-engine).
 
 ### Salida del comando de despliegue
 
@@ -190,7 +190,7 @@ sobre cómo hacer solicitudes, consulta las instrucciones en la documentación d
 También puedes consultar la documentación de Agent Engine para aprender sobre cómo gestionar tu
 [agente desplegado](https://docs.cloud.google.com/agent-builder/agent-engine/manage/overview).
 Para más información sobre pruebas e interacción con un agente desplegado, consulta
-[Probar agentes desplegados en Agent Engine](/adk-docs/deploy/agent-engine/test/).
+[Probar agentes desplegados en Agent Engine](/deploy/agent-engine/test/).
 
 ### Monitoreo y verificación
 
@@ -207,4 +207,4 @@ Para más información sobre pruebas e interacción con un agente desplegado, co
 Después de completar el despliegue de tu agente ADK, debes probar el flujo de trabajo en
 su nuevo entorno alojado. Para más información sobre cómo probar un agente ADK
 desplegado en Agent Engine, consulta
-[Probar agentes desplegados en Agent Engine](/adk-docs/deploy/agent-engine/test/).
+[Probar agentes desplegados en Agent Engine](/deploy/agent-engine/test/).

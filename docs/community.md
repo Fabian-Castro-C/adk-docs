@@ -191,7 +191,7 @@
       <p>Aprende a construir un agente que mejora los datos de productos de un sitio web minorista completando información faltante.</p>
     </div>
   </a>
-  <a href="https://github.com/google/adk-docs/blob/main/examples/python/notebooks/shop_agent.ipynb" class="resource-card">
+  <a href="https://github.com/google/blob/main/examples/python/notebooks/shop_agent.ipynb" class="resource-card">
     <div class="card-image-wrapper">
       <img src="../assets/community-shoppers-concierge-demo.jpg" alt="ADK Shopper's Concierge Demo">
     </div>
@@ -274,8 +274,8 @@ Traducciones de la documentación de ADK proporcionadas por la comunidad.
 
 <ul class="translation-list">
   <li><a href="https://adk.wiki/">🇨🇳 Documentación en Chino (中文)</a></li>
-  <li><a href="https://adk-labs.github.io/adk-docs/ko/">🇰🇷 Documentación en Coreano (한국어)</a></li>
-  <li><a href="https://adk-labs.github.io/adk-docs/ja/">🇯🇵 Documentación en Japonés (日本語)</a></li>
+  <li><a href="https://adk-labs.github.io/ko/">🇰🇷 Documentación en Coreano (한국어)</a></li>
+  <li><a href="https://adk-labs.github.io/ja/">🇯🇵 Documentación en Japonés (日本語)</a></li>
 </ul>
 
 ## Contribuyendo Tu Recurso

@@ -529,13 +529,13 @@ Algunos ejemplos incluyen:
 
 * **Plugin Model Armor**: Un plugin que consulta la API de model armor para verificar posibles violaciones de seguridad de contenido en puntos especificados de la ejecución del agente. Similar al plugin _Gemini como Juez_, si Model Armor encuentra coincidencias de contenido dañino, devuelve una respuesta predeterminada al usuario.
 
-* **Plugin de Redacción de PII**: Un plugin especializado con diseño para el [Before Tool Callback](/adk-docs/plugins/#tool-callbacks) y creado específicamente para redactar información personalmente identificable antes de que sea procesada por una herramienta o enviada a un servicio externo.
+* **Plugin de Redacción de PII**: Un plugin especializado con diseño para el [Before Tool Callback](/plugins/#tool-callbacks) y creado específicamente para redactar información personalmente identificable antes de que sea procesada por una herramienta o enviada a un servicio externo.
 
 ### Ejecución de código aislada
 
 La ejecución de código es una herramienta especial que tiene implicaciones de seguridad extra: el aislamiento debe usarse para prevenir que el código generado por el modelo comprometa el entorno local, potencialmente creando problemas de seguridad.
 
-Google y el ADK proporcionan varias opciones para la ejecución segura de código. La [función de ejecución de código de la API Vertex Gemini Enterprise](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/code-execution-api) permite a los agentes aprovechar la ejecución de código aislada del lado del servidor habilitando la herramienta tool_execution. Para código que realiza análisis de datos, puedes usar la herramienta [Code Executor](/adk-docs/tools/gemini-api/code-execution/) en ADK para llamar a la [Extensión de Intérprete de Código de Vertex](https://cloud.google.com/vertex-ai/generative-ai/docs/extensions/code-interpreter).
+Google y el ADK proporcionan varias opciones para la ejecución segura de código. La [función de ejecución de código de la API Vertex Gemini Enterprise](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/code-execution-api) permite a los agentes aprovechar la ejecución de código aislada del lado del servidor habilitando la herramienta tool_execution. Para código que realiza análisis de datos, puedes usar la herramienta [Code Executor](/tools/gemini-api/code-execution/) en ADK para llamar a la [Extensión de Intérprete de Código de Vertex](https://cloud.google.com/vertex-ai/generative-ai/docs/extensions/code-interpreter).
 
 Si ninguna de estas opciones satisface tus requisitos, puedes construir tu propio ejecutor de código usando los bloques de construcción proporcionados por el ADK. Recomendamos crear entornos de ejecución que sean herméticos: sin conexiones de red y llamadas API permitidas para evitar la exfiltración de datos sin control; y limpieza completa de datos entre ejecuciones para no crear preocupaciones de exfiltración entre usuarios.
 

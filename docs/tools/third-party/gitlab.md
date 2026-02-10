@@ -1,7 +1,7 @@
 ---
 catalog_title: GitLab
 catalog_description: Realiza búsquedas de código semánticas, inspecciona pipelines, gestiona merge requests
-catalog_icon: /adk-docs/assets/tools-gitlab.png
+catalog_icon: /assets/tools-gitlab.png
 ---
 
 # GitLab

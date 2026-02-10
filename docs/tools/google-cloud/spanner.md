@@ -1,7 +1,7 @@
 ---
 catalog_title: Spanner Tools
 catalog_description: Interact with Spanner to retrieve data, search, and execute SQL
-catalog_icon: /adk-docs/assets/tools-spanner.png
+catalog_icon: /assets/tools-spanner.png
 ---
 
 # Herramienta de base de datos Spanner para ADK

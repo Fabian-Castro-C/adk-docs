@@ -43,7 +43,7 @@ my_agent/
 ### Definir el código del agente
 
 Crea el código para un agente básico, incluyendo una implementación simple de una
-[Herramienta de Función](/adk-docs/tools-custom/function-tools/) de ADK, llamada `getCurrentTime()`.
+[Herramienta de Función](/tools-custom/function-tools/) de ADK, llamada `getCurrentTime()`.
 Agrega el siguiente código al archivo `HelloTimeAgent.java` en el directorio de tu proyecto:
 
 ```java title="my_agent/src/main/java/com/example/agent/HelloTimeAgent.java"
@@ -174,7 +174,7 @@ para establecer las variables de entorno:
 ??? tip "Usar otros modelos de IA con ADK"
     ADK soporta el uso de muchos modelos de IA generativa. Para más
     información sobre cómo configurar otros modelos en agentes ADK, consulta
-    [Modelos y Autenticación](/adk-docs/agents/models).
+    [Modelos y Autenticación](/agents/models).
 
 ### Crear una interfaz de línea de comandos para el agente
 
@@ -248,7 +248,7 @@ usando el siguiente comando Maven:
 mvn compile exec:java -Dexec.mainClass="com.example.agent.AgentCliRunner"
 ```
 
-![adk-run.png](/adk-docs/assets/adk-run.png)
+![adk-run.png](/assets/adk-run.png)
 
 ### Ejecutar con interfaz web
 
@@ -265,7 +265,7 @@ Este comando inicia un servidor web con una interfaz de chat para tu agente. Pue
 acceder a la interfaz web en (http://localhost:8000). Selecciona tu agente en la
 esquina superior izquierda y escribe una solicitud.
 
-![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
+![adk-web-dev-ui-chat.png](/assets/adk-web-dev-ui-chat.png)
 
 !!! warning "Precaución: ADK Web solo para desarrollo"
 
@@ -277,4 +277,4 @@ esquina superior izquierda y escribe una solicitud.
 Ahora que tienes ADK instalado y tu primer agente ejecutándose, intenta construir
 tu propio agente con nuestras guías de construcción:
 
-*  [Construye tu agente](/adk-docs/tutorials/)
+*  [Construye tu agente](/tutorials/)

@@ -36,7 +36,7 @@ El proceso involucra estos pasos principales cuando usas `OpenAPIToolset`:
     * **Ejecución**: Cuando es llamado por el LLM, construye la petición HTTP correcta (URL, headers, parámetros de query, body) usando los argumentos proporcionados por el LLM y los detalles de la especificación OpenAPI. Maneja la autenticación (si está configurada) y ejecuta la llamada a la API usando la librería `requests`.
     * **Manejo de Respuesta**: Devuelve la respuesta de la API (típicamente JSON) de vuelta al flujo del agente.
 
-5. **Autenticación**: Puedes configurar autenticación global (como claves API u OAuth - ver [Authentication](/adk-docs/tools/authentication/) para detalles) al inicializar `OpenAPIToolset`. Esta configuración de autenticación se aplica automáticamente a todas las instancias de `RestApiTool` generadas.
+5. **Autenticación**: Puedes configurar autenticación global (como claves API u OAuth - ver [Authentication](/tools/authentication/) para detalles) al inicializar `OpenAPIToolset`. Esta configuración de autenticación se aplica automáticamente a todas las instancias de `RestApiTool` generadas.
 
 ## Flujo de Trabajo de Uso
 

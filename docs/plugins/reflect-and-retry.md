@@ -5,7 +5,7 @@
 </div>
 
 El plugin Reflect and Retry Tool puede ayudar a tu agente a recuperarse de respuestas de error
-de las [Herramientas](/adk-docs/tools-custom/) de ADK y reintentar automáticamente la
+de las [Herramientas](/tools-custom/) de ADK y reintentar automáticamente la
 solicitud de herramienta. Este plugin intercepta fallos de herramientas, proporciona orientación estructurada
 al modelo de IA para reflexión y corrección, y reintenta la operación hasta un
 límite configurable. Este plugin puede ayudarte a construir más resiliencia en tus

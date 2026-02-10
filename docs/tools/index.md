@@ -36,16 +36,16 @@ herramienta cuando el agente la llama.
 !!! note "Nota: Limitaciones al usar múltiples herramientas"
     Algunas herramientas ADK ***no pueden ser usadas con otras herramientas en el mismo agente***.
     Para más información sobre herramientas con estas limitaciones, consulta
-    [Limitaciones para herramientas ADK](/adk-docs/tools/limitations/#one-tool-one-agent).
+    [Limitaciones para herramientas ADK](/tools/limitations/#one-tool-one-agent).
 
 ## Construir herramientas para agentes
 
 Si las herramientas anteriores no satisfacen tus necesidades, puedes construir herramientas para tus flujos de trabajo ADK
 usando las siguientes guías:
 
-*   **[Function Tools](/adk-docs/tools-custom/function-tools/)**: Construye herramientas personalizadas para
+*   **[Function Tools](/tools-custom/function-tools/)**: Construye herramientas personalizadas para
     las necesidades específicas de tu agente ADK.
-*   **[MCP Tools](/adk-docs/tools-custom/mcp-tools/)**: Conecta servidores MCP como herramientas
+*   **[MCP Tools](/tools-custom/mcp-tools/)**: Conecta servidores MCP como herramientas
     para tus agentes ADK.
-*   **[OpenAPI Integration](/adk-docs/tools-custom/openapi-tools/)**:
+*   **[OpenAPI Integration](/tools-custom/openapi-tools/)**:
     Genera herramientas invocables directamente desde una Especificación OpenAPI.

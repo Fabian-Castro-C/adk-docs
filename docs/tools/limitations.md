@@ -16,9 +16,9 @@ dentro de un agente excluye el uso de cualquier otra herramienta en ese agente. 
 siguientes herramientas ADK solo pueden ser usadas por sí mismas, sin ninguna otra herramienta, en
 un único objeto agente:
 
-*   [Code Execution](/adk-docs/tools/gemini-api/code-execution/) con Gemini API
-*   [Google Search](/adk-docs/tools/gemini-api/google-search/) con Gemini API
-*   [Vertex AI Search](/adk-docs/tools/google-cloud/vertex-ai-search/)
+*   [Code Execution](/tools/gemini-api/code-execution/) con Gemini API
+*   [Google Search](/tools/gemini-api/google-search/) con Gemini API
+*   [Vertex AI Search](/tools/google-cloud/vertex-ai-search/)
 
 Por ejemplo, el siguiente enfoque que usa una de estas herramientas junto con
 otras herramientas, dentro de un único agente, ***no está soportado***:

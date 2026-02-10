@@ -216,7 +216,7 @@ Esta guía de inicio rápido asume un IDE local (VS Code, PyCharm, IntelliJ IDEA
 La capacidad de tu agente para comprender las solicitudes de los usuarios y generar respuestas es impulsada por un Modelo de Lenguaje Grande (LLM). Tu agente necesita realizar llamadas seguras a este servicio LLM externo, lo cual **requiere credenciales de autenticación**. Sin autenticación válida, el servicio LLM denegará las solicitudes del agente, y el agente no podrá funcionar.
 
 !!!tip "Guía de Autenticación del Modelo"
-    Para una guía detallada sobre cómo autenticarse con diferentes modelos, consulta la [Guía de Autenticación](/adk-docs/agents/models/google-gemini#google-ai-studio).
+    Para una guía detallada sobre cómo autenticarse con diferentes modelos, consulta la [Guía de Autenticación](/agents/models/google-gemini#google-ai-studio).
     Este es un paso crítico para asegurar que tu agente pueda realizar llamadas al servicio LLM.
 
 === "Gemini - Google AI Studio"
@@ -408,7 +408,7 @@ La capacidad de tu agente para comprender las solicitudes de los usuarios y gene
 
         ![adk-api-server.png](../assets/adk-api-server.png)
 
-        Para aprender cómo usar `adk api_server` para pruebas, consulta la [documentación sobre el uso del servidor API](/adk-docs/runtime/api-server/).
+        Para aprender cómo usar `adk api_server` para pruebas, consulta la [documentación sobre el uso del servidor API](/runtime/api-server/).
 
 === "TypeScript"
 
@@ -471,7 +471,7 @@ La capacidad de tu agente para comprender las solicitudes de los usuarios y gene
 
         ![adk-api-server.png](../assets/adk-api-server.png)
 
-        Para aprender cómo usar `api_server` para pruebas, consulta la [documentación sobre pruebas](/adk-docs/runtime/api-server/).
+        Para aprender cómo usar `api_server` para pruebas, consulta la [documentación sobre pruebas](/runtime/api-server/).
 
 === "Java"
 

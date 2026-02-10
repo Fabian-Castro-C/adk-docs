@@ -31,7 +31,7 @@ REST del servidor ADK. Cuando uses la función de confirmación con la interfaz 
 el flujo de trabajo del agente muestra un cuadro de diálogo al usuario para solicitar
 entrada, como se muestra en la Figura 1:
 
-![Screenshot of default user interface for tool confirmation](/adk-docs/assets/confirmation-ui.png)
+![Screenshot of default user interface for tool confirmation](/assets/confirmation-ui.png)
 
 **Figura 1.** Ejemplo de cuadro de diálogo de solicitud de respuesta de confirmación usando una
 implementación de respuesta de herramienta avanzada.
@@ -41,7 +41,7 @@ Para un ejemplo de código completo, consulta el ejemplo
 [human_tool_confirmation](https://github.com/google/adk-python/blob/fc90ce968f114f84b14829f8117797a4c256d710/contributing/samples/human_tool_confirmation/agent.py).
 Hay formas adicionales de incorporar entrada humana en tu flujo de trabajo de agente,
 para más detalles, consulta el patrón de agente
-[Human-in-the-loop](/adk-docs/agents/multi-agents/#human-in-the-loop-pattern).
+[Human-in-the-loop](/agents/multi-agents/#human-in-the-loop-pattern).
 
 ## Confirmación booleana {#boolean-confirmation}
 
@@ -211,7 +211,7 @@ requisitos:
 !!! note "Nota: Confirmación con función Resume"
 
     Si tu flujo de trabajo del agente ADK está configurado con la
-    función [Resume](/adk-docs/runtime/resume/), también debes incluir
+    función [Resume](/runtime/resume/), también debes incluir
     el parámetro de ID de Invocación (`invocation_id`) con la respuesta de
     confirmación. El ID de Invocación que proporciones debe ser la misma invocación
     que generó la solicitud de confirmación, de lo contrario el sistema
@@ -220,18 +220,18 @@ requisitos:
     como parámetro con tu solicitud de confirmación, para que pueda ser
     incluido con la respuesta. Para más detalles sobre el uso de la función
     Resume, consulta
-    [Resume stopped agents](/adk-docs/runtime/resume/).
+    [Resume stopped agents](/runtime/resume/).
 
 ## Limitaciones conocidas {#known-limitations}
 
 La función de confirmación de herramienta tiene las siguientes limitaciones:
 
--   [DatabaseSessionService](/adk-docs/api-reference/python/google-adk.html#google.adk.sessions.DatabaseSessionService)
+-   [DatabaseSessionService](/api-reference/python/google-adk.html#google.adk.sessions.DatabaseSessionService)
     no es compatible con esta función.
--   [VertexAiSessionService](/adk-docs/api-reference/python/google-adk.html#google.adk.sessions.VertexAiSessionService)
+-   [VertexAiSessionService](/api-reference/python/google-adk.html#google.adk.sessions.VertexAiSessionService)
     no es compatible con esta función.
 
 ## Próximos pasos
 
 Para más información sobre la construcción de herramientas ADK para flujos de trabajo de agentes, consulta [Function
-tools](/adk-docs/tools-custom/function-tools/).
+tools](/tools-custom/function-tools/).

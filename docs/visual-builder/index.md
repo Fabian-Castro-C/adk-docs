@@ -19,7 +19,7 @@ e incluye un asistente impulsado por IA para ayudarte a construir agentes.
 
 La interfaz del Constructor Visual es parte de la interfaz de usuario de la herramienta ADK Web.
 Asegúrate de tener la biblioteca ADK
-[instalada](/adk-docs/get-started/installation/#python)
+[instalada](/get-started/installation/#python)
 y luego ejecuta la interfaz de usuario de ADK Web.
 
 ```console
@@ -66,31 +66,31 @@ La herramienta soporta todos los componentes esenciales para construir un flujo 
 *   **Agentes**
     *   **Agente Raíz**: El agente controlador principal para un flujo de trabajo. Todos los demás agentes en
         un flujo de trabajo de agente ADK se consideran Sub Agentes.
-    *   [**Agente LLM:**](/adk-docs/agents/llm-agents/)
+    *   [**Agente LLM:**](/agents/llm-agents/)
         Un agente impulsado por un modelo de IA generativa.
-    *   [**Agente Secuencial:**](/adk-docs/agents/workflow-agents/sequential-agents/)
+    *   [**Agente Secuencial:**](/agents/workflow-agents/sequential-agents/)
         Un agente de flujo de trabajo que ejecuta una serie de sub-agentes en una secuencia.
-    *   [**Agente de Bucle:**](/adk-docs/agents/workflow-agents/loop-agents/)
+    *   [**Agente de Bucle:**](/agents/workflow-agents/loop-agents/)
         Un agente de flujo de trabajo que ejecuta repetidamente un sub-agente hasta que se cumple cierta condición.
-    *   [**Agente Paralelo:**](/adk-docs/agents/workflow-agents/parallel-agents/)
+    *   [**Agente Paralelo:**](/agents/workflow-agents/parallel-agents/)
         Un agente de flujo de trabajo que ejecuta múltiples sub-agentes concurrentemente.
 *   **Herramientas**
-    *   [**Herramientas preconstruidas:**](/adk-docs/tools/built-in-tools/)
+    *   [**Herramientas preconstruidas:**](/tools/built-in-tools/)
         Un conjunto limitado de herramientas proporcionadas por ADK que se pueden agregar a los agentes.
-    *   [**Herramientas personalizadas:**](/adk-docs/tools-custom/)
+    *   [**Herramientas personalizadas:**](/tools-custom/)
         Puedes construir y agregar herramientas personalizadas a tu flujo de trabajo.
 *   **Componentes**
-    *   [**Callbacks**](/adk-docs/callbacks/)
+    *   [**Callbacks**](/callbacks/)
         Un componente de control de flujo que te permite modificar el comportamiento de los agentes al inicio
         y al final de los eventos del flujo de trabajo del agente.
 
 Algunas funciones avanzadas de ADK no son soportadas por el Constructor Visual debido a
 limitaciones de la función Agent Config. Para más información, consulta las
-[Limitaciones conocidas](/adk-docs/agents/config/#known-limitations) de Agent Config.
+[Limitaciones conocidas](/agents/config/#known-limitations) de Agent Config.
 
 ## Salida de código del proyecto
 
-La herramienta Constructor Visual genera código en el formato [Agent Config](/adk-docs/agents/config/),
+La herramienta Constructor Visual genera código en el formato [Agent Config](/agents/config/),
 usando archivos de configuración `.yaml` para agentes y código Python para herramientas
 personalizadas. Estos archivos se generan en una subcarpeta del directorio donde ejecutaste
 la interfaz ADK Web. El siguiente listado muestra un diseño de ejemplo para un
@@ -123,5 +123,5 @@ Use the default model if you need to configure that.
 Consulta más información sobre el formato de código Agent Config usado por el Constructor Visual
 y las opciones disponibles:
 
-*   [Agent Config](/adk-docs/agents/config/)
-*   [Esquema YAML de Agent Config](/adk-docs/api-reference/agentconfig/)
+*   [Agent Config](/agents/config/)
+*   [Esquema YAML de Agent Config](/api-reference/agentconfig/)

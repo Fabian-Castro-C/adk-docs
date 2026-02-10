@@ -19,8 +19,8 @@ Puedes usar la biblioteca LiteLLM para acceder a modelos de IA alojados de forma
     como el parámetro `model` de `LlmAgent`.
 *   **Alojamiento local de modelos:** Usa la clase wrapper `LiteLlm` configurada para
     apuntar a tu servidor de modelo local. Para ejemplos de soluciones de alojamiento
-    local de modelos, consulta la documentación de [Ollama](/adk-docs/agents/models/ollama/)
-    o [vLLM](/adk-docs/agents/models/vllm/).
+    local de modelos, consulta la documentación de [Ollama](/agents/models/ollama/)
+    o [vLLM](/agents/models/vllm/).
 
 ??? warning "Codificación en Windows con LiteLLM"
 

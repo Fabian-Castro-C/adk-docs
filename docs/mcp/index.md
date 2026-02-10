@@ -24,7 +24,7 @@ ADK te ayuda tanto a usar como a consumir herramientas MCP en tus agentes, ya se
 intentando construir una herramienta para llamar a un servicio MCP, o exponiendo un servidor MCP para
 que otros desarrolladores o agentes interactúen con tus herramientas.
 
-Consulta la [documentación de Herramientas MCP](/adk-docs/tools-custom/mcp-tools/) para ejemplos de código
+Consulta la [documentación de Herramientas MCP](/tools-custom/mcp-tools/) para ejemplos de código
 y patrones de diseño que te ayudan a usar ADK junto con servidores MCP, incluyendo:
 
 - **Usar Servidores MCP Existentes dentro de ADK**: Un agente ADK puede actuar como un cliente MCP
@@ -97,7 +97,7 @@ MCP Toolbox proporciona conjuntos de herramientas listos para usar para las sigu
 ### Documentación
 
 Consulta la
-[documentación de MCP Toolbox para Bases de Datos](/adk-docs/tools/google-cloud/mcp-toolbox-for-databases/)
+[documentación de MCP Toolbox para Bases de Datos](/tools/google-cloud/mcp-toolbox-for-databases/)
 sobre cómo puedes usar ADK junto con MCP Toolbox para
 Bases de Datos. Para comenzar con MCP Toolbox para Bases de Datos, también están disponibles una publicación de blog [Tutorial: MCP Toolbox para Bases de Datos - Exponiendo Conjuntos de Datos de BigQuery](https://medium.com/google-cloud/tutorial-mcp-toolbox-for-databases-exposing-big-query-datasets-9321f0064f4e) y un Codelab [MCP Toolbox para Bases de Datos: Haciendo disponibles conjuntos de datos de BigQuery para clientes MCP](https://codelabs.developers.google.com/mcp-toolbox-bigquery-dataset?hl=en#0).
 
@@ -106,7 +106,7 @@ Bases de Datos. Para comenzar con MCP Toolbox para Bases de Datos, también est�
 ## Agente ADK y servidor FastMCP
 [FastMCP](https://github.com/jlowin/fastmcp) maneja todos los detalles complejos del protocolo MCP y la gestión del servidor, para que puedas enfocarte en construir excelentes herramientas. Está diseñado para ser de alto nivel y Pythonic; en la mayoría de los casos, decorar una función es todo lo que necesitas.
 
-Consulta la [documentación de Herramientas MCP](/adk-docs/tools-custom/mcp-tools/) sobre
+Consulta la [documentación de Herramientas MCP](/tools-custom/mcp-tools/) sobre
 cómo puedes usar ADK junto con el servidor FastMCP ejecutándose en Cloud Run.
 
 ## Servidores MCP para Google Cloud Genmedia

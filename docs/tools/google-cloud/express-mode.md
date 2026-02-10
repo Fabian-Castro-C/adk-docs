@@ -1,7 +1,7 @@
 ---
 catalog_title: Vertex AI express mode
 catalog_description: Try development with Vertex AI services at no cost
-catalog_icon: /adk-docs/assets/tools-vertex-ai.png
+catalog_icon: /assets/tools-vertex-ai.png
 ---
 
 # Modo express de Vertex AI
@@ -82,7 +82,7 @@ A continuación, crea tu instancia de Agent Engine usando el SDK de Vertex AI.
 
 ## Gestionar Sesiones con `VertexAiSessionService` {#vertex-ai-session-service}
 
-[`VertexAiSessionService`](/adk-docs/sessions/session.md#sessionservice-implementations)
+[`VertexAiSessionService`](/sessions/session.md#sessionservice-implementations)
 es compatible con las claves de API del modo express de Vertex AI. En su lugar puedes inicializar
 el objeto de sesión sin ningún proyecto o ubicación.
 
@@ -111,7 +111,7 @@ session_service = VertexAiSessionService(agent_engine_id=APP_ID)
 
 ## Gestionar Memoria con `VertexAiMemoryBankService` {#vertex-ai-memory-bank}
 
-[`VertexAiMemoryBankService`](/adk-docs/sessions/memory.md#vertex-ai-memory-bank)
+[`VertexAiMemoryBankService`](/sessions/memory.md#vertex-ai-memory-bank)
 es compatible con las claves de API del modo express de Vertex AI. En su lugar puedes inicializar
 el objeto de memoria sin ningún proyecto o ubicación.
 
@@ -144,5 +144,5 @@ Este ejemplo de código muestra un agente del clima que utiliza tanto
 `VertexAiSessionService` como `VertexAiMemoryBankService` para la gestión de contexto,
 permitiendo que tu agente recuerde las preferencias del usuario y las conversaciones.
 
-*   [Agente del Clima con Sesión y Memoria](https://github.com/google/adk-docs/blob/main/examples/python/notebooks/express-mode-weather-agent.ipynb)
+*   [Agente del Clima con Sesión y Memoria](https://github.com/google/blob/main/examples/python/notebooks/express-mode-weather-agent.ipynb)
     usando el modo express de Vertex AI

@@ -6,7 +6,7 @@
 
 [Ollama](https://ollama.com/) es una herramienta que te permite alojar y ejecutar
 modelos de código abierto localmente. ADK se integra con modelos alojados en Ollama a través de la
-biblioteca de conectores de modelos [LiteLLM](/adk-docs/agents/models/litellm/).
+biblioteca de conectores de modelos [LiteLLM](/agents/models/litellm/).
 
 ## Comenzar
 

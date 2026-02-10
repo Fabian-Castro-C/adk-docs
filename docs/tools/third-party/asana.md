@@ -1,7 +1,7 @@
 ---
 catalog_title: Asana
 catalog_description: Manage projects, tasks, and goals for team collaboration
-catalog_icon: /adk-docs/assets/tools-asana.png
+catalog_icon: /assets/tools-asana.png
 ---
 
 # Asana
@@ -104,7 +104,7 @@ tareas, objetivos y colaboración en equipo usando lenguaje natural.
 
 El servidor MCP de Asana incluye más de 30 herramientas organizadas por categoría. Las herramientas se
 descubren automáticamente cuando tu agente se conecta. Usa la
-[Interfaz Web de ADK](/adk-docs/runtime/web-interface/) para ver las herramientas disponibles en el
+[Interfaz Web de ADK](/runtime/web-interface/) para ver las herramientas disponibles en el
 gráfico de trazas después de ejecutar tu agente.
 
 Categoría | Descripción

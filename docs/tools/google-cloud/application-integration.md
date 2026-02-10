@@ -1,7 +1,7 @@
 ---
 catalog_title: Application Integration
 catalog_description: Link your agents to enterprise apps using Integration Connectors
-catalog_icon: /adk-docs/assets/tools-apigee-integration.png
+catalog_icon: /assets/tools-apigee-integration.png
 ---
 
 # Herramientas de Application Integration para ADK
@@ -31,7 +31,7 @@ múltiples aplicaciones empresariales y fuentes de datos simultáneamente.
 ### 1. Instalar ADK
 
 Instala Agent Development Kit siguiendo los pasos en la
-[guía de instalación](/adk-docs/get-started/installation/).
+[guía de instalación](/get-started/installation/).
 
 ### 2. Instalar CLI
 
@@ -121,7 +121,7 @@ Conecta tu agente a aplicaciones empresariales usando
 1. Para usar un conector de Integration Connectors, haz clic en **QUICK SETUP** y [aprovisiona](https://console.cloud.google.com/integrations)
    Application Integration en la misma región que tu conexión.
 
-   ![Google Cloud Tools](/adk-docs/assets/application-integration-overview.png)
+   ![Google Cloud Tools](/assets/application-integration-overview.png)
 
 
 
@@ -129,7 +129,7 @@ Conecta tu agente a aplicaciones empresariales usando
    en la biblioteca de plantillas y haz clic en **USE TEMPLATE**.
 
 
-    ![Google Cloud Tools](/adk-docs/assets/use-connection-tool-template.png)
+    ![Google Cloud Tools](/assets/use-connection-tool-template.png)
 
 3. Ingresa el nombre de integración como *ExecuteConnection* (es obligatorio usar exactamente este nombre de integración).
    Luego, selecciona la región para que coincida con tu región de conexión y haz clic en **CREATE**.
@@ -137,7 +137,7 @@ Conecta tu agente a aplicaciones empresariales usando
 4. Haz clic en **PUBLISH** para publicar la integración en el editor de <i>Application Integration</i>.
 
 
-    ![Google Cloud Tools](/adk-docs/assets/publish-integration.png)
+    ![Google Cloud Tools](/assets/publish-integration.png)
 
 
 ### Crear un Toolset de Application Integration

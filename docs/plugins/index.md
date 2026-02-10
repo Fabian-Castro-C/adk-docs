@@ -28,7 +28,7 @@ Algunas aplicaciones típicas de Plugins son las siguientes:
 !!! tip
     Al implementar barreras de seguridad y políticas, usa Plugins de ADK para
     mejor modularidad y flexibilidad que con Callbacks. Para más detalles, consulta
-    [Callbacks y Plugins para Barreras de Seguridad](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+    [Callbacks y Plugins para Barreras de Seguridad](/safety/#callbacks-and-plugins-for-security-guardrails).
 
 !!! warning "Precaución"
     Los Plugins no son soportados por la
@@ -60,9 +60,9 @@ aplicación de agente.
 ADK incluye varios plugins que puedes agregar a tus flujos de trabajo de agente
 inmediatamente:
 
-*   [**Reflect and Retry Tools**](/adk-docs/plugins/reflect-and-retry/):
+*   [**Reflect and Retry Tools**](/plugins/reflect-and-retry/):
     Rastrea fallos de herramientas e intenta nuevamente las solicitudes de herramientas de manera inteligente.
-*   [**BigQuery Analytics**](/adk-docs/observability/bigquery-agent-analytics/):
+*   [**BigQuery Analytics**](/observability/bigquery-agent-analytics/):
     Habilita el registro y análisis de agentes con BigQuery.
 *   [**Context Filter**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/context_filter_plugin.py):
     Filtra el contexto de IA generativa para reducir su tamaño.
@@ -341,7 +341,7 @@ Hello world: query is [hello world]
 
 
 Para más información sobre ejecutar agentes ADK, consulta la guía
-[Inicio Rápido](/adk-docs/get-started/quickstart/#run-your-agent).
+[Inicio Rápido](/get-started/quickstart/#run-your-agent).
 
 ## Construir flujos de trabajo con Plugins
 
@@ -740,4 +740,4 @@ Consulta estos recursos para desarrollar y aplicar Plugins a tus proyectos ADK:
 -   Para más ejemplos de código de Plugin de ADK, consulta el
     [repositorio de ADK Python](https://github.com/google/adk-python/tree/main/src/google/adk/plugins).
 -   Para información sobre aplicar Plugins con fines de seguridad, consulta
-    [Callbacks y Plugins para Barreras de Seguridad](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+    [Callbacks y Plugins para Barreras de Seguridad](/safety/#callbacks-and-plugins-for-security-guardrails).

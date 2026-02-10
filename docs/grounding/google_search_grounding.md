@@ -4,7 +4,7 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-[Google Search Grounding tool](/adk-docs/tools/gemini-api/google-search/) es una característica poderosa en el Agent Development Kit (ADK) que permite a los agentes de IA acceder a información autorizada y en tiempo real desde la web. Al conectar tus agentes a Google Search, puedes proporcionar a los usuarios respuestas actualizadas respaldadas por fuentes confiables.
+[Google Search Grounding tool](/tools/gemini-api/google-search/) es una característica poderosa en el Agent Development Kit (ADK) que permite a los agentes de IA acceder a información autorizada y en tiempo real desde la web. Al conectar tus agentes a Google Search, puedes proporcionar a los usuarios respuestas actualizadas respaldadas por fuentes confiables.
 
 Esta característica es particularmente valiosa para consultas que requieren información actual como actualizaciones del clima, eventos de noticias, precios de acciones, o cualquier hecho que pueda haber cambiado desde la fecha límite de los datos de entrenamiento del modelo. Cuando tu agente determina que se necesita información externa, automáticamente realiza búsquedas web e incorpora los resultados en su respuesta con la atribución adecuada.
 

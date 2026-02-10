@@ -1,7 +1,7 @@
 ---
 catalog_title: Data Agents
 catalog_description: Analyze data with AI-powered agents
-catalog_icon: /adk-docs/assets/tools-vertex-ai.png
+catalog_icon: /assets/tools-vertex-ai.png
 ---
 
 # Herramientas de Data Agents para ADK

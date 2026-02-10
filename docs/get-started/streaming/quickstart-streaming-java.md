@@ -77,7 +77,7 @@ public class ScienceTeacherAgent {
   public static final BaseAgent ROOT_AGENT = initAgent();
 
   // Por favor completa el ID del modelo más reciente que soporte la API en vivo desde
-  // https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming/#supported-models
+  // https://google.github.io/get-started/streaming/quickstart-streaming/#supported-models
   public static BaseAgent initAgent() {
     return LlmAgent.builder()
         .name("science-app")

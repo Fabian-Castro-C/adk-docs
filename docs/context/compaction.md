@@ -6,7 +6,7 @@
 
 A medida que un agente ADK se ejecuta, recopila información de *contexto*, incluyendo instrucciones del usuario, datos recuperados, respuestas de herramientas y contenido generado. A medida que el tamaño de estos datos de contexto crece, los tiempos de procesamiento del agente también suelen aumentar. Cada vez más datos se envían al modelo de IA generativa utilizado por el agente, aumentando el tiempo de procesamiento y ralentizando las respuestas. La característica de Compactación de Contexto del ADK está diseñada para reducir el tamaño del contexto mientras un agente se ejecuta, resumiendo las partes más antiguas del historial de eventos del flujo de trabajo del agente.
 
-La característica de Compactación de Contexto utiliza un enfoque de *ventana deslizante* para recopilar y resumir datos de eventos del flujo de trabajo del agente dentro de una [Session](/adk-docs/sessions/session/). Cuando configuras esta característica en tu agente, resume los datos de eventos más antiguos una vez que alcanza un umbral de un número específico de eventos de flujo de trabajo, o invocaciones, dentro de la sesión actual.
+La característica de Compactación de Contexto utiliza un enfoque de *ventana deslizante* para recopilar y resumir datos de eventos del flujo de trabajo del agente dentro de una [Session](/sessions/session/). Cuando configuras esta característica en tu agente, resume los datos de eventos más antiguos una vez que alcanza un umbral de un número específico de eventos de flujo de trabajo, o invocaciones, dentro de la sesión actual.
 
 ## Configurar la compactación de contexto
 
@@ -32,7 +32,7 @@ Una vez configurado, el `Runner` del ADK maneja el proceso de compactación en s
 
 Si estableces `compaction_interval` en 3 y `overlap_size` en 1, los datos de eventos se comprimen al completarse los eventos 3, 6, 9, y así sucesivamente. La configuración de superposición aumenta el tamaño de la segunda compresión resumida, y de cada resumen posterior, como se muestra en la Figura 1.
 
-![Context compaction example illustration](/adk-docs/assets/context-compaction.svg)
+![Context compaction example illustration](/assets/context-compaction.svg)
 **Figura 1.** Ilustración de la configuración de compactación de eventos con un intervalo de 3 y una superposición de 1.
 
 Con esta configuración de ejemplo, las tareas de compresión de contexto ocurren de la siguiente manera:

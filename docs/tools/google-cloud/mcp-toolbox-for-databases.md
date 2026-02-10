@@ -1,7 +1,7 @@
 ---
 catalog_title: MCP Toolbox for Databases
 catalog_description: Connect over 30 different data sources to your agents
-catalog_icon: /adk-docs/assets/tools-mcp-toolbox-for-databases.png
+catalog_icon: /assets/tools-mcp-toolbox-for-databases.png
 ---
 
 # MCP Toolbox para Bases de Datos

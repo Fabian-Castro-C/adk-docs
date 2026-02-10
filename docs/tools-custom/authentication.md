@@ -368,7 +368,7 @@ if auth_request_function_call_id and auth_config:
 !!! note "Nota: Respuesta de autorización con la función Resume"
 
     Si tu flujo de trabajo del agente ADK está configurado con la
-    función [Resume](/adk-docs/runtime/resume/), también debes incluir
+    función [Resume](/runtime/resume/), también debes incluir
     el ID de Invocación (`invocation_id`) como parámetro con la respuesta
     de autorización. El ID de Invocación que proporciones debe ser la misma
     invocación que generó la solicitud de autorización, de lo contrario el
@@ -377,7 +377,7 @@ if auth_request_function_call_id and auth_config:
     como un parámetro con tu solicitud de autorización, para que pueda ser incluido
     con la respuesta de autorización. Para más detalles sobre el uso de la función
     Resume, consulta
-    [Resume stopped agents](/adk-docs/runtime/resume/).
+    [Resume stopped agents](/runtime/resume/).
 
 **Paso 5: ADK Maneja el Intercambio de Token y Reintento de Herramienta y obtiene el Resultado de la Herramienta**
 

@@ -51,4 +51,4 @@ Ahora que tienes una visión general de los diferentes tipos de agentes disponib
 * [**Agentes de Flujo de Trabajo:**](workflow-agents/index.md) Aprende cómo orquestar tareas usando `SequentialAgent`, `ParallelAgent` y `LoopAgent` para procesos estructurados y predecibles.
 * [**Agentes Personalizados:**](custom-agents.md) Descubre los principios de extender `BaseAgent` para construir agentes con lógica e integraciones únicas adaptadas a tus necesidades específicas.
 * [**Multi-Agentes:**](multi-agents.md) Comprende cómo combinar diferentes tipos de agentes para crear sistemas sofisticados y colaborativos capaces de abordar problemas complejos.
-* [**Modelos:**](/adk-docs/agents/models/) Aprende sobre las diferentes integraciones de LLM disponibles y cómo seleccionar el modelo correcto para tus agentes.
+* [**Modelos:**](/agents/models/) Aprende sobre las diferentes integraciones de LLM disponibles y cómo seleccionar el modelo correcto para tus agentes.

@@ -235,7 +235,7 @@ Aunque tienes considerable flexibilidad al definir tu función, recuerda que la 
 * **Tipos de datos simples:** Favorece tipos de datos primitivos como `str` e `int` sobre clases personalizadas siempre que sea posible.
 * **Nombres significativos:** El nombre de la función y los nombres de los parámetros influyen significativamente en cómo el LLM interpreta y utiliza la herramienta. Elige nombres que reflejen claramente el propósito de la función y el significado de sus entradas. Evita nombres genéricos como `do_stuff()` o `beAgent()`.
 * **Construir para ejecución paralela:** Mejora el rendimiento de las llamadas a funciones cuando se ejecutan múltiples herramientas construyendo para operación asíncrona. Para información sobre cómo habilitar la ejecución paralela para herramientas, consulta
-[Aumentar el rendimiento de herramientas con ejecución paralela](/adk-docs/tools-custom/performance/).
+[Aumentar el rendimiento de herramientas con ejecución paralela](/tools-custom/performance/).
 
 ## Herramientas de Función de Larga Ejecución {#long-run-tool}
 
@@ -253,7 +253,7 @@ Al usar un `LongRunningFunctionTool`, tu función puede iniciar la operación de
     Dependiendo del tipo de herramienta que estés construyendo, diseñar para operación asíncrona
     puede ser una mejor solución que crear una herramienta de larga ejecución. Para
     más información, consulta
-    [Aumentar el rendimiento de herramientas con ejecución paralela](/adk-docs/tools-custom/performance/).
+    [Aumentar el rendimiento de herramientas con ejecución paralela](/tools-custom/performance/).
 
 ### Cómo funciona
 
@@ -348,7 +348,7 @@ El cliente del agente recibió un evento con llamadas a funciones de larga ejecu
 !!! note "Nota: Respuesta de función de larga ejecución con funcionalidad de Resume"
 
     Si tu flujo de trabajo de agente ADK está configurado con la
-    funcionalidad [Resume](/adk-docs/runtime/resume/), también debes incluir
+    funcionalidad [Resume](/runtime/resume/), también debes incluir
     el parámetro de ID de Invocación (`invocation_id`) con la respuesta de función de larga
     ejecución. El ID de Invocación que proporciones debe ser la misma
     invocación que generó la solicitud de función de larga ejecución, de lo contrario
@@ -356,7 +356,7 @@ El cliente del agente recibió un evento con llamadas a funciones de larga ejecu
     agente usa la funcionalidad Resume, considera incluir el ID de Invocación
     como parámetro con tu solicitud de función de larga ejecución, para que pueda ser
     incluido con la respuesta. Para más detalles sobre el uso de la funcionalidad Resume, consulta
-    [Reanudar agentes detenidos](/adk-docs/runtime/resume/).
+    [Reanudar agentes detenidos](/runtime/resume/).
 
 ??? Tip "Aplica solo a ADK de Java"
 

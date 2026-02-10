@@ -1,7 +1,7 @@
 ---
 catalog_title: Google Search
 catalog_description: Perform web searches using Google Search with Gemini
-catalog_icon: /adk-docs/assets/tools-google-search.png
+catalog_icon: /assets/tools-google-search.png
 ---
 
 # Herramienta Google Search para ADK
@@ -10,7 +10,7 @@ catalog_icon: /adk-docs/assets/tools-google-search.png
   <span class="lst-supported">Soportado en ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-La herramienta `google_search` permite al agente realizar búsquedas web usando Google Search. La herramienta `google_search` solo es compatible con modelos Gemini 2. Para más detalles sobre la herramienta, consulta [Entendiendo la fundamentación de Google Search](/adk-docs/grounding/google_search_grounding/).
+La herramienta `google_search` permite al agente realizar búsquedas web usando Google Search. La herramienta `google_search` solo es compatible con modelos Gemini 2. Para más detalles sobre la herramienta, consulta [Entendiendo la fundamentación de Google Search](/grounding/google_search_grounding/).
 
 !!! warning "Requisitos adicionales al usar la herramienta `google_search`"
     Cuando usas fundamentación con Google Search, y recibes sugerencias de búsqueda en tu respuesta, debes mostrar las sugerencias de búsqueda en producción y en tus aplicaciones.
@@ -20,7 +20,7 @@ La herramienta `google_search` permite al agente realizar búsquedas web usando 
 
     Esta herramienta solo puede ser usada ***por sí misma*** dentro de una instancia de agente.
     Para más información sobre esta limitación y soluciones alternativas, consulta
-    [Limitaciones para herramientas ADK](/adk-docs/tools/limitations/#one-tool-one-agent).
+    [Limitaciones para herramientas ADK](/tools/limitations/#one-tool-one-agent).
 
 === "Python"
 

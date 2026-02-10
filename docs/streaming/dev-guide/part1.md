@@ -1,6 +1,6 @@
 # Parte 1: Introducción a ADK Bidi-streaming
 
-El Kit de Desarrollo de Agentes ([ADK](https://google.github.io/adk-docs/)) de Google proporciona un framework listo para producción para construir aplicaciones Bidi-streaming con modelos Gemini. Esta guía introduce la arquitectura de streaming de ADK, que permite comunicación bidireccional en tiempo real entre usuarios y agentes de IA a través de canales multimodales (texto, audio, video).
+El Kit de Desarrollo de Agentes ([ADK](https://google.github.io/)) de Google proporciona un framework listo para producción para construir aplicaciones Bidi-streaming con modelos Gemini. Esta guía introduce la arquitectura de streaming de ADK, que permite comunicación bidireccional en tiempo real entre usuarios y agentes de IA a través de canales multimodales (texto, audio, video).
 
 **Lo que aprenderás**: Esta parte cubre los fundamentos de Bidi-streaming, la tecnología subyacente de Live API (Gemini Live API y Vertex AI Live API), los componentes arquitectónicos de ADK (`LiveRequestQueue`, `Runner`, `Agent`), y un ejemplo completo de implementación con FastAPI. Comprenderás cómo ADK maneja la gestión de sesiones, orquestación de herramientas y abstracción de plataformas—reduciendo meses de desarrollo de infraestructura a configuración declarativa.
 
@@ -193,12 +193,12 @@ ADK transforma estos desafíos en APIs simples y declarativas. En lugar de pasar
 
 | Característica | Live API Cruda (SDK `google-genai`) | ADK Bidi-streaming (SDK `adk-python` y `adk-java`) |
 |---------|-----------------------------------|------------------------------------------------------|
-| **Framework de Agentes** | ❌ No disponible | ✅ Agente único, multi-agente con sub-agentes, y agentes de flujo de trabajo secuencial, Ecosistema de herramientas, Listo para despliegue, Evaluación, Seguridad y más (ver [docs de Agente ADK](https://google.github.io/adk-docs/agents/)) |
+| **Framework de Agentes** | ❌ No disponible | ✅ Agente único, multi-agente con sub-agentes, y agentes de flujo de trabajo secuencial, Ecosistema de herramientas, Listo para despliegue, Evaluación, Seguridad y más (ver [docs de Agente ADK](https://google.github.io/agents/)) |
 | **Ejecución de Herramientas** | ❌ Ejecución manual de herramientas y manejo de respuestas | ✅ Ejecución automática de herramientas (ver [Parte 3: Eventos de Llamada a Herramientas](part3.md#tool-call-events)) |
 | **Gestión de Conexión** | ❌ Reconexión manual y reanudación de sesión | ✅ Reconexión automática y reanudación de sesión (ver [Parte 4: Reanudación de Sesión Live API](part4.md#live-api-session-resumption)) |
 | **Modelo de Eventos** | ❌ Estructuras de eventos personalizadas y serialización | ✅ Modelo de eventos unificado con metadatos (ver [Parte 3: Manejo de Eventos](part3.md)) |
 | **Framework de Procesamiento de Eventos Async** | ❌ Coordinación async manual y manejo de streams | ✅ `LiveRequestQueue`, generador async `run_live()`, coordinación automática de flujo bidireccional (ver [Parte 2](part2.md) y [Parte 3](part3.md)) |
-| **Persistencia de Sesión a Nivel de Aplicación** | ❌ Implementación manual | ✅ Bases de datos SQL (PostgreSQL, MySQL, SQLite), Vertex AI, en memoria (ver [docs de Sesión ADK](https://google.github.io/adk-docs/sessions/)) |
+| **Persistencia de Sesión a Nivel de Aplicación** | ❌ Implementación manual | ✅ Bases de datos SQL (PostgreSQL, MySQL, SQLite), Vertex AI, en memoria (ver [docs de Sesión ADK](https://google.github.io/sessions/)) |
 
 ### Flexibilidad de Plataforma
 
@@ -312,9 +312,9 @@ ADK Bidi-streaming integra sesión Live API en el ciclo de vida de aplicación d
 
 - **Fase 1: Inicialización de Aplicación** (Una Vez al Inicio)
   - Inicialización de Aplicación ADK
-    - Crear un [Agent](https://google.github.io/adk-docs/agents/): para interactuar con usuarios, utilizar herramientas externas y coordinar con otros agentes.
-    - Crear un [SessionService](https://google.github.io/adk-docs/sessions/session/#managing-sessions-with-a-sessionservice): para obtener o crear `Session` de ADK
-    - Crear un [Runner](https://google.github.io/adk-docs/runtime/): para proporcionar un runtime para el Agent
+    - Crear un [Agent](https://google.github.io/agents/): para interactuar con usuarios, utilizar herramientas externas y coordinar con otros agentes.
+    - Crear un [SessionService](https://google.github.io/sessions/session/#managing-sessions-with-a-sessionservice): para obtener o crear `Session` de ADK
+    - Crear un [Runner](https://google.github.io/runtime/): para proporcionar un runtime para el Agent
 
 - **Fase 2: Inicialización de Sesión** (Una Vez por Sesión de Usuario)
   - Inicialización de `Session` de ADK:
@@ -432,7 +432,7 @@ agent = Agent(
 )
 ```
 
-La instancia del agente es **sin estado y reutilizable**—la creas una vez y la usas para todas las sesiones de streaming. La configuración del agente se cubre en la [documentación de Agent ADK](https://google.github.io/adk-docs/agents/).
+La instancia del agente es **sin estado y reutilizable**—la creas una vez y la usas para todas las sesiones de streaming. La configuración del agente se cubre en la [documentación de Agent ADK](https://google.github.io/agents/).
 
 !!! note "Disponibilidad de Modelos"
 
@@ -444,9 +444,9 @@ La instancia del agente es **sin estado y reutilizable**—la creas una vez y la
 
 #### Define Tu SessionService
 
-La [Session](https://google.github.io/adk-docs/sessions/session/) de ADK gestiona estado e historial de conversación a través de sesiones de streaming. Almacena y recupera datos de sesión, habilitando características como reanudación de conversación y persistencia de contexto.
+La [Session](https://google.github.io/sessions/session/) de ADK gestiona estado e historial de conversación a través de sesiones de streaming. Almacena y recupera datos de sesión, habilitando características como reanudación de conversación y persistencia de contexto.
 
-Para crear una `Session`, u obtener una existente para un `session_id` especificado, cada aplicación ADK necesita tener un [SessionService](https://google.github.io/adk-docs/sessions/session/#managing-sessions-with-a-sessionservice). Para propósito de desarrollo, ADK proporciona un `InMemorySessionService` simple que perderá el estado de la `Session` cuando la aplicación se apague.
+Para crear una `Session`, u obtener una existente para un `session_id` especificado, cada aplicación ADK necesita tener un [SessionService](https://google.github.io/sessions/session/#managing-sessions-with-a-sessionservice). Para propósito de desarrollo, ADK proporciona un `InMemorySessionService` simple que perderá el estado de la `Session` cuando la aplicación se apague.
 
 ```python title='Implementación de Demo: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L37" target="_blank">main.py:37</a>'
 from google.adk.sessions import InMemorySessionService
@@ -473,11 +473,11 @@ Para aplicaciones de producción, elige un servicio de sesión persistente basad
 - Necesitas integración estrecha con características de Vertex AI
 - Ejemplo: `VertexAiSessionService(project="my-project")`
 
-Ambos proporcionan capacidades de persistencia de sesión—elige según tus requisitos de infraestructura y escala. Con servicios de sesión persistentes, el estado de la `Session` se preservará incluso después del apagado de la aplicación. Consulta la [documentación de Gestión de Sesiones ADK](https://google.github.io/adk-docs/sessions/) para más detalles.
+Ambos proporcionan capacidades de persistencia de sesión—elige según tus requisitos de infraestructura y escala. Con servicios de sesión persistentes, el estado de la `Session` se preservará incluso después del apagado de la aplicación. Consulta la [documentación de Gestión de Sesiones ADK](https://google.github.io/sessions/) para más detalles.
 
 #### Define Tu Runner
 
-El [Runner](https://google.github.io/adk-docs/runtime/) proporciona el runtime para el `Agent`. Gestiona el flujo de conversación, coordina ejecución de herramientas, maneja eventos e integra con almacenamiento de sesiones. Creas una instancia de runner al inicio de la aplicación y la reutilizas para todas las sesiones de streaming.
+El [Runner](https://google.github.io/runtime/) proporciona el runtime para el `Agent`. Gestiona el flujo de conversación, coordina ejecución de herramientas, maneja eventos e integra con almacenamiento de sesiones. Creas una instancia de runner al inicio de la aplicación y la reutilizas para todas las sesiones de streaming.
 
 ```python title='Implementación de Demo: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L50" target="_blank">main.py:50,53</a>'
 from google.adk.runners import Runner

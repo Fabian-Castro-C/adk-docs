@@ -36,9 +36,9 @@ app = App(
 
 !!! warning "Precaución: Funciones de Larga Ejecución, Confirmaciones, Autenticación"
     Para agentes que usan
-    [Funciones de Larga Ejecución](/adk-docs/tools-custom/function-tools/#long-run-tool),
-    [Confirmaciones](/adk-docs/tools-custom/confirmation/), o
-    [Autenticación](/adk-docs/tools-custom/authentication/)
+    [Funciones de Larga Ejecución](/tools-custom/function-tools/#long-run-tool),
+    [Confirmaciones](/tools-custom/confirmation/), o
+    [Autenticación](/tools-custom/authentication/)
     que requieren entrada del usuario, agregar una confirmación reanudable cambia cómo operan estas características.
     Para más información, consulta la documentación para esas características.
 
@@ -54,7 +54,7 @@ app = App(
 Cuando un flujo de trabajo ADK detiene su ejecución puedes reanudar el flujo de trabajo usando un
 comando que contenga el ID de Invocación para la instancia del flujo de trabajo, que puede ser
 encontrado en el historial de
-[Eventos](/adk-docs/events/#understanding-and-using-events)
+[Eventos](/events/#understanding-and-using-events)
 del flujo de trabajo. Asegúrate de que el servidor API de ADK esté ejecutándose, en caso de que fuera
 interrumpido o apagado, y luego ejecuta el siguiente comando para reanudar el
 flujo de trabajo, como se muestra en el siguiente ejemplo de solicitud API.
@@ -93,8 +93,8 @@ runner.run_async(user_id='u_123', session_id='s_abc',
 
 La característica de Reanudación funciona registrando las tareas completadas del flujo de trabajo del Agente,
 incluyendo pasos incrementales usando
-[Eventos](/adk-docs/events/) y
-[Acciones de Eventos](/adk-docs/events/#detecting-actions-and-side-effects).
+[Eventos](/events/) y
+[Acciones de Eventos](/events/#detecting-actions-and-side-effects).
 rastreando la finalización de tareas del agente dentro de un flujo de trabajo reanudable. Si un flujo de trabajo es
 interrumpido y luego reiniciado más tarde, el sistema reanuda el flujo de trabajo estableciendo
 el estado de finalización de cada agente. Si un agente no se completó, el sistema del flujo de trabajo
@@ -151,7 +151,7 @@ Personalizado para soportar una Reanudación de flujo de trabajo.
 
 El siguiente ejemplo muestra las modificaciones de código requeridas al ejemplo de la
 clase StoryFlowAgent mostrada en la guía de
-[Agentes Personalizados](/adk-docs/agents/custom-agents/#full-code-example):
+[Agentes Personalizados](/agents/custom-agents/#full-code-example):
 
 ```python
 class WorkflowStep(int, Enum):

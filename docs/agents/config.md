@@ -21,7 +21,7 @@ incorporar Funciones, Herramientas, Sub-Agentes y más. Esta página describe c�
 construir y ejecutar flujos de trabajo de ADK con la característica Agent Config. Para información detallada
 sobre la sintaxis y configuraciones soportadas por el formato Agent Config,
 consulta la
-[referencia de sintaxis de Agent Config](/adk-docs/api-reference/agentconfig/).
+[referencia de sintaxis de Agent Config](/api-reference/agentconfig/).
 
 !!! example "Experimental"
     La característica Agent Config es experimental y tiene algunas
@@ -49,7 +49,7 @@ los archivos Agent Config.
 Para configurar ADK para usar con Agent Config:
 
 1.  Instala las bibliotecas Python de ADK siguiendo las
-    instrucciones de [Instalación](/adk-docs/get-started/installation/#python).
+    instrucciones de [Instalación](/get-started/installation/#python).
     *Python es actualmente requerido.* Para más información, consulta las
     [Limitaciones conocidas](#known-limitations).
 1.  Verifica que ADK esté instalado ejecutando el siguiente comando en tu
@@ -63,7 +63,7 @@ Para configurar ADK para usar con Agent Config:
     Si el comando `adk` falla al ejecutarse y la versión no aparece en el paso 2, asegúrate
     de que tu entorno Python esté activo. Ejecuta `source .venv/bin/activate` en
     tu terminal en Mac y Linux. Para comandos de otras plataformas, consulta la
-    página de [Instalación](/adk-docs/get-started/installation/#python).
+    página de [Instalación](/get-started/installation/#python).
 
 ### Construir un agente
 
@@ -118,7 +118,7 @@ Puedes descubrir más opciones de configuración para tu archivo de
 configuración de agente `root_agent.yaml` consultando el
 [repositorio de ejemplos](https://github.com/search?q=repo%3Agoogle%2Fadk-python+path%3A%2F%5Econtributing%5C%2Fsamples%5C%2F%2F+.yaml&type=code) de ADK
 o la referencia de
-[sintaxis de Agent Config](/adk-docs/api-reference/agentconfig/).
+[sintaxis de Agent Config](/api-reference/agentconfig/).
 
 ### Ejecutar el agente
 
@@ -138,9 +138,9 @@ Para ejecutar tu agente definido con Agent Config:
 
 Para más información sobre las formas de ejecutar tu agente, consulta el tema *Ejecutar Tu Agente*
 en el
-[Inicio rápido](/adk-docs/get-started/quickstart/#run-your-agent).
+[Inicio rápido](/get-started/quickstart/#run-your-agent).
 Para más información sobre las opciones de línea de comandos de ADK, consulta la
-[referencia de CLI de ADK](/adk-docs/api-reference/cli/).
+[referencia de CLI de ADK](/api-reference/cli/).
 
 ## Ejemplos de configs
 
@@ -225,13 +225,13 @@ Para más detalles, consulta el código completo de este ejemplo en el
 ## Desplegar agent configs
 
 Puedes desplegar agentes Agent Config con
-[Cloud Run](/adk-docs/deploy/cloud-run/) y
-[Agent Engine](/adk-docs/deploy/agent-engine/),
+[Cloud Run](/deploy/cloud-run/) y
+[Agent Engine](/deploy/agent-engine/),
 usando el mismo procedimiento que los agentes basados en código. Para más información sobre cómo
 preparar y desplegar agentes basados en Agent Config, consulta las
 guías de despliegue de
-[Cloud Run](/adk-docs/deploy/cloud-run/) y
-[Agent Engine](/adk-docs/deploy/agent-engine/).
+[Cloud Run](/deploy/cloud-run/) y
+[Agent Engine](/deploy/agent-engine/).
 
 ## Limitaciones conocidas {#known-limitations}
 
@@ -268,4 +268,4 @@ definiciones de agentes basadas en yaml en el
 repositorio [adk-samples](https://github.com/search?q=repo:google/adk-python+path:/%5Econtributing%5C/samples%5C//+root_agent.yaml&type=code) de ADK.
 Para información detallada sobre la sintaxis y configuraciones soportadas por
 el formato Agent Config, consulta la
-[referencia de sintaxis de Agent Config](/adk-docs/api-reference/agentconfig/).
+[referencia de sintaxis de Agent Config](/api-reference/agentconfig/).

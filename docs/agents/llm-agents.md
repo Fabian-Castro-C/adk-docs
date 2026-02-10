@@ -43,7 +43,7 @@ Primero, necesitas establecer qué *es* el agente y para qué *sirve*.
 * **`model` (Requerido):** Especifica el LLM subyacente que impulsará el
   razonamiento de este agente. Este es un identificador de cadena como `"gemini-2.5-flash"`. La
   elección del modelo impacta las capacidades del agente, el costo y el rendimiento. Consulta
-  la página de [Modelos](/adk-docs/agents/models/) para opciones disponibles y consideraciones.
+  la página de [Modelos](/agents/models/) para opciones disponibles y consideraciones.
 
 === "Python"
 
@@ -703,7 +703,7 @@ call_agent("Si está lloviendo en Nueva York ahora mismo, ¿cuál es la temperat
 
 - **`code_executor` (Opcional):** Proporciona una instancia de `BaseCodeExecutor` para permitir
   al agente ejecutar bloques de código encontrados en la respuesta del LLM. Para más
-  información, ver [Ejecución de Código con Gemini API](/adk-docs/tools/gemini-api/code-execution/).
+  información, ver [Ejecución de Código con Gemini API](/tools/gemini-api/code-execution/).
 
 === "Python"
 

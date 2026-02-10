@@ -397,7 +397,7 @@ Los agentes dentro de un sistema a menudo necesitan intercambiar datos o activar
 
 #### a) Estado de Sesión Compartido (`session.state`)
 
-La forma más fundamental para que los agentes que operan dentro de la misma invocación (y por lo tanto comparten el mismo objeto [`Session`](/adk-docs/sessions/session/) vía el `InvocationContext`) se comuniquen pasivamente.
+La forma más fundamental para que los agentes que operan dentro de la misma invocación (y por lo tanto comparten el mismo objeto [`Session`](/sessions/session/) vía el `InvocationContext`) se comuniquen pasivamente.
 
 * **Mecanismo:** Un agente (o su herramienta/callback) escribe un valor (`context.state['data_key'] = processed_data`), y un agente subsecuente lo lee (`data = context.state.get('data_key')`). Los cambios de estado son rastreados vía [`CallbackContext`](../callbacks/index.md).
 * **Conveniencia:** La propiedad `output_key` en [`LlmAgent`](llm-agents.md) automáticamente guarda el texto de respuesta final del agente (o salida estructurada) en la clave de estado especificada.

@@ -18,9 +18,9 @@ funciones de programación con una Herramienta ADK, tales como:
 *   Recuperar información de documentos (RAG)
 *   Interactuar con otro software o servicios
 
-!!! tip "[Lista de Herramientas ADK](/adk-docs/tools/)"
+!!! tip "[Lista de Herramientas ADK](/tools/)"
     Antes de construir tus propias Herramientas para ADK, consulta la
-    **[Lista de Herramientas ADK](/adk-docs/tools/)**
+    **[Lista de Herramientas ADK](/tools/)**
     para herramientas preconstruidas que puedes usar con Agentes ADK.
 
 ## ¿Qué es una Herramienta?
@@ -62,11 +62,11 @@ Piensa en las herramientas como un kit de herramientas especializado al que el n
 
 ADK ofrece flexibilidad al soportar varios tipos de herramientas:
 
-1. **[Herramientas de Función](/adk-docs/tools-custom/function-tools/):** Herramientas creadas por ti, adaptadas a las necesidades específicas de tu aplicación.
-    * **[Funciones/Métodos](/adk-docs/tools-custom/function-tools/#1-function-tool):** Define funciones o métodos síncronos estándar en tu código (ej., Python def).
-    * **[Agentes-como-Herramientas](/adk-docs/tools-custom/function-tools/#3-agent-as-a-tool):** Usa otro agente, potencialmente especializado, como una herramienta para un agente padre.
-    * **[Herramientas de Función de Larga Duración](/adk-docs/tools-custom/function-tools/#2-long-running-function-tool):** Soporte para herramientas que realizan operaciones asíncronas o toman tiempo significativo para completarse.
-2. **[Herramientas Integradas](/adk-docs/tools/built-in-tools/):** Herramientas listas para usar proporcionadas por el framework para tareas comunes.
+1. **[Herramientas de Función](/tools-custom/function-tools/):** Herramientas creadas por ti, adaptadas a las necesidades específicas de tu aplicación.
+    * **[Funciones/Métodos](/tools-custom/function-tools/#1-function-tool):** Define funciones o métodos síncronos estándar en tu código (ej., Python def).
+    * **[Agentes-como-Herramientas](/tools-custom/function-tools/#3-agent-as-a-tool):** Usa otro agente, potencialmente especializado, como una herramienta para un agente padre.
+    * **[Herramientas de Función de Larga Duración](/tools-custom/function-tools/#2-long-running-function-tool):** Soporte para herramientas que realizan operaciones asíncronas o toman tiempo significativo para completarse.
+2. **[Herramientas Integradas](/tools/built-in-tools/):** Herramientas listas para usar proporcionadas por el framework para tareas comunes.
         Ejemplos: Búsqueda de Google, Ejecución de Código, Generación Aumentada por Recuperación (RAG).
 3. **Herramientas de Terceros:** Integra herramientas sin problemas desde bibliotecas externas populares.
 

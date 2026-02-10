@@ -1,7 +1,7 @@
 ---
 catalog_title: API Registry
 catalog_description: Dynamically connect with Google Cloud services as MCP tools
-catalog_icon: /adk-docs/assets/developer-tools-color.svg
+catalog_icon: /assets/developer-tools-color.svg
 ---
 
 # Conectar herramientas MCP desde Cloud API Registry

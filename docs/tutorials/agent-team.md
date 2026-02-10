@@ -6,7 +6,7 @@
   <!-- Line 1: Open in Colab -->
   <!-- This div ensures the link takes up its own line and adds space below -->
   <div style="margin-bottom: 10px;">
-    <a href="https://colab.research.google.com/github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" style="display: inline-flex; align-items: center; gap: 5px; text-decoration: none; color: #4285F4;">
+    <a href="https://colab.research.google.com/github/google/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" style="display: inline-flex; align-items: center; gap: 5px; text-decoration: none; color: #4285F4;">
       <img width="32px" src="https://www.gstatic.com/pantheon/images/bigquery/welcome_page/colab-logo.svg" alt="Google Colaboratory logo">
       <span>Abrir en Colab</span>
     </a>
@@ -19,26 +19,26 @@
     <span style="font-weight: bold;">Compartir en:</span>
 
     <!-- Social Media Links -->
-    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on LinkedIn">
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A//github/google/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on LinkedIn">
       <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg" alt="LinkedIn logo" style="vertical-align: middle;">
     </a>
-    <a href="https://bsky.app/intent/compose?text=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on Bluesky">
+    <a href="https://bsky.app/intent/compose?text=https%3A//github/google/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on Bluesky">
       <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Bluesky_Logo.svg" alt="Bluesky logo" style="vertical-align: middle;">
     </a>
-    <a href="https://twitter.com/intent/tweet?url=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on X (Twitter)">
+    <a href="https://twitter.com/intent/tweet?url=https%3A//github/google/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on X (Twitter)">
       <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/5/5a/X_icon_2.svg" alt="X logo" style="vertical-align: middle;">
     </a>
-    <a href="https://reddit.com/submit?url=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on Reddit">
+    <a href="https://reddit.com/submit?url=https%3A//github/google/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on Reddit">
       <img width="20px" src="https://redditinc.com/hubfs/Reddit%20Inc/Brand/Reddit_Logo.png" alt="Reddit logo" style="vertical-align: middle;">
     </a>
-    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on Facebook">
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//github/google/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on Facebook">
       <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo" style="vertical-align: middle;">
     </a>
   </div>
 
 </div>
 
-Este tutorial se extiende desde el [ejemplo de Inicio Rápido](https://google.github.io/adk-docs/get-started/quickstart/) para el [Kit de Desarrollo de Agentes](https://google.github.io/adk-docs/get-started/). Ahora, estás listo para profundizar y construir un **sistema multi-agente** más sofisticado.
+Este tutorial se extiende desde el [ejemplo de Inicio Rápido](https://google.github.io/get-started/quickstart/) para el [Kit de Desarrollo de Agentes](https://google.github.io/get-started/). Ahora, estás listo para profundizar y construir un **sistema multi-agente** más sofisticado.
 
 Nos embarcaremos en la construcción de un **equipo de agentes Bot del Clima**, agregando progresivamente características avanzadas sobre una base simple. Comenzando con un solo agente que puede consultar el clima, agregaremos incrementalmente capacidades como:
 
@@ -87,7 +87,7 @@ Este tutorial está estructurado para entornos de notebook interactivos como Goo
 
 **Alternativa: Usar Herramientas Integradas de ADK (Web UI / CLI / API Server)**
 
-Si prefieres una configuración que maneje la gestión de runner y sesión automáticamente usando las herramientas estándar de ADK, puedes encontrar el código equivalente estructurado para ese propósito [aquí](https://github.com/google/adk-docs/tree/main/examples/python/tutorial/agent_team/adk-tutorial). Esa versión está diseñada para ejecutarse directamente con comandos como `adk web` (para una interfaz web), `adk run` (para interacción CLI) o `adk api_server` (para exponer una API). Por favor sigue las instrucciones del `README.md` proporcionadas en ese recurso alternativo.
+Si prefieres una configuración que maneje la gestión de runner y sesión automáticamente usando las herramientas estándar de ADK, puedes encontrar el código equivalente estructurado para ese propósito [aquí](https://github.com/google/tree/main/examples/python/tutorial/agent_team/adk-tutorial). Esa versión está diseñada para ejecutarse directamente con comandos como `adk web` (para una interfaz web), `adk run` (para interacción CLI) o `adk api_server` (para exponer una API). Por favor sigue las instrucciones del `README.md` proporcionadas en ese recurso alternativo.
 
 ---
 

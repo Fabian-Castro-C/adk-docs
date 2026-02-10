@@ -51,7 +51,7 @@ npm install -D @google/adk-devtools
 ### Definir el código del agente
 
 Crea el código para un agente básico, incluyendo una implementación simple de una
-[Function Tool](/adk-docs/tools/function-tools/) de ADK, llamada `getCurrentTime`.
+[Function Tool](/tools/function-tools/) de ADK, llamada `getCurrentTime`.
 Crea un archivo `agent.ts` en el directorio de tu proyecto y agrega el siguiente código:
 
 ```typescript title="my-agent/agent.ts"
@@ -96,7 +96,7 @@ echo 'GEMINI_API_KEY="YOUR_API_KEY"' > .env
 ??? tip "Usar otros modelos de IA con ADK"
     ADK soporta el uso de muchos modelos de IA generativa. Para más
     información sobre cómo configurar otros modelos en agentes ADK, consulta
-    [Models & Authentication](/adk-docs/agents/models).
+    [Models & Authentication](/agents/models).
 
 ## Ejecutar tu agente
 
@@ -114,7 +114,7 @@ usando el siguiente comando:
 npx adk run agent.ts
 ```
 
-![adk-run.png](/adk-docs/assets/adk-run.png)
+![adk-run.png](/assets/adk-run.png)
 
 ### Ejecutar con interfaz web
 
@@ -128,7 +128,7 @@ Este comando inicia un servidor web con una interfaz de chat para tu agente. Pue
 acceder a la interfaz web en (http://localhost:8000). Selecciona tu agente en la
 esquina superior derecha y escribe una solicitud.
 
-![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
+![adk-web-dev-ui-chat.png](/assets/adk-web-dev-ui-chat.png)
 
 !!! warning "Precaución: ADK Web solo para desarrollo"
 
@@ -140,4 +140,4 @@ esquina superior derecha y escribe una solicitud.
 Ahora que tienes ADK instalado y tu primer agente ejecutándose, intenta construir
 tu propio agente con nuestras guías de construcción:
 
-*  [Build your agent](/adk-docs/tutorials/)
+*  [Build your agent](/tutorials/)

@@ -18,7 +18,7 @@ Repositorio | Descripción | Guía Detallada
 [`google/adk-js`](https://github.com/google/adk-js) | Contiene el código fuente de la biblioteca principal de JavaScript | [`CONTRIBUTING.md`](https://github.com/google/adk-js/blob/main/CONTRIBUTING.md)
 [`google/adk-go`](https://github.com/google/adk-go) | Contiene el código fuente de la biblioteca principal de Go | [`CONTRIBUTING.md`](https://github.com/google/adk-go/blob/main/CONTRIBUTING.md)
 [`google/adk-java`](https://github.com/google/adk-java) | Contiene el código fuente de la biblioteca principal de Java | [`CONTRIBUTING.md`](https://github.com/google/adk-java/blob/main/CONTRIBUTING.md)
-[`google/adk-docs`](https://github.com/google/adk-docs) | Contiene el código fuente del sitio de documentación que estás leyendo actualmente | [`CONTRIBUTING.md`](https://github.com/google/adk-docs/blob/main/CONTRIBUTING.md)
+[`google/adk-docs`](https://github.com/google/adk-docs) | Contiene el código fuente del sitio de documentación que estás leyendo actualmente | [`CONTRIBUTING.md`](https://github.com/google/blob/main/CONTRIBUTING.md)
 [`google/adk-samples`](https://github.com/google/adk-samples) | Contiene agentes de ejemplo para ADK | [`CONTRIBUTING.md`](https://github.com/google/adk-samples/blob/main/CONTRIBUTING.md)
 [`google/adk-web`](https://github.com/google/adk-web) | Contiene el código fuente para la interfaz de desarrollo `adk web` |
 
@@ -72,7 +72,7 @@ Si encuentras un error en el framework o un error en la documentación:
 [`google/adk-js`](https://github.com/google/adk-js/issues/new),
 [`google/adk-go`](https://github.com/google/adk-go/issues/new), o
 [`google/adk-java`](https://github.com/google/adk-java/issues/new)
-* **Errores de Documentación:** [Abre un issue en `google/adk-docs` (usa la plantilla de bug)](https://github.com/google/adk-docs/issues/new?template=bug_report.md)
+* **Errores de Documentación:** [Abre un issue en `google/adk-docs` (usa la plantilla de bug)](https://github.com/google/issues/new?template=bug_report.md)
 
 ### Sugerir mejoras { #suggesting-enhancements }
 
@@ -82,14 +82,14 @@ Si encuentras un error en el framework o un error en la documentación:
 [`google/adk-js`](https://github.com/google/adk-js/issues/new),
 [`google/adk-go`](https://github.com/google/adk-go/issues/new), o
 [`google/adk-java`](https://github.com/google/adk-java/issues/new)
-* **Mejoras de Documentación:** [Abre un issue en `google/adk-docs`](https://github.com/google/adk-docs/issues/new)
+* **Mejoras de Documentación:** [Abre un issue en `google/adk-docs`](https://github.com/google/issues/new)
 
 ### Mejorar la documentación { #improving-documentation }
 
 ¿Encontraste un error tipográfico, una explicación poco clara o información faltante? Envía tus cambios directamente:
 
 * **Cómo:** Envía un Pull Request (PR) con tus mejoras sugeridas.
-* **Dónde:** [Crea un Pull Request en `google/adk-docs`](https://github.com/google/adk-docs/pulls)
+* **Dónde:** [Crea un Pull Request en `google/adk-docs`](https://github.com/google/pulls)
 
 ### Escribir código { #writing-code }
 
@@ -101,7 +101,7 @@ Ayuda a corregir errores, implementar nuevas características o contribuir con e
 * **Framework de TypeScript:** [Crea un Pull Request en `google/adk-js`](https://github.com/google/adk-js/pulls)
 * **Framework de Go:** [Crea un Pull Request en `google/adk-go`](https://github.com/google/adk-go/pulls)
 * **Framework de Java:** [Crea un Pull Request en `google/adk-java`](https://github.com/google/adk-java/pulls)
-* **Documentación:** [Crea un Pull Request en `google/adk-docs`](https://github.com/google/adk-docs/pulls)
+* **Documentación:** [Crea un Pull Request en `google/adk-docs`](https://github.com/google/pulls)
 
 ### Revisiones de código
 
@@ -114,7 +114,7 @@ Ayuda a corregir errores, implementar nuevas características o contribuir con e
 ## Licencia
 
 Al contribuir, aceptas que tus contribuciones estarán licenciadas bajo la
-[Licencia Apache 2.0](https://github.com/google/adk-docs/blob/main/LICENSE) del
+[Licencia Apache 2.0](https://github.com/google/blob/main/LICENSE) del
 proyecto.
 
 ## ¿Preguntas?

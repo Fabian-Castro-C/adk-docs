@@ -29,7 +29,7 @@ Los callbacks son una característica fundamental de ADK, proporcionando un meca
 !!! tip
     Al implementar barreras de seguridad y políticas, usa Plugins de ADK para
     mejor modularidad y flexibilidad que los Callbacks. Para más detalles, consulta
-    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+    [Callbacks and Plugins for Security Guardrails](/safety/#callbacks-and-plugins-for-security-guardrails).
 
 **Cómo se agregan:**
 

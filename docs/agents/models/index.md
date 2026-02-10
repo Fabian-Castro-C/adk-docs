@@ -16,9 +16,9 @@ ADK utiliza principalmente dos mecanismos para la integración de modelos:
    alojados en endpoints de Vertex AI. Accedes a estos modelos proporcionando el nombre del modelo o el string del recurso del endpoint y el registro interno de ADK
    resuelve este string al cliente backend apropiado.
 
-      *  [Modelos Gemini](/adk-docs/agents/models/google-gemini/)
-      *  [Modelos Claude](/adk-docs/agents/models/anthropic/)
-      *  [Modelos alojados en Vertex AI](/adk-docs/agents/models/vertex/)
+      *  [Modelos Gemini](/agents/models/google-gemini/)
+      *  [Modelos Claude](/agents/models/anthropic/)
+      *  [Modelos alojados en Vertex AI](/agents/models/vertex/)
 
 2. **Conectores de modelos:** Para una compatibilidad más amplia, especialmente modelos
    fuera del ecosistema de Google o aquellos que requieren configuraciones específicas
@@ -26,7 +26,7 @@ ADK utiliza principalmente dos mecanismos para la integración de modelos:
    `LiteLlm`, y pasas este objeto como el parámetro `model`
    a tu `LlmAgent`.
 
-      *  [Modelos Apigee](/adk-docs/agents/models/apigee/)
-      *  [Modelos LiteLLM](/adk-docs/agents/models/litellm/)
-      *  [Alojamiento de modelos Ollama](/adk-docs/agents/models/ollama/)
-      *  [Alojamiento de modelos vLLM](/adk-docs/agents/models/vllm/)
+      *  [Modelos Apigee](/agents/models/apigee/)
+      *  [Modelos LiteLLM](/agents/models/litellm/)
+      *  [Alojamiento de modelos Ollama](/agents/models/ollama/)
+      *  [Alojamiento de modelos vLLM](/agents/models/vllm/)

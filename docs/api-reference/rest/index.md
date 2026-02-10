@@ -2,7 +2,7 @@
 
 Esta página proporciona una referencia para la API REST proporcionada por el servidor web de ADK.
 Para obtener detalles sobre el uso de la API REST de ADK en la práctica, consulte
-[Usar el Servidor API](/adk-docs/runtime/api-server/).
+[Usar el Servidor API](/runtime/api-server/).
 
 !!! tip
     Puede ver una referencia de API actualizada en un servidor web ADK en ejecución navegando

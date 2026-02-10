@@ -37,7 +37,7 @@ my_agent/
 ### Definir el código del agente
 
 Crea el código para un agente básico que utiliza la
-[herramienta de Búsqueda de Google](/adk-docs/tools/built-in-tools/#google-search) integrada. Agrega el
+[herramienta de Búsqueda de Google](/tools/built-in-tools/#google-search) integrada. Agrega el
 siguiente código al archivo `my_agent/agent.go` en el directorio de tu proyecto:
 
 ```go title="my_agent/agent.go"
@@ -126,7 +126,7 @@ tu proyecto para establecer las variables de entorno:
 ??? tip "Usar otros modelos de IA con ADK"
     ADK soporta el uso de muchos modelos de IA generativa. Para más
     información sobre cómo configurar otros modelos en agentes ADK, consulta
-    [Modelos y Autenticación](/adk-docs/agents/models).
+    [Modelos y Autenticación](/agents/models).
 
 
 ## Ejecutar tu agente
@@ -145,7 +145,7 @@ Ejecuta tu agente usando el siguiente comando de Go:
 go run agent.go
 ```
 
-![adk-run.png](/adk-docs/assets/adk-run.png)
+![adk-run.png](/assets/adk-run.png)
 
 ### Ejecutar con interfaz web
 
@@ -160,7 +160,7 @@ Este comando inicia un servidor web con una interfaz de chat para tu agente. Pue
 acceder a la interfaz web en (http://localhost:8080). Selecciona tu agente en la
 esquina superior izquierda y escribe una solicitud.
 
-![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
+![adk-web-dev-ui-chat.png](/assets/adk-web-dev-ui-chat.png)
 
 !!! warning "Precaución: ADK Web solo para desarrollo"
 
@@ -172,4 +172,4 @@ esquina superior izquierda y escribe una solicitud.
 Ahora que tienes ADK instalado y tu primer agente ejecutándose, intenta construir
 tu propio agente con nuestras guías de construcción:
 
-*  [Construir tu agente](/adk-docs/tutorials/)
+*  [Construir tu agente](/tutorials/)

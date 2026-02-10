@@ -1,7 +1,7 @@
 ---
 catalog_title: Qdrant
 catalog_description: Store and retrieve information using semantic vector search
-catalog_icon: /adk-docs/assets/tools-qdrant.png
+catalog_icon: /assets/tools-qdrant.png
 ---
 
 # Qdrant

@@ -1,6 +1,6 @@
 # Observabilidad de Agentes con Cloud Trace
 
-Con ADK, ya eres capaz de inspeccionar y observar la interacción de tu agente localmente utilizando la potente interfaz de usuario de desarrollo web discutida en [aquí](https://google.github.io/adk-docs/evaluate/#debugging-with-the-trace-view). Sin embargo, si nuestro objetivo es el despliegue en la nube, necesitaremos un panel centralizado para observar el tráfico real.
+Con ADK, ya eres capaz de inspeccionar y observar la interacción de tu agente localmente utilizando la potente interfaz de usuario de desarrollo web discutida en [aquí](https://google.github.io/evaluate/#debugging-with-the-trace-view). Sin embargo, si nuestro objetivo es el despliegue en la nube, necesitaremos un panel centralizado para observar el tráfico real.
 
 Cloud Trace es un componente de Google Cloud Observability. Es una herramienta poderosa para monitorear, depurar y mejorar el rendimiento de tus aplicaciones enfocándose específicamente en capacidades de rastreo. Para aplicaciones del Agent Development Kit (ADK), Cloud Trace habilita rastreo integral, ayudándote a entender cómo fluyen las solicitudes a través de las interacciones de tu agente e identificar cuellos de botella de rendimiento o errores dentro de tus agentes de IA.
 
